@@ -6,7 +6,7 @@ const SUCCESS_NEXT_DELAY = 1000;
 const ENGLISH_LANGUAGE = "en-US";
 const TURKISH_LANGUAGE = "tr-TR";
 const WELCOME_MESSAGE = "Merhaba! Haydi oynayalım!";
-const PRAISE_MESSAGES = ["Harika", "Süpersin", "Aferin", "Muhteşemsin"];
+const PRAISE_MESSAGES = ["Harikasın", "Süpersin", "Muhteşemsin", "Aferin", "Çok güzel", "Mükemmel", "Devam et", "Bravo"];
 const RETRY_MESSAGES = ["Hadi tekrar deneyelim.", "Harika gidiyorsun.", "Bir kez daha bakalım."];
 const STICKERS = ["⭐", "🌈", "🦋", "🦄", "🚀", "🐱", "🐶"];
 const STICKER_STORAGE_KEY = "mila-learning-stickers";
@@ -85,6 +85,8 @@ let shouldKeepWakeLock = false;
 let achievementQueue = [];
 let achievementPopupTimer;
 let isAchievementShowing = false;
+let correctAnswersSinceVoice = 2;
+let lastVoiceEncouragement = "";
 
 function getValidPlayerName(name) {
   const playerName = typeof name === "string" ? name.trim() : "";
@@ -408,6 +410,17 @@ function getPersonalizedSessionMessage() {
 function getPersonalizedPraiseMessage() {
   const praiseMessage = appUtils.randomItem(PRAISE_MESSAGES);
   return selectedPlayer ? `${praiseMessage} ${selectedPlayer}!` : `${praiseMessage}!`;
+}
+
+function shouldPlayVoiceEncouragement() {
+  correctAnswersSinceVoice += 1;
+  return correctAnswersSinceVoice >= 3 && Math.random() < .3;
+}
+
+function getVoiceEncouragementMessage() {
+  const messages = PRAISE_MESSAGES.filter(message => message !== lastVoiceEncouragement);
+  const encouragement = appUtils.randomItem(messages.length ? messages : PRAISE_MESSAGES);
+  return { encouragement, message: selectedPlayer ? `${encouragement} ${selectedPlayer}!` : `${encouragement}!` };
 }
 
 function renderPlayerSelection() {
@@ -1011,7 +1024,8 @@ async function handleCorrectAnswer(button) {
   triggerMascotReaction("mascot-celebrate");
   button.classList.add("correct");
   setInputEnabled(false);
-  ui.feedback.textContent = getPersonalizedPraiseMessage();
+  const voiceEncouragement = shouldPlayVoiceEncouragement() ? getVoiceEncouragementMessage() : undefined;
+  ui.feedback.textContent = voiceEncouragement?.message ?? getPersonalizedPraiseMessage();
   ui.feedback.className = "feedback success";
   updateScoreboard();
   ui.next.classList.add("hidden");
@@ -1019,7 +1033,11 @@ async function handleCorrectAnswer(button) {
   audio.playSuccess();
   await appUtils.wait(300);
   if (!isActiveAudio(run)) return;
-  await speech.speak(ui.feedback.textContent, TURKISH_LANGUAGE);
+  if (voiceEncouragement) {
+    lastVoiceEncouragement = voiceEncouragement.encouragement;
+    correctAnswersSinceVoice = 0;
+    await speech.speak(ui.feedback.textContent, TURKISH_LANGUAGE);
+  }
   await appUtils.wait(SUCCESS_NEXT_DELAY);
   finishCorrectAnswer(run);
 }
@@ -1046,6 +1064,8 @@ function resetSession() {
   questionNumber = 0;
   currentAnswers = [];
   pendingCorrectTransition = false;
+  correctAnswersSinceVoice = 2;
+  lastVoiceEncouragement = "";
   clearSavedProgress();
   engine.resetSession();
 }
