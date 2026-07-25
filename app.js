@@ -19,6 +19,7 @@ const SESSION_CELEBRATION_MESSAGES = ["Harika Mila!", "Bugün çok güzel oynad�
 const GAME_PROGRESS_STORAGE_KEY = "mila-learning-progress";
 const LEARNING_STATS_STORAGE_KEY = "mila-learning-learning-stats";
 const BONUS_DURATION = 20000;
+const BONUS_CORRECT_ANSWER_INTERVAL = 5;
 const LEARNING_MODE = "learning";
 const QUICK_MODE = "quick";
 const GAME_MODE_STORAGE_KEY = "mila-learning-game-mode";
@@ -726,7 +727,7 @@ async function handleCorrectAnswer(button) {
 function finishCorrectAnswer(run) {
   if (!isActiveAudio(run) || !pendingCorrectTransition) return;
   pendingCorrectTransition = false;
-  if (correctAnswers % 10 === 0) startBalloonBonus();
+  if (correctAnswers % BONUS_CORRECT_ANSWER_INTERVAL === 0) startBalloonBonus();
   else if (questionNumber >= SESSION_QUESTION_COUNT) showSessionSummary();
   else showQuestion();
 }
