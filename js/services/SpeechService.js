@@ -5,44 +5,59 @@ class SpeechService {
     this.activeResolver = undefined;
     this.englishVoice = undefined;
     this.turkishVoice = undefined;
+    this.voiceSignature = "";
+    this.voiceReadyResolver = undefined;
+    this.voiceFallbackTimer = undefined;
+    this.handleVoicesChanged = this.handleVoicesChanged.bind(this);
     this.ready = this.loadVoices();
   }
 
   findVoice(voices, language) {
-    const baseLanguage = language.split("-")[0];
-    return voices.find(voice => voice.lang.toLowerCase() === language)
-      || voices.find(voice => voice.lang.toLowerCase().startsWith(baseLanguage));
+    const languages = language === "en" ? ["en-us", "en-gb"] : ["tr-tr"];
+    const getLanguage = voice => (voice.lang ?? "").toLowerCase();
+    return languages.map(preferredLanguage => voices.find(voice => getLanguage(voice) === preferredLanguage)).find(Boolean)
+      || voices.find(voice => getLanguage(voice).startsWith(language));
   }
 
   cacheVoices() {
     const voices = window.speechSynthesis?.getVoices() ?? [];
-    this.englishVoice = this.findVoice(voices, "en-us");
-    this.turkishVoice = this.findVoice(voices, "tr-tr");
+    const signature = voices.map(voice => `${voice.voiceURI}:${voice.lang}`).join("|");
+    if (signature === this.voiceSignature) return voices.length > 0;
+    this.voiceSignature = signature;
+    this.englishVoice = this.findVoice(voices, "en");
+    this.turkishVoice = this.findVoice(voices, "tr");
     return voices.length > 0;
+  }
+
+  handleVoicesChanged() {
+    if (!this.cacheVoices() || !this.voiceReadyResolver) return;
+    window.clearTimeout(this.voiceFallbackTimer);
+    const resolve = this.voiceReadyResolver;
+    this.voiceReadyResolver = undefined;
+    resolve();
+  }
+
+  listenForVoices() {
+    if (!window.speechSynthesis || this.isListeningForVoices) return;
+    window.speechSynthesis.addEventListener("voiceschanged", this.handleVoicesChanged);
+    this.isListeningForVoices = true;
   }
 
   loadVoices() {
     if (!("speechSynthesis" in window)) return Promise.resolve();
+    this.listenForVoices();
+    if (this.cacheVoices()) return Promise.resolve();
     return new Promise(resolve => {
-      let fallbackTimer;
-      const finish = () => {
-        window.clearTimeout(fallbackTimer);
-        window.speechSynthesis.onvoiceschanged = null;
-        this.cacheVoices();
+      this.voiceReadyResolver = resolve;
+      this.voiceFallbackTimer = window.setTimeout(() => {
+        this.voiceReadyResolver = undefined;
         resolve();
-      };
-      if (this.cacheVoices()) finish();
-      else {
-        window.speechSynthesis.onvoiceschanged = () => {
-          if (this.cacheVoices()) finish();
-        };
-        fallbackTimer = window.setTimeout(finish, 2000);
-      }
+      }, 2000);
     });
   }
 
   getVoice(language) {
-    return language.startsWith("tr") ? this.turkishVoice : this.englishVoice;
+    return language.toLowerCase().startsWith("tr") ? this.turkishVoice : this.englishVoice;
   }
 
   speakUtterance(text, language) {
@@ -55,10 +70,16 @@ class SpeechService {
         if (this.activeResolver === finish) this.activeResolver = undefined;
         resolve();
       };
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = language;
-      utterance.rate = .82;
+      const isTurkish = language.toLowerCase().startsWith("tr");
       const voice = this.getVoice(language);
+      if (isTurkish && !voice) {
+        resolve();
+        return;
+      }
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = voice?.lang || (isTurkish ? "tr-TR" : "en-US");
+      utterance.rate = .8;
+      utterance.volume = .88;
       if (voice) utterance.voice = voice;
       utterance.onend = utterance.onerror = finish;
       this.activeResolver = finish;
@@ -74,6 +95,7 @@ class SpeechService {
       const request = this.queue.shift();
       await this.speakUtterance(request.text, request.language);
       request.resolve();
+      if (this.queue.length > 0) await new Promise(resolve => window.setTimeout(resolve, 90));
     }
     this.isProcessing = false;
   }
