@@ -7,7 +7,7 @@ const ENGLISH_LANGUAGE = "en-US";
 const TURKISH_LANGUAGE = "tr-TR";
 const WELCOME_MESSAGE = "Merhaba! Haydi oynayalım!";
 const PRAISE_MESSAGES = ["Harikasın", "Süpersin", "Muhteşemsin", "Aferin", "Çok güzel", "Mükemmel", "Devam et", "Bravo"];
-const RETRY_MESSAGES = ["Hadi tekrar deneyelim.", "Harika gidiyorsun.", "Bir kez daha bakalım."];
+const RETRY_MESSAGES = ["Bir daha deneyelim!", "Yaklaşıyorsun!", "Bir kez daha bakalım.", "Sorun değil.", "Hadi tekrar deneyelim!"];
 const STICKERS = ["⭐", "🌈", "🦋", "🦄", "🚀", "🐱", "🐶"];
 const STICKER_STORAGE_KEY = "mila-learning-stickers";
 const REWARD_POPUP_DURATION = 3000;
@@ -87,6 +87,9 @@ let achievementPopupTimer;
 let isAchievementShowing = false;
 let correctAnswersSinceVoice = 2;
 let lastVoiceEncouragement = "";
+let wrongAttemptsForQuestion = 0;
+let lastRetryMessage = "";
+let isRevealingCorrectAnswer = false;
 
 function getValidPlayerName(name) {
   const playerName = typeof name === "string" ? name.trim() : "";
@@ -410,6 +413,13 @@ function getPersonalizedSessionMessage() {
 function getPersonalizedPraiseMessage() {
   const praiseMessage = appUtils.randomItem(PRAISE_MESSAGES);
   return selectedPlayer ? `${praiseMessage} ${selectedPlayer}!` : `${praiseMessage}!`;
+}
+
+function getRetryMessage() {
+  const messages = RETRY_MESSAGES.filter(message => message !== lastRetryMessage);
+  const retryMessage = appUtils.randomItem(messages.length ? messages : RETRY_MESSAGES);
+  lastRetryMessage = retryMessage;
+  return retryMessage;
 }
 
 function shouldPlayVoiceEncouragement() {
@@ -760,6 +770,11 @@ function resumeGame() {
     });
     return;
   }
+  if (isRevealingCorrectAnswer) {
+    isRevealingCorrectAnswer = false;
+    showQuestion();
+    return;
+  }
   resumeQuestionSequence();
 }
 
@@ -943,6 +958,8 @@ function showQuestion() {
   if (isPaused) return;
   clearSpeech();
   pendingCorrectTransition = false;
+  wrongAttemptsForQuestion = 0;
+  isRevealingCorrectAnswer = false;
   currentQuestion = engine.selectQuestion();
   currentAnswers = engine.getAnswers(currentQuestion);
   questionNumber += 1;
@@ -986,9 +1003,10 @@ async function showSessionSummary() {
 }
 
 async function handleWrongAnswer(button) {
-  if (isPaused) return;
+  if (isPaused || isRevealingCorrectAnswer) return;
   clearSpeech();
   const run = audioRun;
+  wrongAttemptsForQuestion += 1;
   streak = 0;
   engine.recordResult(currentQuestion, false);
   updateParentData(false);
@@ -996,14 +1014,24 @@ async function handleWrongAnswer(button) {
   saveGameProgress();
   triggerMascotReaction("mascot-encourage");
   button.classList.add("try-again-choice");
-  ui.feedback.textContent = appUtils.randomItem(RETRY_MESSAGES);
+  ui.feedback.textContent = getRetryMessage();
   ui.feedback.className = "feedback try-again";
   updateScoreboard();
   setInputEnabled(false);
   await speech.speak(ui.feedback.textContent, TURKISH_LANGUAGE);
   if (!isActiveAudio(run)) return;
   button.classList.remove("try-again-choice");
-  playQuestionSequence();
+  if (wrongAttemptsForQuestion < 2) {
+    playQuestionSequence();
+    return;
+  }
+  const correctButton = getAnswerButtons().find(answerButton => answerButton.textContent === currentQuestion.correct);
+  correctButton?.classList.add("correct-answer-reveal");
+  isRevealingCorrectAnswer = true;
+  await appUtils.wait(900);
+  if (!isActiveAudio(run)) return;
+  isRevealingCorrectAnswer = false;
+  showQuestion();
 }
 
 async function handleCorrectAnswer(button) {
@@ -1051,7 +1079,7 @@ function finishCorrectAnswer(run) {
 }
 
 function answerQuestion(button, answer) {
-  if (isPaused || isSpeaking || button.disabled || pendingCorrectTransition) return;
+  if (isPaused || isSpeaking || button.disabled || pendingCorrectTransition || isRevealingCorrectAnswer) return;
   if (answer === currentQuestion.correct) handleCorrectAnswer(button);
   else handleWrongAnswer(button);
 }
@@ -1066,6 +1094,9 @@ function resetSession() {
   pendingCorrectTransition = false;
   correctAnswersSinceVoice = 2;
   lastVoiceEncouragement = "";
+  wrongAttemptsForQuestion = 0;
+  lastRetryMessage = "";
+  isRevealingCorrectAnswer = false;
   clearSavedProgress();
   engine.resetSession();
 }
@@ -1110,6 +1141,7 @@ function goHome() {
   window.clearTimeout(balloonPopTimer);
   pendingBonusEnd = false;
   isWelcomeSequenceActive = false;
+  isRevealingCorrectAnswer = false;
   ui.quiz.classList.add("hidden");
   ui.bonus.classList.add("hidden");
   ui.summary.classList.add("hidden");
