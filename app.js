@@ -23,6 +23,7 @@ const LEARNING_MODE = "learning";
 const QUICK_MODE = "quick";
 const GAME_MODE_STORAGE_KEY = "mila-learning-game-mode";
 const PLAYER_STORAGE_KEY = "mila-learning-player";
+const PLAYER_PROGRESS_MIGRATION_STORAGE_KEY = "mila-learning-player-progress-migrated";
 const DEFAULT_PLAYERS = ["Mila", "Açelya", "Alp", "Aslan Cemal", "Zeynep", "Nova", "Ata", "Hiranur"];
 
 const ui = {
@@ -52,6 +53,8 @@ let audioRun = 0;
 let rewardPopupTimer;
 let balloonBonusTimer;
 let isBalloonBonusActive = false;
+let selectedPlayer = getSavedPlayer();
+migratePlayerProgress();
 let parentData = loadParentData();
 let playStartedAt = 0;
 let parentHoldTimer;
@@ -64,7 +67,6 @@ let balloonPopTimer;
 let pendingCorrectTransition = false;
 let pendingBonusEnd = false;
 let activeGameMode = getSavedGameMode();
-let selectedPlayer = getSavedPlayer();
 
 function getValidPlayerName(name) {
   const playerName = typeof name === "string" ? name.trim() : "";
@@ -82,6 +84,24 @@ function getSavedPlayer() {
 function saveSelectedPlayer() {
   try {
     window.localStorage.setItem(PLAYER_STORAGE_KEY, selectedPlayer);
+  } catch {
+    // The game continues when local storage is unavailable.
+  }
+}
+
+function getPlayerStorageKey(storageKey, playerName = selectedPlayer) {
+  return playerName ? `${storageKey}-${encodeURIComponent(playerName)}` : undefined;
+}
+
+function migratePlayerProgress() {
+  try {
+    if (window.localStorage.getItem(PLAYER_PROGRESS_MIGRATION_STORAGE_KEY)) return;
+    [STICKER_STORAGE_KEY, PARENT_DATA_STORAGE_KEY, GAME_PROGRESS_STORAGE_KEY, LEARNING_STATS_STORAGE_KEY, GAME_MODE_STORAGE_KEY].forEach(storageKey => {
+      const existingData = window.localStorage.getItem(storageKey);
+      const milaStorageKey = getPlayerStorageKey(storageKey, "Mila");
+      if (existingData !== null && window.localStorage.getItem(milaStorageKey) === null) window.localStorage.setItem(milaStorageKey, existingData);
+    });
+    window.localStorage.setItem(PLAYER_PROGRESS_MIGRATION_STORAGE_KEY, "true");
   } catch {
     // The game continues when local storage is unavailable.
   }
@@ -109,6 +129,8 @@ function selectPlayer(name) {
   if (!selectedPlayer) return;
   ui.customPlayerName.value = "";
   saveSelectedPlayer();
+  parentData = loadParentData();
+  setGameMode(getSavedGameMode());
   renderPlayerSelection();
 }
 
@@ -128,13 +150,18 @@ function updateCustomPlayer() {
   const playerName = getValidPlayerName(ui.customPlayerName.value);
   selectedPlayer = playerName;
   ui.customPlayer.setAttribute("aria-pressed", String(Boolean(playerName)));
-  if (playerName) saveSelectedPlayer();
+  if (playerName) {
+    saveSelectedPlayer();
+    parentData = loadParentData();
+    setGameMode(getSavedGameMode());
+  }
   updateStartButton();
 }
 
 function getSavedGameMode() {
   try {
-    const savedMode = window.localStorage.getItem(GAME_MODE_STORAGE_KEY);
+    const storageKey = getPlayerStorageKey(GAME_MODE_STORAGE_KEY);
+    const savedMode = storageKey && window.localStorage.getItem(storageKey);
     return savedMode === QUICK_MODE || savedMode === LEARNING_MODE ? savedMode : LEARNING_MODE;
   } catch {
     return LEARNING_MODE;
@@ -147,7 +174,8 @@ function setGameMode(mode) {
   ui.learningMode.setAttribute("aria-pressed", String(mode === LEARNING_MODE));
   ui.quickMode.setAttribute("aria-pressed", String(mode === QUICK_MODE));
   try {
-    window.localStorage.setItem(GAME_MODE_STORAGE_KEY, mode);
+    const storageKey = getPlayerStorageKey(GAME_MODE_STORAGE_KEY);
+    if (storageKey) window.localStorage.setItem(storageKey, mode);
   } catch {
     // The game continues when local storage is unavailable.
   }
@@ -156,7 +184,8 @@ function setGameMode(mode) {
 
 function getSavedProgress() {
   try {
-    return JSON.parse(window.localStorage.getItem(GAME_PROGRESS_STORAGE_KEY));
+    const storageKey = getPlayerStorageKey(GAME_PROGRESS_STORAGE_KEY);
+    return storageKey ? JSON.parse(window.localStorage.getItem(storageKey)) : undefined;
   } catch {
     return undefined;
   }
@@ -165,7 +194,9 @@ function getSavedProgress() {
 function saveGameProgress(pendingAdvance = false) {
   if (!engine || !currentQuestion) return;
   try {
-    window.localStorage.setItem(GAME_PROGRESS_STORAGE_KEY, JSON.stringify({
+    const storageKey = getPlayerStorageKey(GAME_PROGRESS_STORAGE_KEY);
+    if (!storageKey) return;
+    window.localStorage.setItem(storageKey, JSON.stringify({
       stars, streak, bestStreak, correctAnswers, questionNumber, pendingAdvance,
       currentQuestion: { category: currentQuestion.category, correct: currentQuestion.correct },
       currentAnswers, learningStats: engine.getLearningStats(), difficultyState: engine.getDifficultyState()
@@ -177,7 +208,8 @@ function saveGameProgress(pendingAdvance = false) {
 
 function clearSavedProgress() {
   try {
-    window.localStorage.removeItem(GAME_PROGRESS_STORAGE_KEY);
+    const storageKey = getPlayerStorageKey(GAME_PROGRESS_STORAGE_KEY);
+    if (storageKey) window.localStorage.removeItem(storageKey);
   } catch {
     // The game continues when local storage is unavailable.
   }
@@ -186,7 +218,9 @@ function clearSavedProgress() {
 function saveLearningStats() {
   if (!engine) return;
   try {
-    window.localStorage.setItem(LEARNING_STATS_STORAGE_KEY, JSON.stringify({ learningStats: engine.getLearningStats(), difficultyState: engine.getDifficultyState() }));
+    const storageKey = getPlayerStorageKey(LEARNING_STATS_STORAGE_KEY);
+    if (!storageKey) return;
+    window.localStorage.setItem(storageKey, JSON.stringify({ learningStats: engine.getLearningStats(), difficultyState: engine.getDifficultyState() }));
   } catch {
     // The game continues when local storage is unavailable.
   }
@@ -194,7 +228,10 @@ function saveLearningStats() {
 
 function restoreStoredLearningStats() {
   try {
-    const savedData = JSON.parse(window.localStorage.getItem(LEARNING_STATS_STORAGE_KEY));
+    const storageKey = getPlayerStorageKey(LEARNING_STATS_STORAGE_KEY);
+    const savedData = storageKey ? JSON.parse(window.localStorage.getItem(storageKey)) : undefined;
+    engine.learningStats.clear();
+    engine.restoreDifficultyState({});
     engine.restoreLearningStats(savedData?.learningStats ?? savedData);
     engine.restoreDifficultyState(savedData?.difficultyState);
   } catch {
@@ -239,7 +276,19 @@ function restoreSavedProgress() {
 
 function loadParentData() {
   try {
-    return JSON.parse(window.localStorage.getItem(PARENT_DATA_STORAGE_KEY)) ?? { playTime: 0, questionsAnswered: 0, correctAnswers: 0, categoryCounts: {}, difficultWords: {}, bestStreak: 0 };
+    const storageKey = getPlayerStorageKey(PARENT_DATA_STORAGE_KEY);
+    const savedData = storageKey ? JSON.parse(window.localStorage.getItem(storageKey)) : undefined;
+    if (savedData && typeof savedData === "object" && !Array.isArray(savedData)) {
+      return {
+        playTime: Number.isFinite(savedData.playTime) ? savedData.playTime : 0,
+        questionsAnswered: Number.isFinite(savedData.questionsAnswered) ? savedData.questionsAnswered : 0,
+        correctAnswers: Number.isFinite(savedData.correctAnswers) ? savedData.correctAnswers : 0,
+        categoryCounts: savedData.categoryCounts && typeof savedData.categoryCounts === "object" && !Array.isArray(savedData.categoryCounts) ? savedData.categoryCounts : {},
+        difficultWords: savedData.difficultWords && typeof savedData.difficultWords === "object" && !Array.isArray(savedData.difficultWords) ? savedData.difficultWords : {},
+        bestStreak: Number.isFinite(savedData.bestStreak) ? savedData.bestStreak : 0
+      };
+    }
+    return { playTime: 0, questionsAnswered: 0, correctAnswers: 0, categoryCounts: {}, difficultWords: {}, bestStreak: 0 };
   } catch {
     return { playTime: 0, questionsAnswered: 0, correctAnswers: 0, categoryCounts: {}, difficultWords: {}, bestStreak: 0 };
   }
@@ -247,7 +296,8 @@ function loadParentData() {
 
 function saveParentData() {
   try {
-    window.localStorage.setItem(PARENT_DATA_STORAGE_KEY, JSON.stringify(parentData));
+    const storageKey = getPlayerStorageKey(PARENT_DATA_STORAGE_KEY);
+    if (storageKey) window.localStorage.setItem(storageKey, JSON.stringify(parentData));
   } catch {
     // The game continues when local storage is unavailable.
   }
@@ -403,8 +453,11 @@ function updateScoreboard() {
 
 function saveSticker(sticker) {
   try {
-    const stickers = JSON.parse(window.localStorage.getItem(STICKER_STORAGE_KEY) ?? "[]");
-    window.localStorage.setItem(STICKER_STORAGE_KEY, JSON.stringify([...stickers, sticker]));
+    const storageKey = getPlayerStorageKey(STICKER_STORAGE_KEY);
+    if (!storageKey) return;
+    const savedStickers = JSON.parse(window.localStorage.getItem(storageKey) ?? "[]");
+    const stickers = Array.isArray(savedStickers) ? savedStickers : [];
+    window.localStorage.setItem(storageKey, JSON.stringify([...stickers, sticker]));
   } catch {
     // The game continues when local storage is unavailable.
   }
@@ -661,6 +714,7 @@ async function startGame() {
   isStartingGame = true;
   try {
     [engine] = await Promise.all([gameReady, speech.ready]);
+    restoreStoredLearningStats();
     ui.welcome.classList.add("hidden");
     ui.summary.classList.add("hidden");
     ui.quiz.classList.remove("hidden");
