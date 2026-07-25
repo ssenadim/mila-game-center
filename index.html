@@ -49,6 +49,8 @@
           <button id="quick-mode-button" class="mode-button" type="button" aria-pressed="false"><strong>Hızlı Oyun</strong><span>Soruyu dinle, cevabı biliyorsan hemen seç.</span></button>
           <button id="matching-mode-button" class="mode-button matching-mode-button" type="button" aria-pressed="false"><strong>🧩 Eşini Bul</strong><span>Kartları aç ve aynı olanları bul.</span></button>
           <button id="listening-mode-button" class="mode-button listening-mode-button" type="button" aria-pressed="false"><strong>👂 Dinle ve Seç</strong><span>Kelimeyi dinle, doğru resmi seç.</span></button>
+          <button id="number-match-mode-button" class="mode-button number-match-mode-button" type="button" aria-pressed="false"><strong>🔢 Sayıyı Bul</strong><span>Sayıyı dinle, doğru rakamı seç.</span></button>
+          <button id="color-match-mode-button" class="mode-button color-match-mode-button" type="button" aria-pressed="false"><strong>🎨 Rengi Bul</strong><span>Rengi dinle ya da oku, doğru kartı seç.</span></button>
         </div>
         <section id="category-pack-selection" class="category-pack-selection" aria-labelledby="category-pack-title">
           <h2 id="category-pack-title">Ne oynayalım?</h2>
@@ -109,6 +111,29 @@
         <button id="listening-replay-button" class="replay-button" type="button"><span aria-hidden="true">🔊</span> Tekrar dinle</button>
         <p id="listening-feedback" class="matching-feedback">Dinle ve doğru resmi seç.</p>
         <div class="listening-board-wrap"><div id="listening-celebration" class="celebration" aria-hidden="true"></div><div id="listening-cards" class="listening-cards" aria-label="Dinleme seçenekleri"></div></div>
+      </section>
+
+      <section id="number-match-screen" class="screen number-match-screen hidden" aria-live="polite" aria-labelledby="number-match-title">
+        <header class="matching-header">
+          <button id="number-match-home-button" class="icon-button" type="button" aria-label="Ana sayfaya dön">⌂</button>
+          <div><p class="eyebrow">SAYIYI BUL</p><h2 id="number-match-title">Sayıyı dinle!</h2></div>
+          <button id="number-match-pause-button" class="icon-button" type="button" aria-label="Oyunu duraklat">⏸</button>
+        </header>
+        <button id="number-match-replay-button" class="replay-button" type="button"><span aria-hidden="true">🔊</span> Tekrar dinle</button>
+        <p id="number-match-feedback" class="matching-feedback">Sayıyı dinle ve doğru rakamı seç.</p>
+        <div class="number-match-board-wrap"><div id="number-match-celebration" class="celebration" aria-hidden="true"></div><div id="number-match-cards" class="number-match-cards" aria-label="Sayı seçenekleri"></div></div>
+      </section>
+
+      <section id="color-match-screen" class="screen color-match-screen hidden" aria-live="polite" aria-labelledby="color-match-title">
+        <header class="matching-header">
+          <button id="color-match-home-button" class="icon-button" type="button" aria-label="Ana sayfaya dön">⌂</button>
+          <div><p class="eyebrow">RENGİ BUL</p><h2 id="color-match-title">Doğru rengi bul!</h2></div>
+          <button id="color-match-pause-button" class="icon-button" type="button" aria-label="Oyunu duraklat">⏸</button>
+        </header>
+        <button id="color-match-replay-button" class="replay-button" type="button"><span aria-hidden="true">🔊</span> Tekrar dinle</button>
+        <p id="color-match-prompt" class="color-match-prompt hidden" aria-live="polite"></p>
+        <p id="color-match-feedback" class="matching-feedback">Rengi dinle ve doğru kartı seç.</p>
+        <div class="color-match-board-wrap"><div id="color-match-celebration" class="celebration" aria-hidden="true"></div><div id="color-match-cards" class="color-match-cards" aria-label="Renk seçenekleri"></div></div>
       </section>
 
       <section id="summary-screen" class="screen summary-screen hidden" aria-live="polite" aria-labelledby="summary-title">
