@@ -1,0 +1,5 @@
+[
+  { "category": "Emoji", "label": "Emojiler", "prompt": "Which emoji is happy?", "visual": "😊", "answers": ["Happy", "Sad", "Angry", "Sleepy"], "correct": "Happy" },
+  { "category": "Emoji", "label": "Emojiler", "prompt": "What feeling does this emoji show?", "visual": "😴", "answers": ["Excited", "Sleepy", "Surprised", "Silly"], "correct": "Sleepy" },
+  { "category": "Emoji", "label": "Emojiler", "prompt": "Which emoji is a heart?", "visual": "❤️", "answers": ["Heart", "Star", "Flower", "Rainbow"], "correct": "Heart" }
+]

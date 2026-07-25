@@ -1,0 +1,23 @@
+window.MilaOfflineQuestions = [
+  { category: "Numbers", label: "Sayılar", prompt: "How many apples are there?", visual: "🍎 🍎 🍎", answers: ["One", "Two", "Three", "Four"], correct: "Three" },
+  { category: "Numbers", label: "Sayılar", prompt: "What number is this?", visual: "7️⃣", answers: ["Five", "Six", "Seven", "Eight"], correct: "Seven" },
+  { category: "Numbers", label: "Sayılar", prompt: "How many stars are there?", visual: "⭐ ⭐", answers: ["One", "Two", "Three", "Four"], correct: "Two" },
+  { category: "Colors", label: "Renkler", prompt: "What color is this?", visual: "🟡", answers: ["Blue", "Yellow", "Red", "Green"], correct: "Yellow" },
+  { category: "Colors", label: "Renkler", prompt: "What color is the strawberry?", visual: "🍓", answers: ["Purple", "Red", "Orange", "Blue"], correct: "Red" },
+  { category: "Colors", label: "Renkler", prompt: "What color is the leaf?", visual: "🍃", answers: ["Green", "Pink", "Brown", "Yellow"], correct: "Green" },
+  { category: "Animals", label: "Hayvanlar", prompt: "What animal is this?", visual: "🐘", answers: ["Lion", "Elephant", "Cat", "Monkey"], correct: "Elephant" },
+  { category: "Animals", label: "Hayvanlar", prompt: "What animal says meow?", visual: "🐱", answers: ["Dog", "Bird", "Cat", "Fish"], correct: "Cat" },
+  { category: "Animals", label: "Hayvanlar", prompt: "What animal is this?", visual: "🦁", answers: ["Lion", "Tiger", "Bear", "Rabbit"], correct: "Lion" },
+  { category: "Fruits", label: "Meyveler", prompt: "What fruit is this?", visual: "🍌", answers: ["Banana", "Apple", "Grape", "Orange"], correct: "Banana" },
+  { category: "Fruits", label: "Meyveler", prompt: "What fruit is red?", visual: "🍎", answers: ["Apple", "Lemon", "Blueberry", "Kiwi"], correct: "Apple" },
+  { category: "Fruits", label: "Meyveler", prompt: "What fruit is this?", visual: "🍇", answers: ["Grapes", "Cherry", "Pear", "Peach"], correct: "Grapes" },
+  { category: "Letters", label: "Harfler", prompt: "What letter is this?", visual: "A", answers: ["A", "E", "I", "O"], correct: "A" },
+  { category: "Letters", label: "Harfler", prompt: "Which letter comes after B?", visual: "B  →  ?", answers: ["A", "C", "D", "E"], correct: "C" },
+  { category: "Letters", label: "Harfler", prompt: "What letter is this?", visual: "M", answers: ["N", "W", "M", "H"], correct: "M" },
+  { category: "Shapes", label: "Şekiller", prompt: "What shape is this?", visual: "🔺", answers: ["Circle", "Square", "Triangle", "Star"], correct: "Triangle" },
+  { category: "Shapes", label: "Şekiller", prompt: "What shape is this?", visual: "🟦", answers: ["Triangle", "Circle", "Square", "Heart"], correct: "Square" },
+  { category: "Shapes", label: "Şekiller", prompt: "What shape is round?", visual: "🔵", answers: ["Circle", "Rectangle", "Star", "Triangle"], correct: "Circle" },
+  { category: "Emoji", label: "Emojiler", prompt: "Which emoji is happy?", visual: "😊", answers: ["Happy", "Sad", "Angry", "Sleepy"], correct: "Happy" },
+  { category: "Emoji", label: "Emojiler", prompt: "What feeling does this emoji show?", visual: "😴", answers: ["Excited", "Sleepy", "Surprised", "Silly"], correct: "Sleepy" },
+  { category: "Emoji", label: "Emojiler", prompt: "Which emoji is a heart?", visual: "❤️", answers: ["Heart", "Star", "Flower", "Rainbow"], correct: "Heart" }
+];

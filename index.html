@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#7c5ce0" />
+    <title>Mila Learning Adventure</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="game-shell">
+      <div class="cloud cloud-one"></div><div class="cloud cloud-two"></div>
+      <section id="welcome-screen" class="screen welcome-screen" aria-labelledby="welcome-title">
+        <div class="mascot" aria-hidden="true"><span class="ear ear-left"></span><span class="ear ear-right"></span><span class="face"><span class="eye"></span><span class="eye"></span><span class="smile"></span></span></div>
+        <p class="eyebrow">MİLA'YA ÖZEL</p>
+        <h1 id="welcome-title">Öğrenme<br /><span>Macerası</span></h1>
+        <p class="welcome-copy">Renkleri, hayvanları ve sayıları keşfetmeye hazır mısın?</p>
+        <button id="start-button" class="primary-button" type="button">Hadi başlayalım <span aria-hidden="true">✦</span></button>
+        <button id="welcome-sound-button" class="sound-button" type="button" aria-label="Hoş geldin mesajını tekrar dinle">🔊 Dinle</button>
+      </section>
+
+      <section id="quiz-screen" class="screen quiz-screen hidden" aria-live="polite">
+        <div id="game-mascot" class="game-mascot" aria-hidden="true">
+          <span class="mascot-hand mascot-hand-left">✋</span>
+          <span class="mascot-character">🐻</span>
+          <span class="mascot-hand mascot-hand-right">✋</span>
+        </div>
+        <header class="quiz-header">
+          <button id="home-button" class="icon-button" type="button" aria-label="Ana sayfaya dön">⌂</button>
+          <div class="progress-wrap">
+            <div class="progress-label"><span id="question-count">Soru 1</span><span id="score">⭐ 0</span></div>
+            <div class="progress-bar" aria-label="10 soruluk tur ilerlemesi"><span id="progress-fill"></span></div>
+            <p id="streak" class="streak" aria-live="polite">🔥 Seri: 0</p>
+          </div>
+          <span aria-hidden="true"></span>
+        </header>
+        <div id="category-pill" class="category-pill">Renkler</div>
+        <button id="question-sound-button" class="replay-button" type="button" aria-label="Soruyu tekrar dinle"><span aria-hidden="true">🔊</span> Soruyu dinle</button>
+        <div class="question-card">
+          <div id="question-visual" class="question-visual" aria-hidden="true"></div>
+          <div id="celebration" class="celebration" aria-hidden="true"></div>
+          <p id="question-prompt" class="question-prompt">What color is this?</p>
+        </div>
+        <div id="answers" class="answers" aria-label="Cevap seçenekleri"></div>
+        <p id="feedback" class="feedback" role="status"></p>
+        <button id="next-button" class="primary-button next-button hidden" type="button">Sonraki soru <span aria-hidden="true">→</span></button>
+      </section>
+
+      <section id="summary-screen" class="screen summary-screen hidden" aria-live="polite" aria-labelledby="summary-title">
+        <div class="summary-sparkles" aria-hidden="true">✨ ⭐ ✨</div>
+        <p class="eyebrow">20 SORULUK MACERA</p>
+        <h2 id="summary-title">Harika<br /><span>Mila!</span></h2>
+        <p class="summary-copy">Bugün çok güzel öğrendin!</p>
+        <div class="summary-stats">
+          <div class="summary-stat"><span aria-hidden="true">⭐</span><strong id="summary-stars">0</strong><small>Yıldız</small></div>
+          <div class="summary-stat"><span aria-hidden="true">🎉</span><strong id="summary-correct">0</strong><small>Doğru cevap</small></div>
+          <div class="summary-stat"><span aria-hidden="true">🔥</span><strong id="summary-streak">0</strong><small>En iyi seri</small></div>
+          <div class="summary-stat category-stat"><span aria-hidden="true">💜</span><strong id="summary-category">-</strong><small>Favori kategori</small></div>
+        </div>
+        <button id="play-again-button" class="primary-button" type="button">Yeniden oyna <span aria-hidden="true">↻</span></button>
+        <button id="summary-home-button" class="sound-button" type="button">Ana sayfa</button>
+      </section>
+
+      <section id="balloon-bonus" class="screen balloon-bonus hidden" aria-live="polite" aria-labelledby="balloon-title">
+        <p class="eyebrow">BALON BONUSU</p>
+        <h2 id="balloon-title">Balonu patlat!</h2>
+        <p id="balloon-target" class="balloon-target">Pop Apple.</p>
+        <div id="balloons" class="balloons" aria-label="Balonlar"></div>
+      </section>
+
+      <div id="reward-popup" class="reward-popup hidden" role="status" aria-live="polite">
+        <span id="reward-sticker" class="reward-sticker" aria-hidden="true">⭐</span>
+        <p>Yeni sticker!</p>
+      </div>
+      <section id="parent-dashboard" class="parent-dashboard hidden" role="dialog" aria-modal="true" aria-labelledby="parent-dashboard-title">
+        <div class="parent-dashboard-card">
+          <button id="parent-dashboard-close" class="parent-dashboard-close" type="button" aria-label="Close parent mode">×</button>
+          <p class="eyebrow">EBEVEYN MODU</p>
+          <h2 id="parent-dashboard-title">Mila'nın öğrenme özeti</h2>
+          <div class="parent-stats">
+            <p><span>Oyun süresi</span><strong id="parent-play-time">0 dk</strong></p>
+            <p><span>Cevaplanan soru</span><strong id="parent-questions">0</strong></p>
+            <p><span>Doğru cevap</span><strong id="parent-correct">0</strong></p>
+            <p><span>Favori kategori</span><strong id="parent-category">-</strong></p>
+            <p><span>En iyi seri</span><strong id="parent-streak">0</strong></p>
+          </div>
+          <div class="parent-difficult"><span>Birlikte tekrar edilebilecek kelimeler</span><strong id="parent-difficult-words">Henüz yok</strong></div>
+        </div>
+      </section>
+    </main>
+    <script src="js/utils/random.js"></script>
+    <script src="js/services/SpeechService.js"></script>
+    <script src="js/services/AudioHelper.js"></script>
+    <script src="js/services/AnimationHelper.js"></script>
+    <script src="js/QuestionEngine.js"></script>
+    <script src="data/offline-data.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

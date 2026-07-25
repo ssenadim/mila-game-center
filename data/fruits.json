@@ -1,0 +1,5 @@
+[
+  { "category": "Fruits", "label": "Meyveler", "prompt": "What fruit is this?", "visual": "🍌", "answers": ["Banana", "Apple", "Grape", "Orange"], "correct": "Banana" },
+  { "category": "Fruits", "label": "Meyveler", "prompt": "What fruit is red?", "visual": "🍎", "answers": ["Apple", "Lemon", "Blueberry", "Kiwi"], "correct": "Apple" },
+  { "category": "Fruits", "label": "Meyveler", "prompt": "What fruit is this?", "visual": "🍇", "answers": ["Grapes", "Cherry", "Pear", "Peach"], "correct": "Grapes" }
+]

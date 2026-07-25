@@ -1,0 +1,5 @@
+[
+  { "category": "Shapes", "label": "Şekiller", "prompt": "What shape is this?", "visual": "🔺", "answers": ["Circle", "Square", "Triangle", "Star"], "correct": "Triangle" },
+  { "category": "Shapes", "label": "Şekiller", "prompt": "What shape is this?", "visual": "🟦", "answers": ["Triangle", "Circle", "Square", "Heart"], "correct": "Square" },
+  { "category": "Shapes", "label": "Şekiller", "prompt": "What shape is round?", "visual": "🔵", "answers": ["Circle", "Rectangle", "Star", "Triangle"], "correct": "Circle" }
+]

@@ -1,0 +1,5 @@
+[
+  { "category": "Letters", "label": "Harfler", "prompt": "What letter is this?", "visual": "A", "answers": ["A", "E", "I", "O"], "correct": "A" },
+  { "category": "Letters", "label": "Harfler", "prompt": "Which letter comes after B?", "visual": "B  →  ?", "answers": ["A", "C", "D", "E"], "correct": "C" },
+  { "category": "Letters", "label": "Harfler", "prompt": "What letter is this?", "visual": "M", "answers": ["N", "W", "M", "H"], "correct": "M" }
+]

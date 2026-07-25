@@ -1,0 +1,5 @@
+[
+  { "category": "Animals", "label": "Hayvanlar", "prompt": "What animal is this?", "visual": "🐘", "answers": ["Lion", "Elephant", "Cat", "Monkey"], "correct": "Elephant" },
+  { "category": "Animals", "label": "Hayvanlar", "prompt": "What animal says meow?", "visual": "🐱", "answers": ["Dog", "Bird", "Cat", "Fish"], "correct": "Cat" },
+  { "category": "Animals", "label": "Hayvanlar", "prompt": "What animal is this?", "visual": "🦁", "answers": ["Lion", "Tiger", "Bear", "Rabbit"], "correct": "Lion" }
+]

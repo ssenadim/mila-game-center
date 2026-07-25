@@ -1,0 +1,5 @@
+[
+  { "category": "Numbers", "label": "Sayılar", "prompt": "How many apples are there?", "visual": "🍎 🍎 🍎", "answers": ["One", "Two", "Three", "Four"], "correct": "Three" },
+  { "category": "Numbers", "label": "Sayılar", "prompt": "What number is this?", "visual": "7️⃣", "answers": ["Five", "Six", "Seven", "Eight"], "correct": "Seven" },
+  { "category": "Numbers", "label": "Sayılar", "prompt": "How many stars are there?", "visual": "⭐ ⭐", "answers": ["One", "Two", "Three", "Four"], "correct": "Two" }
+]

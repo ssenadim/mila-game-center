@@ -1,0 +1,5 @@
+[
+  { "category": "Colors", "label": "Renkler", "prompt": "What color is this?", "visual": "🟡", "answers": ["Blue", "Yellow", "Red", "Green"], "correct": "Yellow" },
+  { "category": "Colors", "label": "Renkler", "prompt": "What color is the strawberry?", "visual": "🍓", "answers": ["Purple", "Red", "Orange", "Blue"], "correct": "Red" },
+  { "category": "Colors", "label": "Renkler", "prompt": "What color is the leaf?", "visual": "🍃", "answers": ["Green", "Pink", "Brown", "Yellow"], "correct": "Green" }
+]
