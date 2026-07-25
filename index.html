@@ -40,6 +40,17 @@
           <button id="learning-mode-button" class="mode-button" type="button" aria-pressed="true"><strong>Öğrenme Modu</strong><span>Önce bütün seçenekleri dinle, sonra cevapla.</span></button>
           <button id="quick-mode-button" class="mode-button" type="button" aria-pressed="false"><strong>Hızlı Oyun</strong><span>Soruyu dinle, cevabı biliyorsan hemen seç.</span></button>
         </div>
+        <section id="category-pack-selection" class="category-pack-selection" aria-labelledby="category-pack-title">
+          <h2 id="category-pack-title">Ne oynayalım?</h2>
+          <div class="category-pack-options" aria-label="Kategori paketi seçimi">
+            <button class="category-pack-button" type="button" data-category-pack="mixed" aria-pressed="true">Karışık</button>
+            <button class="category-pack-button" type="button" data-category-pack="words" aria-pressed="false">Kelimeler</button>
+            <button class="category-pack-button" type="button" data-category-pack="colors-shapes" aria-pressed="false">Renkler ve Şekiller</button>
+            <button class="category-pack-button" type="button" data-category-pack="numbers" aria-pressed="false">Sayılar</button>
+            <button class="category-pack-button" type="button" data-category-pack="custom" aria-pressed="false">Özel</button>
+          </div>
+          <div id="custom-category-options" class="custom-category-options hidden" aria-label="Özel kategori seçimi"></div>
+        </section>
       </section>
 
       <section id="quiz-screen" class="screen quiz-screen hidden" aria-live="polite">

@@ -5,7 +5,7 @@ const CHOICE_DELAY = 2000;
 const SUCCESS_NEXT_DELAY = 1000;
 const ENGLISH_LANGUAGE = "en-US";
 const TURKISH_LANGUAGE = "tr-TR";
-const WELCOME_MESSAGE = "Merhaba Mila. Hoş geldin. Bu eğlenceli oyunu seni çok seven baban senin için hazırladı. Haydi başlayalım.";
+const WELCOME_MESSAGE = "Merhaba! Haydi oynayalım!";
 const SUMMARY_MESSAGE = "Harika Mila! Yirmi soruluk macerayı tamamladın. Çok güzel öğrendin!";
 const PRAISE_MESSAGES = ["Harika Mila!", "Süpersin Mila!", "Aferin Mila!", "Muhteşemsin Mila!"];
 const RETRY_MESSAGES = ["Hadi tekrar deneyelim.", "Harika gidiyorsun.", "Bir kez daha bakalım."];
@@ -25,11 +25,12 @@ const QUICK_MODE = "quick";
 const GAME_MODE_STORAGE_KEY = "mila-learning-game-mode";
 const PLAYER_STORAGE_KEY = "mila-learning-player";
 const PLAYER_PROGRESS_MIGRATION_STORAGE_KEY = "mila-learning-player-progress-migrated";
+const CATEGORY_PACK_STORAGE_KEY = "mila-learning-category-pack";
 const DEFAULT_PLAYERS = ["Mila", "Açelya", "Alp", "Aslan Cemal", "Zeynep", "Nova", "Ata", "Hiranur"];
 
 const ui = {
   welcome: document.querySelector("#welcome-screen"), quiz: document.querySelector("#quiz-screen"), summary: document.querySelector("#summary-screen"),
-  start: document.querySelector("#start-button"), welcomeSound: document.querySelector("#welcome-sound-button"), learningMode: document.querySelector("#learning-mode-button"), quickMode: document.querySelector("#quick-mode-button"), playerButtons: document.querySelectorAll(".player-button"), customPlayer: document.querySelector("#custom-player-button"), customPlayerLabel: document.querySelector("#custom-player-label"), customPlayerName: document.querySelector("#custom-player-name"), home: document.querySelector("#home-button"), replay: document.querySelector("#question-sound-button"),
+  start: document.querySelector("#start-button"), welcomeSound: document.querySelector("#welcome-sound-button"), learningMode: document.querySelector("#learning-mode-button"), quickMode: document.querySelector("#quick-mode-button"), playerButtons: document.querySelectorAll(".player-button"), customPlayer: document.querySelector("#custom-player-button"), customPlayerLabel: document.querySelector("#custom-player-label"), customPlayerName: document.querySelector("#custom-player-name"), categoryPackButtons: document.querySelectorAll(".category-pack-button"), customCategoryOptions: document.querySelector("#custom-category-options"), home: document.querySelector("#home-button"), replay: document.querySelector("#question-sound-button"),
   category: document.querySelector("#category-pill"), visual: document.querySelector("#question-visual"), celebration: document.querySelector("#celebration"), mascot: document.querySelector("#game-mascot"), prompt: document.querySelector("#question-prompt"),
   answers: document.querySelector("#answers"), feedback: document.querySelector("#feedback"), next: document.querySelector("#next-button"), count: document.querySelector("#question-count"), score: document.querySelector("#score"), streak: document.querySelector("#streak"), progress: document.querySelector("#progress-fill"),
   playAgain: document.querySelector("#play-again-button"), summaryHome: document.querySelector("#summary-home-button"), summaryStars: document.querySelector("#summary-stars"), summaryCorrect: document.querySelector("#summary-correct"), summaryStreak: document.querySelector("#summary-streak"), summaryCategory: document.querySelector("#summary-category"), summaryTitle: document.querySelector("#summary-title"), summaryCopy: document.querySelector(".summary-copy"), rewardPopup: document.querySelector("#reward-popup"), rewardSticker: document.querySelector("#reward-sticker"), bonus: document.querySelector("#balloon-bonus"), balloonTarget: document.querySelector("#balloon-target"), balloons: document.querySelector("#balloons"), pause: document.querySelector("#pause-button"), bonusPause: document.querySelector("#bonus-pause-button"), pauseOverlay: document.querySelector("#pause-overlay"), resume: document.querySelector("#resume-button"), parentLogo: document.querySelector("#welcome-title"), parentDashboard: document.querySelector("#parent-dashboard"), parentDashboardClose: document.querySelector("#parent-dashboard-close"), parentPlayTime: document.querySelector("#parent-play-time"), parentQuestions: document.querySelector("#parent-questions"), parentCorrect: document.querySelector("#parent-correct"), parentCategory: document.querySelector("#parent-category"), parentStreak: document.querySelector("#parent-streak"), parentDifficultWords: document.querySelector("#parent-difficult-words")
@@ -69,6 +70,8 @@ let pendingCorrectTransition = false;
 let pendingBonusEnd = false;
 let activeGameMode = getSavedGameMode();
 let isWelcomeSequenceActive = false;
+let activeCategoryPack = "mixed";
+let customCategories = [];
 
 function getValidPlayerName(name) {
   const playerName = typeof name === "string" ? name.trim() : "";
@@ -109,13 +112,90 @@ function migratePlayerProgress() {
   }
 }
 
+function getAvailableCategories() {
+  return engine?.getAvailableCategories() ?? [];
+}
+
+function getPackCategories(pack = activeCategoryPack) {
+  const availableCategories = getAvailableCategories().map(category => category.category);
+  if (pack === "words") return availableCategories.filter(category => !["Colors", "Shapes", "Numbers"].includes(category));
+  if (pack === "colors-shapes") return availableCategories.filter(category => ["Colors", "Shapes"].includes(category));
+  if (pack === "numbers") return availableCategories.filter(category => category === "Numbers");
+  if (pack === "custom") return customCategories.filter(category => availableCategories.includes(category));
+  return availableCategories;
+}
+
+function saveCategoryPack() {
+  try {
+    const storageKey = getPlayerStorageKey(CATEGORY_PACK_STORAGE_KEY);
+    if (storageKey) window.localStorage.setItem(storageKey, JSON.stringify({ pack: activeCategoryPack, categories: customCategories }));
+  } catch {
+    // The game continues when local storage is unavailable.
+  }
+}
+
+function restoreCategoryPack() {
+  activeCategoryPack = "mixed";
+  customCategories = [];
+  try {
+    const storageKey = getPlayerStorageKey(CATEGORY_PACK_STORAGE_KEY);
+    const savedPack = storageKey ? JSON.parse(window.localStorage.getItem(storageKey)) : undefined;
+    const availableCategories = getAvailableCategories().map(category => category.category);
+    const validPacks = ["mixed", "words", "colors-shapes", "numbers", "custom"];
+    customCategories = Array.isArray(savedPack?.categories) ? [...new Set(savedPack.categories.filter(category => availableCategories.includes(category)))] : [];
+    activeCategoryPack = validPacks.includes(savedPack?.pack) ? savedPack.pack : "mixed";
+    if (!getPackCategories(activeCategoryPack).length) activeCategoryPack = "mixed";
+  } catch {
+    activeCategoryPack = "mixed";
+    customCategories = [];
+  }
+}
+
+function renderCategoryPackSelection() {
+  const availableCategories = getAvailableCategories();
+  const availableCategoryNames = availableCategories.map(category => category.category);
+  ui.categoryPackButtons.forEach(button => {
+    const packCategories = getPackCategories(button.dataset.categoryPack);
+    const isAvailable = button.dataset.categoryPack === "mixed" || button.dataset.categoryPack === "custom" || packCategories.length > 0;
+    button.classList.toggle("hidden", !isAvailable);
+    button.setAttribute("aria-pressed", String(button.dataset.categoryPack === activeCategoryPack));
+  });
+  ui.customCategoryOptions.textContent = "";
+  availableCategories.forEach(category => {
+    const button = document.createElement("button");
+    button.className = "custom-category-button";
+    button.type = "button";
+    button.textContent = category.label;
+    button.setAttribute("aria-pressed", String(customCategories.includes(category.category)));
+    button.addEventListener("click", () => {
+      customCategories = customCategories.includes(category.category) ? customCategories.filter(name => name !== category.category) : [...customCategories, category.category];
+      saveCategoryPack();
+      renderCategoryPackSelection();
+    });
+    ui.customCategoryOptions.append(button);
+  });
+  ui.customCategoryOptions.classList.toggle("hidden", activeCategoryPack !== "custom" || availableCategoryNames.length === 0);
+  updateStartButton();
+}
+
+function setCategoryPack(pack) {
+  if (!getPackCategories(pack).length && pack !== "custom") return;
+  activeCategoryPack = pack;
+  saveCategoryPack();
+  renderCategoryPackSelection();
+}
+
+function applyCategoryPack() {
+  engine?.setActiveCategories(getPackCategories());
+}
+
 function updateStartButton() {
   const hasGameMode = activeGameMode === LEARNING_MODE || activeGameMode === QUICK_MODE;
-  ui.start.disabled = !selectedPlayer || !hasGameMode;
+  ui.start.disabled = !selectedPlayer || !hasGameMode || (activeCategoryPack === "custom" && !getPackCategories().length);
 }
 
 function getPersonalizedWelcomeMessage() {
-  return selectedPlayer ? `Merhaba ${selectedPlayer}! Hazır mısın? Haydi başlayalım!` : "Merhaba! Hazır mısın? Haydi başlayalım!";
+  return WELCOME_MESSAGE;
 }
 
 function getPersonalizedBonusMessage() {
@@ -145,6 +225,8 @@ function selectPlayer(name) {
   saveSelectedPlayer();
   parentData = loadParentData();
   setGameMode(getSavedGameMode());
+  restoreCategoryPack();
+  renderCategoryPackSelection();
   renderPlayerSelection();
 }
 
@@ -168,6 +250,8 @@ function updateCustomPlayer() {
     saveSelectedPlayer();
     parentData = loadParentData();
     setGameMode(getSavedGameMode());
+    restoreCategoryPack();
+    renderCategoryPackSelection();
   }
   updateStartButton();
 }
@@ -751,12 +835,13 @@ function resetSession() {
 }
 
 async function startGame() {
-  if (isPaused || isStartingGame || !selectedPlayer || (activeGameMode !== LEARNING_MODE && activeGameMode !== QUICK_MODE)) return;
+  if (isPaused || isStartingGame || !selectedPlayer || (activeGameMode !== LEARNING_MODE && activeGameMode !== QUICK_MODE) || (activeCategoryPack === "custom" && !getPackCategories().length)) return;
   window.clearTimeout(sessionCelebrationTimer);
   isStartingGame = true;
   try {
     [engine] = await Promise.all([gameReady, speech.ready]);
     restoreStoredLearningStats();
+    applyCategoryPack();
     ui.welcome.classList.add("hidden");
     ui.summary.classList.add("hidden");
     ui.quiz.classList.remove("hidden");
@@ -798,6 +883,7 @@ ui.start.addEventListener("click", startGame);
 ui.welcomeSound.addEventListener("click", speakWelcome);
 ui.learningMode.addEventListener("click", () => setGameMode(LEARNING_MODE));
 ui.quickMode.addEventListener("click", () => setGameMode(QUICK_MODE));
+ui.categoryPackButtons.forEach(button => button.addEventListener("click", () => setCategoryPack(button.dataset.categoryPack)));
 ui.playerButtons.forEach(button => button.addEventListener("click", () => {
   if (button === ui.customPlayer) selectCustomPlayer();
   else selectPlayer(button.dataset.playerName);
@@ -830,6 +916,9 @@ document.addEventListener("pointerdown", event => {
 window.addEventListener("load", async () => {
   [engine] = await Promise.all([gameReady, speech.ready]);
   setGameMode(activeGameMode);
+  restoreCategoryPack();
+  applyCategoryPack();
+  renderCategoryPackSelection();
   renderPlayerSelection();
   restoreStoredLearningStats();
   if (!restoreSavedProgress()) window.setTimeout(speakWelcome, 400);

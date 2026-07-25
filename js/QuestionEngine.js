@@ -10,6 +10,7 @@ const MISTAKE_DIFFICULTY_STEP = .05;
 class QuestionEngine {
   constructor(questions) {
     this.questions = questions;
+    this.activeCategories = this.getAvailableCategories().map(category => category.category);
     this.learningStats = new Map();
     this.difficulty = DEFAULT_DIFFICULTY;
     this.recentResults = [];
@@ -28,6 +29,16 @@ class QuestionEngine {
   getStats(question) {
     if (!this.learningStats.has(question)) this.learningStats.set(question, { mistakes: 0, successes: 0 });
     return this.learningStats.get(question);
+  }
+
+  getAvailableCategories() {
+    return [...new Map(this.questions.filter(question => question.category && question.label).map(question => [question.category, { category: question.category, label: question.label }])).values()];
+  }
+
+  setActiveCategories(categories) {
+    const availableCategories = this.getAvailableCategories().map(category => category.category);
+    const selectedCategories = Array.isArray(categories) ? [...new Set(categories.filter(category => availableCategories.includes(category)))] : [];
+    this.activeCategories = selectedCategories.length ? selectedCategories : availableCategories;
   }
 
   recordResult(question, wasCorrect) {
@@ -96,10 +107,12 @@ class QuestionEngine {
   }
 
   selectQuestion() {
-    const fresh = this.questions.filter(question => !this.recentQuestions.includes(question));
+    const playableQuestions = this.questions.filter(question => this.activeCategories.includes(question.category));
+    const availableQuestions = playableQuestions.length ? playableQuestions : this.questions;
+    const fresh = availableQuestions.filter(question => !this.recentQuestions.includes(question));
     const categoryBalanced = fresh.filter(question => !this.recentCategories.slice(-RECENT_BALANCE_LIMIT).includes(question.category));
     const answerBalanced = categoryBalanced.filter(question => !this.recentAnswers.slice(-RECENT_BALANCE_LIMIT).includes(question.correct));
-    const choices = answerBalanced.length ? answerBalanced : categoryBalanced.length ? categoryBalanced : fresh.length ? fresh : this.questions;
+    const choices = answerBalanced.length ? answerBalanced : categoryBalanced.length ? categoryBalanced : fresh.length ? fresh : availableQuestions;
     const question = this.pickWeighted(choices);
     question.questionType = this.getQuestionType(question);
     question.questionPrompt = this.getQuestionPrompt(question);
