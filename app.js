@@ -586,7 +586,7 @@ async function playQuestionSequence(keepInputDisabled = false) {
   clearSpeech();
   const run = audioRun;
   setInputEnabled(false);
-  await speech.speak(currentQuestion.prompt, ENGLISH_LANGUAGE);
+  await speech.speak(currentQuestion.questionPrompt ?? currentQuestion.prompt, ENGLISH_LANGUAGE);
   if (!isActiveAudio(run)) return false;
   if (isQuickPlay) setInputEnabled(true);
   await appUtils.wait(QUESTION_DELAY);
@@ -601,7 +601,7 @@ async function playQuestionSequence(keepInputDisabled = false) {
   }
   await appUtils.wait(QUESTION_DELAY);
   if (!isActiveAudio(run)) return false;
-  await speech.speak(currentQuestion.prompt, ENGLISH_LANGUAGE);
+  await speech.speak(currentQuestion.questionPrompt ?? currentQuestion.prompt, ENGLISH_LANGUAGE);
   if (!isActiveAudio(run)) return false;
   if (!keepInputDisabled && !isQuickPlay) setInputEnabled(true);
   return true;
@@ -637,7 +637,7 @@ function showQuestion() {
   questionNumber += 1;
   ui.category.textContent = currentQuestion.label;
   ui.visual.textContent = currentQuestion.visual;
-  ui.prompt.textContent = currentQuestion.prompt;
+  ui.prompt.textContent = currentQuestion.questionPrompt ?? currentQuestion.prompt;
   ui.feedback.textContent = "";
   ui.feedback.className = "feedback";
   ui.next.classList.add("hidden");

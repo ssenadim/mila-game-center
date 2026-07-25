@@ -20,6 +20,8 @@ class QuestionEngine {
     this.recentQuestions = [];
     this.recentCategories = [];
     this.recentAnswers = [];
+    this.recentQuestionTypes = [];
+    this.questionTypeCounts = { recognition: 0, selection: 0 };
     this.categoryCounts = {};
   }
 
@@ -97,21 +99,52 @@ class QuestionEngine {
     const fresh = this.questions.filter(question => !this.recentQuestions.includes(question));
     const categoryBalanced = fresh.filter(question => !this.recentCategories.slice(-RECENT_BALANCE_LIMIT).includes(question.category));
     const answerBalanced = categoryBalanced.filter(question => !this.recentAnswers.slice(-RECENT_BALANCE_LIMIT).includes(question.correct));
-    const choices = answerBalanced.length ? answerBalanced : categoryBalanced.length ? categoryBalanced : fresh;
+    const choices = answerBalanced.length ? answerBalanced : categoryBalanced.length ? categoryBalanced : fresh.length ? fresh : this.questions;
     const question = this.pickWeighted(choices);
+    question.questionType = this.getQuestionType(question);
+    question.questionPrompt = this.getQuestionPrompt(question);
     this.remember(question);
     return question;
+  }
+
+  canUseRecognition(question) {
+    const visual = typeof question.visual === "string" ? question.visual.trim().toLowerCase() : "";
+    const correct = typeof question.correct === "string" ? question.correct.trim().toLowerCase() : "";
+    return Boolean(visual) && visual !== correct;
+  }
+
+  getQuestionType(question) {
+    if (!this.canUseRecognition(question)) return "selection";
+    const recentTypes = this.recentQuestionTypes.slice(-2);
+    if (recentTypes.length === 2 && recentTypes.every(type => type === recentTypes[0])) return recentTypes[0] === "recognition" ? "selection" : "recognition";
+    const difference = this.questionTypeCounts.recognition - this.questionTypeCounts.selection;
+    if (difference >= 2) return "selection";
+    if (difference <= -2) return "recognition";
+    return Math.random() < .5 ? "recognition" : "selection";
+  }
+
+  getQuestionPrompt(question) {
+    if (question.questionType === "recognition") {
+      return ({ Fruits: "What fruit is this?", Colors: "What color is this?", Numbers: "What number is this?", Animals: "What animal is this?", Shapes: "What shape is this?" })[question.category] ?? question.prompt;
+    }
+    const target = question.correct;
+    return ({ Fruits: `Touch the ${target}.`, Colors: `Touch ${target}.`, Numbers: `Touch number ${target.toLowerCase()}.`, Animals: `Touch the ${target}.`, Shapes: `Touch the ${target}.`, Letters: `Touch letter ${target}.`, Emoji: `Touch ${target}.` })[question.category] ?? question.prompt;
   }
 
   remember(question) {
     this.recentQuestions = [...this.recentQuestions, question].slice(-RECENT_QUESTION_LIMIT);
     this.recentCategories = [...this.recentCategories, question.category].slice(-RECENT_BALANCE_LIMIT);
     this.recentAnswers = [...this.recentAnswers, question.correct].slice(-RECENT_BALANCE_LIMIT);
+    this.recentQuestionTypes = [...this.recentQuestionTypes, question.questionType].slice(-2);
+    this.questionTypeCounts[question.questionType] += 1;
     this.categoryCounts[question.label] = (this.categoryCounts[question.label] ?? 0) + 1;
   }
 
   getAnswers(question) {
-    return window.MilaUtils.shuffle(question.answers);
+    const answers = Array.isArray(question.answers) ? question.answers : [];
+    const categoryAnswers = this.questions.filter(item => item.category === question.category).map(item => item.correct);
+    const uniqueAnswers = [...new Set([question.correct, ...answers, ...categoryAnswers].filter(answer => typeof answer === "string" && answer.trim()))];
+    return window.MilaUtils.shuffle(uniqueAnswers.slice(0, 4));
   }
 
   getFavoriteCategory() {
