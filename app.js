@@ -24,14 +24,22 @@ const GAME_MODE_STORAGE_KEY = "mila-learning-game-mode";
 const PLAYER_STORAGE_KEY = "mila-learning-player";
 const PLAYER_PROGRESS_MIGRATION_STORAGE_KEY = "mila-learning-player-progress-migrated";
 const CATEGORY_PACK_STORAGE_KEY = "mila-learning-category-pack";
+const ACHIEVEMENT_STORAGE_KEY = "mila-learning-achievements";
 const DEFAULT_PLAYERS = ["Mila", "Açelya", "Alp", "Aslan Cemal", "Zeynep", "Nova", "Ata", "Hiranur"];
+const ACHIEVEMENTS = [
+  { id: "first-star", icon: "⭐", title: "İlk Yıldız", description: "İlk doğru cevabını verdin." },
+  { id: "five-correct", icon: "🎯", title: "Beş Doğru", description: "Beş doğru cevap verdin." },
+  { id: "ten-correct", icon: "🏆", title: "On Doğru", description: "On doğru cevap verdin." },
+  { id: "first-bonus", icon: "🎁", title: "İlk Bonus", description: "İlk bonus oyununu tamamladın." },
+  { id: "fruit-explorer", icon: "🍎", title: "Meyve Kaşifi", description: "Tüm meyveleri doğru bildin." }
+];
 
 const ui = {
   welcome: document.querySelector("#welcome-screen"), quiz: document.querySelector("#quiz-screen"), summary: document.querySelector("#summary-screen"),
-  start: document.querySelector("#start-button"), fullscreen: document.querySelector("#fullscreen-button"), welcomeSound: document.querySelector("#welcome-sound-button"), learningMode: document.querySelector("#learning-mode-button"), quickMode: document.querySelector("#quick-mode-button"), playerButtons: document.querySelectorAll(".player-button"), customPlayer: document.querySelector("#custom-player-button"), customPlayerLabel: document.querySelector("#custom-player-label"), customPlayerName: document.querySelector("#custom-player-name"), categoryPackButtons: document.querySelectorAll(".category-pack-button"), customCategoryOptions: document.querySelector("#custom-category-options"), home: document.querySelector("#home-button"), replay: document.querySelector("#question-sound-button"),
+  start: document.querySelector("#start-button"), fullscreen: document.querySelector("#fullscreen-button"), achievements: document.querySelector("#achievements-button"), welcomeSound: document.querySelector("#welcome-sound-button"), learningMode: document.querySelector("#learning-mode-button"), quickMode: document.querySelector("#quick-mode-button"), playerButtons: document.querySelectorAll(".player-button"), customPlayer: document.querySelector("#custom-player-button"), customPlayerLabel: document.querySelector("#custom-player-label"), customPlayerName: document.querySelector("#custom-player-name"), categoryPackButtons: document.querySelectorAll(".category-pack-button"), customCategoryOptions: document.querySelector("#custom-category-options"), home: document.querySelector("#home-button"), replay: document.querySelector("#question-sound-button"),
   category: document.querySelector("#category-pill"), visual: document.querySelector("#question-visual"), celebration: document.querySelector("#celebration"), mascot: document.querySelector("#game-mascot"), prompt: document.querySelector("#question-prompt"),
   answers: document.querySelector("#answers"), feedback: document.querySelector("#feedback"), next: document.querySelector("#next-button"), count: document.querySelector("#question-count"), score: document.querySelector("#score"), streak: document.querySelector("#streak"), progress: document.querySelector("#progress-fill"),
-  playAgain: document.querySelector("#play-again-button"), summaryHome: document.querySelector("#summary-home-button"), summaryStars: document.querySelector("#summary-stars"), summaryCorrect: document.querySelector("#summary-correct"), summaryStreak: document.querySelector("#summary-streak"), summaryCategory: document.querySelector("#summary-category"), summaryTitle: document.querySelector("#summary-title"), summaryCopy: document.querySelector(".summary-copy"), rewardPopup: document.querySelector("#reward-popup"), rewardSticker: document.querySelector("#reward-sticker"), bonus: document.querySelector("#balloon-bonus"), balloonTarget: document.querySelector("#balloon-target"), balloons: document.querySelector("#balloons"), pause: document.querySelector("#pause-button"), bonusPause: document.querySelector("#bonus-pause-button"), pauseOverlay: document.querySelector("#pause-overlay"), resume: document.querySelector("#resume-button"), parentLogo: document.querySelector("#welcome-title"), parentDashboard: document.querySelector("#parent-dashboard"), parentDashboardClose: document.querySelector("#parent-dashboard-close"), parentDashboardTitle: document.querySelector("#parent-dashboard-title"), parentPlayTime: document.querySelector("#parent-play-time"), parentQuestions: document.querySelector("#parent-questions"), parentCorrect: document.querySelector("#parent-correct"), parentCategory: document.querySelector("#parent-category"), parentStreak: document.querySelector("#parent-streak"), parentDifficultWords: document.querySelector("#parent-difficult-words")
+  playAgain: document.querySelector("#play-again-button"), summaryHome: document.querySelector("#summary-home-button"), summaryStars: document.querySelector("#summary-stars"), summaryCorrect: document.querySelector("#summary-correct"), summaryStreak: document.querySelector("#summary-streak"), summaryCategory: document.querySelector("#summary-category"), summaryTitle: document.querySelector("#summary-title"), summaryCopy: document.querySelector(".summary-copy"), rewardPopup: document.querySelector("#reward-popup"), rewardSticker: document.querySelector("#reward-sticker"), achievementPopup: document.querySelector("#achievement-popup"), achievementPopupIcon: document.querySelector("#achievement-popup-icon"), achievementPopupTitle: document.querySelector("#achievement-popup-title"), achievementsModal: document.querySelector("#achievements-modal"), achievementsModalClose: document.querySelector("#achievements-modal-close"), achievementsList: document.querySelector("#achievements-list"), bonus: document.querySelector("#balloon-bonus"), balloonTarget: document.querySelector("#balloon-target"), balloons: document.querySelector("#balloons"), pause: document.querySelector("#pause-button"), bonusPause: document.querySelector("#bonus-pause-button"), pauseOverlay: document.querySelector("#pause-overlay"), resume: document.querySelector("#resume-button"), parentLogo: document.querySelector("#welcome-title"), parentDashboard: document.querySelector("#parent-dashboard"), parentDashboardClose: document.querySelector("#parent-dashboard-close"), parentDashboardTitle: document.querySelector("#parent-dashboard-title"), parentPlayTime: document.querySelector("#parent-play-time"), parentQuestions: document.querySelector("#parent-questions"), parentCorrect: document.querySelector("#parent-correct"), parentCategory: document.querySelector("#parent-category"), parentStreak: document.querySelector("#parent-streak"), parentDifficultWords: document.querySelector("#parent-difficult-words")
 };
 
 const appUtils = window.MilaUtils;
@@ -56,6 +64,7 @@ let isBalloonBonusActive = false;
 let selectedPlayer = getSavedPlayer();
 migratePlayerProgress();
 let parentData = loadParentData();
+let achievementData = loadAchievementData();
 let playStartedAt = 0;
 let parentHoldTimer;
 let sessionCelebrationTimer;
@@ -73,6 +82,9 @@ let customCategories = [];
 let wakeLock;
 let wakeLockRequest;
 let shouldKeepWakeLock = false;
+let achievementQueue = [];
+let achievementPopupTimer;
+let isAchievementShowing = false;
 
 function getValidPlayerName(name) {
   const playerName = typeof name === "string" ? name.trim() : "";
@@ -111,6 +123,99 @@ function migratePlayerProgress() {
   } catch {
     // The game continues when local storage is unavailable.
   }
+}
+
+function loadAchievementData() {
+  try {
+    const storageKey = getPlayerStorageKey(ACHIEVEMENT_STORAGE_KEY);
+    const savedData = storageKey ? JSON.parse(window.localStorage.getItem(storageKey)) : undefined;
+    return savedData && typeof savedData === "object" && !Array.isArray(savedData) && savedData.unlocked && typeof savedData.unlocked === "object" && !Array.isArray(savedData.unlocked) ? { unlocked: savedData.unlocked } : { unlocked: {} };
+  } catch {
+    return { unlocked: {} };
+  }
+}
+
+function saveAchievementData() {
+  try {
+    const storageKey = getPlayerStorageKey(ACHIEVEMENT_STORAGE_KEY);
+    if (storageKey) window.localStorage.setItem(storageKey, JSON.stringify(achievementData));
+  } catch {
+    // The game continues when local storage is unavailable.
+  }
+}
+
+function getAvailableAchievements() {
+  const hasFruits = engine?.questions.some(question => question.category === "Fruits");
+  return ACHIEVEMENTS.filter(achievement => achievement.id !== "fruit-explorer" || hasFruits);
+}
+
+function resetAchievementPopup() {
+  achievementQueue = [];
+  isAchievementShowing = false;
+  window.clearTimeout(achievementPopupTimer);
+  ui.achievementPopup.classList.add("hidden");
+}
+
+function showNextAchievement() {
+  if (isAchievementShowing || !achievementQueue.length) return;
+  const achievement = achievementQueue.shift();
+  isAchievementShowing = true;
+  ui.achievementPopupIcon.textContent = achievement.icon;
+  ui.achievementPopupTitle.textContent = achievement.title;
+  ui.achievementPopup.classList.remove("hidden");
+  animations.celebrate();
+  achievementPopupTimer = window.setTimeout(() => {
+    ui.achievementPopup.classList.add("hidden");
+    isAchievementShowing = false;
+    showNextAchievement();
+  }, 1800);
+}
+
+function unlockAchievement(achievementId) {
+  const achievement = getAvailableAchievements().find(item => item.id === achievementId);
+  if (!achievement || achievementData.unlocked[achievementId]) return;
+  achievementData.unlocked[achievementId] = true;
+  saveAchievementData();
+  achievementQueue.push(achievement);
+  showNextAchievement();
+}
+
+function checkAchievements() {
+  if (parentData.correctAnswers >= 1) unlockAchievement("first-star");
+  if (parentData.correctAnswers >= 5) unlockAchievement("five-correct");
+  if (parentData.correctAnswers >= 10) unlockAchievement("ten-correct");
+  const fruitQuestions = engine?.questions.filter(question => question.category === "Fruits") ?? [];
+  if (fruitQuestions.length && fruitQuestions.every(question => (engine.learningStats.get(question)?.successes ?? 0) > 0)) unlockAchievement("fruit-explorer");
+}
+
+function renderAchievements() {
+  ui.achievementsList.textContent = "";
+  getAvailableAchievements().forEach(achievement => {
+    const item = document.createElement("div");
+    const isUnlocked = Boolean(achievementData.unlocked[achievement.id]);
+    item.className = `achievement-item${isUnlocked ? "" : " locked"}`;
+    const icon = document.createElement("span");
+    icon.className = "achievement-item-icon";
+    icon.textContent = achievement.icon;
+    const copy = document.createElement("div");
+    const title = document.createElement("strong");
+    title.textContent = achievement.title;
+    const description = document.createElement("span");
+    description.textContent = achievement.description;
+    copy.append(title, description);
+    item.append(icon, copy);
+    ui.achievementsList.append(item);
+  });
+}
+
+function openAchievements() {
+  renderAchievements();
+  ui.achievementsModal.classList.remove("hidden");
+  ui.achievementsModalClose.focus();
+}
+
+function closeAchievements() {
+  ui.achievementsModal.classList.add("hidden");
 }
 
 function getFullscreenElement() {
@@ -300,6 +405,8 @@ function selectPlayer(name) {
   ui.customPlayerName.value = "";
   saveSelectedPlayer();
   parentData = loadParentData();
+  achievementData = loadAchievementData();
+  resetAchievementPopup();
   setGameMode(getSavedGameMode());
   restoreCategoryPack();
   renderCategoryPackSelection();
@@ -325,6 +432,8 @@ function updateCustomPlayer() {
   if (playerName) {
     saveSelectedPlayer();
     parentData = loadParentData();
+    achievementData = loadAchievementData();
+    resetAchievementPopup();
     setGameMode(getSavedGameMode());
     restoreCategoryPack();
     renderCategoryPackSelection();
@@ -720,6 +829,7 @@ function endBalloonBonus() {
   pendingBonusEnd = false;
   ui.bonus.classList.add("hidden");
   ui.quiz.classList.remove("hidden");
+  unlockAchievement("first-bonus");
   if (questionNumber >= SESSION_QUESTION_COUNT) showSessionSummary();
   else showQuestion();
 }
@@ -870,6 +980,7 @@ async function handleCorrectAnswer(button) {
   correctAnswers += 1;
   engine.recordResult(currentQuestion, true);
   updateParentData(true);
+  checkAchievements();
   saveLearningStats();
   saveGameProgress(true);
   triggerMascotReaction("mascot-celebrate");
@@ -963,6 +1074,7 @@ function goHome() {
 
 ui.start.addEventListener("click", startGame);
 ui.fullscreen.addEventListener("click", toggleFullscreen);
+ui.achievements.addEventListener("click", openAchievements);
 ui.welcomeSound.addEventListener("click", speakWelcome);
 ui.learningMode.addEventListener("click", () => setGameMode(LEARNING_MODE));
 ui.quickMode.addEventListener("click", () => setGameMode(QUICK_MODE));
@@ -993,6 +1105,7 @@ ui.parentLogo.addEventListener("pointerdown", () => {
 });
 ["pointerup", "pointercancel", "pointerleave"].forEach(eventName => ui.parentLogo.addEventListener(eventName, () => window.clearTimeout(parentHoldTimer)));
 ui.parentDashboardClose.addEventListener("click", closeParentDashboard);
+ui.achievementsModalClose.addEventListener("click", closeAchievements);
 document.addEventListener("fullscreenchange", updateFullscreenButton);
 document.addEventListener("webkitfullscreenchange", updateFullscreenButton);
 document.addEventListener("visibilitychange", () => {

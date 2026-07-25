@@ -36,6 +36,7 @@
         </section>
         <button id="start-button" class="primary-button" type="button" disabled>Hadi başlayalım <span aria-hidden="true">✦</span></button>
         <button id="fullscreen-button" class="fullscreen-button" type="button">Tam Ekran</button>
+        <button id="achievements-button" class="achievements-button" type="button">Başarılar</button>
         <button id="welcome-sound-button" class="sound-button" type="button" aria-label="Hoş geldin mesajını tekrar dinle">🔊 Dinle</button>
         <div class="mode-selection" aria-label="Oyun modu seçimi">
           <button id="learning-mode-button" class="mode-button" type="button" aria-pressed="true"><strong>Öğrenme Modu</strong><span>Önce bütün seçenekleri dinle, sonra cevapla.</span></button>
@@ -108,6 +109,11 @@
         <span id="reward-sticker" class="reward-sticker" aria-hidden="true">⭐</span>
         <p>Yeni sticker!</p>
       </div>
+      <div id="achievement-popup" class="achievement-popup hidden" role="status" aria-live="polite">
+        <span id="achievement-popup-icon" class="achievement-popup-icon" aria-hidden="true">⭐</span>
+        <p>Yeni başarı!</p>
+        <strong id="achievement-popup-title"></strong>
+      </div>
       <section id="pause-overlay" class="pause-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="pause-title">
         <div class="pause-card">
           <span aria-hidden="true">⏸</span>
@@ -128,6 +134,14 @@
             <p><span>En iyi seri</span><strong id="parent-streak">0</strong></p>
           </div>
           <div class="parent-difficult"><span>Birlikte tekrar edilebilecek kelimeler</span><strong id="parent-difficult-words">Henüz yok</strong></div>
+        </div>
+      </section>
+      <section id="achievements-modal" class="achievements-modal hidden" role="dialog" aria-modal="true" aria-labelledby="achievements-modal-title">
+        <div class="achievements-modal-card">
+          <button id="achievements-modal-close" class="parent-dashboard-close" type="button" aria-label="Kapat">×</button>
+          <p class="eyebrow">BAŞARILAR</p>
+          <h2 id="achievements-modal-title">Rozetlerin</h2>
+          <div id="achievements-list" class="achievements-list"></div>
         </div>
       </section>
     </main>
