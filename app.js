@@ -6,8 +6,7 @@ const SUCCESS_NEXT_DELAY = 1000;
 const ENGLISH_LANGUAGE = "en-US";
 const TURKISH_LANGUAGE = "tr-TR";
 const WELCOME_MESSAGE = "Merhaba! Haydi oynayalım!";
-const SUMMARY_MESSAGE = "Harika Mila! Yirmi soruluk macerayı tamamladın. Çok güzel öğrendin!";
-const PRAISE_MESSAGES = ["Harika Mila!", "Süpersin Mila!", "Aferin Mila!", "Muhteşemsin Mila!"];
+const PRAISE_MESSAGES = ["Harika", "Süpersin", "Aferin", "Muhteşemsin"];
 const RETRY_MESSAGES = ["Hadi tekrar deneyelim.", "Harika gidiyorsun.", "Bir kez daha bakalım."];
 const STICKERS = ["⭐", "🌈", "🦋", "🦄", "🚀", "🐱", "🐶"];
 const STICKER_STORAGE_KEY = "mila-learning-stickers";
@@ -15,7 +14,6 @@ const REWARD_POPUP_DURATION = 3000;
 const PARENT_DATA_STORAGE_KEY = "mila-learning-parent-data";
 const PARENT_HOLD_DURATION = 5000;
 const SESSION_CELEBRATION_DURATION = 3500;
-const SESSION_CELEBRATION_MESSAGES = ["Harika Mila!", "Bugün çok güzel oynadın!", "Süpersin Mila!", "Ne güzel öğrendin Mila!"];
 const GAME_PROGRESS_STORAGE_KEY = "mila-learning-progress";
 const LEARNING_STATS_STORAGE_KEY = "mila-learning-learning-stats";
 const BONUS_DURATION = 20000;
@@ -33,7 +31,7 @@ const ui = {
   start: document.querySelector("#start-button"), fullscreen: document.querySelector("#fullscreen-button"), welcomeSound: document.querySelector("#welcome-sound-button"), learningMode: document.querySelector("#learning-mode-button"), quickMode: document.querySelector("#quick-mode-button"), playerButtons: document.querySelectorAll(".player-button"), customPlayer: document.querySelector("#custom-player-button"), customPlayerLabel: document.querySelector("#custom-player-label"), customPlayerName: document.querySelector("#custom-player-name"), categoryPackButtons: document.querySelectorAll(".category-pack-button"), customCategoryOptions: document.querySelector("#custom-category-options"), home: document.querySelector("#home-button"), replay: document.querySelector("#question-sound-button"),
   category: document.querySelector("#category-pill"), visual: document.querySelector("#question-visual"), celebration: document.querySelector("#celebration"), mascot: document.querySelector("#game-mascot"), prompt: document.querySelector("#question-prompt"),
   answers: document.querySelector("#answers"), feedback: document.querySelector("#feedback"), next: document.querySelector("#next-button"), count: document.querySelector("#question-count"), score: document.querySelector("#score"), streak: document.querySelector("#streak"), progress: document.querySelector("#progress-fill"),
-  playAgain: document.querySelector("#play-again-button"), summaryHome: document.querySelector("#summary-home-button"), summaryStars: document.querySelector("#summary-stars"), summaryCorrect: document.querySelector("#summary-correct"), summaryStreak: document.querySelector("#summary-streak"), summaryCategory: document.querySelector("#summary-category"), summaryTitle: document.querySelector("#summary-title"), summaryCopy: document.querySelector(".summary-copy"), rewardPopup: document.querySelector("#reward-popup"), rewardSticker: document.querySelector("#reward-sticker"), bonus: document.querySelector("#balloon-bonus"), balloonTarget: document.querySelector("#balloon-target"), balloons: document.querySelector("#balloons"), pause: document.querySelector("#pause-button"), bonusPause: document.querySelector("#bonus-pause-button"), pauseOverlay: document.querySelector("#pause-overlay"), resume: document.querySelector("#resume-button"), parentLogo: document.querySelector("#welcome-title"), parentDashboard: document.querySelector("#parent-dashboard"), parentDashboardClose: document.querySelector("#parent-dashboard-close"), parentPlayTime: document.querySelector("#parent-play-time"), parentQuestions: document.querySelector("#parent-questions"), parentCorrect: document.querySelector("#parent-correct"), parentCategory: document.querySelector("#parent-category"), parentStreak: document.querySelector("#parent-streak"), parentDifficultWords: document.querySelector("#parent-difficult-words")
+  playAgain: document.querySelector("#play-again-button"), summaryHome: document.querySelector("#summary-home-button"), summaryStars: document.querySelector("#summary-stars"), summaryCorrect: document.querySelector("#summary-correct"), summaryStreak: document.querySelector("#summary-streak"), summaryCategory: document.querySelector("#summary-category"), summaryTitle: document.querySelector("#summary-title"), summaryCopy: document.querySelector(".summary-copy"), rewardPopup: document.querySelector("#reward-popup"), rewardSticker: document.querySelector("#reward-sticker"), bonus: document.querySelector("#balloon-bonus"), balloonTarget: document.querySelector("#balloon-target"), balloons: document.querySelector("#balloons"), pause: document.querySelector("#pause-button"), bonusPause: document.querySelector("#bonus-pause-button"), pauseOverlay: document.querySelector("#pause-overlay"), resume: document.querySelector("#resume-button"), parentLogo: document.querySelector("#welcome-title"), parentDashboard: document.querySelector("#parent-dashboard"), parentDashboardClose: document.querySelector("#parent-dashboard-close"), parentDashboardTitle: document.querySelector("#parent-dashboard-title"), parentPlayTime: document.querySelector("#parent-play-time"), parentQuestions: document.querySelector("#parent-questions"), parentCorrect: document.querySelector("#parent-correct"), parentCategory: document.querySelector("#parent-category"), parentStreak: document.querySelector("#parent-streak"), parentDifficultWords: document.querySelector("#parent-difficult-words")
 };
 
 const appUtils = window.MilaUtils;
@@ -279,6 +277,11 @@ function getPersonalizedSessionMessage() {
   return selectedPlayer ? `Harika ${selectedPlayer}! Bugün çok güzel oynadın.` : "Harika! Bugün çok güzel oynadın.";
 }
 
+function getPersonalizedPraiseMessage() {
+  const praiseMessage = appUtils.randomItem(PRAISE_MESSAGES);
+  return selectedPlayer ? `${praiseMessage} ${selectedPlayer}!` : `${praiseMessage}!`;
+}
+
 function renderPlayerSelection() {
   const isCustomPlayer = selectedPlayer && !DEFAULT_PLAYERS.includes(selectedPlayer);
   ui.playerButtons.forEach(button => {
@@ -511,6 +514,7 @@ function updateParentData(wasCorrect) {
 function renderParentDashboard() {
   const activePlayTime = playStartedAt ? Date.now() - playStartedAt : 0;
   const minutes = Math.floor((parentData.playTime + activePlayTime) / 60000);
+  ui.parentDashboardTitle.textContent = selectedPlayer ? `${selectedPlayer}'nın öğrenme özeti` : "Öğrenme özeti";
   ui.parentPlayTime.textContent = `${minutes} dk`;
   ui.parentQuestions.textContent = parentData.questionsAnswered;
   ui.parentCorrect.textContent = parentData.correctAnswers;
@@ -871,7 +875,7 @@ async function handleCorrectAnswer(button) {
   triggerMascotReaction("mascot-celebrate");
   button.classList.add("correct");
   setInputEnabled(false);
-  ui.feedback.textContent = appUtils.randomItem(PRAISE_MESSAGES);
+  ui.feedback.textContent = getPersonalizedPraiseMessage();
   ui.feedback.className = "feedback success";
   updateScoreboard();
   ui.next.classList.add("hidden");
