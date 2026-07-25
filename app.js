@@ -22,10 +22,12 @@ const BONUS_DURATION = 20000;
 const LEARNING_MODE = "learning";
 const QUICK_MODE = "quick";
 const GAME_MODE_STORAGE_KEY = "mila-learning-game-mode";
+const PLAYER_STORAGE_KEY = "mila-learning-player";
+const DEFAULT_PLAYERS = ["Mila", "Açelya", "Alp", "Aslan Cemal", "Zeynep", "Nova", "Ata", "Hiranur"];
 
 const ui = {
   welcome: document.querySelector("#welcome-screen"), quiz: document.querySelector("#quiz-screen"), summary: document.querySelector("#summary-screen"),
-  start: document.querySelector("#start-button"), welcomeSound: document.querySelector("#welcome-sound-button"), learningMode: document.querySelector("#learning-mode-button"), quickMode: document.querySelector("#quick-mode-button"), home: document.querySelector("#home-button"), replay: document.querySelector("#question-sound-button"),
+  start: document.querySelector("#start-button"), welcomeSound: document.querySelector("#welcome-sound-button"), learningMode: document.querySelector("#learning-mode-button"), quickMode: document.querySelector("#quick-mode-button"), playerButtons: document.querySelectorAll(".player-button"), customPlayer: document.querySelector("#custom-player-button"), customPlayerLabel: document.querySelector("#custom-player-label"), customPlayerName: document.querySelector("#custom-player-name"), home: document.querySelector("#home-button"), replay: document.querySelector("#question-sound-button"),
   category: document.querySelector("#category-pill"), visual: document.querySelector("#question-visual"), celebration: document.querySelector("#celebration"), mascot: document.querySelector("#game-mascot"), prompt: document.querySelector("#question-prompt"),
   answers: document.querySelector("#answers"), feedback: document.querySelector("#feedback"), next: document.querySelector("#next-button"), count: document.querySelector("#question-count"), score: document.querySelector("#score"), streak: document.querySelector("#streak"), progress: document.querySelector("#progress-fill"),
   playAgain: document.querySelector("#play-again-button"), summaryHome: document.querySelector("#summary-home-button"), summaryStars: document.querySelector("#summary-stars"), summaryCorrect: document.querySelector("#summary-correct"), summaryStreak: document.querySelector("#summary-streak"), summaryCategory: document.querySelector("#summary-category"), summaryTitle: document.querySelector("#summary-title"), summaryCopy: document.querySelector(".summary-copy"), rewardPopup: document.querySelector("#reward-popup"), rewardSticker: document.querySelector("#reward-sticker"), bonus: document.querySelector("#balloon-bonus"), balloonTarget: document.querySelector("#balloon-target"), balloons: document.querySelector("#balloons"), pause: document.querySelector("#pause-button"), bonusPause: document.querySelector("#bonus-pause-button"), pauseOverlay: document.querySelector("#pause-overlay"), resume: document.querySelector("#resume-button"), parentLogo: document.querySelector("#welcome-title"), parentDashboard: document.querySelector("#parent-dashboard"), parentDashboardClose: document.querySelector("#parent-dashboard-close"), parentPlayTime: document.querySelector("#parent-play-time"), parentQuestions: document.querySelector("#parent-questions"), parentCorrect: document.querySelector("#parent-correct"), parentCategory: document.querySelector("#parent-category"), parentStreak: document.querySelector("#parent-streak"), parentDifficultWords: document.querySelector("#parent-difficult-words")
@@ -62,6 +64,73 @@ let balloonPopTimer;
 let pendingCorrectTransition = false;
 let pendingBonusEnd = false;
 let activeGameMode = getSavedGameMode();
+let selectedPlayer = getSavedPlayer();
+
+function getValidPlayerName(name) {
+  const playerName = typeof name === "string" ? name.trim() : "";
+  return playerName.length > 0 && Array.from(playerName).length <= 20 && /^[\p{L} ]+$/u.test(playerName) ? playerName : undefined;
+}
+
+function getSavedPlayer() {
+  try {
+    return getValidPlayerName(window.localStorage.getItem(PLAYER_STORAGE_KEY));
+  } catch {
+    return undefined;
+  }
+}
+
+function saveSelectedPlayer() {
+  try {
+    window.localStorage.setItem(PLAYER_STORAGE_KEY, selectedPlayer);
+  } catch {
+    // The game continues when local storage is unavailable.
+  }
+}
+
+function updateStartButton() {
+  const hasGameMode = activeGameMode === LEARNING_MODE || activeGameMode === QUICK_MODE;
+  ui.start.disabled = !selectedPlayer || !hasGameMode;
+}
+
+function renderPlayerSelection() {
+  const isCustomPlayer = selectedPlayer && !DEFAULT_PLAYERS.includes(selectedPlayer);
+  ui.playerButtons.forEach(button => {
+    const isSelected = button.dataset.playerName === selectedPlayer || (button === ui.customPlayer && isCustomPlayer);
+    button.setAttribute("aria-pressed", String(isSelected));
+  });
+  ui.customPlayerLabel.classList.toggle("hidden", !isCustomPlayer);
+  ui.customPlayerName.classList.toggle("hidden", !isCustomPlayer);
+  if (isCustomPlayer) ui.customPlayerName.value = selectedPlayer;
+  updateStartButton();
+}
+
+function selectPlayer(name) {
+  selectedPlayer = getValidPlayerName(name);
+  if (!selectedPlayer) return;
+  ui.customPlayerName.value = "";
+  saveSelectedPlayer();
+  renderPlayerSelection();
+}
+
+function selectCustomPlayer() {
+  selectedPlayer = undefined;
+  ui.playerButtons.forEach(button => button.setAttribute("aria-pressed", "false"));
+  ui.customPlayer.setAttribute("aria-pressed", "true");
+  ui.customPlayerLabel.classList.remove("hidden");
+  ui.customPlayerName.classList.remove("hidden");
+  ui.customPlayerName.focus();
+  updateStartButton();
+}
+
+function updateCustomPlayer() {
+  const sanitizedName = Array.from(ui.customPlayerName.value).filter(character => /[\p{L} ]/u.test(character)).slice(0, 20).join("");
+  if (ui.customPlayerName.value !== sanitizedName) ui.customPlayerName.value = sanitizedName;
+  const playerName = getValidPlayerName(ui.customPlayerName.value);
+  selectedPlayer = playerName;
+  ui.customPlayer.setAttribute("aria-pressed", String(Boolean(playerName)));
+  if (playerName) saveSelectedPlayer();
+  updateStartButton();
+}
 
 function getSavedGameMode() {
   try {
@@ -82,6 +151,7 @@ function setGameMode(mode) {
   } catch {
     // The game continues when local storage is unavailable.
   }
+  updateStartButton();
 }
 
 function getSavedProgress() {
@@ -586,7 +656,7 @@ function resetSession() {
 }
 
 async function startGame() {
-  if (isPaused || isStartingGame) return;
+  if (isPaused || isStartingGame || !selectedPlayer || (activeGameMode !== LEARNING_MODE && activeGameMode !== QUICK_MODE)) return;
   window.clearTimeout(sessionCelebrationTimer);
   isStartingGame = true;
   try {
@@ -629,6 +699,14 @@ ui.start.addEventListener("click", startGame);
 ui.welcomeSound.addEventListener("click", speakWelcome);
 ui.learningMode.addEventListener("click", () => setGameMode(LEARNING_MODE));
 ui.quickMode.addEventListener("click", () => setGameMode(QUICK_MODE));
+ui.playerButtons.forEach(button => button.addEventListener("click", () => {
+  if (button === ui.customPlayer) selectCustomPlayer();
+  else selectPlayer(button.dataset.playerName);
+}));
+ui.customPlayerName.addEventListener("input", updateCustomPlayer);
+ui.customPlayerName.addEventListener("keydown", event => {
+  if (event.key === "Enter" && selectedPlayer && (activeGameMode === LEARNING_MODE || activeGameMode === QUICK_MODE)) startGame();
+});
 ui.home.addEventListener("click", goHome);
 ui.replay.addEventListener("click", () => {
   if (!isPaused && !isSpeaking) playQuestionSequence();
@@ -653,6 +731,7 @@ document.addEventListener("pointerdown", event => {
 window.addEventListener("load", async () => {
   [engine] = await Promise.all([gameReady, speech.ready]);
   setGameMode(activeGameMode);
+  renderPlayerSelection();
   restoreStoredLearningStats();
   if (!restoreSavedProgress()) window.setTimeout(speakWelcome, 400);
 });

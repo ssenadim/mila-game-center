@@ -18,7 +18,23 @@
         <p class="eyebrow">MİLA'YA ÖZEL</p>
         <h1 id="welcome-title">Öğrenme<br /><span>Macerası</span></h1>
         <p class="welcome-copy">Renkleri, hayvanları ve sayıları keşfetmeye hazır mısın?</p>
-        <button id="start-button" class="primary-button" type="button">Hadi başlayalım <span aria-hidden="true">✦</span></button>
+        <section class="player-selection" aria-labelledby="player-selection-title">
+          <h2 id="player-selection-title">Kim oynuyor?</h2>
+          <div class="player-options" aria-label="Oyuncu seçimi">
+            <button class="player-button" type="button" data-player-name="Mila" aria-pressed="false">Mila</button>
+            <button class="player-button" type="button" data-player-name="Açelya" aria-pressed="false">Açelya</button>
+            <button class="player-button" type="button" data-player-name="Alp" aria-pressed="false">Alp</button>
+            <button class="player-button" type="button" data-player-name="Aslan Cemal" aria-pressed="false">Aslan Cemal</button>
+            <button class="player-button" type="button" data-player-name="Zeynep" aria-pressed="false">Zeynep</button>
+            <button class="player-button" type="button" data-player-name="Nova" aria-pressed="false">Nova</button>
+            <button class="player-button" type="button" data-player-name="Ata" aria-pressed="false">Ata</button>
+            <button class="player-button" type="button" data-player-name="Hiranur" aria-pressed="false">Hiranur</button>
+            <button id="custom-player-button" class="player-button custom-player-button" type="button" aria-pressed="false">Başka bir isim</button>
+          </div>
+          <label id="custom-player-label" class="custom-player-label hidden" for="custom-player-name">İsmini yaz</label>
+          <input id="custom-player-name" class="custom-player-input hidden" type="text" maxlength="20" autocomplete="name" />
+        </section>
+        <button id="start-button" class="primary-button" type="button" disabled>Hadi başlayalım <span aria-hidden="true">✦</span></button>
         <button id="welcome-sound-button" class="sound-button" type="button" aria-label="Hoş geldin mesajını tekrar dinle">🔊 Dinle</button>
         <div class="mode-selection" aria-label="Oyun modu seçimi">
           <button id="learning-mode-button" class="mode-button" type="button" aria-pressed="true"><strong>Öğrenme Modu</strong><span>Önce bütün seçenekleri dinle, sonra cevapla.</span></button>
