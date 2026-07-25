@@ -72,15 +72,17 @@ class SpeechService {
       };
       const isTurkish = language.toLowerCase().startsWith("tr");
       const voice = this.getVoice(language);
-      if (isTurkish && !voice) {
+      const voiceLanguage = (voice?.lang ?? "").toLowerCase();
+      const isMatchingVoice = voiceLanguage.startsWith(isTurkish ? "tr" : "en");
+      if (isTurkish && !isMatchingVoice) {
         resolve();
         return;
       }
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = voice?.lang || (isTurkish ? "tr-TR" : "en-US");
+      utterance.lang = isTurkish ? "tr-TR" : (isMatchingVoice ? voice.lang : "en-US");
       utterance.rate = .8;
       utterance.volume = .88;
-      if (voice) utterance.voice = voice;
+      if (isMatchingVoice) utterance.voice = voice;
       utterance.onend = utterance.onerror = finish;
       this.activeResolver = finish;
       window.speechSynthesis.speak(utterance);
