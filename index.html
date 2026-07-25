@@ -36,7 +36,7 @@
         </section>
         <button id="start-button" class="primary-button" type="button" disabled>Hadi başlayalım <span aria-hidden="true">✦</span></button>
         <button id="fullscreen-button" class="fullscreen-button" type="button">Tam Ekran</button>
-        <button id="achievements-button" class="achievements-button" type="button">Başarılar</button>
+        <button id="achievements-button" class="achievements-button" type="button">Kazandıklarım</button>
         <button id="welcome-sound-button" class="sound-button" type="button" aria-label="Hoş geldin mesajını tekrar dinle">🔊 Dinle</button>
         <div class="mode-selection" aria-label="Oyun modu seçimi">
           <button id="learning-mode-button" class="mode-button" type="button" aria-pressed="true"><strong>Öğrenme Modu</strong><span>Önce bütün seçenekleri dinle, sonra cevapla.</span></button>
@@ -139,9 +139,20 @@
       <section id="achievements-modal" class="achievements-modal hidden" role="dialog" aria-modal="true" aria-labelledby="achievements-modal-title">
         <div class="achievements-modal-card">
           <button id="achievements-modal-close" class="parent-dashboard-close" type="button" aria-label="Kapat">×</button>
-          <p class="eyebrow">BAŞARILAR</p>
-          <h2 id="achievements-modal-title">Rozetlerin</h2>
-          <div id="achievements-list" class="achievements-list"></div>
+          <p class="eyebrow">KAZANDIKLARIM</p>
+          <h2 id="achievements-modal-title">Ödül Odası</h2>
+          <section class="rewards-section" aria-labelledby="achievements-section-title">
+            <h3 id="achievements-section-title">🏅 Rozetler</h3>
+            <div id="achievements-list" class="achievements-list"></div>
+          </section>
+          <section class="rewards-section" aria-labelledby="stars-section-title">
+            <h3 id="stars-section-title">⭐ Yıldızlar</h3>
+            <div class="rewards-stars-card"><span aria-hidden="true">⭐</span><strong id="rewards-star-count">0</strong><p>Harika gidiyorsun!</p></div>
+          </section>
+          <section class="rewards-section" aria-labelledby="stickers-section-title">
+            <h3 id="stickers-section-title">🎁 Sticker Albümü</h3>
+            <div id="stickers-list" class="stickers-list"></div>
+          </section>
         </div>
       </section>
     </main>
