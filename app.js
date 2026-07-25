@@ -20,6 +20,7 @@ const BONUS_DURATION = 20000;
 const BONUS_CORRECT_ANSWER_INTERVAL = 5;
 const LEARNING_MODE = "learning";
 const QUICK_MODE = "quick";
+const MATCHING_MODE = "matching";
 const GAME_MODE_STORAGE_KEY = "mila-learning-game-mode";
 const PLAYER_STORAGE_KEY = "mila-learning-player";
 const PLAYER_PROGRESS_MIGRATION_STORAGE_KEY = "mila-learning-player-progress-migrated";
@@ -43,7 +44,7 @@ const DAILY_GOALS = [
 
 const ui = {
   welcome: document.querySelector("#welcome-screen"), quiz: document.querySelector("#quiz-screen"), summary: document.querySelector("#summary-screen"),
-  start: document.querySelector("#start-button"), fullscreen: document.querySelector("#fullscreen-button"), achievements: document.querySelector("#achievements-button"), welcomeSound: document.querySelector("#welcome-sound-button"), learningMode: document.querySelector("#learning-mode-button"), quickMode: document.querySelector("#quick-mode-button"), playerButtons: document.querySelectorAll(".player-button"), customPlayer: document.querySelector("#custom-player-button"), customPlayerLabel: document.querySelector("#custom-player-label"), customPlayerName: document.querySelector("#custom-player-name"), categoryPackButtons: document.querySelectorAll(".category-pack-button"), customCategoryOptions: document.querySelector("#custom-category-options"), home: document.querySelector("#home-button"), replay: document.querySelector("#question-sound-button"),
+  start: document.querySelector("#start-button"), fullscreen: document.querySelector("#fullscreen-button"), achievements: document.querySelector("#achievements-button"), welcomeSound: document.querySelector("#welcome-sound-button"), learningMode: document.querySelector("#learning-mode-button"), quickMode: document.querySelector("#quick-mode-button"), matchingMode: document.querySelector("#matching-mode-button"), playerButtons: document.querySelectorAll(".player-button"), customPlayer: document.querySelector("#custom-player-button"), customPlayerLabel: document.querySelector("#custom-player-label"), customPlayerName: document.querySelector("#custom-player-name"), categoryPackButtons: document.querySelectorAll(".category-pack-button"), customCategoryOptions: document.querySelector("#custom-category-options"), home: document.querySelector("#home-button"), replay: document.querySelector("#question-sound-button"), matching: document.querySelector("#matching-screen"), matchingCards: document.querySelector("#matching-cards"), matchingCelebration: document.querySelector("#matching-celebration"), matchingFeedback: document.querySelector("#matching-feedback"), matchingHome: document.querySelector("#matching-home-button"), matchingPause: document.querySelector("#matching-pause-button"),
   category: document.querySelector("#category-pill"), visual: document.querySelector("#question-visual"), celebration: document.querySelector("#celebration"), mascot: document.querySelector("#game-mascot"), prompt: document.querySelector("#question-prompt"),
   answers: document.querySelector("#answers"), feedback: document.querySelector("#feedback"), next: document.querySelector("#next-button"), count: document.querySelector("#question-count"), score: document.querySelector("#score"), streak: document.querySelector("#streak"), progress: document.querySelector("#progress-fill"),
   playAgain: document.querySelector("#play-again-button"), summaryHome: document.querySelector("#summary-home-button"), summaryStars: document.querySelector("#summary-stars"), summaryCorrect: document.querySelector("#summary-correct"), summaryStreak: document.querySelector("#summary-streak"), summaryCategory: document.querySelector("#summary-category"), summaryTitle: document.querySelector("#summary-title"), summaryCopy: document.querySelector(".summary-copy"), rewardPopup: document.querySelector("#reward-popup"), rewardSticker: document.querySelector("#reward-sticker"), achievementPopup: document.querySelector("#achievement-popup"), achievementPopupIcon: document.querySelector("#achievement-popup-icon"), achievementPopupTitle: document.querySelector("#achievement-popup-title"), dailyGoalCard: document.querySelector("#daily-goal-card"), dailyGoalTitle: document.querySelector("#daily-goal-title"), dailyGoalProgress: document.querySelector("#daily-goal-progress"), dailyGoalPopup: document.querySelector("#daily-goal-popup"), achievementsModal: document.querySelector("#achievements-modal"), achievementsModalClose: document.querySelector("#achievements-modal-close"), achievementsList: document.querySelector("#achievements-list"), rewardsStarCount: document.querySelector("#rewards-star-count"), stickersList: document.querySelector("#stickers-list"), bonus: document.querySelector("#balloon-bonus"), balloonTarget: document.querySelector("#balloon-target"), balloons: document.querySelector("#balloons"), pause: document.querySelector("#pause-button"), bonusPause: document.querySelector("#bonus-pause-button"), pauseOverlay: document.querySelector("#pause-overlay"), resume: document.querySelector("#resume-button"), parentLogo: document.querySelector("#welcome-title"), parentDashboard: document.querySelector("#parent-dashboard"), parentDashboardClose: document.querySelector("#parent-dashboard-close"), parentDashboardTitle: document.querySelector("#parent-dashboard-title"), parentPlayTime: document.querySelector("#parent-play-time"), parentQuestions: document.querySelector("#parent-questions"), parentCorrect: document.querySelector("#parent-correct"), parentCategory: document.querySelector("#parent-category"), parentStreak: document.querySelector("#parent-streak"), parentDifficultWords: document.querySelector("#parent-difficult-words")
@@ -101,6 +102,13 @@ let lastVoiceEncouragement = "";
 let wrongAttemptsForQuestion = 0;
 let lastRetryMessage = "";
 let isRevealingCorrectAnswer = false;
+let isMatchingGameActive = false;
+let matchingCards = [];
+let matchingOpenCards = [];
+let matchingPairsFound = 0;
+let matchingPendingFlip = false;
+let matchingFlipTimer;
+let matchingCompletionTimer;
 
 function getValidPlayerName(name) {
   const playerName = typeof name === "string" ? name.trim() : "";
@@ -520,8 +528,8 @@ function applyCategoryPack() {
 }
 
 function updateStartButton() {
-  const hasGameMode = activeGameMode === LEARNING_MODE || activeGameMode === QUICK_MODE;
-  ui.start.disabled = !selectedPlayer || !hasGameMode || (activeCategoryPack === "custom" && !getPackCategories().length);
+  const hasGameMode = activeGameMode === LEARNING_MODE || activeGameMode === QUICK_MODE || activeGameMode === MATCHING_MODE;
+  ui.start.disabled = !selectedPlayer || !hasGameMode || (activeGameMode !== MATCHING_MODE && activeCategoryPack === "custom" && !getPackCategories().length);
 }
 
 function getPersonalizedWelcomeMessage() {
@@ -634,17 +642,18 @@ function getSavedGameMode() {
   try {
     const storageKey = getPlayerStorageKey(GAME_MODE_STORAGE_KEY);
     const savedMode = storageKey && window.localStorage.getItem(storageKey);
-    return savedMode === QUICK_MODE || savedMode === LEARNING_MODE ? savedMode : LEARNING_MODE;
+    return savedMode === QUICK_MODE || savedMode === LEARNING_MODE || savedMode === MATCHING_MODE ? savedMode : LEARNING_MODE;
   } catch {
     return LEARNING_MODE;
   }
 }
 
 function setGameMode(mode) {
-  if (isPaused || (mode !== LEARNING_MODE && mode !== QUICK_MODE)) return;
+  if (isPaused || (mode !== LEARNING_MODE && mode !== QUICK_MODE && mode !== MATCHING_MODE)) return;
   activeGameMode = mode;
   ui.learningMode.setAttribute("aria-pressed", String(mode === LEARNING_MODE));
   ui.quickMode.setAttribute("aria-pressed", String(mode === QUICK_MODE));
+  ui.matchingMode.setAttribute("aria-pressed", String(mode === MATCHING_MODE));
   try {
     const storageKey = getPlayerStorageKey(GAME_MODE_STORAGE_KEY);
     if (storageKey) window.localStorage.setItem(storageKey, mode);
@@ -759,12 +768,13 @@ function loadParentData() {
         correctAnswers: Number.isFinite(savedData.correctAnswers) ? savedData.correctAnswers : 0,
         categoryCounts: savedData.categoryCounts && typeof savedData.categoryCounts === "object" && !Array.isArray(savedData.categoryCounts) ? savedData.categoryCounts : {},
         difficultWords: savedData.difficultWords && typeof savedData.difficultWords === "object" && !Array.isArray(savedData.difficultWords) ? savedData.difficultWords : {},
-        bestStreak: Number.isFinite(savedData.bestStreak) ? savedData.bestStreak : 0
+        bestStreak: Number.isFinite(savedData.bestStreak) ? savedData.bestStreak : 0,
+        matchingPairsCompleted: Number.isFinite(savedData.matchingPairsCompleted) ? savedData.matchingPairsCompleted : 0
       };
     }
-    return { playTime: 0, questionsAnswered: 0, correctAnswers: 0, categoryCounts: {}, difficultWords: {}, bestStreak: 0 };
+    return { playTime: 0, questionsAnswered: 0, correctAnswers: 0, categoryCounts: {}, difficultWords: {}, bestStreak: 0, matchingPairsCompleted: 0 };
   } catch {
-    return { playTime: 0, questionsAnswered: 0, correctAnswers: 0, categoryCounts: {}, difficultWords: {}, bestStreak: 0 };
+    return { playTime: 0, questionsAnswered: 0, correctAnswers: 0, categoryCounts: {}, difficultWords: {}, bestStreak: 0, matchingPairsCompleted: 0 };
   }
 }
 
@@ -807,6 +817,97 @@ function updateParentData(wasCorrect) {
     parentData.difficultWords[currentQuestion.correct] = (parentData.difficultWords[currentQuestion.correct] ?? 0) + 1;
   }
   saveParentData();
+}
+
+function renderMatchingCards() {
+  ui.matchingCards.textContent = "";
+  matchingCards.forEach((card, index) => {
+    const button = document.createElement("button");
+    button.className = `matching-card${card.revealed ? " revealed" : ""}${card.completed ? " completed" : ""}`;
+    button.type = "button";
+    button.textContent = card.revealed || card.completed ? card.symbol : "?";
+    button.setAttribute("aria-label", card.revealed || card.completed ? "Açık kart" : "Kapalı kart");
+    button.disabled = isPaused || matchingPendingFlip || card.revealed || card.completed;
+    button.addEventListener("click", () => openMatchingCard(index));
+    ui.matchingCards.append(button);
+  });
+}
+
+function flipBackMatchingCards() {
+  matchingFlipTimer = undefined;
+  if (!isMatchingGameActive || isPaused) return;
+  matchingOpenCards.forEach(index => { matchingCards[index].revealed = false; });
+  matchingOpenCards = [];
+  matchingPendingFlip = false;
+  renderMatchingCards();
+}
+
+function scheduleMatchingFlip() {
+  window.clearTimeout(matchingFlipTimer);
+  matchingFlipTimer = window.setTimeout(flipBackMatchingCards, 750);
+}
+
+function completeMatchingGame() {
+  if (!isMatchingGameActive) return;
+  isMatchingGameActive = false;
+  matchingPendingFlip = true;
+  parentData.matchingPairsCompleted += 1;
+  saveParentData();
+  ui.matchingFeedback.textContent = "Harika! Tüm eşleri buldun!";
+  renderMatchingCards();
+  animations.celebrate();
+  ui.matchingCelebration.innerHTML = ui.celebration.innerHTML;
+  ui.matchingCelebration.classList.remove("burst");
+  void ui.matchingCelebration.offsetWidth;
+  ui.matchingCelebration.classList.add("burst");
+  audio.playCelebration();
+  window.clearTimeout(matchingCompletionTimer);
+  matchingCompletionTimer = window.setTimeout(goHome, 1400);
+}
+
+function openMatchingCard(index) {
+  const card = matchingCards[index];
+  if (!isMatchingGameActive || isPaused || matchingPendingFlip || !card || card.revealed || card.completed) return;
+  card.revealed = true;
+  matchingOpenCards.push(index);
+  renderMatchingCards();
+  if (matchingOpenCards.length < 2) return;
+  const [firstIndex, secondIndex] = matchingOpenCards;
+  if (matchingCards[firstIndex].symbol === matchingCards[secondIndex].symbol) {
+    matchingCards[firstIndex].completed = true;
+    matchingCards[secondIndex].completed = true;
+    matchingOpenCards = [];
+    matchingPairsFound += 1;
+    ui.matchingFeedback.textContent = "Eşini buldun!";
+    renderMatchingCards();
+    audio.playSuccess();
+    if (matchingPairsFound === 3) completeMatchingGame();
+    return;
+  }
+  matchingPendingFlip = true;
+  ui.matchingFeedback.textContent = "Bir kez daha bakalım.";
+  renderMatchingCards();
+  scheduleMatchingFlip();
+}
+
+function startMatchingGame() {
+  isMatchingGameActive = true;
+  matchingCards = appUtils.shuffle(["🍎", "🍎", "🐶", "🐶", "⭐", "⭐"]).map(symbol => ({ symbol, revealed: false, completed: false }));
+  matchingOpenCards = [];
+  matchingPairsFound = 0;
+  matchingPendingFlip = false;
+  window.clearTimeout(matchingFlipTimer);
+  window.clearTimeout(matchingCompletionTimer);
+  clearSpeech();
+  ui.welcome.classList.add("hidden");
+  ui.quiz.classList.add("hidden");
+  ui.summary.classList.add("hidden");
+  ui.bonus.classList.add("hidden");
+  ui.matching.classList.remove("hidden");
+  ui.matchingFeedback.textContent = "İki kartı aç.";
+  renderMatchingCards();
+  startPlayTime();
+  startWakeLock();
 }
 
 function renderParentDashboard() {
@@ -867,10 +968,12 @@ function setGameActionsEnabled(enabled) {
   ui.next.disabled = !enabled;
   ui.pause.disabled = !enabled;
   ui.bonusPause.disabled = !enabled;
+  ui.matchingHome.disabled = !enabled;
+  ui.matchingPause.disabled = !enabled;
 }
 
 function pauseGame() {
-  if (isPaused || (ui.quiz.classList.contains("hidden") && !isBalloonBonusActive)) return;
+  if (isPaused || (ui.quiz.classList.contains("hidden") && !isBalloonBonusActive && !isMatchingGameActive)) return;
   isPaused = true;
   clearSpeech();
   stopPlayTime();
@@ -881,6 +984,10 @@ function pauseGame() {
     window.clearTimeout(balloonBonusTimer);
     window.clearTimeout(balloonPopTimer);
     ui.balloons.querySelectorAll("button").forEach(balloon => { balloon.disabled = true; });
+  }
+  if (isMatchingGameActive) {
+    window.clearTimeout(matchingFlipTimer);
+    renderMatchingCards();
   }
   ui.pauseOverlay.classList.remove("hidden");
   ui.resume.focus();
@@ -903,6 +1010,11 @@ function resumeGame() {
       return;
     }
     playBalloonPrompt();
+    return;
+  }
+  if (isMatchingGameActive) {
+    renderMatchingCards();
+    if (matchingPendingFlip) scheduleMatchingFlip();
     return;
   }
   if (isWelcomeSequenceActive) {
@@ -1246,13 +1358,17 @@ function resetSession() {
 }
 
 async function startGame() {
-  if (isPaused || isStartingGame || !selectedPlayer || (activeGameMode !== LEARNING_MODE && activeGameMode !== QUICK_MODE) || (activeCategoryPack === "custom" && !getPackCategories().length)) return;
+  if (isPaused || isStartingGame || !selectedPlayer || (activeGameMode !== LEARNING_MODE && activeGameMode !== QUICK_MODE && activeGameMode !== MATCHING_MODE) || (activeGameMode !== MATCHING_MODE && activeCategoryPack === "custom" && !getPackCategories().length)) return;
   ensureDailyGoal();
   renderDailyGoal();
   window.clearTimeout(sessionCelebrationTimer);
   isStartingGame = true;
   try {
     [engine] = await Promise.all([gameReady, speech.ready]);
+    if (activeGameMode === MATCHING_MODE) {
+      startMatchingGame();
+      return;
+    }
     restoreStoredLearningStats();
     applyCategoryPack();
     ui.welcome.classList.add("hidden");
@@ -1280,6 +1396,8 @@ function goHome() {
   clearSpeech();
   stopWakeLock();
   window.clearTimeout(sessionCelebrationTimer);
+  window.clearTimeout(matchingFlipTimer);
+  window.clearTimeout(matchingCompletionTimer);
   stopPlayTime();
   if (!ui.quiz.classList.contains("hidden")) saveGameProgress();
   isBalloonBonusActive = false;
@@ -1288,12 +1406,17 @@ function goHome() {
   pendingBonusEnd = false;
   isWelcomeSequenceActive = false;
   isRevealingCorrectAnswer = false;
+  isMatchingGameActive = false;
+  matchingCards = [];
+  matchingOpenCards = [];
+  matchingPendingFlip = false;
   ensureDailyGoal();
   renderDailyGoal();
   resetDailyGoalPopup();
   ui.quiz.classList.add("hidden");
   ui.bonus.classList.add("hidden");
   ui.summary.classList.add("hidden");
+  ui.matching.classList.add("hidden");
   ui.welcome.classList.remove("hidden");
   speakWelcome();
 }
@@ -1304,6 +1427,7 @@ ui.achievements.addEventListener("click", openAchievements);
 ui.welcomeSound.addEventListener("click", speakWelcome);
 ui.learningMode.addEventListener("click", () => setGameMode(LEARNING_MODE));
 ui.quickMode.addEventListener("click", () => setGameMode(QUICK_MODE));
+ui.matchingMode.addEventListener("click", () => setGameMode(MATCHING_MODE));
 ui.categoryPackButtons.forEach(button => button.addEventListener("click", () => setCategoryPack(button.dataset.categoryPack)));
 ui.playerButtons.forEach(button => button.addEventListener("click", () => {
   if (button === ui.customPlayer) selectCustomPlayer();
@@ -1314,6 +1438,8 @@ ui.customPlayerName.addEventListener("keydown", event => {
   if (event.key === "Enter" && selectedPlayer && (activeGameMode === LEARNING_MODE || activeGameMode === QUICK_MODE)) startGame();
 });
 ui.home.addEventListener("click", goHome);
+ui.matchingHome.addEventListener("click", goHome);
+ui.matchingPause.addEventListener("click", pauseGame);
 ui.replay.addEventListener("click", () => {
   if (!isPaused && !isSpeaking) playQuestionSequence();
 });

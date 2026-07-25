@@ -22,6 +22,8 @@
           <h2 id="player-selection-title">Kim oynuyor?</h2>
           <div class="player-options" aria-label="Oyuncu seçimi">
             <button class="player-button" type="button" data-player-name="Mila" aria-pressed="false">Mila</button>
+	    <button class="player-button" type="button" data-player-name="Deniz" aria-pressed="false">Deniz</button>
+            <button class="player-button" type="button" data-player-name="Elis" aria-pressed="false">Elis</button>
             <button class="player-button" type="button" data-player-name="Açelya" aria-pressed="false">Açelya</button>
             <button class="player-button" type="button" data-player-name="Alp" aria-pressed="false">Alp</button>
             <button class="player-button" type="button" data-player-name="Aslan Cemal" aria-pressed="false">Aslan Cemal</button>
@@ -45,6 +47,7 @@
         <div class="mode-selection" aria-label="Oyun modu seçimi">
           <button id="learning-mode-button" class="mode-button" type="button" aria-pressed="true"><strong>Öğrenme Modu</strong><span>Önce bütün seçenekleri dinle, sonra cevapla.</span></button>
           <button id="quick-mode-button" class="mode-button" type="button" aria-pressed="false"><strong>Hızlı Oyun</strong><span>Soruyu dinle, cevabı biliyorsan hemen seç.</span></button>
+          <button id="matching-mode-button" class="mode-button matching-mode-button" type="button" aria-pressed="false"><strong>🧩 Eşini Bul</strong><span>Kartları aç ve aynı olanları bul.</span></button>
         </div>
         <section id="category-pack-selection" class="category-pack-selection" aria-labelledby="category-pack-title">
           <h2 id="category-pack-title">Ne oynayalım?</h2>
@@ -84,6 +87,16 @@
         <div id="answers" class="answers" aria-label="Cevap seçenekleri"></div>
         <p id="feedback" class="feedback" role="status"></p>
         <button id="next-button" class="primary-button next-button hidden" type="button">Sonraki soru <span aria-hidden="true">→</span></button>
+      </section>
+
+      <section id="matching-screen" class="screen matching-screen hidden" aria-live="polite" aria-labelledby="matching-title">
+        <header class="matching-header">
+          <button id="matching-home-button" class="icon-button" type="button" aria-label="Ana sayfaya dön">⌂</button>
+          <div><p class="eyebrow">EŞİNİ BUL</p><h2 id="matching-title">Aynı kartları bul!</h2></div>
+          <button id="matching-pause-button" class="icon-button" type="button" aria-label="Oyunu duraklat">⏸</button>
+        </header>
+        <p id="matching-feedback" class="matching-feedback">İki kartı aç.</p>
+        <div class="matching-board-wrap"><div id="matching-celebration" class="celebration" aria-hidden="true"></div><div id="matching-cards" class="matching-cards" aria-label="Eşleştirme kartları"></div></div>
       </section>
 
       <section id="summary-screen" class="screen summary-screen hidden" aria-live="polite" aria-labelledby="summary-title">
