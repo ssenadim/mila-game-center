@@ -2157,10 +2157,14 @@ function goHome() {
   isMatchingGameActive = false;
   matchingCards = [];
   matchingOpenCards = [];
+  matchingPairsFound = 0;
   matchingPendingFlip = false;
   isListeningGameActive = false;
   currentListeningQuestion = undefined;
   listeningAnswers = [];
+  listeningRound = 0;
+  listeningWrongAttempts = 0;
+  listeningPreviousQuestion = undefined;
   isListeningSpeaking = false;
   isListeningTransitioning = false;
   isListeningRevealing = false;
@@ -2170,6 +2174,8 @@ function goHome() {
   currentNumberMatchQuestion = undefined;
   numberMatchQuestions = [];
   numberMatchAnswers = [];
+  numberMatchRound = 0;
+  numberMatchWrongAttempts = 0;
   isNumberMatchSpeaking = false;
   isNumberMatchTransitioning = false;
   isNumberMatchRevealing = false;
@@ -2178,6 +2184,10 @@ function goHome() {
   isColorMatchGameActive = false;
   currentColorMatchQuestion = undefined;
   colorMatchAnswers = [];
+  colorMatchRound = 0;
+  colorMatchWrongAttempts = 0;
+  colorMatchPreviousQuestion = undefined;
+  isColorMatchSpeechRound = false;
   isColorMatchSpeaking = false;
   isColorMatchTransitioning = false;
   isColorMatchRevealing = false;
@@ -2189,6 +2199,8 @@ function goHome() {
   isSortingCompleted = false;
   sortingItems = [];
   sortingDestinationOrder = [];
+  ui.sortingItems.textContent = "";
+  ui.sortingDestinations.textContent = "";
   ensureDailyGoal();
   renderDailyGoal();
   resetDailyGoalPopup();

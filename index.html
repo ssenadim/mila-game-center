@@ -45,13 +45,23 @@
         <button id="achievements-button" class="achievements-button" type="button">Kazandıklarım</button>
         <button id="welcome-sound-button" class="sound-button" type="button" aria-label="Hoş geldin mesajını tekrar dinle">🔊 Dinle</button>
         <div class="mode-selection" aria-label="Oyun modu seçimi">
-          <button id="learning-mode-button" class="mode-button" type="button" aria-pressed="true"><strong>Öğrenme Modu</strong><span>Önce bütün seçenekleri dinle, sonra cevapla.</span></button>
-          <button id="quick-mode-button" class="mode-button" type="button" aria-pressed="false"><strong>Hızlı Oyun</strong><span>Soruyu dinle, cevabı biliyorsan hemen seç.</span></button>
-          <button id="matching-mode-button" class="mode-button matching-mode-button" type="button" aria-pressed="false"><strong>🧩 Eşini Bul</strong><span>Kartları aç ve aynı olanları bul.</span></button>
-          <button id="listening-mode-button" class="mode-button listening-mode-button" type="button" aria-pressed="false"><strong>👂 Dinle ve Seç</strong><span>Kelimeyi dinle, doğru resmi seç.</span></button>
-          <button id="number-match-mode-button" class="mode-button number-match-mode-button" type="button" aria-pressed="false"><strong>🔢 Sayıyı Bul</strong><span>Sayıyı dinle, doğru rakamı seç.</span></button>
-          <button id="color-match-mode-button" class="mode-button color-match-mode-button" type="button" aria-pressed="false"><strong>🎨 Rengi Bul</strong><span>Rengi dinle ya da oku, doğru kartı seç.</span></button>
-          <button id="sorting-mode-button" class="mode-button sorting-mode-button" type="button" aria-pressed="false"><strong>🧺 Grupla</strong><span>Nesneleri doğru kutuya yerleştir.</span></button>
+          <section class="game-mode-section" aria-labelledby="learning-modes-title">
+            <h2 id="learning-modes-title">Öğrenme Modları</h2>
+            <div class="mode-card-grid learning-modes-grid">
+              <button id="learning-mode-button" class="mode-button" type="button" aria-pressed="true"><strong>Öğrenme Modu</strong><span>Önce bütün seçenekleri dinle, sonra cevapla.</span></button>
+              <button id="quick-mode-button" class="mode-button" type="button" aria-pressed="false"><strong>Hızlı Oyun</strong><span>Soruyu dinle, cevabı biliyorsan hemen seç.</span></button>
+            </div>
+          </section>
+          <section class="game-mode-section mini-games-section" aria-labelledby="mini-games-title">
+            <h2 id="mini-games-title">Mini Oyunlar</h2>
+            <div class="mode-card-grid mini-games-grid">
+              <button id="matching-mode-button" class="mode-button matching-mode-button" type="button" aria-pressed="false"><strong>🧩 Eşini Bul</strong><span>Kartları aç ve aynı olanları bul.</span></button>
+              <button id="listening-mode-button" class="mode-button listening-mode-button" type="button" aria-pressed="false"><strong>👂 Dinle ve Seç</strong><span>Kelimeyi dinle, doğru resmi seç.</span></button>
+              <button id="number-match-mode-button" class="mode-button number-match-mode-button" type="button" aria-pressed="false"><strong>🔢 Sayıyı Bul</strong><span>Sayıyı dinle, doğru rakamı seç.</span></button>
+              <button id="color-match-mode-button" class="mode-button color-match-mode-button" type="button" aria-pressed="false"><strong>🎨 Rengi Bul</strong><span>Rengi dinle ya da oku, doğru kartı seç.</span></button>
+              <button id="sorting-mode-button" class="mode-button sorting-mode-button" type="button" aria-pressed="false"><strong>🧺 Grupla</strong><span>Nesneleri doğru kutuya yerleştir.</span></button>
+            </div>
+          </section>
         </div>
         <section id="category-pack-selection" class="category-pack-selection" aria-labelledby="category-pack-title">
           <h2 id="category-pack-title">Ne oynayalım?</h2>
