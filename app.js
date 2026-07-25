@@ -67,6 +67,7 @@ let balloonPopTimer;
 let pendingCorrectTransition = false;
 let pendingBonusEnd = false;
 let activeGameMode = getSavedGameMode();
+let isWelcomeSequenceActive = false;
 
 function getValidPlayerName(name) {
   const playerName = typeof name === "string" ? name.trim() : "";
@@ -110,6 +111,18 @@ function migratePlayerProgress() {
 function updateStartButton() {
   const hasGameMode = activeGameMode === LEARNING_MODE || activeGameMode === QUICK_MODE;
   ui.start.disabled = !selectedPlayer || !hasGameMode;
+}
+
+function getPersonalizedWelcomeMessage() {
+  return selectedPlayer ? `Merhaba ${selectedPlayer}! Hazır mısın? Haydi başlayalım!` : "Merhaba! Hazır mısın? Haydi başlayalım!";
+}
+
+function getPersonalizedBonusMessage() {
+  return selectedPlayer ? `Harika gidiyorsun ${selectedPlayer}! Bonus zamanı!` : "Harika gidiyorsun! Bonus zamanı!";
+}
+
+function getPersonalizedSessionMessage() {
+  return selectedPlayer ? `Harika ${selectedPlayer}! Bugün çok güzel oynadın.` : "Harika! Bugün çok güzel oynadın.";
 }
 
 function renderPlayerSelection() {
@@ -430,6 +443,12 @@ function resumeGame() {
     playBalloonPrompt();
     return;
   }
+  if (isWelcomeSequenceActive) {
+    playWelcomeSequence().then(completed => {
+      if (completed && !isPaused) showQuestion();
+    });
+    return;
+  }
   resumeQuestionSequence();
 }
 
@@ -511,6 +530,7 @@ async function startBalloonBonus() {
   ui.balloonTarget.textContent = `Pop ${currentQuestion.correct}.`;
   renderBalloons();
   startBonusTimer(BONUS_DURATION);
+  speech.speak(getPersonalizedBonusMessage(), TURKISH_LANGUAGE);
   await playBalloonPrompt();
 }
 
@@ -586,6 +606,27 @@ async function playQuestionSequence(keepInputDisabled = false) {
   return true;
 }
 
+async function playWelcomeSequence() {
+  if (isPaused || !isWelcomeSequenceActive) return false;
+  const run = audioRun;
+  const welcomeMessage = getPersonalizedWelcomeMessage();
+  ui.feedback.textContent = welcomeMessage;
+  ui.feedback.className = "feedback";
+  await speech.speak(welcomeMessage, TURKISH_LANGUAGE);
+  if (!isWelcomeSequenceActive || !isActiveAudio(run)) return false;
+  if (!speech.turkishVoice) await appUtils.wait(400);
+  if (!isWelcomeSequenceActive || !isActiveAudio(run)) return false;
+  const modeMessage = activeGameMode === LEARNING_MODE ? "Bugün birlikte yeni şeyler öğreneceğiz." : "Hazırsan hızlı oyun başlıyor!";
+  ui.feedback.textContent = modeMessage;
+  await speech.speak(modeMessage, TURKISH_LANGUAGE);
+  if (!isWelcomeSequenceActive || !isActiveAudio(run)) return false;
+  if (!speech.turkishVoice) await appUtils.wait(400);
+  if (!isWelcomeSequenceActive || !isActiveAudio(run)) return false;
+  ui.feedback.textContent = "";
+  isWelcomeSequenceActive = false;
+  return true;
+}
+
 function showQuestion() {
   if (isPaused) return;
   clearSpeech();
@@ -610,12 +651,12 @@ async function showSessionSummary() {
   const run = audioRun;
   stopPlayTime();
   clearSavedProgress();
-  const celebrationMessage = appUtils.randomItem(SESSION_CELEBRATION_MESSAGES);
+  const celebrationMessage = getPersonalizedSessionMessage();
   ui.summaryStars.textContent = stars;
   ui.summaryCorrect.textContent = correctAnswers;
   ui.summaryStreak.textContent = bestStreak;
   ui.summaryCategory.textContent = engine.getFavoriteCategory();
-  ui.summaryTitle.innerHTML = celebrationMessage.replace(" Mila!", "<br /><span>Mila!</span>");
+  ui.summaryTitle.textContent = celebrationMessage;
   ui.summaryCopy.textContent = `${questionNumber} soru tamamlandı!`;
   ui.quiz.classList.add("hidden");
   ui.summary.classList.remove("hidden");
@@ -720,7 +761,9 @@ async function startGame() {
     ui.quiz.classList.remove("hidden");
     resetSession();
     startPlayTime();
-    showQuestion();
+    clearSpeech();
+    isWelcomeSequenceActive = true;
+    if (await playWelcomeSequence()) showQuestion();
   } finally {
     isStartingGame = false;
   }
@@ -742,6 +785,7 @@ function goHome() {
   window.clearTimeout(balloonBonusTimer);
   window.clearTimeout(balloonPopTimer);
   pendingBonusEnd = false;
+  isWelcomeSequenceActive = false;
   ui.quiz.classList.add("hidden");
   ui.bonus.classList.add("hidden");
   ui.summary.classList.add("hidden");
