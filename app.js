@@ -21,6 +21,15 @@ const BONUS_CORRECT_ANSWER_INTERVAL = 5;
 const LEARNING_MODE = "learning";
 const QUICK_MODE = "quick";
 const MATCHING_MODE = "matching";
+const LISTENING_MODE = "listening";
+const LISTENING_SESSION_ROUNDS = 5;
+const LISTENING_CATEGORIES = ["Fruits", "Animals", "Colors", "Numbers"];
+const LISTENING_VISUALS = {
+  Apple: "🍎", Banana: "🍌", Grape: "🍇", Grapes: "🍇", Orange: "🍊", Lemon: "🍋", Blueberry: "🫐", Kiwi: "🥝", Cherry: "🍒", Pear: "🍐", Peach: "🍑",
+  Lion: "🦁", Elephant: "🐘", Cat: "🐱", Monkey: "🐒", Dog: "🐶", Bird: "🐦", Fish: "🐟", Tiger: "🐯", Bear: "🐻", Rabbit: "🐰"
+};
+const LISTENING_COLOR_VISUALS = { Blue: "🔵", Yellow: "🟡", Red: "🔴", Green: "🟢", Purple: "🟣", Orange: "🟠", Pink: "🩷", Brown: "🟤" };
+const LISTENING_NUMBER_VISUALS = { One: "1️⃣", Two: "2️⃣", Three: "3️⃣", Four: "4️⃣", Five: "5️⃣", Six: "6️⃣", Seven: "7️⃣", Eight: "8️⃣" };
 const GAME_MODE_STORAGE_KEY = "mila-learning-game-mode";
 const PLAYER_STORAGE_KEY = "mila-learning-player";
 const PLAYER_PROGRESS_MIGRATION_STORAGE_KEY = "mila-learning-player-progress-migrated";
@@ -44,7 +53,7 @@ const DAILY_GOALS = [
 
 const ui = {
   welcome: document.querySelector("#welcome-screen"), quiz: document.querySelector("#quiz-screen"), summary: document.querySelector("#summary-screen"),
-  start: document.querySelector("#start-button"), fullscreen: document.querySelector("#fullscreen-button"), achievements: document.querySelector("#achievements-button"), welcomeSound: document.querySelector("#welcome-sound-button"), learningMode: document.querySelector("#learning-mode-button"), quickMode: document.querySelector("#quick-mode-button"), matchingMode: document.querySelector("#matching-mode-button"), playerButtons: document.querySelectorAll(".player-button"), customPlayer: document.querySelector("#custom-player-button"), customPlayerLabel: document.querySelector("#custom-player-label"), customPlayerName: document.querySelector("#custom-player-name"), categoryPackButtons: document.querySelectorAll(".category-pack-button"), customCategoryOptions: document.querySelector("#custom-category-options"), home: document.querySelector("#home-button"), replay: document.querySelector("#question-sound-button"), matching: document.querySelector("#matching-screen"), matchingCards: document.querySelector("#matching-cards"), matchingCelebration: document.querySelector("#matching-celebration"), matchingFeedback: document.querySelector("#matching-feedback"), matchingHome: document.querySelector("#matching-home-button"), matchingPause: document.querySelector("#matching-pause-button"),
+  start: document.querySelector("#start-button"), fullscreen: document.querySelector("#fullscreen-button"), achievements: document.querySelector("#achievements-button"), welcomeSound: document.querySelector("#welcome-sound-button"), learningMode: document.querySelector("#learning-mode-button"), quickMode: document.querySelector("#quick-mode-button"), matchingMode: document.querySelector("#matching-mode-button"), listeningMode: document.querySelector("#listening-mode-button"), playerButtons: document.querySelectorAll(".player-button"), customPlayer: document.querySelector("#custom-player-button"), customPlayerLabel: document.querySelector("#custom-player-label"), customPlayerName: document.querySelector("#custom-player-name"), categoryPackButtons: document.querySelectorAll(".category-pack-button"), customCategoryOptions: document.querySelector("#custom-category-options"), home: document.querySelector("#home-button"), replay: document.querySelector("#question-sound-button"), matching: document.querySelector("#matching-screen"), matchingCards: document.querySelector("#matching-cards"), matchingCelebration: document.querySelector("#matching-celebration"), matchingFeedback: document.querySelector("#matching-feedback"), matchingHome: document.querySelector("#matching-home-button"), matchingPause: document.querySelector("#matching-pause-button"), listening: document.querySelector("#listening-screen"), listeningCards: document.querySelector("#listening-cards"), listeningCelebration: document.querySelector("#listening-celebration"), listeningFeedback: document.querySelector("#listening-feedback"), listeningReplay: document.querySelector("#listening-replay-button"), listeningHome: document.querySelector("#listening-home-button"), listeningPause: document.querySelector("#listening-pause-button"),
   category: document.querySelector("#category-pill"), visual: document.querySelector("#question-visual"), celebration: document.querySelector("#celebration"), mascot: document.querySelector("#game-mascot"), prompt: document.querySelector("#question-prompt"),
   answers: document.querySelector("#answers"), feedback: document.querySelector("#feedback"), next: document.querySelector("#next-button"), count: document.querySelector("#question-count"), score: document.querySelector("#score"), streak: document.querySelector("#streak"), progress: document.querySelector("#progress-fill"),
   playAgain: document.querySelector("#play-again-button"), summaryHome: document.querySelector("#summary-home-button"), summaryStars: document.querySelector("#summary-stars"), summaryCorrect: document.querySelector("#summary-correct"), summaryStreak: document.querySelector("#summary-streak"), summaryCategory: document.querySelector("#summary-category"), summaryTitle: document.querySelector("#summary-title"), summaryCopy: document.querySelector(".summary-copy"), rewardPopup: document.querySelector("#reward-popup"), rewardSticker: document.querySelector("#reward-sticker"), achievementPopup: document.querySelector("#achievement-popup"), achievementPopupIcon: document.querySelector("#achievement-popup-icon"), achievementPopupTitle: document.querySelector("#achievement-popup-title"), dailyGoalCard: document.querySelector("#daily-goal-card"), dailyGoalTitle: document.querySelector("#daily-goal-title"), dailyGoalProgress: document.querySelector("#daily-goal-progress"), dailyGoalPopup: document.querySelector("#daily-goal-popup"), achievementsModal: document.querySelector("#achievements-modal"), achievementsModalClose: document.querySelector("#achievements-modal-close"), achievementsList: document.querySelector("#achievements-list"), rewardsStarCount: document.querySelector("#rewards-star-count"), stickersList: document.querySelector("#stickers-list"), bonus: document.querySelector("#balloon-bonus"), balloonTarget: document.querySelector("#balloon-target"), balloons: document.querySelector("#balloons"), pause: document.querySelector("#pause-button"), bonusPause: document.querySelector("#bonus-pause-button"), pauseOverlay: document.querySelector("#pause-overlay"), resume: document.querySelector("#resume-button"), parentLogo: document.querySelector("#welcome-title"), parentDashboard: document.querySelector("#parent-dashboard"), parentDashboardClose: document.querySelector("#parent-dashboard-close"), parentDashboardTitle: document.querySelector("#parent-dashboard-title"), parentPlayTime: document.querySelector("#parent-play-time"), parentQuestions: document.querySelector("#parent-questions"), parentCorrect: document.querySelector("#parent-correct"), parentCategory: document.querySelector("#parent-category"), parentStreak: document.querySelector("#parent-streak"), parentDifficultWords: document.querySelector("#parent-difficult-words")
@@ -109,6 +118,18 @@ let matchingPairsFound = 0;
 let matchingPendingFlip = false;
 let matchingFlipTimer;
 let matchingCompletionTimer;
+let isListeningGameActive = false;
+let currentListeningQuestion;
+let listeningAnswers = [];
+let listeningRound = 0;
+let listeningWrongAttempts = 0;
+let listeningPreviousQuestion;
+let isListeningSpeaking = false;
+let isListeningTransitioning = false;
+let isListeningRevealing = false;
+let listeningWrongIndex;
+let isListeningWrongFeedback = false;
+let listeningCompletionTimer;
 
 function getValidPlayerName(name) {
   const playerName = typeof name === "string" ? name.trim() : "";
@@ -528,8 +549,8 @@ function applyCategoryPack() {
 }
 
 function updateStartButton() {
-  const hasGameMode = activeGameMode === LEARNING_MODE || activeGameMode === QUICK_MODE || activeGameMode === MATCHING_MODE;
-  ui.start.disabled = !selectedPlayer || !hasGameMode || (activeGameMode !== MATCHING_MODE && activeCategoryPack === "custom" && !getPackCategories().length);
+  const hasGameMode = activeGameMode === LEARNING_MODE || activeGameMode === QUICK_MODE || activeGameMode === MATCHING_MODE || activeGameMode === LISTENING_MODE;
+  ui.start.disabled = !selectedPlayer || !hasGameMode || (activeGameMode !== MATCHING_MODE && activeGameMode !== LISTENING_MODE && activeCategoryPack === "custom" && !getPackCategories().length);
 }
 
 function getPersonalizedWelcomeMessage() {
@@ -642,18 +663,19 @@ function getSavedGameMode() {
   try {
     const storageKey = getPlayerStorageKey(GAME_MODE_STORAGE_KEY);
     const savedMode = storageKey && window.localStorage.getItem(storageKey);
-    return savedMode === QUICK_MODE || savedMode === LEARNING_MODE || savedMode === MATCHING_MODE ? savedMode : LEARNING_MODE;
+    return savedMode === QUICK_MODE || savedMode === LEARNING_MODE || savedMode === MATCHING_MODE || savedMode === LISTENING_MODE ? savedMode : LEARNING_MODE;
   } catch {
     return LEARNING_MODE;
   }
 }
 
 function setGameMode(mode) {
-  if (isPaused || (mode !== LEARNING_MODE && mode !== QUICK_MODE && mode !== MATCHING_MODE)) return;
+  if (isPaused || (mode !== LEARNING_MODE && mode !== QUICK_MODE && mode !== MATCHING_MODE && mode !== LISTENING_MODE)) return;
   activeGameMode = mode;
   ui.learningMode.setAttribute("aria-pressed", String(mode === LEARNING_MODE));
   ui.quickMode.setAttribute("aria-pressed", String(mode === QUICK_MODE));
   ui.matchingMode.setAttribute("aria-pressed", String(mode === MATCHING_MODE));
+  ui.listeningMode.setAttribute("aria-pressed", String(mode === LISTENING_MODE));
   try {
     const storageKey = getPlayerStorageKey(GAME_MODE_STORAGE_KEY);
     if (storageKey) window.localStorage.setItem(storageKey, mode);
@@ -910,6 +932,164 @@ function startMatchingGame() {
   startWakeLock();
 }
 
+function getListeningVisual(answer, category) {
+  const matchingQuestion = engine.questions.find(question => question.category === category && question.correct === answer);
+  if (matchingQuestion?.visual) return matchingQuestion.visual;
+  if (category === "Colors") return LISTENING_COLOR_VISUALS[answer] ?? "🎨";
+  if (category === "Numbers") return LISTENING_NUMBER_VISUALS[answer] ?? "🔢";
+  return LISTENING_VISUALS[answer] ?? "❔";
+}
+
+function selectListeningQuestion() {
+  const questions = engine.questions.filter(question => LISTENING_CATEGORIES.includes(question.category) && new Set([question.correct, ...(question.answers ?? [])]).size >= 4);
+  const freshQuestions = questions.filter(question => question !== listeningPreviousQuestion);
+  const question = appUtils.randomItem(freshQuestions.length ? freshQuestions : questions);
+  listeningPreviousQuestion = question;
+  return question;
+}
+
+function renderListeningCards() {
+  ui.listeningCards.textContent = "";
+  listeningAnswers.forEach((answer, index) => {
+    const button = document.createElement("button");
+    const isCorrect = answer === currentListeningQuestion?.correct;
+    button.className = `listening-card${isListeningTransitioning && isCorrect ? " correct" : ""}${isListeningRevealing && isCorrect ? " correct-answer-reveal" : ""}${listeningWrongIndex === index ? " try-again-choice" : ""}`;
+    button.type = "button";
+    button.textContent = getListeningVisual(answer, currentListeningQuestion.category);
+    button.setAttribute("aria-label", "Seçenek");
+    button.disabled = isPaused || isListeningSpeaking || isListeningTransitioning || isListeningRevealing;
+    button.addEventListener("click", () => answerListeningQuestion(index));
+    ui.listeningCards.append(button);
+  });
+  ui.listeningReplay.disabled = isPaused || isListeningSpeaking || isListeningTransitioning || isListeningRevealing;
+}
+
+async function speakListeningWord() {
+  if (!isListeningGameActive || isPaused || !currentListeningQuestion) return;
+  clearSpeech();
+  const run = audioRun;
+  isListeningSpeaking = true;
+  renderListeningCards();
+  await speech.speak(currentListeningQuestion.correct, ENGLISH_LANGUAGE);
+  if (!isListeningGameActive || !isActiveAudio(run)) return;
+  isListeningSpeaking = false;
+  renderListeningCards();
+}
+
+function finishListeningGame() {
+  if (!isListeningGameActive) return;
+  isListeningGameActive = false;
+  isListeningTransitioning = true;
+  ui.listeningFeedback.textContent = "Harika! Dinleme oyununu tamamladın!";
+  renderListeningCards();
+  animations.celebrate();
+  ui.listeningCelebration.innerHTML = ui.celebration.innerHTML;
+  ui.listeningCelebration.classList.remove("burst");
+  void ui.listeningCelebration.offsetWidth;
+  ui.listeningCelebration.classList.add("burst");
+  audio.playCelebration();
+  window.clearTimeout(listeningCompletionTimer);
+  listeningCompletionTimer = window.setTimeout(goHome, 1400);
+}
+
+function showListeningRound() {
+  if (!isListeningGameActive || isPaused) return;
+  currentListeningQuestion = selectListeningQuestion();
+  if (!currentListeningQuestion) {
+    finishListeningGame();
+    return;
+  }
+  listeningRound += 1;
+  listeningAnswers = appUtils.shuffle([...new Set([currentListeningQuestion.correct, ...(currentListeningQuestion.answers ?? [])])].slice(0, 4));
+  listeningWrongAttempts = 0;
+  listeningWrongIndex = undefined;
+  isListeningTransitioning = false;
+  isListeningRevealing = false;
+  ui.listeningFeedback.textContent = `Dinle ve doğru resmi seç. ${listeningRound}/${LISTENING_SESSION_ROUNDS}`;
+  renderListeningCards();
+  speakListeningWord();
+}
+
+async function handleListeningWrongAnswer(index) {
+  if (!isListeningGameActive || isPaused || isListeningSpeaking || isListeningTransitioning || isListeningRevealing) return;
+  clearSpeech();
+  const run = audioRun;
+  listeningWrongAttempts += 1;
+  listeningWrongIndex = index;
+  isListeningWrongFeedback = true;
+  isListeningSpeaking = true;
+  ui.listeningFeedback.textContent = getRetryMessage();
+  renderListeningCards();
+  await speech.speak(ui.listeningFeedback.textContent, TURKISH_LANGUAGE);
+  if (!isListeningGameActive || !isActiveAudio(run)) return;
+  listeningWrongIndex = undefined;
+  isListeningWrongFeedback = false;
+  isListeningSpeaking = false;
+  if (listeningWrongAttempts < 2) {
+    renderListeningCards();
+    return;
+  }
+  revealListeningAnswer(run);
+}
+
+async function revealListeningAnswer(run = audioRun) {
+  isListeningRevealing = true;
+  renderListeningCards();
+  await appUtils.wait(900);
+  if (!isListeningGameActive || !isActiveAudio(run)) return;
+  showListeningRound();
+}
+
+async function handleListeningCorrectAnswer() {
+  if (!isListeningGameActive || isPaused || isListeningSpeaking || isListeningTransitioning || isListeningRevealing) return;
+  clearSpeech();
+  const run = audioRun;
+  isListeningTransitioning = true;
+  ui.listeningFeedback.textContent = "Harika!";
+  renderListeningCards();
+  animations.celebrate();
+  ui.listeningCelebration.innerHTML = ui.celebration.innerHTML;
+  ui.listeningCelebration.classList.remove("burst");
+  void ui.listeningCelebration.offsetWidth;
+  ui.listeningCelebration.classList.add("burst");
+  audio.playSuccess();
+  await appUtils.wait(800);
+  if (!isListeningGameActive || !isActiveAudio(run)) return;
+  if (listeningRound >= LISTENING_SESSION_ROUNDS) finishListeningGame();
+  else showListeningRound();
+}
+
+function answerListeningQuestion(index) {
+  if (!isListeningGameActive || isPaused || isListeningSpeaking || isListeningTransitioning || isListeningRevealing) return;
+  if (listeningAnswers[index] === currentListeningQuestion.correct) handleListeningCorrectAnswer();
+  else handleListeningWrongAnswer(index);
+}
+
+function startListeningGame() {
+  isListeningGameActive = true;
+  currentListeningQuestion = undefined;
+  listeningAnswers = [];
+  listeningRound = 0;
+  listeningWrongAttempts = 0;
+  listeningPreviousQuestion = undefined;
+  isListeningSpeaking = false;
+  isListeningTransitioning = false;
+  isListeningRevealing = false;
+  listeningWrongIndex = undefined;
+  isListeningWrongFeedback = false;
+  window.clearTimeout(listeningCompletionTimer);
+  clearSpeech();
+  ui.welcome.classList.add("hidden");
+  ui.quiz.classList.add("hidden");
+  ui.matching.classList.add("hidden");
+  ui.summary.classList.add("hidden");
+  ui.bonus.classList.add("hidden");
+  ui.listening.classList.remove("hidden");
+  startPlayTime();
+  startWakeLock();
+  showListeningRound();
+}
+
 function renderParentDashboard() {
   const activePlayTime = playStartedAt ? Date.now() - playStartedAt : 0;
   const minutes = Math.floor((parentData.playTime + activePlayTime) / 60000);
@@ -970,10 +1150,12 @@ function setGameActionsEnabled(enabled) {
   ui.bonusPause.disabled = !enabled;
   ui.matchingHome.disabled = !enabled;
   ui.matchingPause.disabled = !enabled;
+  ui.listeningHome.disabled = !enabled;
+  ui.listeningPause.disabled = !enabled;
 }
 
 function pauseGame() {
-  if (isPaused || (ui.quiz.classList.contains("hidden") && !isBalloonBonusActive && !isMatchingGameActive)) return;
+  if (isPaused || (ui.quiz.classList.contains("hidden") && !isBalloonBonusActive && !isMatchingGameActive && !isListeningGameActive)) return;
   isPaused = true;
   clearSpeech();
   stopPlayTime();
@@ -989,6 +1171,7 @@ function pauseGame() {
     window.clearTimeout(matchingFlipTimer);
     renderMatchingCards();
   }
+  if (isListeningGameActive) renderListeningCards();
   ui.pauseOverlay.classList.remove("hidden");
   ui.resume.focus();
 }
@@ -1015,6 +1198,23 @@ function resumeGame() {
   if (isMatchingGameActive) {
     renderMatchingCards();
     if (matchingPendingFlip) scheduleMatchingFlip();
+    return;
+  }
+  if (isListeningGameActive) {
+    listeningWrongIndex = undefined;
+    if (isListeningWrongFeedback) {
+      isListeningWrongFeedback = false;
+      isListeningSpeaking = false;
+      if (listeningWrongAttempts >= 2) revealListeningAnswer();
+      else renderListeningCards();
+      return;
+    }
+    if (isListeningTransitioning || isListeningRevealing) {
+      if (isListeningTransitioning && listeningRound >= LISTENING_SESSION_ROUNDS) finishListeningGame();
+      else showListeningRound();
+      return;
+    }
+    speakListeningWord();
     return;
   }
   if (isWelcomeSequenceActive) {
@@ -1358,7 +1558,7 @@ function resetSession() {
 }
 
 async function startGame() {
-  if (isPaused || isStartingGame || !selectedPlayer || (activeGameMode !== LEARNING_MODE && activeGameMode !== QUICK_MODE && activeGameMode !== MATCHING_MODE) || (activeGameMode !== MATCHING_MODE && activeCategoryPack === "custom" && !getPackCategories().length)) return;
+  if (isPaused || isStartingGame || !selectedPlayer || (activeGameMode !== LEARNING_MODE && activeGameMode !== QUICK_MODE && activeGameMode !== MATCHING_MODE && activeGameMode !== LISTENING_MODE) || (activeGameMode !== MATCHING_MODE && activeGameMode !== LISTENING_MODE && activeCategoryPack === "custom" && !getPackCategories().length)) return;
   ensureDailyGoal();
   renderDailyGoal();
   window.clearTimeout(sessionCelebrationTimer);
@@ -1367,6 +1567,10 @@ async function startGame() {
     [engine] = await Promise.all([gameReady, speech.ready]);
     if (activeGameMode === MATCHING_MODE) {
       startMatchingGame();
+      return;
+    }
+    if (activeGameMode === LISTENING_MODE) {
+      startListeningGame();
       return;
     }
     restoreStoredLearningStats();
@@ -1398,6 +1602,7 @@ function goHome() {
   window.clearTimeout(sessionCelebrationTimer);
   window.clearTimeout(matchingFlipTimer);
   window.clearTimeout(matchingCompletionTimer);
+  window.clearTimeout(listeningCompletionTimer);
   stopPlayTime();
   if (!ui.quiz.classList.contains("hidden")) saveGameProgress();
   isBalloonBonusActive = false;
@@ -1410,6 +1615,14 @@ function goHome() {
   matchingCards = [];
   matchingOpenCards = [];
   matchingPendingFlip = false;
+  isListeningGameActive = false;
+  currentListeningQuestion = undefined;
+  listeningAnswers = [];
+  isListeningSpeaking = false;
+  isListeningTransitioning = false;
+  isListeningRevealing = false;
+  listeningWrongIndex = undefined;
+  isListeningWrongFeedback = false;
   ensureDailyGoal();
   renderDailyGoal();
   resetDailyGoalPopup();
@@ -1417,6 +1630,7 @@ function goHome() {
   ui.bonus.classList.add("hidden");
   ui.summary.classList.add("hidden");
   ui.matching.classList.add("hidden");
+  ui.listening.classList.add("hidden");
   ui.welcome.classList.remove("hidden");
   speakWelcome();
 }
@@ -1428,6 +1642,7 @@ ui.welcomeSound.addEventListener("click", speakWelcome);
 ui.learningMode.addEventListener("click", () => setGameMode(LEARNING_MODE));
 ui.quickMode.addEventListener("click", () => setGameMode(QUICK_MODE));
 ui.matchingMode.addEventListener("click", () => setGameMode(MATCHING_MODE));
+ui.listeningMode.addEventListener("click", () => setGameMode(LISTENING_MODE));
 ui.categoryPackButtons.forEach(button => button.addEventListener("click", () => setCategoryPack(button.dataset.categoryPack)));
 ui.playerButtons.forEach(button => button.addEventListener("click", () => {
   if (button === ui.customPlayer) selectCustomPlayer();
@@ -1435,11 +1650,16 @@ ui.playerButtons.forEach(button => button.addEventListener("click", () => {
 }));
 ui.customPlayerName.addEventListener("input", updateCustomPlayer);
 ui.customPlayerName.addEventListener("keydown", event => {
-  if (event.key === "Enter" && selectedPlayer && (activeGameMode === LEARNING_MODE || activeGameMode === QUICK_MODE)) startGame();
+  if (event.key === "Enter" && selectedPlayer && (activeGameMode === LEARNING_MODE || activeGameMode === QUICK_MODE || activeGameMode === MATCHING_MODE || activeGameMode === LISTENING_MODE)) startGame();
 });
 ui.home.addEventListener("click", goHome);
 ui.matchingHome.addEventListener("click", goHome);
 ui.matchingPause.addEventListener("click", pauseGame);
+ui.listeningHome.addEventListener("click", goHome);
+ui.listeningPause.addEventListener("click", pauseGame);
+ui.listeningReplay.addEventListener("click", () => {
+  if (!isPaused && !isListeningSpeaking && !isListeningTransitioning && !isListeningRevealing) speakListeningWord();
+});
 ui.replay.addEventListener("click", () => {
   if (!isPaused && !isSpeaking) playQuestionSequence();
 });

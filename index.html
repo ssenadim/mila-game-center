@@ -48,6 +48,7 @@
           <button id="learning-mode-button" class="mode-button" type="button" aria-pressed="true"><strong>Öğrenme Modu</strong><span>Önce bütün seçenekleri dinle, sonra cevapla.</span></button>
           <button id="quick-mode-button" class="mode-button" type="button" aria-pressed="false"><strong>Hızlı Oyun</strong><span>Soruyu dinle, cevabı biliyorsan hemen seç.</span></button>
           <button id="matching-mode-button" class="mode-button matching-mode-button" type="button" aria-pressed="false"><strong>🧩 Eşini Bul</strong><span>Kartları aç ve aynı olanları bul.</span></button>
+          <button id="listening-mode-button" class="mode-button listening-mode-button" type="button" aria-pressed="false"><strong>👂 Dinle ve Seç</strong><span>Kelimeyi dinle, doğru resmi seç.</span></button>
         </div>
         <section id="category-pack-selection" class="category-pack-selection" aria-labelledby="category-pack-title">
           <h2 id="category-pack-title">Ne oynayalım?</h2>
@@ -97,6 +98,17 @@
         </header>
         <p id="matching-feedback" class="matching-feedback">İki kartı aç.</p>
         <div class="matching-board-wrap"><div id="matching-celebration" class="celebration" aria-hidden="true"></div><div id="matching-cards" class="matching-cards" aria-label="Eşleştirme kartları"></div></div>
+      </section>
+
+      <section id="listening-screen" class="screen listening-screen hidden" aria-live="polite" aria-labelledby="listening-title">
+        <header class="matching-header">
+          <button id="listening-home-button" class="icon-button" type="button" aria-label="Ana sayfaya dön">⌂</button>
+          <div><p class="eyebrow">DİNLE VE SEÇ</p><h2 id="listening-title">Sesi dinle!</h2></div>
+          <button id="listening-pause-button" class="icon-button" type="button" aria-label="Oyunu duraklat">⏸</button>
+        </header>
+        <button id="listening-replay-button" class="replay-button" type="button"><span aria-hidden="true">🔊</span> Tekrar dinle</button>
+        <p id="listening-feedback" class="matching-feedback">Dinle ve doğru resmi seç.</p>
+        <div class="listening-board-wrap"><div id="listening-celebration" class="celebration" aria-hidden="true"></div><div id="listening-cards" class="listening-cards" aria-label="Dinleme seçenekleri"></div></div>
       </section>
 
       <section id="summary-screen" class="screen summary-screen hidden" aria-live="polite" aria-labelledby="summary-title">
