@@ -34,6 +34,10 @@
           <label id="custom-player-label" class="custom-player-label hidden" for="custom-player-name">İsmini yaz</label>
           <input id="custom-player-name" class="custom-player-input hidden" type="text" maxlength="20" autocomplete="name" />
         </section>
+        <section id="daily-goal-card" class="daily-goal-card hidden" aria-live="polite">
+          <span class="daily-goal-icon" aria-hidden="true">☀️</span>
+          <div><strong>Günün Görevi</strong><p id="daily-goal-title"></p><span id="daily-goal-progress"></span></div>
+        </section>
         <button id="start-button" class="primary-button" type="button" disabled>Hadi başlayalım <span aria-hidden="true">✦</span></button>
         <button id="fullscreen-button" class="fullscreen-button" type="button">Tam Ekran</button>
         <button id="achievements-button" class="achievements-button" type="button">Kazandıklarım</button>
@@ -113,6 +117,9 @@
         <span id="achievement-popup-icon" class="achievement-popup-icon" aria-hidden="true">⭐</span>
         <p>Yeni başarı!</p>
         <strong id="achievement-popup-title"></strong>
+      </div>
+      <div id="daily-goal-popup" class="daily-goal-popup hidden" role="status" aria-live="polite">
+        <span aria-hidden="true">☀️</span><strong>Günün Görevi Tamamlandı!</strong>
       </div>
       <section id="pause-overlay" class="pause-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="pause-title">
         <div class="pause-card">

@@ -25,6 +25,7 @@ const PLAYER_STORAGE_KEY = "mila-learning-player";
 const PLAYER_PROGRESS_MIGRATION_STORAGE_KEY = "mila-learning-player-progress-migrated";
 const CATEGORY_PACK_STORAGE_KEY = "mila-learning-category-pack";
 const ACHIEVEMENT_STORAGE_KEY = "mila-learning-achievements";
+const DAILY_GOAL_STORAGE_KEY = "mila-learning-daily-goal";
 const DEFAULT_PLAYERS = ["Mila", "Açelya", "Alp", "Aslan Cemal", "Zeynep", "Nova", "Ata", "Hiranur"];
 const ACHIEVEMENTS = [
   { id: "first-star", icon: "⭐", title: "İlk Yıldız", description: "İlk doğru cevabını verdin." },
@@ -33,13 +34,19 @@ const ACHIEVEMENTS = [
   { id: "first-bonus", icon: "🎁", title: "İlk Bonus", description: "İlk bonus oyununu tamamladın." },
   { id: "fruit-explorer", icon: "🍎", title: "Meyve Kaşifi", description: "Tüm meyveleri doğru bildin." }
 ];
+const DAILY_GOALS = [
+  { id: "ten-correct", icon: "⭐", title: "10 doğru cevap ver", target: 10 },
+  { id: "streak-three", icon: "🎯", title: "3 doğru seri yap", target: 3 },
+  { id: "complete-bonus", icon: "🎁", title: "Bir Bonus Modu tamamla", target: 1 },
+  { id: "five-different", icon: "🍎", title: "5 farklı soruyu doğru bil", target: 5 }
+];
 
 const ui = {
   welcome: document.querySelector("#welcome-screen"), quiz: document.querySelector("#quiz-screen"), summary: document.querySelector("#summary-screen"),
   start: document.querySelector("#start-button"), fullscreen: document.querySelector("#fullscreen-button"), achievements: document.querySelector("#achievements-button"), welcomeSound: document.querySelector("#welcome-sound-button"), learningMode: document.querySelector("#learning-mode-button"), quickMode: document.querySelector("#quick-mode-button"), playerButtons: document.querySelectorAll(".player-button"), customPlayer: document.querySelector("#custom-player-button"), customPlayerLabel: document.querySelector("#custom-player-label"), customPlayerName: document.querySelector("#custom-player-name"), categoryPackButtons: document.querySelectorAll(".category-pack-button"), customCategoryOptions: document.querySelector("#custom-category-options"), home: document.querySelector("#home-button"), replay: document.querySelector("#question-sound-button"),
   category: document.querySelector("#category-pill"), visual: document.querySelector("#question-visual"), celebration: document.querySelector("#celebration"), mascot: document.querySelector("#game-mascot"), prompt: document.querySelector("#question-prompt"),
   answers: document.querySelector("#answers"), feedback: document.querySelector("#feedback"), next: document.querySelector("#next-button"), count: document.querySelector("#question-count"), score: document.querySelector("#score"), streak: document.querySelector("#streak"), progress: document.querySelector("#progress-fill"),
-  playAgain: document.querySelector("#play-again-button"), summaryHome: document.querySelector("#summary-home-button"), summaryStars: document.querySelector("#summary-stars"), summaryCorrect: document.querySelector("#summary-correct"), summaryStreak: document.querySelector("#summary-streak"), summaryCategory: document.querySelector("#summary-category"), summaryTitle: document.querySelector("#summary-title"), summaryCopy: document.querySelector(".summary-copy"), rewardPopup: document.querySelector("#reward-popup"), rewardSticker: document.querySelector("#reward-sticker"), achievementPopup: document.querySelector("#achievement-popup"), achievementPopupIcon: document.querySelector("#achievement-popup-icon"), achievementPopupTitle: document.querySelector("#achievement-popup-title"), achievementsModal: document.querySelector("#achievements-modal"), achievementsModalClose: document.querySelector("#achievements-modal-close"), achievementsList: document.querySelector("#achievements-list"), rewardsStarCount: document.querySelector("#rewards-star-count"), stickersList: document.querySelector("#stickers-list"), bonus: document.querySelector("#balloon-bonus"), balloonTarget: document.querySelector("#balloon-target"), balloons: document.querySelector("#balloons"), pause: document.querySelector("#pause-button"), bonusPause: document.querySelector("#bonus-pause-button"), pauseOverlay: document.querySelector("#pause-overlay"), resume: document.querySelector("#resume-button"), parentLogo: document.querySelector("#welcome-title"), parentDashboard: document.querySelector("#parent-dashboard"), parentDashboardClose: document.querySelector("#parent-dashboard-close"), parentDashboardTitle: document.querySelector("#parent-dashboard-title"), parentPlayTime: document.querySelector("#parent-play-time"), parentQuestions: document.querySelector("#parent-questions"), parentCorrect: document.querySelector("#parent-correct"), parentCategory: document.querySelector("#parent-category"), parentStreak: document.querySelector("#parent-streak"), parentDifficultWords: document.querySelector("#parent-difficult-words")
+  playAgain: document.querySelector("#play-again-button"), summaryHome: document.querySelector("#summary-home-button"), summaryStars: document.querySelector("#summary-stars"), summaryCorrect: document.querySelector("#summary-correct"), summaryStreak: document.querySelector("#summary-streak"), summaryCategory: document.querySelector("#summary-category"), summaryTitle: document.querySelector("#summary-title"), summaryCopy: document.querySelector(".summary-copy"), rewardPopup: document.querySelector("#reward-popup"), rewardSticker: document.querySelector("#reward-sticker"), achievementPopup: document.querySelector("#achievement-popup"), achievementPopupIcon: document.querySelector("#achievement-popup-icon"), achievementPopupTitle: document.querySelector("#achievement-popup-title"), dailyGoalCard: document.querySelector("#daily-goal-card"), dailyGoalTitle: document.querySelector("#daily-goal-title"), dailyGoalProgress: document.querySelector("#daily-goal-progress"), dailyGoalPopup: document.querySelector("#daily-goal-popup"), achievementsModal: document.querySelector("#achievements-modal"), achievementsModalClose: document.querySelector("#achievements-modal-close"), achievementsList: document.querySelector("#achievements-list"), rewardsStarCount: document.querySelector("#rewards-star-count"), stickersList: document.querySelector("#stickers-list"), bonus: document.querySelector("#balloon-bonus"), balloonTarget: document.querySelector("#balloon-target"), balloons: document.querySelector("#balloons"), pause: document.querySelector("#pause-button"), bonusPause: document.querySelector("#bonus-pause-button"), pauseOverlay: document.querySelector("#pause-overlay"), resume: document.querySelector("#resume-button"), parentLogo: document.querySelector("#welcome-title"), parentDashboard: document.querySelector("#parent-dashboard"), parentDashboardClose: document.querySelector("#parent-dashboard-close"), parentDashboardTitle: document.querySelector("#parent-dashboard-title"), parentPlayTime: document.querySelector("#parent-play-time"), parentQuestions: document.querySelector("#parent-questions"), parentCorrect: document.querySelector("#parent-correct"), parentCategory: document.querySelector("#parent-category"), parentStreak: document.querySelector("#parent-streak"), parentDifficultWords: document.querySelector("#parent-difficult-words")
 };
 
 const appUtils = window.MilaUtils;
@@ -65,6 +72,7 @@ let selectedPlayer = getSavedPlayer();
 migratePlayerProgress();
 let parentData = loadParentData();
 let achievementData = loadAchievementData();
+let dailyGoalData = loadDailyGoalData();
 let playStartedAt = 0;
 let parentHoldTimer;
 let sessionCelebrationTimer;
@@ -85,6 +93,9 @@ let shouldKeepWakeLock = false;
 let achievementQueue = [];
 let achievementPopupTimer;
 let isAchievementShowing = false;
+let dailyGoalPopupTimer;
+let isDailyGoalShowing = false;
+let pendingDailyGoalPopup = false;
 let correctAnswersSinceVoice = 2;
 let lastVoiceEncouragement = "";
 let wrongAttemptsForQuestion = 0;
@@ -154,6 +165,120 @@ function getAvailableAchievements() {
   return ACHIEVEMENTS.filter(achievement => achievement.id !== "fruit-explorer" || hasFruits);
 }
 
+function getTodayDate() {
+  const today = new Date();
+  return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+}
+
+function getDailyGoal(goalId) {
+  return DAILY_GOALS.find(goal => goal.id === goalId);
+}
+
+function getNextDailyGoal(previousGoalId) {
+  const availableGoals = DAILY_GOALS.filter(goal => goal.id !== previousGoalId);
+  return appUtils.randomItem(availableGoals.length ? availableGoals : DAILY_GOALS);
+}
+
+function loadDailyGoalData() {
+  try {
+    const storageKey = getPlayerStorageKey(DAILY_GOAL_STORAGE_KEY);
+    const savedData = storageKey ? JSON.parse(window.localStorage.getItem(storageKey)) : undefined;
+    return savedData && typeof savedData === "object" && !Array.isArray(savedData) ? savedData : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveDailyGoalData() {
+  try {
+    const storageKey = getPlayerStorageKey(DAILY_GOAL_STORAGE_KEY);
+    if (storageKey) window.localStorage.setItem(storageKey, JSON.stringify(dailyGoalData));
+  } catch {
+    // The game continues when local storage is unavailable.
+  }
+}
+
+function ensureDailyGoal() {
+  if (!selectedPlayer) return false;
+  const today = getTodayDate();
+  const currentGoal = getDailyGoal(dailyGoalData.goalId);
+  if (dailyGoalData.date !== today || !currentGoal) {
+    const nextGoal = getNextDailyGoal(currentGoal?.id ?? dailyGoalData.lastGoalId);
+    dailyGoalData = { date: today, goalId: nextGoal.id, lastGoalId: currentGoal?.id ?? dailyGoalData.lastGoalId, progress: 0, completed: false, answeredQuestionKeys: [] };
+    saveDailyGoalData();
+  }
+  return true;
+}
+
+function renderDailyGoal() {
+  const goal = getDailyGoal(dailyGoalData.goalId);
+  const hasGoal = Boolean(selectedPlayer && goal);
+  ui.dailyGoalCard.classList.toggle("hidden", !hasGoal);
+  if (!hasGoal) return;
+  const progress = Math.min(Number(dailyGoalData.progress) || 0, goal.target);
+  ui.dailyGoalTitle.textContent = `${goal.icon} ${goal.title}`;
+  ui.dailyGoalProgress.textContent = dailyGoalData.completed ? "Tamamlandı!" : `${progress}/${goal.target}`;
+  ui.dailyGoalCard.classList.toggle("completed", Boolean(dailyGoalData.completed));
+}
+
+function resetDailyGoalPopup() {
+  pendingDailyGoalPopup = false;
+  isDailyGoalShowing = false;
+  window.clearTimeout(dailyGoalPopupTimer);
+  ui.dailyGoalPopup.classList.add("hidden");
+}
+
+function showDailyGoalPopup() {
+  if (isAchievementShowing) {
+    pendingDailyGoalPopup = true;
+    return;
+  }
+  if (isDailyGoalShowing) return;
+  pendingDailyGoalPopup = false;
+  isDailyGoalShowing = true;
+  ui.dailyGoalPopup.classList.remove("hidden");
+  animations.celebrate();
+  window.clearTimeout(dailyGoalPopupTimer);
+  dailyGoalPopupTimer = window.setTimeout(() => {
+    ui.dailyGoalPopup.classList.add("hidden");
+    isDailyGoalShowing = false;
+  }, 1800);
+}
+
+function completeDailyGoal() {
+  if (dailyGoalData.completed) return;
+  dailyGoalData.completed = true;
+  saveDailyGoalData();
+  renderDailyGoal();
+  showDailyGoalPopup();
+}
+
+function updateDailyGoalOnCorrectAnswer() {
+  if (!ensureDailyGoal() || dailyGoalData.completed) return;
+  const goal = getDailyGoal(dailyGoalData.goalId);
+  if (!goal) return;
+  if (goal.id === "ten-correct") dailyGoalData.progress = Math.min(goal.target, (Number(dailyGoalData.progress) || 0) + 1);
+  if (goal.id === "streak-three") dailyGoalData.progress = Math.max(Number(dailyGoalData.progress) || 0, Math.min(streak, goal.target));
+  if (goal.id === "five-different") {
+    const questionKey = `${currentQuestion.category}|${currentQuestion.correct}`;
+    const answeredQuestionKeys = Array.isArray(dailyGoalData.answeredQuestionKeys) ? dailyGoalData.answeredQuestionKeys : [];
+    if (!answeredQuestionKeys.includes(questionKey)) answeredQuestionKeys.push(questionKey);
+    dailyGoalData.answeredQuestionKeys = answeredQuestionKeys;
+    dailyGoalData.progress = Math.min(goal.target, answeredQuestionKeys.length);
+  }
+  if ((Number(dailyGoalData.progress) || 0) >= goal.target) completeDailyGoal();
+  else {
+    saveDailyGoalData();
+    renderDailyGoal();
+  }
+}
+
+function updateDailyGoalOnBonusComplete() {
+  if (!ensureDailyGoal() || dailyGoalData.completed || dailyGoalData.goalId !== "complete-bonus") return;
+  dailyGoalData.progress = 1;
+  completeDailyGoal();
+}
+
 function resetAchievementPopup() {
   achievementQueue = [];
   isAchievementShowing = false;
@@ -173,6 +298,7 @@ function showNextAchievement() {
     ui.achievementPopup.classList.add("hidden");
     isAchievementShowing = false;
     showNextAchievement();
+    if (!isAchievementShowing && pendingDailyGoalPopup) showDailyGoalPopup();
   }, 1800);
 }
 
@@ -452,7 +578,11 @@ function selectPlayer(name) {
   saveSelectedPlayer();
   parentData = loadParentData();
   achievementData = loadAchievementData();
+  dailyGoalData = loadDailyGoalData();
   resetAchievementPopup();
+  resetDailyGoalPopup();
+  ensureDailyGoal();
+  renderDailyGoal();
   if (!ui.achievementsModal.classList.contains("hidden")) renderRewardsRoom();
   setGameMode(getSavedGameMode());
   restoreCategoryPack();
@@ -462,6 +592,9 @@ function selectPlayer(name) {
 
 function selectCustomPlayer() {
   selectedPlayer = undefined;
+  dailyGoalData = {};
+  resetDailyGoalPopup();
+  renderDailyGoal();
   ui.playerButtons.forEach(button => button.setAttribute("aria-pressed", "false"));
   ui.customPlayer.setAttribute("aria-pressed", "true");
   ui.customPlayerLabel.classList.remove("hidden");
@@ -480,11 +613,19 @@ function updateCustomPlayer() {
     saveSelectedPlayer();
     parentData = loadParentData();
     achievementData = loadAchievementData();
+    dailyGoalData = loadDailyGoalData();
     resetAchievementPopup();
+    resetDailyGoalPopup();
+    ensureDailyGoal();
+    renderDailyGoal();
     if (!ui.achievementsModal.classList.contains("hidden")) renderRewardsRoom();
     setGameMode(getSavedGameMode());
     restoreCategoryPack();
     renderCategoryPackSelection();
+  } else {
+    dailyGoalData = {};
+    resetDailyGoalPopup();
+    renderDailyGoal();
   }
   updateStartButton();
 }
@@ -875,6 +1016,7 @@ function popBalloon(balloon, answer) {
 
 function endBalloonBonus() {
   if (isPaused || !isBalloonBonusActive) return;
+  const completedBonus = pendingBonusEnd;
   isBalloonBonusActive = false;
   window.clearTimeout(balloonBonusTimer);
   window.clearTimeout(balloonPopTimer);
@@ -883,6 +1025,7 @@ function endBalloonBonus() {
   ui.bonus.classList.add("hidden");
   ui.quiz.classList.remove("hidden");
   unlockAchievement("first-bonus");
+  if (completedBonus) updateDailyGoalOnBonusComplete();
   if (questionNumber >= SESSION_QUESTION_COUNT) showSessionSummary();
   else showQuestion();
 }
@@ -1047,6 +1190,7 @@ async function handleCorrectAnswer(button) {
   engine.recordResult(currentQuestion, true);
   updateParentData(true);
   checkAchievements();
+  updateDailyGoalOnCorrectAnswer();
   saveLearningStats();
   saveGameProgress(true);
   triggerMascotReaction("mascot-celebrate");
@@ -1103,6 +1247,8 @@ function resetSession() {
 
 async function startGame() {
   if (isPaused || isStartingGame || !selectedPlayer || (activeGameMode !== LEARNING_MODE && activeGameMode !== QUICK_MODE) || (activeCategoryPack === "custom" && !getPackCategories().length)) return;
+  ensureDailyGoal();
+  renderDailyGoal();
   window.clearTimeout(sessionCelebrationTimer);
   isStartingGame = true;
   try {
@@ -1142,6 +1288,9 @@ function goHome() {
   pendingBonusEnd = false;
   isWelcomeSequenceActive = false;
   isRevealingCorrectAnswer = false;
+  ensureDailyGoal();
+  renderDailyGoal();
+  resetDailyGoalPopup();
   ui.quiz.classList.add("hidden");
   ui.bonus.classList.add("hidden");
   ui.summary.classList.add("hidden");
@@ -1200,6 +1349,8 @@ window.addEventListener("load", async () => {
   applyCategoryPack();
   renderCategoryPackSelection();
   renderPlayerSelection();
+  ensureDailyGoal();
+  renderDailyGoal();
   restoreStoredLearningStats();
   if (!restoreSavedProgress()) window.setTimeout(speakWelcome, 400);
 });
