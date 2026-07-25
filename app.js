@@ -24,6 +24,7 @@ const MATCHING_MODE = "matching";
 const LISTENING_MODE = "listening";
 const NUMBER_MATCH_MODE = "number-match";
 const COLOR_MATCH_MODE = "color-match";
+const SORTING_MODE = "sorting";
 const LISTENING_SESSION_ROUNDS = 5;
 const NUMBER_MATCH_SESSION_ROUNDS = 10;
 const COLOR_MATCH_SESSION_ROUNDS = 10;
@@ -32,6 +33,11 @@ const COLOR_MATCH_COLORS = [
   { name: "Red", className: "red" }, { name: "Blue", className: "blue" }, { name: "Green", className: "green" }, { name: "Yellow", className: "yellow" },
   { name: "Orange", className: "orange" }, { name: "Purple", className: "purple" }, { name: "Black", className: "black" }, { name: "White", className: "white" }
 ];
+const SORTING_ITEMS = [
+  { name: "Apple", visual: "🍎", group: "fruits" }, { name: "Banana", visual: "🍌", group: "fruits" }, { name: "Orange", visual: "🍊", group: "fruits" }, { name: "Strawberry", visual: "🍓", group: "fruits" },
+  { name: "Dog", visual: "🐶", group: "animals" }, { name: "Cat", visual: "🐱", group: "animals" }, { name: "Lion", visual: "🦁", group: "animals" }, { name: "Elephant", visual: "🐘", group: "animals" }
+];
+const SORTING_DESTINATIONS = { fruits: { icon: "🍎", label: "Meyveler" }, animals: { icon: "🐾", label: "Hayvanlar" } };
 const LISTENING_CATEGORIES = ["Fruits", "Animals", "Colors", "Numbers"];
 const LISTENING_VISUALS = {
   Apple: "🍎", Banana: "🍌", Grape: "🍇", Grapes: "🍇", Orange: "🍊", Lemon: "🍋", Blueberry: "🫐", Kiwi: "🥝", Cherry: "🍒", Pear: "🍐", Peach: "🍑",
@@ -62,7 +68,7 @@ const DAILY_GOALS = [
 
 const ui = {
   welcome: document.querySelector("#welcome-screen"), quiz: document.querySelector("#quiz-screen"), summary: document.querySelector("#summary-screen"),
-  start: document.querySelector("#start-button"), fullscreen: document.querySelector("#fullscreen-button"), achievements: document.querySelector("#achievements-button"), welcomeSound: document.querySelector("#welcome-sound-button"), learningMode: document.querySelector("#learning-mode-button"), quickMode: document.querySelector("#quick-mode-button"), matchingMode: document.querySelector("#matching-mode-button"), listeningMode: document.querySelector("#listening-mode-button"), numberMatchMode: document.querySelector("#number-match-mode-button"), colorMatchMode: document.querySelector("#color-match-mode-button"), playerButtons: document.querySelectorAll(".player-button"), customPlayer: document.querySelector("#custom-player-button"), customPlayerLabel: document.querySelector("#custom-player-label"), customPlayerName: document.querySelector("#custom-player-name"), categoryPackButtons: document.querySelectorAll(".category-pack-button"), customCategoryOptions: document.querySelector("#custom-category-options"), home: document.querySelector("#home-button"), replay: document.querySelector("#question-sound-button"), matching: document.querySelector("#matching-screen"), matchingCards: document.querySelector("#matching-cards"), matchingCelebration: document.querySelector("#matching-celebration"), matchingFeedback: document.querySelector("#matching-feedback"), matchingHome: document.querySelector("#matching-home-button"), matchingPause: document.querySelector("#matching-pause-button"), listening: document.querySelector("#listening-screen"), listeningCards: document.querySelector("#listening-cards"), listeningCelebration: document.querySelector("#listening-celebration"), listeningFeedback: document.querySelector("#listening-feedback"), listeningReplay: document.querySelector("#listening-replay-button"), listeningHome: document.querySelector("#listening-home-button"), listeningPause: document.querySelector("#listening-pause-button"), numberMatch: document.querySelector("#number-match-screen"), numberMatchCards: document.querySelector("#number-match-cards"), numberMatchCelebration: document.querySelector("#number-match-celebration"), numberMatchFeedback: document.querySelector("#number-match-feedback"), numberMatchReplay: document.querySelector("#number-match-replay-button"), numberMatchHome: document.querySelector("#number-match-home-button"), numberMatchPause: document.querySelector("#number-match-pause-button"), colorMatch: document.querySelector("#color-match-screen"), colorMatchCards: document.querySelector("#color-match-cards"), colorMatchCelebration: document.querySelector("#color-match-celebration"), colorMatchFeedback: document.querySelector("#color-match-feedback"), colorMatchPrompt: document.querySelector("#color-match-prompt"), colorMatchReplay: document.querySelector("#color-match-replay-button"), colorMatchHome: document.querySelector("#color-match-home-button"), colorMatchPause: document.querySelector("#color-match-pause-button"),
+  start: document.querySelector("#start-button"), fullscreen: document.querySelector("#fullscreen-button"), achievements: document.querySelector("#achievements-button"), welcomeSound: document.querySelector("#welcome-sound-button"), learningMode: document.querySelector("#learning-mode-button"), quickMode: document.querySelector("#quick-mode-button"), matchingMode: document.querySelector("#matching-mode-button"), listeningMode: document.querySelector("#listening-mode-button"), numberMatchMode: document.querySelector("#number-match-mode-button"), colorMatchMode: document.querySelector("#color-match-mode-button"), sortingMode: document.querySelector("#sorting-mode-button"), playerButtons: document.querySelectorAll(".player-button"), customPlayer: document.querySelector("#custom-player-button"), customPlayerLabel: document.querySelector("#custom-player-label"), customPlayerName: document.querySelector("#custom-player-name"), categoryPackButtons: document.querySelectorAll(".category-pack-button"), customCategoryOptions: document.querySelector("#custom-category-options"), home: document.querySelector("#home-button"), replay: document.querySelector("#question-sound-button"), matching: document.querySelector("#matching-screen"), matchingCards: document.querySelector("#matching-cards"), matchingCelebration: document.querySelector("#matching-celebration"), matchingFeedback: document.querySelector("#matching-feedback"), matchingHome: document.querySelector("#matching-home-button"), matchingPause: document.querySelector("#matching-pause-button"), listening: document.querySelector("#listening-screen"), listeningCards: document.querySelector("#listening-cards"), listeningCelebration: document.querySelector("#listening-celebration"), listeningFeedback: document.querySelector("#listening-feedback"), listeningReplay: document.querySelector("#listening-replay-button"), listeningHome: document.querySelector("#listening-home-button"), listeningPause: document.querySelector("#listening-pause-button"), numberMatch: document.querySelector("#number-match-screen"), numberMatchCards: document.querySelector("#number-match-cards"), numberMatchCelebration: document.querySelector("#number-match-celebration"), numberMatchFeedback: document.querySelector("#number-match-feedback"), numberMatchReplay: document.querySelector("#number-match-replay-button"), numberMatchHome: document.querySelector("#number-match-home-button"), numberMatchPause: document.querySelector("#number-match-pause-button"), colorMatch: document.querySelector("#color-match-screen"), colorMatchCards: document.querySelector("#color-match-cards"), colorMatchCelebration: document.querySelector("#color-match-celebration"), colorMatchFeedback: document.querySelector("#color-match-feedback"), colorMatchPrompt: document.querySelector("#color-match-prompt"), colorMatchReplay: document.querySelector("#color-match-replay-button"), colorMatchHome: document.querySelector("#color-match-home-button"), colorMatchPause: document.querySelector("#color-match-pause-button"), sorting: document.querySelector("#sorting-screen"), sortingItems: document.querySelector("#sorting-items"), sortingDestinations: document.querySelector("#sorting-destinations"), sortingCelebration: document.querySelector("#sorting-celebration"), sortingFeedback: document.querySelector("#sorting-feedback"), sortingHome: document.querySelector("#sorting-home-button"), sortingPause: document.querySelector("#sorting-pause-button"), sortingFinishHome: document.querySelector("#sorting-finish-home-button"),
   category: document.querySelector("#category-pill"), visual: document.querySelector("#question-visual"), celebration: document.querySelector("#celebration"), mascot: document.querySelector("#game-mascot"), prompt: document.querySelector("#question-prompt"),
   answers: document.querySelector("#answers"), feedback: document.querySelector("#feedback"), next: document.querySelector("#next-button"), count: document.querySelector("#question-count"), score: document.querySelector("#score"), streak: document.querySelector("#streak"), progress: document.querySelector("#progress-fill"),
   playAgain: document.querySelector("#play-again-button"), summaryHome: document.querySelector("#summary-home-button"), summaryStars: document.querySelector("#summary-stars"), summaryCorrect: document.querySelector("#summary-correct"), summaryStreak: document.querySelector("#summary-streak"), summaryCategory: document.querySelector("#summary-category"), summaryTitle: document.querySelector("#summary-title"), summaryCopy: document.querySelector(".summary-copy"), rewardPopup: document.querySelector("#reward-popup"), rewardSticker: document.querySelector("#reward-sticker"), achievementPopup: document.querySelector("#achievement-popup"), achievementPopupIcon: document.querySelector("#achievement-popup-icon"), achievementPopupTitle: document.querySelector("#achievement-popup-title"), dailyGoalCard: document.querySelector("#daily-goal-card"), dailyGoalTitle: document.querySelector("#daily-goal-title"), dailyGoalProgress: document.querySelector("#daily-goal-progress"), dailyGoalPopup: document.querySelector("#daily-goal-popup"), achievementsModal: document.querySelector("#achievements-modal"), achievementsModalClose: document.querySelector("#achievements-modal-close"), achievementsList: document.querySelector("#achievements-list"), rewardsStarCount: document.querySelector("#rewards-star-count"), stickersList: document.querySelector("#stickers-list"), bonus: document.querySelector("#balloon-bonus"), balloonTarget: document.querySelector("#balloon-target"), balloons: document.querySelector("#balloons"), pause: document.querySelector("#pause-button"), bonusPause: document.querySelector("#bonus-pause-button"), pauseOverlay: document.querySelector("#pause-overlay"), resume: document.querySelector("#resume-button"), parentLogo: document.querySelector("#welcome-title"), parentDashboard: document.querySelector("#parent-dashboard"), parentDashboardClose: document.querySelector("#parent-dashboard-close"), parentDashboardTitle: document.querySelector("#parent-dashboard-title"), parentPlayTime: document.querySelector("#parent-play-time"), parentQuestions: document.querySelector("#parent-questions"), parentCorrect: document.querySelector("#parent-correct"), parentCategory: document.querySelector("#parent-category"), parentStreak: document.querySelector("#parent-streak"), parentDifficultWords: document.querySelector("#parent-difficult-words")
@@ -164,6 +170,13 @@ let isColorMatchRevealing = false;
 let colorMatchWrongIndex;
 let isColorMatchWrongFeedback = false;
 let colorMatchCompletionTimer;
+let isSortingGameActive = false;
+let sortingItems = [];
+let sortingDestinationOrder = [];
+let selectedSortingItem;
+let activeSortingDrag;
+let isSortingProcessing = false;
+let isSortingCompleted = false;
 
 function getValidPlayerName(name) {
   const playerName = typeof name === "string" ? name.trim() : "";
@@ -583,8 +596,8 @@ function applyCategoryPack() {
 }
 
 function updateStartButton() {
-  const hasGameMode = activeGameMode === LEARNING_MODE || activeGameMode === QUICK_MODE || activeGameMode === MATCHING_MODE || activeGameMode === LISTENING_MODE || activeGameMode === NUMBER_MATCH_MODE || activeGameMode === COLOR_MATCH_MODE;
-  ui.start.disabled = !selectedPlayer || !hasGameMode || (activeGameMode !== MATCHING_MODE && activeGameMode !== LISTENING_MODE && activeGameMode !== NUMBER_MATCH_MODE && activeGameMode !== COLOR_MATCH_MODE && activeCategoryPack === "custom" && !getPackCategories().length);
+  const hasGameMode = activeGameMode === LEARNING_MODE || activeGameMode === QUICK_MODE || activeGameMode === MATCHING_MODE || activeGameMode === LISTENING_MODE || activeGameMode === NUMBER_MATCH_MODE || activeGameMode === COLOR_MATCH_MODE || activeGameMode === SORTING_MODE;
+  ui.start.disabled = !selectedPlayer || !hasGameMode || (activeGameMode !== MATCHING_MODE && activeGameMode !== LISTENING_MODE && activeGameMode !== NUMBER_MATCH_MODE && activeGameMode !== COLOR_MATCH_MODE && activeGameMode !== SORTING_MODE && activeCategoryPack === "custom" && !getPackCategories().length);
 }
 
 function getPersonalizedWelcomeMessage() {
@@ -697,14 +710,14 @@ function getSavedGameMode() {
   try {
     const storageKey = getPlayerStorageKey(GAME_MODE_STORAGE_KEY);
     const savedMode = storageKey && window.localStorage.getItem(storageKey);
-    return savedMode === QUICK_MODE || savedMode === LEARNING_MODE || savedMode === MATCHING_MODE || savedMode === LISTENING_MODE || savedMode === NUMBER_MATCH_MODE || savedMode === COLOR_MATCH_MODE ? savedMode : LEARNING_MODE;
+    return savedMode === QUICK_MODE || savedMode === LEARNING_MODE || savedMode === MATCHING_MODE || savedMode === LISTENING_MODE || savedMode === NUMBER_MATCH_MODE || savedMode === COLOR_MATCH_MODE || savedMode === SORTING_MODE ? savedMode : LEARNING_MODE;
   } catch {
     return LEARNING_MODE;
   }
 }
 
 function setGameMode(mode) {
-  if (isPaused || (mode !== LEARNING_MODE && mode !== QUICK_MODE && mode !== MATCHING_MODE && mode !== LISTENING_MODE && mode !== NUMBER_MATCH_MODE && mode !== COLOR_MATCH_MODE)) return;
+  if (isPaused || (mode !== LEARNING_MODE && mode !== QUICK_MODE && mode !== MATCHING_MODE && mode !== LISTENING_MODE && mode !== NUMBER_MATCH_MODE && mode !== COLOR_MATCH_MODE && mode !== SORTING_MODE)) return;
   activeGameMode = mode;
   ui.learningMode.setAttribute("aria-pressed", String(mode === LEARNING_MODE));
   ui.quickMode.setAttribute("aria-pressed", String(mode === QUICK_MODE));
@@ -712,6 +725,7 @@ function setGameMode(mode) {
   ui.listeningMode.setAttribute("aria-pressed", String(mode === LISTENING_MODE));
   ui.numberMatchMode.setAttribute("aria-pressed", String(mode === NUMBER_MATCH_MODE));
   ui.colorMatchMode.setAttribute("aria-pressed", String(mode === COLOR_MATCH_MODE));
+  ui.sortingMode.setAttribute("aria-pressed", String(mode === SORTING_MODE));
   try {
     const storageKey = getPlayerStorageKey(GAME_MODE_STORAGE_KEY);
     if (storageKey) window.localStorage.setItem(storageKey, mode);
@@ -1416,6 +1430,144 @@ function startColorMatchGame() {
   showColorMatchRound();
 }
 
+function clearSortingInteraction() {
+  if (activeSortingDrag?.button?.hasPointerCapture(activeSortingDrag.pointerId)) activeSortingDrag.button.releasePointerCapture(activeSortingDrag.pointerId);
+  activeSortingDrag = undefined;
+  selectedSortingItem = undefined;
+}
+
+function renderSortingGame() {
+  ui.sortingItems.textContent = "";
+  ui.sortingDestinations.textContent = "";
+  const canInteract = isSortingGameActive && !isPaused && !isSortingProcessing;
+  sortingItems.filter(item => !item.completed).forEach(item => {
+    const button = document.createElement("button");
+    button.className = `sorting-item${selectedSortingItem === item ? " selected" : ""}`;
+    button.type = "button";
+    button.dataset.sortingItem = item.id;
+    button.setAttribute("aria-label", item.name);
+    button.innerHTML = `<span aria-hidden="true">${item.visual}</span>${item.name}`;
+    button.disabled = !canInteract;
+    button.addEventListener("pointerdown", event => startSortingPointer(event, item, button));
+    button.addEventListener("pointermove", moveSortingPointer);
+    button.addEventListener("pointerup", endSortingPointer);
+    button.addEventListener("pointercancel", cancelSortingPointer);
+    ui.sortingItems.append(button);
+  });
+  sortingDestinationOrder.forEach(group => {
+    const destination = SORTING_DESTINATIONS[group];
+    const button = document.createElement("button");
+    const completedItems = sortingItems.filter(item => item.completed && item.group === group);
+    button.className = `sorting-destination${selectedSortingItem ? " selected-target" : ""}${completedItems.length ? " completed-target" : ""}`;
+    button.type = "button";
+    button.dataset.sortingDestination = group;
+    button.setAttribute("aria-label", destination.label);
+    button.disabled = !canInteract;
+    button.innerHTML = `<span aria-hidden="true">${destination.icon}</span><strong>${destination.label}</strong><div class="sorting-sorted-items">${completedItems.map(item => `<span class="sorting-sorted-item" aria-label="${item.name}">${item.visual}</span>`).join("")}</div>`;
+    button.addEventListener("click", () => {
+      if (selectedSortingItem) placeSortingItem(selectedSortingItem, group);
+    });
+    ui.sortingDestinations.append(button);
+  });
+}
+
+function startSortingPointer(event, item, button) {
+  if (!isSortingGameActive || isPaused || isSortingProcessing || item.completed || activeSortingDrag) return;
+  activeSortingDrag = { item, button, pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, dragging: false };
+  button.setPointerCapture?.(event.pointerId);
+}
+
+function moveSortingPointer(event) {
+  if (!activeSortingDrag || event.pointerId !== activeSortingDrag.pointerId || isSortingProcessing) return;
+  const moved = Math.hypot(event.clientX - activeSortingDrag.startX, event.clientY - activeSortingDrag.startY) > 8;
+  if (!moved) return;
+  activeSortingDrag.dragging = true;
+  activeSortingDrag.button.classList.add("dragging");
+  event.preventDefault();
+}
+
+function endSortingPointer(event) {
+  if (!activeSortingDrag || event.pointerId !== activeSortingDrag.pointerId) return;
+  const { item, button, dragging } = activeSortingDrag;
+  if (button.hasPointerCapture?.(event.pointerId)) button.releasePointerCapture(event.pointerId);
+  activeSortingDrag = undefined;
+  button.classList.remove("dragging");
+  if (!isSortingGameActive || isPaused || isSortingProcessing) return;
+  if (!dragging) {
+    selectedSortingItem = selectedSortingItem === item ? undefined : item;
+    renderSortingGame();
+    return;
+  }
+  const target = document.elementFromPoint(event.clientX, event.clientY)?.closest("[data-sorting-destination]");
+  if (target) placeSortingItem(item, target.dataset.sortingDestination);
+}
+
+function cancelSortingPointer(event) {
+  if (!activeSortingDrag || event.pointerId !== activeSortingDrag.pointerId) return;
+  activeSortingDrag.button.classList.remove("dragging");
+  clearSortingInteraction();
+  renderSortingGame();
+}
+
+function placeSortingItem(item, destinationGroup) {
+  if (!isSortingGameActive || isPaused || isSortingProcessing || !item || item.completed || !SORTING_DESTINATIONS[destinationGroup]) return;
+  isSortingProcessing = true;
+  clearSortingInteraction();
+  if (item.group === destinationGroup) {
+    item.completed = true;
+    ui.sortingFeedback.textContent = "Harika, doğru kutu!";
+    audio.playSuccess();
+    if (sortingItems.every(sortingItem => sortingItem.completed)) {
+      finishSortingGame();
+      return;
+    }
+  } else {
+    ui.sortingFeedback.textContent = getRetryMessage();
+  }
+  isSortingProcessing = false;
+  renderSortingGame();
+}
+
+function finishSortingGame() {
+  if (!isSortingGameActive) return;
+  isSortingGameActive = false;
+  isSortingCompleted = true;
+  clearSortingInteraction();
+  ui.sortingFeedback.textContent = "Harika! Tüm nesneleri grupladın!";
+  ui.sortingFinishHome.classList.remove("hidden");
+  animations.celebrate();
+  ui.sortingCelebration.innerHTML = ui.celebration.innerHTML;
+  ui.sortingCelebration.classList.remove("burst");
+  void ui.sortingCelebration.offsetWidth;
+  ui.sortingCelebration.classList.add("burst");
+  audio.playCelebration();
+  renderSortingGame();
+}
+
+function startSortingGame() {
+  clearSortingInteraction();
+  isSortingGameActive = true;
+  isSortingProcessing = false;
+  isSortingCompleted = false;
+  sortingItems = appUtils.shuffle(SORTING_ITEMS.map((item, index) => ({ ...item, id: `sorting-${index}`, completed: false })));
+  sortingDestinationOrder = appUtils.shuffle(["fruits", "animals"]);
+  clearSpeech();
+  ui.welcome.classList.add("hidden");
+  ui.quiz.classList.add("hidden");
+  ui.matching.classList.add("hidden");
+  ui.listening.classList.add("hidden");
+  ui.numberMatch.classList.add("hidden");
+  ui.colorMatch.classList.add("hidden");
+  ui.summary.classList.add("hidden");
+  ui.bonus.classList.add("hidden");
+  ui.sorting.classList.remove("hidden");
+  ui.sortingFinishHome.classList.add("hidden");
+  ui.sortingFeedback.textContent = "Bir nesneye dokun, sonra kutusuna dokun. İstersen sürükle.";
+  renderSortingGame();
+  startPlayTime();
+  startWakeLock();
+}
+
 function renderParentDashboard() {
   const activePlayTime = playStartedAt ? Date.now() - playStartedAt : 0;
   const minutes = Math.floor((parentData.playTime + activePlayTime) / 60000);
@@ -1482,10 +1634,12 @@ function setGameActionsEnabled(enabled) {
   ui.numberMatchPause.disabled = !enabled;
   ui.colorMatchHome.disabled = !enabled;
   ui.colorMatchPause.disabled = !enabled;
+  ui.sortingHome.disabled = !enabled;
+  ui.sortingPause.disabled = !enabled;
 }
 
 function pauseGame() {
-  if (isPaused || (ui.quiz.classList.contains("hidden") && !isBalloonBonusActive && !isMatchingGameActive && !isListeningGameActive && !isNumberMatchGameActive && !isColorMatchGameActive)) return;
+  if (isPaused || (ui.quiz.classList.contains("hidden") && !isBalloonBonusActive && !isMatchingGameActive && !isListeningGameActive && !isNumberMatchGameActive && !isColorMatchGameActive && !isSortingGameActive)) return;
   isPaused = true;
   clearSpeech();
   stopPlayTime();
@@ -1504,6 +1658,10 @@ function pauseGame() {
   if (isListeningGameActive) renderListeningCards();
   if (isNumberMatchGameActive) renderNumberMatchCards();
   if (isColorMatchGameActive) renderColorMatchCards();
+  if (isSortingGameActive) {
+    clearSortingInteraction();
+    renderSortingGame();
+  }
   ui.pauseOverlay.classList.remove("hidden");
   ui.resume.focus();
 }
@@ -1582,6 +1740,10 @@ function resumeGame() {
     }
     if (isColorMatchSpeechRound) speakColorMatchColor();
     else renderColorMatchCards();
+    return;
+  }
+  if (isSortingGameActive) {
+    renderSortingGame();
     return;
   }
   if (isWelcomeSequenceActive) {
@@ -1925,7 +2087,7 @@ function resetSession() {
 }
 
 async function startGame() {
-  if (isPaused || isStartingGame || !selectedPlayer || (activeGameMode !== LEARNING_MODE && activeGameMode !== QUICK_MODE && activeGameMode !== MATCHING_MODE && activeGameMode !== LISTENING_MODE && activeGameMode !== NUMBER_MATCH_MODE && activeGameMode !== COLOR_MATCH_MODE) || (activeGameMode !== MATCHING_MODE && activeGameMode !== LISTENING_MODE && activeGameMode !== NUMBER_MATCH_MODE && activeGameMode !== COLOR_MATCH_MODE && activeCategoryPack === "custom" && !getPackCategories().length)) return;
+  if (isPaused || isStartingGame || !selectedPlayer || (activeGameMode !== LEARNING_MODE && activeGameMode !== QUICK_MODE && activeGameMode !== MATCHING_MODE && activeGameMode !== LISTENING_MODE && activeGameMode !== NUMBER_MATCH_MODE && activeGameMode !== COLOR_MATCH_MODE && activeGameMode !== SORTING_MODE) || (activeGameMode !== MATCHING_MODE && activeGameMode !== LISTENING_MODE && activeGameMode !== NUMBER_MATCH_MODE && activeGameMode !== COLOR_MATCH_MODE && activeGameMode !== SORTING_MODE && activeCategoryPack === "custom" && !getPackCategories().length)) return;
   ensureDailyGoal();
   renderDailyGoal();
   window.clearTimeout(sessionCelebrationTimer);
@@ -1946,6 +2108,10 @@ async function startGame() {
     }
     if (activeGameMode === COLOR_MATCH_MODE) {
       startColorMatchGame();
+      return;
+    }
+    if (activeGameMode === SORTING_MODE) {
+      startSortingGame();
       return;
     }
     restoreStoredLearningStats();
@@ -2017,6 +2183,12 @@ function goHome() {
   isColorMatchRevealing = false;
   colorMatchWrongIndex = undefined;
   isColorMatchWrongFeedback = false;
+  clearSortingInteraction();
+  isSortingGameActive = false;
+  isSortingProcessing = false;
+  isSortingCompleted = false;
+  sortingItems = [];
+  sortingDestinationOrder = [];
   ensureDailyGoal();
   renderDailyGoal();
   resetDailyGoalPopup();
@@ -2027,6 +2199,7 @@ function goHome() {
   ui.listening.classList.add("hidden");
   ui.numberMatch.classList.add("hidden");
   ui.colorMatch.classList.add("hidden");
+  ui.sorting.classList.add("hidden");
   ui.welcome.classList.remove("hidden");
   speakWelcome();
 }
@@ -2041,6 +2214,7 @@ ui.matchingMode.addEventListener("click", () => setGameMode(MATCHING_MODE));
 ui.listeningMode.addEventListener("click", () => setGameMode(LISTENING_MODE));
 ui.numberMatchMode.addEventListener("click", () => setGameMode(NUMBER_MATCH_MODE));
 ui.colorMatchMode.addEventListener("click", () => setGameMode(COLOR_MATCH_MODE));
+ui.sortingMode.addEventListener("click", () => setGameMode(SORTING_MODE));
 ui.categoryPackButtons.forEach(button => button.addEventListener("click", () => setCategoryPack(button.dataset.categoryPack)));
 ui.playerButtons.forEach(button => button.addEventListener("click", () => {
   if (button === ui.customPlayer) selectCustomPlayer();
@@ -2048,7 +2222,7 @@ ui.playerButtons.forEach(button => button.addEventListener("click", () => {
 }));
 ui.customPlayerName.addEventListener("input", updateCustomPlayer);
 ui.customPlayerName.addEventListener("keydown", event => {
-  if (event.key === "Enter" && selectedPlayer && (activeGameMode === LEARNING_MODE || activeGameMode === QUICK_MODE || activeGameMode === MATCHING_MODE || activeGameMode === LISTENING_MODE || activeGameMode === NUMBER_MATCH_MODE || activeGameMode === COLOR_MATCH_MODE)) startGame();
+  if (event.key === "Enter" && selectedPlayer && (activeGameMode === LEARNING_MODE || activeGameMode === QUICK_MODE || activeGameMode === MATCHING_MODE || activeGameMode === LISTENING_MODE || activeGameMode === NUMBER_MATCH_MODE || activeGameMode === COLOR_MATCH_MODE || activeGameMode === SORTING_MODE)) startGame();
 });
 ui.home.addEventListener("click", goHome);
 ui.matchingHome.addEventListener("click", goHome);
@@ -2059,6 +2233,9 @@ ui.numberMatchHome.addEventListener("click", goHome);
 ui.numberMatchPause.addEventListener("click", pauseGame);
 ui.colorMatchHome.addEventListener("click", goHome);
 ui.colorMatchPause.addEventListener("click", pauseGame);
+ui.sortingHome.addEventListener("click", goHome);
+ui.sortingPause.addEventListener("click", pauseGame);
+ui.sortingFinishHome.addEventListener("click", goHome);
 ui.listeningReplay.addEventListener("click", () => {
   if (!isPaused && !isListeningSpeaking && !isListeningTransitioning && !isListeningRevealing) speakListeningWord();
 });
