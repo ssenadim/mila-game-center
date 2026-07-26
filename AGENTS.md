@@ -44,6 +44,12 @@ The project is already working and is developed through small incremental update
 * Preserve responsive behavior on desktop, mobile and tablet.
 * Avoid unnecessary scrolling and horizontal overflow.
 * Turkish characters and player names must display safely.
+* Do not use an ambiguous generic "Geri" action inside child-facing game screens.
+* Child-facing navigation actions must clearly communicate their destination; prefer explicit labels such as "Ana Sayfa", "Oyunlar" or "Öğrenme Yolu".
+* Keep navigation placement consistent across similar game screens.
+* Do not rely only on the browser back action for child-facing navigation.
+* Child-facing replay actions should use understandable text labels such as "Yeni Oyun" or "Tekrar Oyna".
+* Do not rely on an icon without a text label when an action creates a new session.
 
 ## Speech
 
@@ -57,6 +63,9 @@ The project is already working and is developed through small incremental update
 * Do not hardcode “Mila” as the active player.
 * If no player name is available, use a generic message rather than a specific default name.
 * Do not add speech to every correct answer unless explicitly requested.
+* When a child must read a word, label or question to continue, consider providing a nearby listen action through the existing speech system.
+* A listen action must read only the relevant current content.
+* Changing questions or leaving the screen must cancel obsolete listen speech.
 
 ## Gameplay
 
@@ -67,6 +76,13 @@ The project is already working and is developed through small incremental update
 * Prevent repeated taps from producing duplicate scoring or transitions.
 * Keep question content within the currently selected category pack.
 * Do not generate duplicate answers or questions without a valid correct answer.
+* Timers may show how long an activity took when this improves the experience.
+* Do not turn completion time into pressure, ranking, pass/fail or competition unless a future sprint explicitly requests it.
+* Prefer showing elapsed time only after activity completion.
+* Before navigating between game states or screens, clear obsolete timers, callbacks, speech, feedback, celebrations and animation state.
+* Previous-screen feedback or animations must never visually overlap the next screen.
+* Do not solve transition overlap only by increasing timeout durations; coordinate state cleanup and transition timing explicitly.
+* Starting a new game must reset temporary session state cleanly without clearing permanent player progress.
 
 ## Browser APIs
 
@@ -93,3 +109,5 @@ After making changes:
 5. Report any limitation that could not be resolved.
 
 Do not implement recommendations or optional future work unless explicitly requested.
+
+These are repository-wide interaction principles. Do not add game-specific dimensions, category lists, content values or sprint implementation details to this file.

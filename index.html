@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=6.7" />
   </head>
   <body>
     <main class="game-shell">
@@ -108,10 +108,11 @@
             <div class="progress-bar" aria-label="10 soruluk tur ilerlemesi"><span id="progress-fill"></span></div>
             <p id="streak" class="streak" aria-live="polite">🔥 Seri: 0</p>
           </div>
+          <button id="home-button" class="game-destination-button" type="button">⌂ Ana Sayfa</button>
           <button id="pause-button" class="icon-button pause-button" type="button" aria-label="Oyunu duraklat">⏸</button>
         </header>
         <div id="category-pill" class="category-pill">Renkler</div>
-        <button id="question-sound-button" class="replay-button" type="button" aria-label="Soruyu tekrar dinle"><span aria-hidden="true">🔊</span> Soruyu dinle</button>
+        <button id="question-sound-button" class="replay-button" type="button" aria-label="Soruyu tekrar dinle"><span aria-hidden="true">🔊</span> Tekrar Dinle</button>
         <div class="question-card">
           <div id="question-visual" class="question-visual" aria-hidden="true"></div>
           <div id="celebration" class="celebration" aria-hidden="true"></div>
@@ -125,18 +126,32 @@
       <section id="matching-screen" class="screen matching-screen hidden" aria-live="polite" aria-labelledby="matching-title">
         <header class="matching-header">
           <div><p class="eyebrow">EŞİNİ BUL</p><h2 id="matching-title">Aynı kartları bul!</h2></div>
+          <button id="matching-home-button" class="game-destination-button" type="button">🎮 Oyunlar</button>
           <button id="matching-pause-button" class="icon-button" type="button" aria-label="Oyunu duraklat">⏸</button>
         </header>
-        <p id="matching-feedback" class="matching-feedback">İki kartı aç.</p>
-        <div class="matching-board-wrap"><div id="matching-celebration" class="celebration" aria-hidden="true"></div><div id="matching-cards" class="matching-cards" aria-label="Eşleştirme kartları"></div></div>
+        <div id="matching-category-selection" class="matching-category-selection">
+          <p>Hangi kartlarla oynayalım?</p>
+          <div id="matching-category-options" class="matching-category-options" aria-label="Eşini Bul kategorileri"></div>
+        </div>
+        <div id="matching-game-area" class="hidden">
+          <p id="matching-category-label" class="category-pill"></p>
+          <p id="matching-feedback" class="matching-feedback">İki kartı aç.</p>
+          <div class="matching-board-wrap"><div id="matching-celebration" class="celebration" aria-hidden="true"></div><div id="matching-cards" class="matching-cards" aria-label="Eşleştirme kartları"></div></div>
+          <div id="matching-completion-actions" class="matching-completion-actions hidden">
+            <p id="matching-completion-time"></p>
+            <button id="matching-replay-button" class="primary-button" type="button">Tekrar Oyna <span aria-hidden="true">↻</span></button>
+            <button id="matching-categories-button" class="sound-button" type="button">Kategoriler</button>
+          </div>
+        </div>
       </section>
 
       <section id="listening-screen" class="screen listening-screen hidden" aria-live="polite" aria-labelledby="listening-title">
         <header class="matching-header">
           <div><p class="eyebrow">DİNLE VE SEÇ</p><h2 id="listening-title">Sesi dinle!</h2></div>
+          <button id="listening-home-button" class="game-destination-button" type="button">🎮 Oyunlar</button>
           <button id="listening-pause-button" class="icon-button" type="button" aria-label="Oyunu duraklat">⏸</button>
         </header>
-        <button id="listening-replay-button" class="replay-button" type="button"><span aria-hidden="true">🔊</span> Tekrar dinle</button>
+        <button id="listening-replay-button" class="replay-button" type="button" aria-label="Kelimeyi tekrar dinle"><span aria-hidden="true">🔊</span> Tekrar Dinle</button>
         <p id="listening-feedback" class="matching-feedback">Dinle ve doğru resmi seç.</p>
         <div class="listening-board-wrap"><div id="listening-celebration" class="celebration" aria-hidden="true"></div><div id="listening-cards" class="listening-cards" aria-label="Dinleme seçenekleri"></div></div>
       </section>
@@ -144,9 +159,10 @@
       <section id="number-match-screen" class="screen number-match-screen hidden" aria-live="polite" aria-labelledby="number-match-title">
         <header class="matching-header">
           <div><p class="eyebrow">SAYIYI BUL</p><h2 id="number-match-title">Sayıyı dinle!</h2></div>
+          <button id="number-match-home-button" class="game-destination-button" type="button">🎮 Oyunlar</button>
           <button id="number-match-pause-button" class="icon-button" type="button" aria-label="Oyunu duraklat">⏸</button>
         </header>
-        <button id="number-match-replay-button" class="replay-button" type="button"><span aria-hidden="true">🔊</span> Tekrar dinle</button>
+        <button id="number-match-replay-button" class="replay-button" type="button" aria-label="Sayıyı tekrar dinle"><span aria-hidden="true">🔊</span> Tekrar Dinle</button>
         <p id="number-match-feedback" class="matching-feedback">Sayıyı dinle ve doğru rakamı seç.</p>
         <div class="number-match-board-wrap"><div id="number-match-celebration" class="celebration" aria-hidden="true"></div><div id="number-match-cards" class="number-match-cards" aria-label="Sayı seçenekleri"></div></div>
       </section>
@@ -154,10 +170,14 @@
       <section id="color-match-screen" class="screen color-match-screen hidden" aria-live="polite" aria-labelledby="color-match-title">
         <header class="matching-header">
           <div><p class="eyebrow">RENGİ BUL</p><h2 id="color-match-title">Doğru rengi bul!</h2></div>
+          <button id="color-match-home-button" class="game-destination-button" type="button">🎮 Oyunlar</button>
           <button id="color-match-pause-button" class="icon-button" type="button" aria-label="Oyunu duraklat">⏸</button>
         </header>
-        <button id="color-match-replay-button" class="replay-button" type="button"><span aria-hidden="true">🔊</span> Tekrar dinle</button>
-        <p id="color-match-prompt" class="color-match-prompt hidden" aria-live="polite"></p>
+        <button id="color-match-replay-button" class="replay-button" type="button" aria-label="Rengi tekrar dinle"><span aria-hidden="true">🔊</span> Tekrar Dinle</button>
+        <div id="color-match-written-prompt" class="color-match-written-prompt hidden">
+          <p id="color-match-prompt" class="color-match-prompt" aria-live="polite"></p>
+          <button id="color-match-word-listen-button" class="color-match-word-listen-button" type="button" aria-label="Yazılı rengi dinle"><span aria-hidden="true">🔊</span> Dinle</button>
+        </div>
         <p id="color-match-feedback" class="matching-feedback">Rengi dinle ve doğru kartı seç.</p>
         <div class="color-match-board-wrap"><div id="color-match-celebration" class="celebration" aria-hidden="true"></div><div id="color-match-cards" class="color-match-cards" aria-label="Renk seçenekleri"></div></div>
       </section>
@@ -165,6 +185,7 @@
       <section id="sorting-screen" class="screen sorting-screen hidden" aria-live="polite" aria-labelledby="sorting-title">
         <header class="matching-header">
           <div><p class="eyebrow">GRUPLA</p><h2 id="sorting-title">Nereye ait?</h2></div>
+          <button id="sorting-home-button" class="game-destination-button" type="button">🎮 Oyunlar</button>
           <button id="sorting-pause-button" class="icon-button" type="button" aria-label="Oyunu duraklat">⏸</button>
         </header>
         <p id="sorting-feedback" class="matching-feedback">Bir nesneye dokun, sonra kutusuna dokun. İstersen sürükle.</p>
@@ -200,6 +221,7 @@
       </section>
 
       <section id="balloon-bonus" class="screen balloon-bonus hidden" aria-live="polite" aria-labelledby="balloon-title">
+        <button id="bonus-home-button" class="game-destination-button bonus-home-button" type="button">⌂ Ana Sayfa</button>
         <button id="bonus-pause-button" class="icon-button bonus-pause-button" type="button" aria-label="Oyunu duraklat">⏸</button>
         <p class="eyebrow">BALON BONUSU</p>
         <h2 id="balloon-title">Balonu patlat!</h2>
@@ -264,9 +286,9 @@
     <script src="js/utils/random.js"></script>
     <script src="js/services/SpeechService.js"></script>
     <script src="js/services/AudioHelper.js"></script>
-    <script src="js/services/AnimationHelper.js"></script>
+    <script src="js/services/AnimationHelper.js?v=6.6"></script>
     <script src="js/QuestionEngine.js?v=6.4"></script>
     <script src="data/offline-data.js"></script>
-    <script src="app.js?v=6.5"></script>
+    <script src="app.js?v=6.7"></script>
   </body>
 </html>
