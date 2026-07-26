@@ -62,11 +62,41 @@ const LISTENING_COLOR_VISUALS = { Blue: "🔵", Yellow: "🟡", Red: "🔴", Gre
 const LISTENING_NUMBER_VISUALS = { One: "1️⃣", Two: "2️⃣", Three: "3️⃣", Four: "4️⃣", Five: "5️⃣", Six: "6️⃣", Seven: "7️⃣", Eight: "8️⃣" };
 const MATCHING_PAIR_COUNT = 8;
 const MATCHING_CATEGORY_DEFINITIONS = [
-  { id: "colors", label: "Renkler", icon: "🎨", symbols: Object.values(LISTENING_COLOR_VISUALS) },
-  { id: "animals", label: "Hayvanlar", icon: "🐾", symbols: ["🦁", "🐘", "🐱", "🐒", "🐶", "🐦", "🐟", "🐯"] },
-  { id: "fruits", label: "Meyveler", icon: "🍎", symbols: ["🍎", "🍌", "🍊", "🍓", "🍇", "🍋", "🥝", "🍒"] }
+  { id: "colors", label: "Renkler", icon: "🎨", items: Object.values(LISTENING_COLOR_VISUALS) },
+  { id: "animals", label: "Hayvanlar", icon: "🐾", items: ["🦁", "🐘", "🐱", "🐒", "🐶", "🐦", "🐟", "🐯"] },
+  { id: "fruits", label: "Meyveler", icon: "🍎", items: ["🍎", "🍌", "🍊", "🍓", "🍇", "🍋", "🥝", "🍒"] },
+  { id: "vehicles", label: "Taşıtlar", icon: "🚗", items: ["🚗", "🚌", "🚂", "✈️", "🚁", "🚲", "🚢", "🚜"] },
+  { id: "sea-creatures", label: "Deniz Canlıları", icon: "🐬", items: ["🐟", "🐬", "🐳", "🐙", "🦀", "🐢", "🦈", "🦐"] },
+  { id: "insects", label: "Böcekler", icon: "🦋", items: ["🦋", "🐞", "🐝", "🐜", "🕷️", "🪲", "🦗", "🐌"] },
+  { id: "dinosaurs", label: "Dinozorlar", icon: "🦕", items: ["🦕", "🦖"] },
+  { id: "home-items", label: "Ev Eşyaları", icon: "🏠", items: ["🪑", "🛏️", "💡", "⏰", "📺", "☎️", "🔑", "🛁"] },
+  { id: "toys", label: "Oyuncaklar", icon: "🧸", items: ["⚽", "🧸", "🚗", "🪁", "🧩", "🪀", "🧱", "🪆"] },
+  { id: "clothes", label: "Giysiler", icon: "👕", items: ["👕", "👖", "👗", "👟", "🧢", "🧦", "🧥", "🧤"] },
+  { id: "foods", label: "Yiyecekler", icon: "🍞", items: ["🍞", "🧀", "🥚", "🍕", "🥪", "🍲", "🍚", "🍪"] },
+  { id: "nature", label: "Doğa", icon: "🌳", items: ["🌳", "🌻", "⛰️", "☀️", "🌙", "☁️", "🌈", "❄️"] },
+  { id: "space", label: "Uzay", icon: "🚀", items: ["🚀", "🪐", "🧑‍🚀", "🛰️", "⭐", "🌙", "☄️", "🛸"] },
+  { id: "buildings", label: "Binalar", icon: "🏠", items: ["🏠", "🏫", "🏥", "🏰", "🏭", "🏨", "🏦", "🏪"] }
 ];
-const MATCHING_CATEGORIES = MATCHING_CATEGORY_DEFINITIONS.filter(category => new Set(category.symbols).size >= MATCHING_PAIR_COUNT);
+
+function getMatchingItemId(item) {
+  return typeof item === "string" ? item : item?.id;
+}
+
+function getMatchingItemVisual(item) {
+  return typeof item === "string" ? item : item?.visual;
+}
+
+function isMatchingCategoryPlayable(category) {
+  if (!category?.id || !category.label || !Array.isArray(category.items) || category.items.length < MATCHING_PAIR_COUNT) return false;
+  const itemIds = category.items.map(getMatchingItemId);
+  const itemVisuals = category.items.map(getMatchingItemVisual);
+  return itemIds.every(itemId => typeof itemId === "string" && itemId.trim())
+    && itemVisuals.every(visual => typeof visual === "string" && visual.trim())
+    && new Set(itemIds).size === category.items.length
+    && new Set(itemVisuals).size === category.items.length;
+}
+
+const MATCHING_CATEGORIES = MATCHING_CATEGORY_DEFINITIONS.filter(isMatchingCategoryPlayable);
 const GAME_MODE_STORAGE_KEY = "mila-learning-game-mode";
 const PLAYER_STORAGE_KEY = "mila-learning-player";
 const PLAYER_PROGRESS_MIGRATION_STORAGE_KEY = "mila-learning-player-progress-migrated";
@@ -1181,7 +1211,7 @@ function openMatchingCard(index) {
   renderMatchingCards();
   if (matchingOpenCards.length < 2) return;
   const [firstIndex, secondIndex] = matchingOpenCards;
-  if (matchingCards[firstIndex].symbol === matchingCards[secondIndex].symbol) {
+  if (matchingCards[firstIndex].itemId === matchingCards[secondIndex].itemId) {
     matchingCards[firstIndex].completed = true;
     matchingCards[secondIndex].completed = true;
     matchingOpenCards = [];
@@ -1204,7 +1234,7 @@ function renderMatchingCategoryOptions() {
     const button = document.createElement("button");
     button.className = "matching-category-button";
     button.type = "button";
-    button.innerHTML = `<span aria-hidden="true">${category.icon}</span>${category.label}`;
+    button.innerHTML = `<span aria-hidden="true">${category.icon ?? "🧩"}</span>${category.label}`;
     button.disabled = isMatchingSessionStarting;
     button.addEventListener("click", () => startMatchingSession(category.id));
     ui.matchingCategoryOptions.append(button);
@@ -1233,11 +1263,17 @@ function showMatchingCategorySelection() {
 function startMatchingSession(categoryId = matchingSelectedCategory) {
   if (isMatchingSessionStarting || isMatchingGameActive) return;
   const category = MATCHING_CATEGORIES.find(item => item.id === categoryId);
-  if (!category || new Set(category.symbols).size < MATCHING_PAIR_COUNT) return;
+  if (!category || !isMatchingCategoryPlayable(category)) return;
   isMatchingSessionStarting = true;
   matchingSelectedCategory = category.id;
   isMatchingGameActive = true;
-  matchingCards = appUtils.shuffle(category.symbols.slice(0, MATCHING_PAIR_COUNT).flatMap(symbol => [symbol, symbol])).map(symbol => ({ symbol, revealed: false, completed: false }));
+  const matchingItems = category.items.slice(0, MATCHING_PAIR_COUNT);
+  matchingCards = appUtils.shuffle(matchingItems.flatMap(item => [item, item])).map(item => ({
+    itemId: getMatchingItemId(item),
+    symbol: getMatchingItemVisual(item),
+    revealed: false,
+    completed: false
+  }));
   matchingOpenCards = [];
   matchingPairsFound = 0;
   matchingPendingFlip = false;

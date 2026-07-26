@@ -77,10 +77,10 @@ button { font:inherit; cursor:pointer; }
 .game-destination-button{min-height:48px;padding:8px 11px;border:3px solid #d7cfff;border-radius:15px;background:#fffdf8;color:#493a85;font-size:.82rem;font-weight:900;box-shadow:0 4px 0 #b4a5df;touch-action:manipulation;white-space:nowrap}
 .game-destination-button:active{transform:translateY(3px);box-shadow:0 1px 0 #7356bd}
 .game-destination-button:focus-visible,.matching-category-button:focus-visible,.matching-completion-actions button:focus-visible,.color-match-word-listen-button:focus-visible{outline:4px solid #f2c94c;outline-offset:2px}
-.matching-category-selection{max-width:520px;margin:28px auto 0;padding:24px 18px;border:3px solid #d7cfff;border-radius:26px;background:#fffdf8;box-shadow:0 6px 0 #b4a5df}
+.matching-category-selection{max-width:680px;margin:28px auto 0;padding:24px 18px;border:3px solid #d7cfff;border-radius:26px;background:#fffdf8;box-shadow:0 6px 0 #b4a5df}
 .matching-category-selection>p{margin:0 0 18px;color:#493a85;font-family:"Baloo 2",cursive;font-size:clamp(1.6rem,6vw,2.1rem);font-weight:900;line-height:1}
-.matching-category-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-.matching-category-button{min-height:92px;padding:12px;border:3px solid #b9aed1;border-radius:22px;background:#f7f3ff;color:#493a85;font-family:"Baloo 2",cursive;font-size:1.3rem;font-weight:900;box-shadow:0 6px 0 #9d89d9;touch-action:manipulation}
+.matching-category-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.matching-category-button{min-width:0;min-height:92px;padding:12px;border:3px solid #b9aed1;border-radius:22px;background:#f7f3ff;color:#493a85;font-family:"Baloo 2",cursive;font-size:1.3rem;font-weight:900;line-height:1.05;overflow-wrap:anywhere;box-shadow:0 6px 0 #9d89d9;touch-action:manipulation}
 .matching-category-button span{display:block;margin-bottom:5px;font-size:2.5rem}
 .matching-category-button:active{transform:translateY(4px);box-shadow:0 2px 0 #7356bd}
 .matching-cards{grid-template-columns:repeat(4,minmax(0,1fr));gap:11px}
@@ -95,6 +95,7 @@ button { font:inherit; cursor:pointer; }
 .bonus-home-button{position:absolute;top:20px;left:20px;z-index:2}
 .player-selection-guidance{margin:13px 0 0;padding:10px 14px;border:3px solid #f2d36a;border-radius:16px;background:#fff9df;color:#5c438f;font-weight:900}
 .mini-games-grid .mode-button:focus-visible{outline:4px solid #f2c94c;outline-offset:3px}
+@media(max-width:700px){.matching-category-options{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:480px){
   .quiz-header,.matching-header{grid-template-columns:minmax(0,1fr) auto 42px;gap:7px}
   .game-destination-button{min-height:44px;padding:7px 8px;font-size:.72rem}
