@@ -4,6 +4,22 @@ This repository contains an educational browser game for preschool children.
 
 The project is already working and is developed through small incremental updates.
 
+### Product Identity
+
+* The permanent product name is "Mila Oyun Merkezi".
+* Do not rename the application to Mila Learning Adventure, Learning Center, Kids Learning App or another product name.
+* English may be used inside educational activities, but the product identity and primary Turkish interface name remain "Mila Oyun Merkezi".
+* The product is an educational game center, not a single quiz or a single learning adventure.
+
+### Product Purpose
+
+* Mila Oyun Merkezi exists to transform passive screen consumption into active educational play.
+* The product does not attempt to eliminate all screen usage.
+* Its primary goal is to offer children an interactive alternative to prolonged passive viewing on platforms such as YouTube and Netflix.
+* Prefer activities that require listening, choosing, matching, sorting, counting, reasoning, remembering or interacting.
+* Avoid experiences where the child only watches a long animation, video or autoplay sequence.
+* Rewards, animations and sounds should support participation rather than turn the application into another passive content feed.
+
 ## Mandatory Development Rules
 
 * Treat every task as an incremental update.
@@ -21,6 +37,8 @@ The project is already working and is developed through small incremental update
 * Reuse existing state, utilities, components, styles and game flows.
 * Do not prepare unrelated future features.
 * Do not change behavior outside the current task.
+* Preserve the current technology stack.
+* Do not introduce a framework, router, state library, database, backend or external dependency unless a future sprint explicitly requires it.
 
 ## Data Safety
 
@@ -37,6 +55,10 @@ The project is already working and is developed through small incremental update
 
 * The primary audience is preschool children, approximately five years old.
 * Keep interactions simple, visual and touch-friendly.
+* Instructions must be short, concrete and child-friendly.
+* Activities must not depend on advanced reading ability.
+* Prefer visual examples, spoken guidance, large touch controls and immediate feedback.
+* Educational difficulty may increase gradually, but every activity must begin with an accessible level.
 * Avoid excessive text.
 * Avoid harsh sounds or discouraging messages.
 * Do not introduce flashing, frightening or stressful effects.
@@ -50,6 +72,14 @@ The project is already working and is developed through small incremental update
 * Do not rely only on the browser back action for child-facing navigation.
 * Child-facing replay actions should use understandable text labels such as "Yeni Oyun" or "Tekrar Oyna".
 * Do not rely on an icon without a text label when an action creates a new session.
+
+## Language Strategy
+
+* Turkish remains the primary application interface language.
+* English remains the current educational language focus.
+* English educational speech and vocabulary may coexist with Turkish navigation and guidance.
+* Do not implement multi-language architecture, language selection screens or translation systems unless a future sprint explicitly requests them.
+* Do not expand the current scope into multiple spoken languages.
 
 ## Application View Navigation
 
@@ -119,6 +149,73 @@ The project is already working and is developed through small incremental update
 * Previous-screen feedback or animations must never visually overlap the next screen.
 * Do not solve transition overlap only by increasing timeout durations; coordinate state cleanup and transition timing explicitly.
 * Starting a new game must reset temporary session state cleanly without clearing permanent player progress.
+
+## Content Expansion and Completeness
+
+* When a sprint explicitly lists several categories, game types, learning stages or content groups, implement the complete requested list.
+* Do not silently reduce a broad content request to only a few familiar examples such as animals and fruits.
+* Examples in a prompt are part of the required scope when they are presented as an explicit target list.
+* Before completing a content sprint, compare the implementation against every requested category or feature.
+* Report any requested item that could not be completed.
+* Do not claim completion when only a subset of the requested roadmap item was implemented.
+* Prefer centralized, extensible content models over repeated hard-coded conditional blocks.
+* Content groups should be data-driven where the existing architecture allows it.
+* Every new content category must include enough valid and distinct items for the game or learning activity that uses it.
+* Do not expose empty, incomplete or unusable categories.
+* Validate category eligibility according to each activity's requirements.
+* For example, a Matching Pairs category requiring 8 unique pairs must not be visible with fewer than 8 valid unique items.
+* Avoid duplicate answers, ambiguous visuals and content that cannot be represented clearly.
+* Integrate new categories into the relevant menus, selectors, progress systems and tests where applicable.
+
+## Educational Math
+
+* Mila Oyun Merkezi may teach age-appropriate early mathematics.
+* Supported early-math concepts may include number recognition, counting, number ordering, greater and smaller comparison, simple addition and simple subtraction.
+* Initial addition and subtraction exercises should use non-negative whole numbers suitable for young children.
+* Initial subtraction exercises must not produce negative results.
+* Prefer small values, visual objects and clear answer choices.
+* Increase difficulty gradually.
+* Avoid timers or pressure that make early learning stressful unless a sprint explicitly introduces an optional challenge mode.
+
+## Mini-game Principles
+
+* New Mini Games must each have a distinct educational or cognitive purpose.
+* Do not create multiple games that are only cosmetic variations of the same interaction.
+* Each Mini Game should define its learning goal, child interaction, start flow, completion condition, replay behavior, speech behavior, cleanup behavior and mobile and tablet behavior.
+* Mini Games launch directly from the Mini Games Center unless the game genuinely requires a focused category or difficulty selection first.
+* Do not make Mini Games depend on the normal Learning Center "Hadi baÅŸlayalÄ±m" action.
+
+## Roadmap Integrity
+
+* Implement only the sprint currently requested.
+* Do not skip forward to later roadmap items.
+* Do not partially implement several future sprints instead of completing the active sprint.
+* Preserve the following roadmap intent:
+  * Sprint 8.1: New Mini Games
+  * Sprint 8.2: New Learning Categories
+  * Sprint 8.3: New Learning Path Sections
+  * Sprint 8.4: Voice and Audio Experience
+  * Sprint 8.5: Daily Goals and New Bonuses
+* Parent Experience remains postponed until a later explicit request.
+* Multi-language support is not part of Sprint 8.
+* Release and production work must not be mixed into content-expansion sprints unless required for regression safety.
+
+## Definition of Done for Roadmap Prompts
+
+Before marking a sprint complete:
+
+1. Read the entire sprint prompt again.
+2. Build a checklist of every explicit feature and category.
+3. Verify every checklist item against the implementation.
+4. Confirm all required screens and navigation entries are connected.
+5. Confirm mobile and tablet interaction.
+6. Confirm speech does not overlap.
+7. Confirm replay resets temporary state.
+8. Confirm navigation cleans active timers, callbacks, speech and animations.
+9. Run available automated tests.
+10. Perform targeted manual regression checks.
+11. Clearly list incomplete items instead of hiding them.
+12. Do not describe planned or placeholder code as completed functionality.
 
 ## Browser APIs
 

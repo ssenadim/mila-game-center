@@ -39,7 +39,13 @@ const LISTENING_MODE = "listening";
 const NUMBER_MATCH_MODE = "number-match";
 const COLOR_MATCH_MODE = "color-match";
 const SORTING_MODE = "sorting";
-const MINI_GAME_MODES = [MATCHING_MODE, LISTENING_MODE, NUMBER_MATCH_MODE, COLOR_MATCH_MODE, SORTING_MODE];
+const MISSING_ITEM_MODE = "missing-item";
+const SHADOW_MODE = "shadow";
+const INITIAL_LETTER_MODE = "initial-letter";
+const SOUND_MEMORY_MODE = "sound-memory";
+const PUZZLE_MODE = "puzzle";
+const NEW_MINI_GAME_MODES = [MISSING_ITEM_MODE, SHADOW_MODE, INITIAL_LETTER_MODE, SOUND_MEMORY_MODE, PUZZLE_MODE];
+const MINI_GAME_MODES = [MATCHING_MODE, LISTENING_MODE, NUMBER_MATCH_MODE, COLOR_MATCH_MODE, SORTING_MODE, ...NEW_MINI_GAME_MODES];
 const LISTENING_SESSION_ROUNDS = 5;
 const NUMBER_MATCH_SESSION_ROUNDS = 10;
 const COLOR_MATCH_SESSION_ROUNDS = 10;
@@ -129,13 +135,16 @@ const DAILY_GOALS = [
 const ui = {
   shell: document.querySelector(".game-shell"), welcome: document.querySelector("#welcome-screen"), learningCenter: document.querySelector("#learning-center-screen"), miniGames: document.querySelector("#mini-games-screen"), playerSelectionScreen: document.querySelector("#player-selection-screen"), playerSelection: document.querySelector(".player-selection"), playerGuidance: document.querySelector("#player-selection-guidance"), selectedPlayerSummary: document.querySelector("#selected-player-summary"), homePlayerChange: document.querySelector("#home-player-change-button"), homeNavigationCards: document.querySelectorAll("[data-home-target]"), learningCenterHome: document.querySelector("#learning-center-home-button"), miniGamesHome: document.querySelector("#mini-games-home-button"), playerSelectionHome: document.querySelector("#player-selection-home-button"), customPlayerConfirm: document.querySelector("#custom-player-confirm-button"), miniGamesSection: document.querySelector(".mini-games-section"), miniGameButtons: document.querySelectorAll(".mini-games-grid .mode-button"), learningPath: document.querySelector("#learning-path-screen"), learningPathStages: document.querySelector("#learning-path-stages"), learningPathGuidance: document.querySelector("#learning-path-guidance"), learningPathEntry: document.querySelector("#learning-path-button"), learningPathHome: document.querySelector("#learning-path-home-button"), learningPathReturn: document.querySelector("#learning-path-return-button"), learningPathNext: document.querySelector("#learning-path-next-button"), learningPathNextLabel: document.querySelector("#learning-path-next-label"), learningPathCompletion: document.querySelector("#learning-path-completion"), learningPathCompletionIcon: document.querySelector("#learning-path-completion-icon"), learningPathCompletionStage: document.querySelector("#learning-path-completion-stage"), learningPathCompletionParticipation: document.querySelector("#learning-path-completion-participation"), learningPathCompletionCorrect: document.querySelector("#learning-path-completion-correct"), quiz: document.querySelector("#quiz-screen"), summary: document.querySelector("#summary-screen"),
   menuButton: document.querySelector("#menu-button"), gameMenu: document.querySelector("#game-menu"), menuItems: document.querySelectorAll("[data-menu-target]"), settings: document.querySelector("#settings-button"),
-  start: document.querySelector("#start-button"), fullscreen: document.querySelector("#fullscreen-button"), achievements: document.querySelector("#achievements-button"), welcomeSound: document.querySelector("#welcome-sound-button"), learningMode: document.querySelector("#learning-mode-button"), quickMode: document.querySelector("#quick-mode-button"), matchingMode: document.querySelector("#matching-mode-button"), listeningMode: document.querySelector("#listening-mode-button"), numberMatchMode: document.querySelector("#number-match-mode-button"), colorMatchMode: document.querySelector("#color-match-mode-button"), sortingMode: document.querySelector("#sorting-mode-button"), playerButtons: document.querySelectorAll(".player-button"), customPlayer: document.querySelector("#custom-player-button"), customPlayerLabel: document.querySelector("#custom-player-label"), customPlayerName: document.querySelector("#custom-player-name"), categoryPackButtons: document.querySelectorAll(".category-pack-button"), customCategoryOptions: document.querySelector("#custom-category-options"), home: document.querySelector("#home-button"), replay: document.querySelector("#question-sound-button"), matching: document.querySelector("#matching-screen"), matchingCategorySelection: document.querySelector("#matching-category-selection"), matchingCategoryOptions: document.querySelector("#matching-category-options"), matchingGameArea: document.querySelector("#matching-game-area"), matchingCategoryLabel: document.querySelector("#matching-category-label"), matchingCards: document.querySelector("#matching-cards"), matchingCelebration: document.querySelector("#matching-celebration"), matchingFeedback: document.querySelector("#matching-feedback"), matchingCompletionActions: document.querySelector("#matching-completion-actions"), matchingCompletionTime: document.querySelector("#matching-completion-time"), matchingReplay: document.querySelector("#matching-replay-button"), matchingCategories: document.querySelector("#matching-categories-button"), matchingHome: document.querySelector("#matching-home-button"), matchingPause: document.querySelector("#matching-pause-button"), listening: document.querySelector("#listening-screen"), listeningCards: document.querySelector("#listening-cards"), listeningCelebration: document.querySelector("#listening-celebration"), listeningFeedback: document.querySelector("#listening-feedback"), listeningReplay: document.querySelector("#listening-replay-button"), listeningHome: document.querySelector("#listening-home-button"), listeningPause: document.querySelector("#listening-pause-button"), numberMatch: document.querySelector("#number-match-screen"), numberMatchCards: document.querySelector("#number-match-cards"), numberMatchCelebration: document.querySelector("#number-match-celebration"), numberMatchFeedback: document.querySelector("#number-match-feedback"), numberMatchReplay: document.querySelector("#number-match-replay-button"), numberMatchHome: document.querySelector("#number-match-home-button"), numberMatchPause: document.querySelector("#number-match-pause-button"), colorMatch: document.querySelector("#color-match-screen"), colorMatchCards: document.querySelector("#color-match-cards"), colorMatchCelebration: document.querySelector("#color-match-celebration"), colorMatchFeedback: document.querySelector("#color-match-feedback"), colorMatchWrittenPrompt: document.querySelector("#color-match-written-prompt"), colorMatchPrompt: document.querySelector("#color-match-prompt"), colorMatchWordListen: document.querySelector("#color-match-word-listen-button"), colorMatchReplay: document.querySelector("#color-match-replay-button"), colorMatchHome: document.querySelector("#color-match-home-button"), colorMatchPause: document.querySelector("#color-match-pause-button"), sorting: document.querySelector("#sorting-screen"), sortingItems: document.querySelector("#sorting-items"), sortingDestinations: document.querySelector("#sorting-destinations"), sortingCelebration: document.querySelector("#sorting-celebration"), sortingFeedback: document.querySelector("#sorting-feedback"), sortingHome: document.querySelector("#sorting-home-button"), sortingPause: document.querySelector("#sorting-pause-button"), sortingFinishHome: document.querySelector("#sorting-finish-home-button"),
+  start: document.querySelector("#start-button"), fullscreen: document.querySelector("#fullscreen-button"), achievements: document.querySelector("#achievements-button"), welcomeSound: document.querySelector("#welcome-sound-button"), learningMode: document.querySelector("#learning-mode-button"), quickMode: document.querySelector("#quick-mode-button"), matchingMode: document.querySelector("#matching-mode-button"), listeningMode: document.querySelector("#listening-mode-button"), numberMatchMode: document.querySelector("#number-match-mode-button"), colorMatchMode: document.querySelector("#color-match-mode-button"), sortingMode: document.querySelector("#sorting-mode-button"), missingItemMode: document.querySelector("#missing-item-mode-button"), shadowMode: document.querySelector("#shadow-mode-button"), initialLetterMode: document.querySelector("#initial-letter-mode-button"), soundMemoryMode: document.querySelector("#sound-memory-mode-button"), puzzleMode: document.querySelector("#puzzle-mode-button"), playerButtons: document.querySelectorAll(".player-button"), customPlayer: document.querySelector("#custom-player-button"), customPlayerLabel: document.querySelector("#custom-player-label"), customPlayerName: document.querySelector("#custom-player-name"), categoryPackButtons: document.querySelectorAll(".category-pack-button"), customCategoryOptions: document.querySelector("#custom-category-options"), home: document.querySelector("#home-button"), replay: document.querySelector("#question-sound-button"), matching: document.querySelector("#matching-screen"), matchingCategorySelection: document.querySelector("#matching-category-selection"), matchingCategoryOptions: document.querySelector("#matching-category-options"), matchingGameArea: document.querySelector("#matching-game-area"), matchingCategoryLabel: document.querySelector("#matching-category-label"), matchingCards: document.querySelector("#matching-cards"), matchingCelebration: document.querySelector("#matching-celebration"), matchingFeedback: document.querySelector("#matching-feedback"), matchingCompletionActions: document.querySelector("#matching-completion-actions"), matchingCompletionTime: document.querySelector("#matching-completion-time"), matchingReplay: document.querySelector("#matching-replay-button"), matchingCategories: document.querySelector("#matching-categories-button"), matchingHome: document.querySelector("#matching-home-button"), matchingPause: document.querySelector("#matching-pause-button"), listening: document.querySelector("#listening-screen"), listeningCards: document.querySelector("#listening-cards"), listeningCelebration: document.querySelector("#listening-celebration"), listeningFeedback: document.querySelector("#listening-feedback"), listeningReplay: document.querySelector("#listening-replay-button"), listeningHome: document.querySelector("#listening-home-button"), listeningPause: document.querySelector("#listening-pause-button"), numberMatch: document.querySelector("#number-match-screen"), numberMatchCards: document.querySelector("#number-match-cards"), numberMatchCelebration: document.querySelector("#number-match-celebration"), numberMatchFeedback: document.querySelector("#number-match-feedback"), numberMatchReplay: document.querySelector("#number-match-replay-button"), numberMatchHome: document.querySelector("#number-match-home-button"), numberMatchPause: document.querySelector("#number-match-pause-button"), colorMatch: document.querySelector("#color-match-screen"), colorMatchCards: document.querySelector("#color-match-cards"), colorMatchCelebration: document.querySelector("#color-match-celebration"), colorMatchFeedback: document.querySelector("#color-match-feedback"), colorMatchWrittenPrompt: document.querySelector("#color-match-written-prompt"), colorMatchPrompt: document.querySelector("#color-match-prompt"), colorMatchWordListen: document.querySelector("#color-match-word-listen-button"), colorMatchReplay: document.querySelector("#color-match-replay-button"), colorMatchHome: document.querySelector("#color-match-home-button"), colorMatchPause: document.querySelector("#color-match-pause-button"), sorting: document.querySelector("#sorting-screen"), sortingItems: document.querySelector("#sorting-items"), sortingDestinations: document.querySelector("#sorting-destinations"), sortingCelebration: document.querySelector("#sorting-celebration"), sortingFeedback: document.querySelector("#sorting-feedback"), sortingHome: document.querySelector("#sorting-home-button"), sortingPause: document.querySelector("#sorting-pause-button"), sortingFinishHome: document.querySelector("#sorting-finish-home-button"),
+  newMiniGame: document.querySelector("#new-mini-game-screen"), newMiniGameEyebrow: document.querySelector("#new-mini-game-eyebrow"), newMiniGameTitle: document.querySelector("#new-mini-game-title"), newMiniGameHome: document.querySelector("#new-mini-game-home-button"), newMiniGamePause: document.querySelector("#new-mini-game-pause-button"), newMiniGameSetup: document.querySelector("#new-mini-game-setup"), newMiniGameArea: document.querySelector("#new-mini-game-area"), newMiniGameProgressLabel: document.querySelector("#new-mini-game-progress-label"), newMiniGameProgressFill: document.querySelector("#new-mini-game-progress-fill"), newMiniGamePrompt: document.querySelector("#new-mini-game-prompt"), newMiniGameListen: document.querySelector("#new-mini-game-listen-button"), newMiniGameVisual: document.querySelector("#new-mini-game-visual"), newMiniGameChoices: document.querySelector("#new-mini-game-choices"), newMiniGameFeedback: document.querySelector("#new-mini-game-feedback"), newMiniGameCompletion: document.querySelector("#new-mini-game-completion"), newMiniGameCompletionCopy: document.querySelector("#new-mini-game-completion-copy"), newMiniGameReplay: document.querySelector("#new-mini-game-replay-button"), newMiniGameChange: document.querySelector("#new-mini-game-change-button"), newMiniGameCompletionHome: document.querySelector("#new-mini-game-completion-home-button"),
   category: document.querySelector("#category-pill"), visual: document.querySelector("#question-visual"), celebration: document.querySelector("#celebration"), mascot: document.querySelector("#game-mascot"), prompt: document.querySelector("#question-prompt"),
   answers: document.querySelector("#answers"), feedback: document.querySelector("#feedback"), next: document.querySelector("#next-button"), count: document.querySelector("#question-count"), score: document.querySelector("#score"), streak: document.querySelector("#streak"), progress: document.querySelector("#progress-fill"),
   playAgain: document.querySelector("#play-again-button"), summaryHome: document.querySelector("#summary-home-button"), summaryStats: document.querySelector("#summary-stats"), summaryStars: document.querySelector("#summary-stars"), summaryCorrect: document.querySelector("#summary-correct"), summaryStreak: document.querySelector("#summary-streak"), summaryCategory: document.querySelector("#summary-category"), summaryTitle: document.querySelector("#summary-title"), summaryCopy: document.querySelector(".summary-copy"), rewardPopup: document.querySelector("#reward-popup"), rewardSticker: document.querySelector("#reward-sticker"), achievementPopup: document.querySelector("#achievement-popup"), achievementPopupIcon: document.querySelector("#achievement-popup-icon"), achievementPopupTitle: document.querySelector("#achievement-popup-title"), dailyGoalCard: document.querySelector("#daily-goal-card"), dailyGoalTitle: document.querySelector("#daily-goal-title"), dailyGoalProgress: document.querySelector("#daily-goal-progress"), dailyGoalPopup: document.querySelector("#daily-goal-popup"), achievementsModal: document.querySelector("#achievements-modal"), achievementsModalClose: document.querySelector("#achievements-modal-close"), achievementsList: document.querySelector("#achievements-list"), rewardsStarCount: document.querySelector("#rewards-star-count"), stickersList: document.querySelector("#stickers-list"), bonus: document.querySelector("#balloon-bonus"), balloonHome: document.querySelector("#bonus-home-button"), balloonTarget: document.querySelector("#balloon-target"), balloons: document.querySelector("#balloons"), pause: document.querySelector("#pause-button"), bonusPause: document.querySelector("#bonus-pause-button"), pauseOverlay: document.querySelector("#pause-overlay"), resume: document.querySelector("#resume-button"), parentLogo: document.querySelector("#welcome-title"), parentDashboard: document.querySelector("#parent-dashboard"), parentDashboardClose: document.querySelector("#parent-dashboard-close"), parentDashboardTitle: document.querySelector("#parent-dashboard-title"), parentPlayTime: document.querySelector("#parent-play-time"), parentQuestions: document.querySelector("#parent-questions"), parentCorrect: document.querySelector("#parent-correct"), parentCategory: document.querySelector("#parent-category"), parentStreak: document.querySelector("#parent-streak"), parentDifficultWords: document.querySelector("#parent-difficult-words")
 };
 
 const appUtils = window.MilaUtils;
+const newMiniGames = window.MilaNewMiniGames;
+newMiniGames.validateContent();
 const speech = new window.MilaSpeechService();
 const audio = new window.MilaAudioHelper();
 const animations = new window.MilaAnimationHelper(ui.visual, ui.celebration);
@@ -244,6 +253,9 @@ let selectedSortingItem;
 let activeSortingDrag;
 let isSortingProcessing = false;
 let isSortingCompleted = false;
+let isNewMiniGameActive = false;
+let newMiniGameSessionId = 0;
+let newMiniGameState = createEmptyNewMiniGameState();
 let activeLearningPathStage;
 let learningPathQuestionPlan = [];
 let isLearningPathSessionCompleted = false;
@@ -1097,12 +1109,14 @@ function loadParentData() {
         categoryCounts: savedData.categoryCounts && typeof savedData.categoryCounts === "object" && !Array.isArray(savedData.categoryCounts) ? savedData.categoryCounts : {},
         difficultWords: savedData.difficultWords && typeof savedData.difficultWords === "object" && !Array.isArray(savedData.difficultWords) ? savedData.difficultWords : {},
         bestStreak: Number.isFinite(savedData.bestStreak) ? savedData.bestStreak : 0,
-        matchingPairsCompleted: Number.isFinite(savedData.matchingPairsCompleted) ? savedData.matchingPairsCompleted : 0
+        matchingPairsCompleted: Number.isFinite(savedData.matchingPairsCompleted) ? savedData.matchingPairsCompleted : 0,
+        miniGamesStarted: savedData.miniGamesStarted && typeof savedData.miniGamesStarted === "object" && !Array.isArray(savedData.miniGamesStarted) ? savedData.miniGamesStarted : {},
+        miniGamesCompleted: savedData.miniGamesCompleted && typeof savedData.miniGamesCompleted === "object" && !Array.isArray(savedData.miniGamesCompleted) ? savedData.miniGamesCompleted : {}
       };
     }
-    return { playTime: 0, questionsAnswered: 0, correctAnswers: 0, categoryCounts: {}, difficultWords: {}, bestStreak: 0, matchingPairsCompleted: 0 };
+    return { playTime: 0, questionsAnswered: 0, correctAnswers: 0, categoryCounts: {}, difficultWords: {}, bestStreak: 0, matchingPairsCompleted: 0, miniGamesStarted: {}, miniGamesCompleted: {} };
   } catch {
-    return { playTime: 0, questionsAnswered: 0, correctAnswers: 0, categoryCounts: {}, difficultWords: {}, bestStreak: 0, matchingPairsCompleted: 0 };
+    return { playTime: 0, questionsAnswered: 0, correctAnswers: 0, categoryCounts: {}, difficultWords: {}, bestStreak: 0, matchingPairsCompleted: 0, miniGamesStarted: {}, miniGamesCompleted: {} };
   }
 }
 
@@ -1891,6 +1905,695 @@ function startSortingGame() {
   startWakeLock();
 }
 
+const NEW_MINI_GAME_CONFIG = {
+  [MISSING_ITEM_MODE]: { eyebrow: "HANGİSİ EKSİK?", title: "Kaybolanı bul!", rounds: 8 },
+  [SHADOW_MODE]: { eyebrow: "GÖLGESİNİ BUL", title: "Doğru gölgeyi bul!", rounds: 8 },
+  [INITIAL_LETTER_MODE]: { eyebrow: "İLK HARFİ BUL", title: "İlk harfi seç!", rounds: 10 },
+  [SOUND_MEMORY_MODE]: { eyebrow: "SES HAFIZASI", title: "Aynı sesleri bul!" },
+  [PUZZLE_MODE]: { eyebrow: "YAPBOZ", title: "Resmi tamamla!" }
+};
+
+function createEmptyNewMiniGameState(mode) {
+  return {
+    mode, sessionId: ++newMiniGameSessionId, round: 0, correct: 0, streak: 0,
+    inputLocked: false, speaking: false, completed: false, pendingDelay: undefined,
+    challenge: undefined, board: [], firstCard: undefined, attempts: 0,
+    elapsedMs: 0, timerStartedAt: 0, soundDifficulty: "standard",
+    puzzleDifficulty: "easy", puzzleId: newMiniGames?.PUZZLES?.[0]?.id, pieces: [],
+    selectedPieceId: undefined, draggedPieceId: undefined
+  };
+}
+
+function newMiniGameSvgUrl(svgMarkup) {
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgMarkup)}`;
+}
+
+function scheduleNewMiniGame(callback, delay) {
+  clearNewMiniGameDelay();
+  const sessionId = newMiniGameState.sessionId;
+  const pending = { callback, remaining: delay, dueAt: Date.now() + delay, timer: undefined };
+  pending.timer = window.setTimeout(() => {
+    if (newMiniGameState.sessionId !== sessionId || isPaused) return;
+    newMiniGameState.pendingDelay = undefined;
+    callback();
+  }, delay);
+  newMiniGameState.pendingDelay = pending;
+}
+
+function clearNewMiniGameDelay() {
+  if (newMiniGameState.pendingDelay?.timer) window.clearTimeout(newMiniGameState.pendingDelay.timer);
+  newMiniGameState.pendingDelay = undefined;
+}
+
+function pauseNewMiniGameState() {
+  const pending = newMiniGameState.pendingDelay;
+  if (pending?.timer) {
+    window.clearTimeout(pending.timer);
+    pending.timer = undefined;
+    pending.remaining = Math.max(0, pending.dueAt - Date.now());
+  }
+  if (newMiniGameState.timerStartedAt) {
+    newMiniGameState.elapsedMs += Date.now() - newMiniGameState.timerStartedAt;
+    newMiniGameState.timerStartedAt = 0;
+  }
+  newMiniGameState.speaking = false;
+  renderCurrentNewMiniGame();
+}
+
+function resumeNewMiniGameState() {
+  if (newMiniGameState.pendingDelay) {
+    const pending = newMiniGameState.pendingDelay;
+    pending.dueAt = Date.now() + pending.remaining;
+    const sessionId = newMiniGameState.sessionId;
+    pending.timer = window.setTimeout(() => {
+      if (newMiniGameState.sessionId !== sessionId || isPaused) return;
+      newMiniGameState.pendingDelay = undefined;
+      pending.callback();
+    }, pending.remaining);
+  }
+  if (newMiniGameState.mode === SOUND_MEMORY_MODE && newMiniGameState.board.length && !newMiniGameState.completed) newMiniGameState.timerStartedAt = Date.now();
+  renderCurrentNewMiniGame();
+}
+
+function cleanupNewMiniGame() {
+  clearNewMiniGameDelay();
+  newMiniGameState.sessionId += 1;
+  newMiniGameState.inputLocked = false;
+  newMiniGameState.speaking = false;
+  newMiniGameState.selectedPieceId = undefined;
+  newMiniGameState.draggedPieceId = undefined;
+  newMiniGameState.timerStartedAt = 0;
+  isNewMiniGameActive = false;
+  ui.newMiniGameSetup.textContent = "";
+  ui.newMiniGameVisual.textContent = "";
+  ui.newMiniGameChoices.textContent = "";
+  ui.newMiniGameCompletion.classList.add("hidden");
+}
+
+async function speakNewMiniGame(text, language = TURKISH_LANGUAGE) {
+  if (!text || isPaused || !isNewMiniGameActive) return false;
+  const sessionId = newMiniGameState.sessionId;
+  clearSpeech();
+  newMiniGameState.speaking = true;
+  renderCurrentNewMiniGame();
+  await speech.speak(text, language);
+  if (sessionId !== newMiniGameState.sessionId || isPaused || !isNewMiniGameActive) return false;
+  newMiniGameState.speaking = false;
+  renderCurrentNewMiniGame();
+  return true;
+}
+
+function updateNewMiniGameProgress(current, total) {
+  ui.newMiniGameProgressLabel.textContent = total ? `${current}/${total}` : "";
+  ui.newMiniGameProgressFill.style.width = total ? `${Math.min(100, (current / total) * 100)}%` : "0";
+}
+
+function resetNewMiniGameView() {
+  ui.newMiniGameSetup.classList.add("hidden");
+  ui.newMiniGameArea.classList.remove("hidden");
+  ui.newMiniGameCompletion.classList.add("hidden");
+  ui.newMiniGameListen.classList.add("hidden");
+  ui.newMiniGameVisual.className = "new-mini-game-visual";
+  ui.newMiniGameChoices.className = "new-mini-game-choices";
+  ui.newMiniGameVisual.textContent = "";
+  ui.newMiniGameChoices.textContent = "";
+  ui.newMiniGameFeedback.textContent = "";
+  ui.newMiniGameFeedback.className = "matching-feedback";
+  ui.newMiniGameChange.classList.add("hidden");
+}
+
+function addNewMiniGameChoice({ label, visual, className = "", disabled = false, onClick, ariaLabel = label }) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = `new-mini-game-choice ${className}`.trim();
+  button.disabled = disabled || isPaused;
+  button.setAttribute("aria-label", ariaLabel);
+  if (visual) button.innerHTML = `<span class="choice-visual" aria-hidden="true">${visual}</span><span>${label}</span>`;
+  else button.textContent = label;
+  button.addEventListener("click", onClick);
+  ui.newMiniGameChoices.append(button);
+  return button;
+}
+
+function recordNewMiniGameStarted(mode) {
+  parentData.miniGamesStarted = parentData.miniGamesStarted && typeof parentData.miniGamesStarted === "object" ? parentData.miniGamesStarted : {};
+  parentData.miniGamesStarted[mode] = (Number(parentData.miniGamesStarted[mode]) || 0) + 1;
+  saveParentData();
+}
+
+function updateDailyGoalForMiniGame(key) {
+  if (!ensureDailyGoal() || dailyGoalData.completed) return;
+  const goal = getDailyGoal(dailyGoalData.goalId);
+  if (!goal) return;
+  if (goal.id === "ten-correct") dailyGoalData.progress = Math.min(goal.target, (Number(dailyGoalData.progress) || 0) + 1);
+  if (goal.id === "streak-three") dailyGoalData.progress = Math.max(Number(dailyGoalData.progress) || 0, Math.min(newMiniGameState.streak, goal.target));
+  if (goal.id === "five-different") {
+    const answered = Array.isArray(dailyGoalData.answeredQuestionKeys) ? dailyGoalData.answeredQuestionKeys : [];
+    const questionKey = `mini-game|${newMiniGameState.mode}|${key}`;
+    if (!answered.includes(questionKey)) answered.push(questionKey);
+    dailyGoalData.answeredQuestionKeys = answered;
+    dailyGoalData.progress = Math.min(goal.target, answered.length);
+  }
+  if ((Number(dailyGoalData.progress) || 0) >= goal.target) completeDailyGoal();
+  else {
+    saveDailyGoalData();
+    renderDailyGoal();
+  }
+}
+
+function recordNewMiniGameCorrect(key) {
+  newMiniGameState.correct += 1;
+  newMiniGameState.streak += 1;
+  parentData.questionsAnswered += 1;
+  parentData.correctAnswers += 1;
+  parentData.bestStreak = Math.max(parentData.bestStreak, newMiniGameState.streak);
+  const label = NEW_MINI_GAME_CONFIG[newMiniGameState.mode].eyebrow;
+  parentData.categoryCounts[label] = (parentData.categoryCounts[label] ?? 0) + 1;
+  saveParentData();
+  updateDailyGoalForMiniGame(key);
+  checkAchievements();
+}
+
+function recordNewMiniGameWrong() {
+  newMiniGameState.streak = 0;
+  parentData.questionsAnswered += 1;
+  saveParentData();
+}
+
+function recordNewMiniGameCompleted() {
+  const mode = newMiniGameState.mode;
+  parentData.miniGamesCompleted = parentData.miniGamesCompleted && typeof parentData.miniGamesCompleted === "object" ? parentData.miniGamesCompleted : {};
+  parentData.miniGamesCompleted[mode] = (Number(parentData.miniGamesCompleted[mode]) || 0) + 1;
+  saveParentData();
+  awardSticker();
+}
+
+function celebrateNewMiniGame() {
+  animations.celebrate();
+  audio.playCelebration();
+}
+
+function finishNewMiniGame(copy) {
+  if (newMiniGameState.completed) return;
+  clearNewMiniGameDelay();
+  if (newMiniGameState.timerStartedAt) {
+    newMiniGameState.elapsedMs += Date.now() - newMiniGameState.timerStartedAt;
+    newMiniGameState.timerStartedAt = 0;
+  }
+  newMiniGameState.completed = true;
+  newMiniGameState.inputLocked = true;
+  isNewMiniGameActive = false;
+  ui.newMiniGameArea.classList.add("hidden");
+  ui.newMiniGameSetup.classList.add("hidden");
+  ui.newMiniGameCompletion.classList.remove("hidden");
+  ui.newMiniGameCompletionCopy.textContent = copy;
+  ui.newMiniGamePause.disabled = true;
+  ui.newMiniGameChange.classList.toggle("hidden", ![SOUND_MEMORY_MODE, PUZZLE_MODE].includes(newMiniGameState.mode));
+  ui.newMiniGameChange.textContent = newMiniGameState.mode === SOUND_MEMORY_MODE ? "Zorluk Seç" : "Başka Yapboz Seç";
+  recordNewMiniGameCompleted();
+  celebrateNewMiniGame();
+  ui.newMiniGameReplay.focus();
+}
+
+function showMissingItemRound() {
+  if (!isNewMiniGameActive || isPaused) return;
+  if (newMiniGameState.round >= NEW_MINI_GAME_CONFIG[MISSING_ITEM_MODE].rounds) {
+    finishNewMiniGame(`${newMiniGameState.correct} kayıp resmi buldun.`);
+    return;
+  }
+  resetNewMiniGameView();
+  newMiniGameState.challenge = newMiniGames.createMissingRound(newMiniGameState.round);
+  newMiniGameState.round += 1;
+  newMiniGameState.inputLocked = true;
+  updateNewMiniGameProgress(newMiniGameState.round, 8);
+  ui.newMiniGamePrompt.textContent = "Resimlere dikkat et.";
+  newMiniGameState.challenge.presented.forEach(item => {
+    const card = document.createElement("span");
+    card.className = "missing-item";
+    card.setAttribute("aria-hidden", "true");
+    card.textContent = item.visual;
+    ui.newMiniGameVisual.append(card);
+  });
+  speakNewMiniGame("Resimlere dikkat et.");
+  scheduleNewMiniGame(revealMissingItemChoices, 1800);
+}
+
+function revealMissingItemChoices() {
+  if (!isNewMiniGameActive || isPaused) return;
+  const challenge = newMiniGameState.challenge;
+  ui.newMiniGameVisual.textContent = "";
+  challenge.remaining.forEach(item => {
+    const card = document.createElement("span");
+    card.className = "missing-item";
+    card.textContent = item.visual;
+    ui.newMiniGameVisual.append(card);
+  });
+  const gone = document.createElement("span");
+  gone.className = "missing-item gone";
+  gone.textContent = "?";
+  ui.newMiniGameVisual.append(gone);
+  ui.newMiniGamePrompt.textContent = "Hangisi eksik?";
+  newMiniGameState.inputLocked = false;
+  renderMissingItemChoices();
+  speakNewMiniGame("Hangisi eksik?");
+}
+
+function renderMissingItemChoices(wrongId) {
+  const challenge = newMiniGameState.challenge;
+  ui.newMiniGameChoices.textContent = "";
+  challenge.choices.forEach(item => addNewMiniGameChoice({
+    label: item.label, visual: item.visual, className: wrongId === item.id ? "try-again-choice" : "",
+    disabled: newMiniGameState.inputLocked || newMiniGameState.speaking,
+    onClick: () => chooseMissingItem(item.id)
+  }));
+}
+
+async function chooseMissingItem(itemId) {
+  if (!isNewMiniGameActive || isPaused || newMiniGameState.inputLocked || newMiniGameState.speaking) return;
+  if (itemId !== newMiniGameState.challenge.missing.id) {
+    recordNewMiniGameWrong();
+    ui.newMiniGameFeedback.textContent = "Bir daha bakalım.";
+    ui.newMiniGameFeedback.className = "matching-feedback try-again";
+    renderMissingItemChoices(itemId);
+    await speakNewMiniGame("Bir daha bakalım.");
+    renderMissingItemChoices();
+    return;
+  }
+  newMiniGameState.inputLocked = true;
+  recordNewMiniGameCorrect(newMiniGameState.challenge.missing.id);
+  ui.newMiniGameFeedback.textContent = "Harika, kaybolanı buldun!";
+  ui.newMiniGameFeedback.className = "matching-feedback success";
+  audio.playSuccess();
+  renderMissingItemChoices();
+  await speakNewMiniGame("Harika!");
+  scheduleNewMiniGame(showMissingItemRound, 450);
+}
+
+function showShadowRound() {
+  if (!isNewMiniGameActive || isPaused) return;
+  if (newMiniGameState.round >= 8) {
+    finishNewMiniGame(`${newMiniGameState.correct} doğru gölgeyi buldun.`);
+    return;
+  }
+  resetNewMiniGameView();
+  newMiniGameState.challenge = newMiniGames.createShadowRound(newMiniGameState.round);
+  newMiniGameState.round += 1;
+  newMiniGameState.inputLocked = false;
+  updateNewMiniGameProgress(newMiniGameState.round, 8);
+  ui.newMiniGamePrompt.textContent = `${newMiniGameState.challenge.source.label} hangisinin gölgesi?`;
+  const source = document.createElement("img");
+  source.className = "shadow-source";
+  source.src = newMiniGameSvgUrl(newMiniGameState.challenge.source.svg);
+  source.alt = "";
+  ui.newMiniGameVisual.append(source);
+  renderShadowChoices();
+  speakNewMiniGame("Doğru gölgeyi bul.");
+}
+
+function renderShadowChoices(wrongId) {
+  ui.newMiniGameChoices.textContent = "";
+  newMiniGameState.challenge.choices.forEach(item => {
+    const button = addNewMiniGameChoice({
+      label: "", className: `shadow-choice${wrongId === item.id ? " try-again-choice" : ""}`,
+      ariaLabel: "Gölge seçeneği", disabled: newMiniGameState.inputLocked || newMiniGameState.speaking,
+      onClick: () => chooseShadow(item.id)
+    });
+    const image = document.createElement("img");
+    image.src = newMiniGameSvgUrl(item.svg);
+    image.alt = "";
+    button.append(image);
+  });
+}
+
+async function chooseShadow(itemId) {
+  if (!isNewMiniGameActive || isPaused || newMiniGameState.inputLocked || newMiniGameState.speaking) return;
+  if (itemId !== newMiniGameState.challenge.source.id) {
+    recordNewMiniGameWrong();
+    ui.newMiniGameFeedback.textContent = "Çok yaklaştın, bir daha dene.";
+    renderShadowChoices(itemId);
+    await speakNewMiniGame("Bir daha bakalım.");
+    renderShadowChoices();
+    return;
+  }
+  newMiniGameState.inputLocked = true;
+  recordNewMiniGameCorrect(itemId);
+  ui.newMiniGameFeedback.textContent = "Evet, gölgesi bu!";
+  audio.playSuccess();
+  renderShadowChoices();
+  await speakNewMiniGame("Harika!");
+  scheduleNewMiniGame(showShadowRound, 450);
+}
+
+function showInitialLetterRound() {
+  if (!isNewMiniGameActive || isPaused) return;
+  if (newMiniGameState.round >= 10) {
+    finishNewMiniGame(`${newMiniGameState.correct} kelimenin ilk harfini buldun.`);
+    return;
+  }
+  resetNewMiniGameView();
+  newMiniGameState.challenge = newMiniGames.createLetterRound(newMiniGameState.round);
+  newMiniGameState.round += 1;
+  newMiniGameState.inputLocked = false;
+  updateNewMiniGameProgress(newMiniGameState.round, 10);
+  const { word } = newMiniGameState.challenge;
+  ui.newMiniGamePrompt.textContent = `${word.word} hangi harfle başlıyor?`;
+  ui.newMiniGameListen.classList.remove("hidden");
+  ui.newMiniGameListen.setAttribute("aria-label", `${word.word} kelimesini tekrar dinle`);
+  ui.newMiniGameVisual.innerHTML = `<span><span class="letter-word-visual" aria-hidden="true">${word.visual}</span><span class="letter-word-label">${word.word}</span></span>`;
+  renderInitialLetterChoices();
+  speakInitialLetterWord();
+}
+
+async function speakInitialLetterWord() {
+  if (!newMiniGameState.challenge?.word) return;
+  await speakNewMiniGame(newMiniGameState.challenge.word.speech, ENGLISH_LANGUAGE);
+}
+
+function renderInitialLetterChoices(wrongLetter) {
+  ui.newMiniGameChoices.textContent = "";
+  newMiniGameState.challenge.choices.forEach(letter => addNewMiniGameChoice({
+    label: letter, className: `letter-choice${wrongLetter === letter ? " try-again-choice" : ""}`,
+    ariaLabel: `${letter} harfi`, disabled: newMiniGameState.inputLocked || newMiniGameState.speaking,
+    onClick: () => chooseInitialLetter(letter)
+  }));
+  ui.newMiniGameListen.disabled = isPaused || newMiniGameState.inputLocked || newMiniGameState.speaking;
+}
+
+async function chooseInitialLetter(letter) {
+  if (!isNewMiniGameActive || isPaused || newMiniGameState.inputLocked || newMiniGameState.speaking) return;
+  const word = newMiniGameState.challenge.word;
+  if (letter !== word.letter) {
+    recordNewMiniGameWrong();
+    ui.newMiniGameFeedback.textContent = "Bir daha dinleyelim.";
+    renderInitialLetterChoices(letter);
+    await speakNewMiniGame("Bir daha dinleyelim.");
+    await speakInitialLetterWord();
+    renderInitialLetterChoices();
+    return;
+  }
+  newMiniGameState.inputLocked = true;
+  recordNewMiniGameCorrect(word.id);
+  ui.newMiniGameFeedback.textContent = `Evet! ${word.word}, ${word.letter} harfiyle başlıyor.`;
+  audio.playSuccess();
+  renderInitialLetterChoices();
+  await speakNewMiniGame("Harika!");
+  scheduleNewMiniGame(showInitialLetterRound, 450);
+}
+
+function renderSoundMemorySetup() {
+  resetNewMiniGameView();
+  ui.newMiniGameArea.classList.add("hidden");
+  ui.newMiniGameSetup.classList.remove("hidden");
+  ui.newMiniGameSetup.innerHTML = "<h3>Kaç ses çifti bulalım?</h3>";
+  const options = document.createElement("div");
+  options.className = "setup-options";
+  Object.values(newMiniGames.SOUND_DIFFICULTIES).forEach(difficulty => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "setup-choice";
+    button.setAttribute("aria-pressed", String(newMiniGameState.soundDifficulty === difficulty.id));
+    button.textContent = `${difficulty.label} · ${difficulty.pairs} çift`;
+    button.addEventListener("click", () => {
+      newMiniGameState.soundDifficulty = difficulty.id;
+      renderSoundMemorySetup();
+    });
+    options.append(button);
+  });
+  const start = document.createElement("button");
+  start.type = "button";
+  start.className = "primary-button";
+  start.textContent = "Oyunu Başlat";
+  start.addEventListener("click", startSoundMemorySession);
+  ui.newMiniGameSetup.append(options, start);
+}
+
+function startSoundMemorySession() {
+  clearSpeech();
+  newMiniGameState.board = newMiniGames.createSoundBoard(newMiniGameState.soundDifficulty);
+  newMiniGameState.firstCard = undefined;
+  newMiniGameState.attempts = 0;
+  newMiniGameState.correct = 0;
+  newMiniGameState.inputLocked = false;
+  newMiniGameState.completed = false;
+  newMiniGameState.elapsedMs = 0;
+  newMiniGameState.timerStartedAt = Date.now();
+  ui.newMiniGameSetup.classList.add("hidden");
+  ui.newMiniGameArea.classList.remove("hidden");
+  renderSoundMemoryBoard();
+}
+
+function renderSoundMemoryBoard() {
+  resetNewMiniGameView();
+  const matchedPairs = newMiniGameState.board.filter(card => card.matched).length / 2;
+  const totalPairs = newMiniGameState.board.length / 2;
+  updateNewMiniGameProgress(matchedPairs, totalPairs);
+  ui.newMiniGamePrompt.textContent = "Kartlara dokun, aynı sesleri bul.";
+  ui.newMiniGameVisual.classList.add("hidden");
+  ui.newMiniGameChoices.className = "new-mini-game-choices sound-memory-board";
+  newMiniGameState.board.forEach((card, index) => {
+    addNewMiniGameChoice({
+      label: card.revealed || card.matched ? "🔊" : "?",
+      className: `sound-card${card.revealed ? " open" : ""}${card.matched ? " matched" : ""}`,
+      ariaLabel: card.matched ? `Eşleşen ses kartı ${index + 1}` : card.revealed ? `Açık ses kartı ${index + 1}, tekrar dinle` : `Kapalı ses kartı ${index + 1}`,
+      disabled: card.matched || newMiniGameState.inputLocked || newMiniGameState.speaking,
+      onClick: () => openSoundMemoryCard(index)
+    });
+  });
+  ui.newMiniGameFeedback.textContent = newMiniGameState.attempts ? `${newMiniGameState.attempts} deneme` : "İlk kartı aç.";
+}
+
+async function openSoundMemoryCard(index) {
+  const card = newMiniGameState.board[index];
+  if (!isNewMiniGameActive || isPaused || !newMiniGames.canSelectSoundCard(card, newMiniGameState.inputLocked, newMiniGameState.speaking)) return;
+  if (card.revealed) {
+    await speakNewMiniGame(card.speech, ENGLISH_LANGUAGE);
+    return;
+  }
+  card.revealed = true;
+  renderSoundMemoryBoard();
+  if (!await speakNewMiniGame(card.speech, ENGLISH_LANGUAGE)) return;
+  if (newMiniGameState.firstCard === undefined) {
+    newMiniGameState.firstCard = index;
+    renderSoundMemoryBoard();
+    return;
+  }
+  const firstIndex = newMiniGameState.firstCard;
+  const first = newMiniGameState.board[firstIndex];
+  newMiniGameState.firstCard = undefined;
+  newMiniGameState.attempts += 1;
+  newMiniGameState.inputLocked = true;
+  if (first.targetId === card.targetId) {
+    first.matched = true;
+    card.matched = true;
+    recordNewMiniGameCorrect(card.targetId);
+    audio.playSuccess();
+    ui.newMiniGameFeedback.textContent = "Aynı sesi buldun!";
+    if (newMiniGameState.board.every(item => item.matched)) {
+      const elapsed = newMiniGameState.elapsedMs + (Date.now() - newMiniGameState.timerStartedAt);
+      finishNewMiniGame(`${newMiniGameState.attempts} denemede, ${formatMatchingTime(elapsed)} içinde tamamladın.`);
+      return;
+    }
+  } else {
+    recordNewMiniGameWrong();
+    ui.newMiniGameFeedback.textContent = "Sesler farklı, yeniden dinleyelim.";
+  }
+  renderSoundMemoryBoard();
+  scheduleNewMiniGame(() => {
+    first.revealed = first.matched;
+    card.revealed = card.matched;
+    newMiniGameState.inputLocked = false;
+    renderSoundMemoryBoard();
+  }, 700);
+}
+
+function renderPuzzleSetup() {
+  resetNewMiniGameView();
+  ui.newMiniGameArea.classList.add("hidden");
+  ui.newMiniGameSetup.classList.remove("hidden");
+  ui.newMiniGameSetup.innerHTML = "<h3>Bir resim seç</h3>";
+  const puzzles = document.createElement("div");
+  puzzles.className = "setup-options puzzle-selector";
+  newMiniGames.PUZZLES.forEach(puzzle => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "setup-choice";
+    button.setAttribute("aria-pressed", String(newMiniGameState.puzzleId === puzzle.id));
+    button.innerHTML = `<img src="${newMiniGameSvgUrl(puzzle.svg)}" alt=""><span>${puzzle.label}</span>`;
+    button.addEventListener("click", () => {
+      newMiniGameState.puzzleId = puzzle.id;
+      renderPuzzleSetup();
+    });
+    puzzles.append(button);
+  });
+  const difficultyTitle = document.createElement("h3");
+  difficultyTitle.textContent = "Zorluk seç";
+  const difficulties = document.createElement("div");
+  difficulties.className = "setup-options";
+  Object.values(newMiniGames.PUZZLE_DIFFICULTIES).forEach(difficulty => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "setup-choice";
+    button.setAttribute("aria-pressed", String(newMiniGameState.puzzleDifficulty === difficulty.id));
+    button.textContent = `${difficulty.label} · ${difficulty.columns} × ${difficulty.rows}`;
+    button.addEventListener("click", () => {
+      newMiniGameState.puzzleDifficulty = difficulty.id;
+      renderPuzzleSetup();
+    });
+    difficulties.append(button);
+  });
+  const start = document.createElement("button");
+  start.type = "button";
+  start.className = "primary-button";
+  start.textContent = "Yapbozu Başlat";
+  start.addEventListener("click", startPuzzleSession);
+  ui.newMiniGameSetup.append(puzzles, difficultyTitle, difficulties, start);
+}
+
+function startPuzzleSession() {
+  newMiniGameState.pieces = newMiniGames.createPuzzlePieces(newMiniGameState.puzzleDifficulty);
+  newMiniGameState.selectedPieceId = undefined;
+  newMiniGameState.draggedPieceId = undefined;
+  newMiniGameState.correct = 0;
+  newMiniGameState.completed = false;
+  newMiniGameState.inputLocked = false;
+  ui.newMiniGameSetup.classList.add("hidden");
+  ui.newMiniGameArea.classList.remove("hidden");
+  renderPuzzleGame();
+}
+
+function puzzlePieceStyle(piece, puzzle, difficulty) {
+  const x = difficulty.columns === 1 ? 0 : (piece.column / (difficulty.columns - 1)) * 100;
+  const y = difficulty.rows === 1 ? 0 : (piece.row / (difficulty.rows - 1)) * 100;
+  return `background-image:url("${newMiniGameSvgUrl(puzzle.svg)}");background-size:${difficulty.columns * 100}% ${difficulty.rows * 100}%;background-position:${x}% ${y}%`;
+}
+
+function createPuzzlePieceButton(piece, puzzle, difficulty, inTray = false) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = `puzzle-piece${newMiniGameState.selectedPieceId === piece.id ? " selected" : ""}`;
+  button.style.cssText = puzzlePieceStyle(piece, puzzle, difficulty);
+  button.setAttribute("aria-label", `Yapboz parçası ${piece.target + 1}${inTray ? ", seçmek için dokun" : ", yerleştirildi"}`);
+  button.disabled = isPaused || piece.placed;
+  if (inTray) {
+    button.draggable = true;
+    button.addEventListener("dragstart", event => {
+      newMiniGameState.draggedPieceId = piece.id;
+      event.dataTransfer?.setData("text/plain", piece.id);
+    });
+    button.addEventListener("dragend", () => { newMiniGameState.draggedPieceId = undefined; });
+    button.addEventListener("click", () => {
+      newMiniGameState.selectedPieceId = newMiniGameState.selectedPieceId === piece.id ? undefined : piece.id;
+      renderPuzzleGame();
+    });
+  }
+  return button;
+}
+
+function renderPuzzleGame() {
+  resetNewMiniGameView();
+  const puzzle = newMiniGames.PUZZLES.find(item => item.id === newMiniGameState.puzzleId) ?? newMiniGames.PUZZLES[0];
+  const difficulty = newMiniGames.PUZZLE_DIFFICULTIES[newMiniGameState.puzzleDifficulty];
+  const placedCount = newMiniGameState.pieces.filter(piece => piece.placed).length;
+  updateNewMiniGameProgress(placedCount, newMiniGameState.pieces.length);
+  ui.newMiniGamePrompt.textContent = "Parçayı seç, sonra doğru yere dokun. İstersen sürükle.";
+  ui.newMiniGameVisual.innerHTML = `<img class="puzzle-reference" src="${newMiniGameSvgUrl(puzzle.svg)}" alt=""><strong>${puzzle.label}</strong>`;
+  ui.newMiniGameChoices.className = "new-mini-game-choices puzzle-layout";
+  const board = document.createElement("div");
+  board.className = "puzzle-board";
+  board.style.gridTemplateColumns = `repeat(${difficulty.columns},1fr)`;
+  board.style.gridTemplateRows = `repeat(${difficulty.rows},1fr)`;
+  Array.from({ length: difficulty.columns * difficulty.rows }, (_, target) => {
+    const placed = newMiniGameState.pieces.find(piece => piece.target === target && piece.placed);
+    const slot = document.createElement(placed ? "div" : "button");
+    if (!placed) slot.type = "button";
+    slot.className = `puzzle-slot${placed ? " filled" : ""}`;
+    slot.setAttribute("aria-label", placed ? `Dolu yapboz yeri ${target + 1}` : `Boş yapboz yeri ${target + 1}`);
+    if (placed) slot.append(createPuzzlePieceButton(placed, puzzle, difficulty));
+    else {
+      slot.disabled = isPaused;
+      slot.textContent = target + 1;
+      slot.addEventListener("click", () => placePuzzlePiece(newMiniGameState.selectedPieceId, target));
+      slot.addEventListener("dragover", event => event.preventDefault());
+      slot.addEventListener("drop", event => {
+        event.preventDefault();
+        placePuzzlePiece(event.dataTransfer?.getData("text/plain") || newMiniGameState.draggedPieceId, target);
+      });
+    }
+    board.append(slot);
+  });
+  const tray = document.createElement("div");
+  tray.className = "puzzle-tray";
+  tray.setAttribute("aria-label", "Yapboz parçaları");
+  newMiniGameState.pieces.filter(piece => !piece.placed).forEach(piece => tray.append(createPuzzlePieceButton(piece, puzzle, difficulty, true)));
+  ui.newMiniGameChoices.append(board, tray);
+  ui.newMiniGameFeedback.textContent = newMiniGameState.selectedPieceId ? "Şimdi parçanın yerini seç." : "Bir parça seç.";
+}
+
+async function placePuzzlePiece(pieceId, target) {
+  if (!isNewMiniGameActive || isPaused || newMiniGameState.inputLocked || !pieceId) return;
+  const piece = newMiniGameState.pieces.find(item => item.id === pieceId && !item.placed);
+  if (!piece) return;
+  newMiniGameState.selectedPieceId = undefined;
+  newMiniGameState.draggedPieceId = undefined;
+  if (piece.target !== target) {
+    recordNewMiniGameWrong();
+    ui.newMiniGameFeedback.textContent = "Bu parça başka bir yere ait. Yeniden deneyelim.";
+    await speakNewMiniGame("Başka bir yere bakalım.");
+    renderPuzzleGame();
+    return;
+  }
+  piece.placed = true;
+  recordNewMiniGameCorrect(piece.id);
+  audio.playSuccess();
+  renderPuzzleGame();
+  if (newMiniGames.isPuzzleComplete(newMiniGameState.pieces)) {
+    finishNewMiniGame(`${newMiniGameState.pieces.length} parçayı doğru yerleştirdin.`);
+  }
+}
+
+function renderCurrentNewMiniGame() {
+  if (!ui.newMiniGame || newMiniGameState.completed) return;
+  if (newMiniGameState.mode === MISSING_ITEM_MODE && newMiniGameState.challenge?.missing && ui.newMiniGamePrompt.textContent === "Hangisi eksik?") renderMissingItemChoices();
+  else if (newMiniGameState.mode === SHADOW_MODE && newMiniGameState.challenge) renderShadowChoices();
+  else if (newMiniGameState.mode === INITIAL_LETTER_MODE && newMiniGameState.challenge) renderInitialLetterChoices();
+  else if (newMiniGameState.mode === SOUND_MEMORY_MODE && newMiniGameState.board.length) renderSoundMemoryBoard();
+  else if (newMiniGameState.mode === PUZZLE_MODE && newMiniGameState.pieces.length) renderPuzzleGame();
+}
+
+function startNewMiniGame(mode) {
+  if (!NEW_MINI_GAME_MODES.includes(mode)) return;
+  cleanupNewMiniGame();
+  newMiniGameState = createEmptyNewMiniGameState(mode);
+  isNewMiniGameActive = true;
+  const config = NEW_MINI_GAME_CONFIG[mode];
+  ui.newMiniGameEyebrow.textContent = config.eyebrow;
+  ui.newMiniGameTitle.textContent = config.title;
+  ui.newMiniGamePause.disabled = false;
+  clearSpeech();
+  hideAllScreens();
+  ui.newMiniGame.classList.remove("hidden");
+  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  recordNewMiniGameStarted(mode);
+  startPlayTime();
+  startWakeLock();
+  if (mode === MISSING_ITEM_MODE) showMissingItemRound();
+  else if (mode === SHADOW_MODE) showShadowRound();
+  else if (mode === INITIAL_LETTER_MODE) showInitialLetterRound();
+  else if (mode === SOUND_MEMORY_MODE) renderSoundMemorySetup();
+  else renderPuzzleSetup();
+  ui.newMiniGameTitle.focus({ preventScroll: true });
+}
+
+function replayNewMiniGame() {
+  const mode = newMiniGameState.mode;
+  if (NEW_MINI_GAME_MODES.includes(mode)) startNewMiniGame(mode);
+}
+
+function changeNewMiniGameSetup() {
+  const mode = newMiniGameState.mode;
+  if (mode === SOUND_MEMORY_MODE || mode === PUZZLE_MODE) startNewMiniGame(mode);
+}
+
 function renderParentDashboard() {
   const activePlayTime = playStartedAt ? Date.now() - playStartedAt : 0;
   const minutes = Math.floor((parentData.playTime + activePlayTime) / 60000);
@@ -1953,10 +2656,11 @@ function setGameActionsEnabled(enabled) {
   ui.numberMatchPause.disabled = !enabled;
   ui.colorMatchPause.disabled = !enabled;
   ui.sortingPause.disabled = !enabled;
+  ui.newMiniGamePause.disabled = !enabled;
 }
 
 function pauseGame() {
-  if (isPaused || (ui.quiz.classList.contains("hidden") && !isBalloonBonusActive && !isMatchingGameActive && !isListeningGameActive && !isNumberMatchGameActive && !isColorMatchGameActive && !isSortingGameActive)) return;
+  if (isPaused || (ui.quiz.classList.contains("hidden") && !isBalloonBonusActive && !isMatchingGameActive && !isListeningGameActive && !isNumberMatchGameActive && !isColorMatchGameActive && !isSortingGameActive && !isNewMiniGameActive)) return;
   isPaused = true;
   clearSpeech();
   stopPlayTime();
@@ -1984,6 +2688,7 @@ function pauseGame() {
     clearSortingInteraction();
     renderSortingGame();
   }
+  if (isNewMiniGameActive) pauseNewMiniGameState();
   ui.pauseOverlay.classList.remove("hidden");
   ui.resume.focus();
 }
@@ -2067,6 +2772,10 @@ function resumeGame() {
   }
   if (isSortingGameActive) {
     renderSortingGame();
+    return;
+  }
+  if (isNewMiniGameActive) {
+    resumeNewMiniGameState();
     return;
   }
   if (isWelcomeSequenceActive) {
@@ -2544,6 +3253,10 @@ async function startGame({ skipWelcome = false, miniGameMode } = {}) {
       startSortingGame();
       return;
     }
+    if (NEW_MINI_GAME_MODES.includes(gameMode)) {
+      startNewMiniGame(gameMode);
+      return;
+    }
     restoreStoredLearningStats();
     if (activeLearningPathStage) engine.setActiveCategories(activeLearningPathStage.categories);
     else applyCategoryPack();
@@ -2588,6 +3301,7 @@ function goHome(shouldSpeak = true, destination = "home") {
   ui.shell.classList.remove("learning-path-open");
   closeGameMenu();
   clearSpeech();
+  cleanupNewMiniGame();
   setSessionNavigationBusy(false);
   resetEncouragementState();
   stopWakeLock();
@@ -2690,6 +3404,7 @@ function goHome(shouldSpeak = true, destination = "home") {
   ui.numberMatch.classList.add("hidden");
   ui.colorMatch.classList.add("hidden");
   ui.sorting.classList.add("hidden");
+  ui.newMiniGame.classList.add("hidden");
   ui.learningPathReturn.classList.add("hidden");
   ui.learningPathNext.classList.add("hidden");
   ui.learningPathCompletion.classList.add("hidden");
@@ -2808,6 +3523,11 @@ ui.listeningMode.addEventListener("click", () => launchMiniGame(LISTENING_MODE))
 ui.numberMatchMode.addEventListener("click", () => launchMiniGame(NUMBER_MATCH_MODE));
 ui.colorMatchMode.addEventListener("click", () => launchMiniGame(COLOR_MATCH_MODE));
 ui.sortingMode.addEventListener("click", () => launchMiniGame(SORTING_MODE));
+ui.missingItemMode.addEventListener("click", () => launchMiniGame(MISSING_ITEM_MODE));
+ui.shadowMode.addEventListener("click", () => launchMiniGame(SHADOW_MODE));
+ui.initialLetterMode.addEventListener("click", () => launchMiniGame(INITIAL_LETTER_MODE));
+ui.soundMemoryMode.addEventListener("click", () => launchMiniGame(SOUND_MEMORY_MODE));
+ui.puzzleMode.addEventListener("click", () => launchMiniGame(PUZZLE_MODE));
 ui.categoryPackButtons.forEach(button => button.addEventListener("click", () => setCategoryPack(button.dataset.categoryPack)));
 ui.playerButtons.forEach(button => button.addEventListener("click", () => {
   if (button === ui.customPlayer) selectCustomPlayer();
@@ -2829,6 +3549,8 @@ ui.listeningHome.addEventListener("click", () => leaveGameFor("games"));
 ui.numberMatchHome.addEventListener("click", () => leaveGameFor("games"));
 ui.colorMatchHome.addEventListener("click", () => leaveGameFor("games"));
 ui.sortingHome.addEventListener("click", () => leaveGameFor("games"));
+ui.newMiniGameHome.addEventListener("click", () => leaveGameFor("games"));
+ui.newMiniGameCompletionHome.addEventListener("click", () => leaveGameFor("games"));
 ui.balloonHome.addEventListener("click", () => leaveGameFor("home"));
 ui.matchingReplay.addEventListener("click", replayMatchingWithNewCategory);
 ui.matchingCategories.addEventListener("click", showMatchingCategorySelection);
@@ -2837,6 +3559,12 @@ ui.listeningPause.addEventListener("click", pauseGame);
 ui.numberMatchPause.addEventListener("click", pauseGame);
 ui.colorMatchPause.addEventListener("click", pauseGame);
 ui.sortingPause.addEventListener("click", pauseGame);
+ui.newMiniGamePause.addEventListener("click", pauseGame);
+ui.newMiniGameReplay.addEventListener("click", replayNewMiniGame);
+ui.newMiniGameChange.addEventListener("click", changeNewMiniGameSetup);
+ui.newMiniGameListen.addEventListener("click", () => {
+  if (newMiniGameState.mode === INITIAL_LETTER_MODE && !isPaused && !newMiniGameState.inputLocked && !newMiniGameState.speaking) speakInitialLetterWord();
+});
 ui.listeningReplay.addEventListener("click", () => {
   if (!isPaused && !isListeningSpeaking && !isListeningTransitioning && !isListeningRevealing) speakListeningWord();
 });

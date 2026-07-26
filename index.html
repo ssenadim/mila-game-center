@@ -4,11 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#7c5ce0" />
-    <title>Mila Learning Adventure</title>
+    <title>Mila Oyun Merkezi</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=7.0" />
+    <link rel="stylesheet" href="styles.css?v=8.1" />
   </head>
   <body>
     <main class="game-shell">
@@ -29,7 +29,7 @@
       <section id="welcome-screen" class="screen welcome-screen" aria-labelledby="welcome-title">
         <div class="mascot" aria-hidden="true"><span class="ear ear-left"></span><span class="ear ear-right"></span><span class="face"><span class="eye"></span><span class="eye"></span><span class="smile"></span></span></div>
         <p class="eyebrow">OYUN MERKEZİ</p>
-        <h1 id="welcome-title" tabindex="-1">Öğrenme <span>Macerası</span></h1>
+        <h1 id="welcome-title" tabindex="-1">Mila <span>Oyun Merkezi</span></h1>
         <p class="welcome-copy">Bugün ne yapmak istersin?</p>
         <section class="selected-player-card" aria-labelledby="selected-player-summary">
           <strong id="selected-player-summary" role="status">Henüz bir oyuncu seçilmedi</strong>
@@ -114,6 +114,11 @@
             <button id="number-match-mode-button" class="mode-button number-match-mode-button" type="button"><strong>🔢 Sayıyı Bul</strong><span>Sayıyı dinle, doğru rakamı seç.</span></button>
             <button id="color-match-mode-button" class="mode-button color-match-mode-button" type="button"><strong>🎨 Rengi Bul</strong><span>Rengi dinle ya da oku, doğru kartı seç.</span></button>
             <button id="sorting-mode-button" class="mode-button sorting-mode-button" type="button"><strong>🧺 Grupla</strong><span>Nesneleri doğru kutuya yerleştir.</span></button>
+            <button id="missing-item-mode-button" class="mode-button" type="button" aria-label="Hangisi Eksik oyununu aç"><strong>🫣 Hangisi Eksik?</strong><span>Resimlere dikkat et, kaybolanı bul.</span></button>
+            <button id="shadow-mode-button" class="mode-button" type="button" aria-label="Gölgesini Bul oyununu aç"><strong>🌑 Gölgesini Bul</strong><span>Resmi doğru gölgesiyle eşleştir.</span></button>
+            <button id="initial-letter-mode-button" class="mode-button" type="button" aria-label="İlk Harfi Bul oyununu aç"><strong>🔤 İlk Harfi Bul</strong><span>Kelimeyi dinle, ilk harfini seç.</span></button>
+            <button id="sound-memory-mode-button" class="mode-button" type="button" aria-label="Ses Hafızası oyununu aç"><strong>🎧 Ses Hafızası</strong><span>Sesleri dinle ve aynı olanları eşleştir.</span></button>
+            <button id="puzzle-mode-button" class="mode-button" type="button" aria-label="Yapboz oyununu aç"><strong>🧩 Yapboz</strong><span>Parçaları birleştir, resmi tamamla.</span></button>
           </div>
         </section>
         <button id="mini-games-home-button" class="sound-button view-home-button" type="button">⌂ Ana Sayfa</button>
@@ -227,6 +232,31 @@
         </div>
       </section>
 
+      <section id="new-mini-game-screen" class="screen new-mini-game-screen hidden" aria-live="polite" aria-labelledby="new-mini-game-title">
+        <header class="matching-header new-mini-game-header">
+          <div><p id="new-mini-game-eyebrow" class="eyebrow">MİNİ OYUN</p><h2 id="new-mini-game-title" tabindex="-1">Haydi oynayalım!</h2></div>
+          <button id="new-mini-game-home-button" class="game-destination-button" type="button">🎮 Oyunlar</button>
+          <button id="new-mini-game-pause-button" class="icon-button" type="button" aria-label="Oyunu duraklat">⏸</button>
+        </header>
+        <div id="new-mini-game-setup" class="new-mini-game-setup hidden"></div>
+        <div id="new-mini-game-area">
+          <div class="new-mini-game-progress"><strong id="new-mini-game-progress-label"></strong><span aria-hidden="true"><i id="new-mini-game-progress-fill"></i></span></div>
+          <p id="new-mini-game-prompt" class="new-mini-game-prompt"></p>
+          <button id="new-mini-game-listen-button" class="replay-button hidden" type="button"><span aria-hidden="true">🔊</span> Tekrar Dinle</button>
+          <div id="new-mini-game-visual" class="new-mini-game-visual" aria-hidden="true"></div>
+          <div id="new-mini-game-choices" class="new-mini-game-choices"></div>
+          <p id="new-mini-game-feedback" class="matching-feedback" role="status"></p>
+        </div>
+        <div id="new-mini-game-completion" class="new-mini-game-completion hidden">
+          <div class="new-mini-game-completion-icon" aria-hidden="true">🎉</div>
+          <h3>Harika, tamamladın!</h3>
+          <p id="new-mini-game-completion-copy"></p>
+          <button id="new-mini-game-replay-button" class="primary-button" type="button">Tekrar Oyna <span aria-hidden="true">↻</span></button>
+          <button id="new-mini-game-change-button" class="sound-button hidden" type="button"></button>
+          <button id="new-mini-game-completion-home-button" class="sound-button" type="button">🎮 Oyunlar</button>
+        </div>
+      </section>
+
       <section id="summary-screen" class="screen summary-screen hidden" aria-live="polite" aria-labelledby="summary-title">
         <div class="summary-sparkles" aria-hidden="true">✨ ⭐ ✨</div>
         <p class="eyebrow">20 SORULUK MACERA</p>
@@ -319,7 +349,8 @@
     <script src="js/services/AudioHelper.js"></script>
     <script src="js/services/AnimationHelper.js?v=6.6"></script>
     <script src="js/QuestionEngine.js?v=6.4"></script>
+    <script src="js/NewMiniGames.js?v=8.1"></script>
     <script src="data/offline-data.js"></script>
-    <script src="app.js?v=7.0"></script>
+    <script src="app.js?v=8.1"></script>
   </body>
 </html>
