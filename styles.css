@@ -280,3 +280,58 @@ button { font:inherit; cursor:pointer; }
   .learning-path-stage-description{font-size:.64rem}
   .learning-path-screen .learning-path-stage-action{grid-column:3;justify-self:start;margin-top:-1px;padding:5px 7px;font-size:.66rem}
 }
+
+/* Sprint 8.3.2: focused number learning stages. */
+.number-learning-screen{align-self:start;width:min(100%,720px);padding:4px 0 26px}
+.number-learning-header{grid-template-columns:minmax(0,1fr) auto 46px}
+.number-learning-header>div{text-align:left}
+.number-learning-header h2{font-size:clamp(1.65rem,5vw,2.5rem)}
+.number-learning-progress{display:grid;grid-template-columns:auto minmax(90px,1fr) auto;align-items:center;gap:10px;max-width:590px;margin:0 auto 10px;color:#493a85;font-size:.88rem;font-weight:900}
+.number-learning-progress .progress-bar{height:14px;padding:3px;border-radius:12px;background:#ffffffcc}
+.number-learning-progress .progress-bar i{display:block;width:0;height:100%;border-radius:9px;background:linear-gradient(90deg,#5d47ba,#9c78fa);transition:width .3s ease}
+.number-learning-prompt{min-height:36px;margin:10px auto;color:#493a85;font-family:"Baloo 2",cursive;font-size:clamp(1.55rem,5vw,2.2rem);font-weight:900;line-height:1.05}
+.number-learning-visual{display:grid;place-items:center;min-height:128px;max-width:590px;margin:0 auto 14px;padding:13px;border:3px solid #fff;border-radius:24px;background:#fffdf8;box-shadow:0 6px 0 #c6c1d0}
+.quantity-visual{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:0}
+.quantity-row{display:block;font-size:clamp(1.75rem,7vw,3rem);line-height:1.08;letter-spacing:.08em;white-space:nowrap}
+.quantity-zero{display:grid;place-items:center;min-width:92px;min-height:68px;border:3px dashed #aaa0be;border-radius:18px;color:#6b5b99;font-size:1.2rem;font-weight:900}
+.number-learning-answers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;max-width:590px;margin:0 auto}
+.number-learning-choice,.number-ordering-slot{min-width:0;min-height:88px;padding:9px;border:3px solid #b9aed1;border-radius:21px;background:#fffdf8;color:#493a85;font:900 clamp(2.3rem,10vw,4rem)/1 "Baloo 2",cursive;box-shadow:0 6px 0 #9d96ac;touch-action:manipulation}
+.number-learning-choice:active:not(:disabled),.number-ordering-slot:active:not(:disabled){transform:translateY(4px);box-shadow:0 2px 0 #7356bd}
+.number-learning-choice.correct{border-color:#218f53;background:#a6eac0;box-shadow:0 6px 0 #197542}
+.number-learning-choice.try-again-choice{border-color:#9674d8;background:#eee7ff}
+.number-learning-choice.selected{border-color:#e1b936;background:#fff8d6;outline:4px solid #f2c94c;outline-offset:2px}
+.quantity-choice{display:grid;place-items:center;min-height:138px;padding:8px}
+.quantity-choice .quantity-row{font-size:clamp(1.25rem,5vw,2.15rem)}
+.number-equal-source{padding:8px 18px;border:4px solid #7855d4;border-radius:20px;background:#f5f0ff}
+.number-neighbor-sequence{display:flex;align-items:center;justify-content:center;gap:15px}
+.number-neighbor-sequence span{display:grid;place-items:center;width:82px;height:82px;border:4px solid #7855d4;border-radius:22px;background:#f5f0ff;color:#493a85;font:900 3rem/1 "Baloo 2",cursive}
+.number-neighbor-sequence i{color:#8064d4;font:900 2rem/1 sans-serif}
+.number-ordering-tray,.number-ordering-slots{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;grid-column:1/-1}
+.number-ordering-tray .number-learning-choice,.number-ordering-slot{min-height:76px;font-size:2.4rem}
+.number-ordering-slot{border-style:dashed;background:#f5f1fa;color:#9a91aa}
+.number-ordering-slot.filled{border-style:solid;border-color:#7855d4;background:#eee7ff;color:#493a85}
+.number-learning-screen>#number-learning-check-button{display:block;width:min(100%,300px);min-height:58px;margin:16px auto 10px}
+.number-learning-screen button:focus-visible{outline:4px solid #f2c94c;outline-offset:3px}
+
+@media(max-width:600px){
+  .number-learning-header{grid-template-columns:minmax(0,1fr) auto 42px;gap:6px}
+  .number-learning-header .game-destination-button{min-height:44px;padding:7px 8px;font-size:.7rem}
+  .number-learning-visual{min-height:105px;padding:9px}
+  .number-learning-answers{gap:9px}
+  .number-learning-choice,.number-ordering-slot{min-height:76px;border-radius:17px}
+  .number-ordering-tray,.number-ordering-slots{gap:6px}
+  .number-ordering-tray .number-learning-choice,.number-ordering-slot{min-height:62px;font-size:1.8rem}
+  .quantity-choice{min-height:112px}
+}
+@media(max-width:390px){
+  .number-learning-header h2{font-size:1.42rem}
+  .number-learning-progress{gap:7px;margin-bottom:5px}
+  .number-learning-prompt{margin:7px auto;font-size:1.42rem}
+  .number-learning-visual{min-height:91px;margin-bottom:10px}
+  .quantity-row{font-size:1.65rem}
+  .number-learning-choice{min-height:68px;font-size:2.45rem}
+  .quantity-choice{min-height:102px;padding:5px}
+  .quantity-choice .quantity-row{font-size:1.15rem}
+  .number-neighbor-sequence span{width:68px;height:68px;font-size:2.4rem}
+  .number-ordering-tray .number-learning-choice,.number-ordering-slot{min-height:56px;font-size:1.55rem}
+}

@@ -12,6 +12,7 @@ global.window = {
 
 const categories = require("../js/LearningCategories.js");
 const roadmap = require("../js/LearningPath.js");
+const numberLearning = require("../js/NumberLearning.js");
 require("../js/QuestionEngine.js");
 const QuestionEngine = global.window.MilaQuestionEngine;
 
@@ -67,8 +68,8 @@ test("every stage belongs to exactly one group in deterministic order", () => {
 test("every implemented stage generates a complete valid Learning Path session", () => {
   const engine = new QuestionEngine(categories.questions);
   const implemented = roadmap.STAGES.filter(stage => stage.implemented);
-  assert.equal(implemented.length, 16);
-  implemented.forEach(stage => {
+  assert.equal(implemented.length, 22);
+  implemented.filter(stage => !numberLearning.NUMBER_STAGE_IDS.includes(stage.id)).forEach(stage => {
     const plan = engine.createSessionPlan(stage.categoryIds, stage.sessionLength, { gentleProgression: true });
     assert.equal(plan.length, stage.sessionLength, `${stage.id} session is incomplete`);
     assert.ok(plan.every(question => stage.categoryIds.includes(question.category)));
@@ -91,12 +92,14 @@ test("first stage unlocks normally and completion unlocks the next implemented s
   assert.equal(roadmap.getNextEligibleStage("recognize-colors", afterColors).id, "recognize-shapes");
 });
 
-test("planned stages never launch and do not block later implemented stages", () => {
+test("number stages unlock sequentially and planned operation stages remain unavailable", () => {
   const throughWordWorld = completedThrough(10);
-  assert.equal(roadmap.canLaunchStage("count-objects", throughWordWorld), false);
-  assert.equal(roadmap.getStageState(roadmap.stageById("count-objects"), throughWordWorld), "planned");
-  assert.equal(roadmap.getNextEligibleStage("nature-space", throughWordWorld).id, "emotions");
-  assert.equal(roadmap.getRecommendedStage(throughWordWorld).id, "emotions");
+  assert.equal(roadmap.canLaunchStage("count-objects", throughWordWorld), true);
+  assert.equal(roadmap.getStageState(roadmap.stageById("count-objects"), throughWordWorld), "current");
+  assert.equal(roadmap.canLaunchStage("order-numbers", throughWordWorld), false);
+  assert.equal(roadmap.getNextEligibleStage("nature-space", throughWordWorld).id, "count-objects");
+  assert.equal(roadmap.getRecommendedStage(throughWordWorld).id, "count-objects");
+  assert.equal(roadmap.canLaunchStage("addition-preparation", completedThrough(16)), false);
 });
 
 test("completed stages remain replayable while locked stages cannot launch", () => {
@@ -111,7 +114,7 @@ test("recommended and group progress count only implemented stages", () => {
   const progress = completedThrough(4);
   assert.equal(roadmap.getRecommendedStage(progress).id, "animals");
   assert.deepEqual(roadmap.getGroupProgress("first-discoveries", progress), { completed: 4, playable: 4, planned: 0 });
-  assert.deepEqual(roadmap.getGroupProgress("number-world", progress), { completed: 0, playable: 0, planned: 6 });
+  assert.deepEqual(roadmap.getGroupProgress("number-world", progress), { completed: 0, playable: 6, planned: 0 });
   assert.deepEqual(roadmap.getGroupProgress("daily-life", progress), { completed: 0, playable: 6, planned: 2 });
 });
 

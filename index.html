@@ -181,6 +181,25 @@
         <button id="next-button" class="primary-button next-button hidden" type="button">Sonraki soru <span aria-hidden="true">→</span></button>
       </section>
 
+      <section id="number-learning-screen" class="screen number-learning-screen hidden" aria-live="polite" aria-labelledby="number-learning-title" tabindex="-1">
+        <header class="matching-header number-learning-header">
+          <div><p class="eyebrow">SAYILAR DÜNYASI</p><h2 id="number-learning-title" tabindex="-1">Sayıları keşfet!</h2></div>
+          <button id="number-learning-path-button" class="game-destination-button" type="button">🗺️ Öğrenme Yolu</button>
+          <button id="number-learning-pause-button" class="icon-button" type="button" aria-label="Oyunu duraklat">⏸</button>
+        </header>
+        <div class="number-learning-progress">
+          <strong id="number-learning-progress-label">1 / 10</strong>
+          <span class="progress-bar" aria-hidden="true"><i id="number-learning-progress-fill"></i></span>
+          <span id="number-learning-score">⭐ 0</span>
+        </div>
+        <button id="number-learning-listen-button" class="replay-button" type="button" aria-label="Yönergeyi tekrar dinle"><span aria-hidden="true">🔊</span> Tekrar Dinle</button>
+        <p id="number-learning-prompt" class="number-learning-prompt"></p>
+        <div id="number-learning-visual" class="number-learning-visual"></div>
+        <div id="number-learning-answers" class="number-learning-answers" aria-label="Cevap seçenekleri"></div>
+        <button id="number-learning-check-button" class="primary-button hidden" type="button">Kontrol Et</button>
+        <p id="number-learning-feedback" class="matching-feedback" role="status"></p>
+      </section>
+
       <section id="matching-screen" class="screen matching-screen hidden" aria-live="polite" aria-labelledby="matching-title">
         <header class="matching-header">
           <div><p class="eyebrow">EŞİNİ BUL</p><h2 id="matching-title">Aynı kartları bul!</h2></div>
@@ -373,8 +392,9 @@
     <script src="js/QuestionEngine.js?v=6.4"></script>
     <script src="js/NewMiniGames.js?v=8.1"></script>
     <script src="js/LearningCategories.js?v=8.2"></script>
-    <script src="js/LearningPath.js?v=8.3.1"></script>
+    <script src="js/LearningPath.js?v=8.3.2"></script>
+    <script src="js/NumberLearning.js?v=8.3.2"></script>
     <script src="data/offline-data.js"></script>
-    <script src="app.js?v=8.3.1"></script>
+    <script src="app.js?v=8.3.2"></script>
   </body>
 </html>

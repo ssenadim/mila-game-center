@@ -47,7 +47,12 @@
     LEARNING_TYPES.SEASON_RECOGNITION,
     LEARNING_TYPES.POSITION_RECOGNITION,
     LEARNING_TYPES.OPPOSITE_RECOGNITION,
-    LEARNING_TYPES.ACTION_RECOGNITION
+    LEARNING_TYPES.ACTION_RECOGNITION,
+    LEARNING_TYPES.QUANTITY_COUNTING,
+    LEARNING_TYPES.NUMBER_ORDERING,
+    LEARNING_TYPES.PREVIOUS_NEXT_NUMBER,
+    LEARNING_TYPES.NUMERIC_COMPARISON,
+    LEARNING_TYPES.QUANTITY_COMPARISON
   ]);
 
   const GROUPS = [
@@ -108,12 +113,12 @@
     { id: "objects", title: "Eşyalar", icon: "🪑", description: "Evde ve okulda kullandığımız eşyaları tanı.", groupId: "word-world", order: 9, learningType: LEARNING_TYPES.VOCABULARY_RECOGNITION, categoryIds: ["HomeItems", "KitchenItems", "BathroomItems", "SchoolItems"], prerequisiteStageIds: ["body"], sessionLength: 20, implemented: true },
     { id: "nature-space", title: "Doğa ve Uzay", icon: "🌍", description: "Doğayı ve gökyüzünü keşfet.", groupId: "word-world", order: 10, learningType: LEARNING_TYPES.VOCABULARY_RECOGNITION, categoryIds: ["Nature", "Space"], prerequisiteStageIds: ["objects"], sessionLength: 20, implemented: true },
 
-    { id: "count-objects", title: "Nesneleri Say", icon: "🧸", description: "Nesneleri tek tek say.", groupId: "number-world", order: 11, learningType: LEARNING_TYPES.QUANTITY_COUNTING, categoryIds: [], prerequisiteStageIds: ["nature-space"], sessionLength: 10, implemented: false },
-    { id: "order-numbers", title: "Sayıları Sırala", icon: "🔢", description: "Sayıları doğru sıraya yerleştir.", groupId: "number-world", order: 12, learningType: LEARNING_TYPES.NUMBER_ORDERING, categoryIds: ["NumberOrder"], prerequisiteStageIds: ["count-objects"], sessionLength: 10, implemented: false },
-    { id: "previous-next-number", title: "Önceki ve Sonraki Sayı", icon: "↔️", description: "Bir sayının komşularını bul.", groupId: "number-world", order: 13, learningType: LEARNING_TYPES.PREVIOUS_NEXT_NUMBER, categoryIds: [], prerequisiteStageIds: ["order-numbers"], sessionLength: 10, implemented: false },
-    { id: "find-greater-number", title: "Büyük Sayıyı Bul", icon: "⬆️", description: "İki sayıdan büyük olanı bul.", groupId: "number-world", order: 14, learningType: LEARNING_TYPES.NUMERIC_COMPARISON, categoryIds: ["BigSmall"], prerequisiteStageIds: ["previous-next-number"], sessionLength: 10, implemented: false },
-    { id: "find-smaller-number", title: "Küçük Sayıyı Bul", icon: "⬇️", description: "İki sayıdan küçük olanı bul.", groupId: "number-world", order: 15, learningType: LEARNING_TYPES.NUMERIC_COMPARISON, categoryIds: ["BigSmall"], prerequisiteStageIds: ["find-greater-number"], sessionLength: 10, implemented: false },
-    { id: "equal-quantities", title: "Eşit Miktarları Bul", icon: "⚖️", description: "Aynı miktardaki grupları eşleştir.", groupId: "number-world", order: 16, learningType: LEARNING_TYPES.QUANTITY_COMPARISON, categoryIds: [], prerequisiteStageIds: ["find-smaller-number"], sessionLength: 10, implemented: false },
+    { id: "count-objects", title: "Nesneleri Say", icon: "🧸", description: "Nesneleri tek tek say.", groupId: "number-world", order: 11, learningType: LEARNING_TYPES.QUANTITY_COUNTING, categoryIds: [], prerequisiteStageIds: ["nature-space"], sessionLength: 10, implemented: true },
+    { id: "order-numbers", title: "Sayıları Sırala", icon: "🔢", description: "Sayıları doğru sıraya yerleştir.", groupId: "number-world", order: 12, learningType: LEARNING_TYPES.NUMBER_ORDERING, categoryIds: [], prerequisiteStageIds: ["count-objects"], sessionLength: 10, implemented: true },
+    { id: "previous-next-number", title: "Önceki ve Sonraki Sayı", icon: "↔️", description: "Bir sayının komşularını bul.", groupId: "number-world", order: 13, learningType: LEARNING_TYPES.PREVIOUS_NEXT_NUMBER, categoryIds: [], prerequisiteStageIds: ["order-numbers"], sessionLength: 10, implemented: true },
+    { id: "find-greater-number", title: "Büyük Sayıyı Bul", icon: "⬆️", description: "İki sayıdan büyük olanı bul.", groupId: "number-world", order: 14, learningType: LEARNING_TYPES.NUMERIC_COMPARISON, categoryIds: [], prerequisiteStageIds: ["previous-next-number"], sessionLength: 8, implemented: true },
+    { id: "find-smaller-number", title: "Küçük Sayıyı Bul", icon: "⬇️", description: "İki sayıdan küçük olanı bul.", groupId: "number-world", order: 15, learningType: LEARNING_TYPES.NUMERIC_COMPARISON, categoryIds: [], prerequisiteStageIds: ["find-greater-number"], sessionLength: 8, implemented: true },
+    { id: "equal-quantities", title: "Eşit Miktarları Bul", icon: "⚖️", description: "Aynı miktardaki grupları eşleştir.", groupId: "number-world", order: 16, learningType: LEARNING_TYPES.QUANTITY_COMPARISON, categoryIds: [], prerequisiteStageIds: ["find-smaller-number"], sessionLength: 8, implemented: true },
 
     { id: "addition-preparation", title: "Toplamaya Hazırlık", icon: "➕", description: "Grupları bir araya getirmeye hazırlan.", groupId: "first-operations", order: 17, learningType: LEARNING_TYPES.ADDITION_PREPARATION, categoryIds: [], prerequisiteStageIds: ["equal-quantities"], sessionLength: 10, implemented: false },
     { id: "add-two-numbers", title: "İki Sayıyı Topla", icon: "➕", description: "İki küçük sayıyı topla.", groupId: "first-operations", order: 18, learningType: LEARNING_TYPES.NUMERIC_ADDITION, categoryIds: [], prerequisiteStageIds: ["addition-preparation"], sessionLength: 10, implemented: false },
@@ -291,7 +296,14 @@
       if (!Number.isInteger(stage.sessionLength) || stage.sessionLength < 1) problems.push(`${stage.id}: geçersiz oturum uzunluğu.`);
       if (stage.implemented) {
         if (!PLAYABLE_LEARNING_TYPES.has(stage.learningType)) problems.push(`${stage.id}: oynanabilir işaretli ancak öğrenme türü desteklenmiyor.`);
-        if (!stage.categoryIds.length) problems.push(`${stage.id}: oynanabilir aşamada kategori yok.`);
+        const isCustomNumberStage = [
+          LEARNING_TYPES.QUANTITY_COUNTING,
+          LEARNING_TYPES.NUMBER_ORDERING,
+          LEARNING_TYPES.PREVIOUS_NEXT_NUMBER,
+          LEARNING_TYPES.NUMERIC_COMPARISON,
+          LEARNING_TYPES.QUANTITY_COMPARISON
+        ].includes(stage.learningType);
+        if (!stage.categoryIds.length && !isCustomNumberStage) problems.push(`${stage.id}: oynanabilir aşamada kategori yok.`);
         const allowedStrategies = STRATEGIES_BY_LEARNING_TYPE[stage.learningType] ?? [];
         stage.categoryIds.forEach(categoryId => {
           const category = categoryById.get(categoryId);
