@@ -45,3 +45,22 @@ button { font:inherit; cursor:pointer; }
 .sorting-mode-button{grid-column:1/-1;text-align:center}.sorting-screen{padding:8px 0 24px}.sorting-board-wrap{position:relative;max-width:560px;margin:0 auto}.sorting-board-wrap .celebration{z-index:2}.sorting-items{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}.sorting-item{min-height:92px;padding:7px 3px;border:3px solid #b9aed1;border-radius:20px;background:#fffdf8;color:#493a85;font:900 .78rem/1.05 Nunito,sans-serif;box-shadow:0 5px 0 #9d96ac;touch-action:none;-webkit-tap-highlight-color:transparent}.sorting-item span{display:block;margin-bottom:4px;font-size:2.7rem;line-height:1}.sorting-item.selected{border-color:#6c4fc8;background:#eee7ff;box-shadow:0 5px 0 #6c4fc8;outline:3px solid #c4b4f2;outline-offset:2px}.sorting-item.dragging{opacity:.65;transform:scale(.94)}.sorting-item:disabled{cursor:default}.sorting-destinations{display:grid;grid-template-columns:1fr 1fr;gap:15px}.sorting-destination{min-height:170px;padding:12px 8px;border:4px dashed #6b5799;border-radius:26px;background:#fffdf8;color:#493a85;box-shadow:0 6px 0 #b2a8c8;touch-action:manipulation}.sorting-destination:active:not(:disabled){transform:translateY(4px);box-shadow:0 2px 0 #b2a8c8}.sorting-destination strong{display:block;font-family:"Baloo 2",cursive;font-size:clamp(1.45rem,6vw,2rem);line-height:1}.sorting-destination>span{display:block;font-size:2rem;line-height:1}.sorting-destination.selected-target{border-style:solid;border-color:#6c4fc8;background:#eee7ff}.sorting-destination.completed-target{border-color:#6a9c4a;background:#f3fae7}.sorting-sorted-items{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin-top:10px}.sorting-sorted-item{display:grid;place-items:center;width:43px;height:43px;border:2px solid #fff;border-radius:14px;background:#fffdf8;font-size:1.9rem;box-shadow:0 2px 0 #b2a8c8}.sorting-screen .primary-button{display:block;margin:18px auto 0}@media(max-width:480px){.sorting-items{gap:9px;margin-bottom:14px}.sorting-item{min-height:78px;border-radius:16px;font-size:.68rem}.sorting-item span{font-size:2.2rem}.sorting-destinations{gap:10px}.sorting-destination{min-height:135px;border-radius:20px}.sorting-sorted-item{width:36px;height:36px;font-size:1.55rem}}
 /* Sprint 5 Welcome layout overrides */
 .mini-games-grid .matching-mode-button,.mini-games-grid .listening-mode-button,.mini-games-grid .number-match-mode-button,.mini-games-grid .color-match-mode-button,.mini-games-grid .sorting-mode-button{grid-column:auto;text-align:left}@media(max-width:480px){.mini-games-grid .matching-mode-button,.mini-games-grid .listening-mode-button,.mini-games-grid .number-match-mode-button,.mini-games-grid .color-match-mode-button,.mini-games-grid .sorting-mode-button{text-align:center}}
+
+/* Sprint 5.7 persistent in-game navigation */
+.game-shell{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
+.global-control-button{min-height:48px;padding:8px 13px;border:3px solid #d7cfff;border-radius:15px;background:#fffdf8;color:#493a85;font-weight:900;box-shadow:0 4px 0 #b4a5df;touch-action:manipulation}
+.global-control-button:active{transform:translateY(3px);box-shadow:0 1px 0 #7356bd}
+.menu-button{position:fixed;top:max(14px,env(safe-area-inset-top));left:max(14px,env(safe-area-inset-left));z-index:19;width:50px;padding:6px;font-size:1.55rem}
+.top-right-controls{position:fixed;top:max(14px,env(safe-area-inset-top));right:max(14px,env(safe-area-inset-right));z-index:18;display:flex;gap:8px}
+.game-menu{position:fixed;top:max(70px,calc(env(safe-area-inset-top) + 56px));left:max(14px,env(safe-area-inset-left));z-index:19;display:grid;width:min(280px,calc(100vw - 28px));gap:8px;padding:12px;border:3px solid #d7cfff;border-radius:20px;background:#fffdf8;box-shadow:0 10px 24px #493a8540}
+.game-menu button{min-height:52px;padding:10px 14px;border:0;border-radius:14px;background:#f1ecff;color:#493a85;font-weight:900;text-align:left;touch-action:manipulation}
+.game-menu button:focus-visible,.global-control-button:focus-visible{outline:4px solid #f2c94c;outline-offset:2px}
+.quiz-header{grid-template-columns:1fr 46px}
+.matching-header{grid-template-columns:1fr 46px}
+@media(max-width:480px){
+  .game-shell{padding:84px 14px 18px}
+  .top-right-controls{gap:5px}
+  .global-control-button{min-height:46px;padding:7px 9px;font-size:.78rem}
+  .menu-button{width:46px;font-size:1.35rem}
+  .quiz-header,.matching-header{grid-template-columns:1fr 42px}
+}

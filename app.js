@@ -68,6 +68,7 @@ const DAILY_GOALS = [
 
 const ui = {
   welcome: document.querySelector("#welcome-screen"), quiz: document.querySelector("#quiz-screen"), summary: document.querySelector("#summary-screen"),
+  menuButton: document.querySelector("#menu-button"), gameMenu: document.querySelector("#game-menu"), menuItems: document.querySelectorAll("[data-menu-target]"), settings: document.querySelector("#settings-button"),
   start: document.querySelector("#start-button"), fullscreen: document.querySelector("#fullscreen-button"), achievements: document.querySelector("#achievements-button"), welcomeSound: document.querySelector("#welcome-sound-button"), learningMode: document.querySelector("#learning-mode-button"), quickMode: document.querySelector("#quick-mode-button"), matchingMode: document.querySelector("#matching-mode-button"), listeningMode: document.querySelector("#listening-mode-button"), numberMatchMode: document.querySelector("#number-match-mode-button"), colorMatchMode: document.querySelector("#color-match-mode-button"), sortingMode: document.querySelector("#sorting-mode-button"), playerButtons: document.querySelectorAll(".player-button"), customPlayer: document.querySelector("#custom-player-button"), customPlayerLabel: document.querySelector("#custom-player-label"), customPlayerName: document.querySelector("#custom-player-name"), categoryPackButtons: document.querySelectorAll(".category-pack-button"), customCategoryOptions: document.querySelector("#custom-category-options"), home: document.querySelector("#home-button"), replay: document.querySelector("#question-sound-button"), matching: document.querySelector("#matching-screen"), matchingCards: document.querySelector("#matching-cards"), matchingCelebration: document.querySelector("#matching-celebration"), matchingFeedback: document.querySelector("#matching-feedback"), matchingHome: document.querySelector("#matching-home-button"), matchingPause: document.querySelector("#matching-pause-button"), listening: document.querySelector("#listening-screen"), listeningCards: document.querySelector("#listening-cards"), listeningCelebration: document.querySelector("#listening-celebration"), listeningFeedback: document.querySelector("#listening-feedback"), listeningReplay: document.querySelector("#listening-replay-button"), listeningHome: document.querySelector("#listening-home-button"), listeningPause: document.querySelector("#listening-pause-button"), numberMatch: document.querySelector("#number-match-screen"), numberMatchCards: document.querySelector("#number-match-cards"), numberMatchCelebration: document.querySelector("#number-match-celebration"), numberMatchFeedback: document.querySelector("#number-match-feedback"), numberMatchReplay: document.querySelector("#number-match-replay-button"), numberMatchHome: document.querySelector("#number-match-home-button"), numberMatchPause: document.querySelector("#number-match-pause-button"), colorMatch: document.querySelector("#color-match-screen"), colorMatchCards: document.querySelector("#color-match-cards"), colorMatchCelebration: document.querySelector("#color-match-celebration"), colorMatchFeedback: document.querySelector("#color-match-feedback"), colorMatchPrompt: document.querySelector("#color-match-prompt"), colorMatchReplay: document.querySelector("#color-match-replay-button"), colorMatchHome: document.querySelector("#color-match-home-button"), colorMatchPause: document.querySelector("#color-match-pause-button"), sorting: document.querySelector("#sorting-screen"), sortingItems: document.querySelector("#sorting-items"), sortingDestinations: document.querySelector("#sorting-destinations"), sortingCelebration: document.querySelector("#sorting-celebration"), sortingFeedback: document.querySelector("#sorting-feedback"), sortingHome: document.querySelector("#sorting-home-button"), sortingPause: document.querySelector("#sorting-pause-button"), sortingFinishHome: document.querySelector("#sorting-finish-home-button"),
   category: document.querySelector("#category-pill"), visual: document.querySelector("#question-visual"), celebration: document.querySelector("#celebration"), mascot: document.querySelector("#game-mascot"), prompt: document.querySelector("#question-prompt"),
   answers: document.querySelector("#answers"), feedback: document.querySelector("#feedback"), next: document.querySelector("#next-button"), count: document.querySelector("#question-count"), score: document.querySelector("#score"), streak: document.querySelector("#streak"), progress: document.querySelector("#progress-fill"),
@@ -108,7 +109,7 @@ let pausedBonusRemaining = 0;
 let balloonPopTimer;
 let pendingCorrectTransition = false;
 let pendingBonusEnd = false;
-let activeGameMode = getSavedGameMode();
+let activeGameMode = LEARNING_MODE;
 let isWelcomeSequenceActive = false;
 let activeCategoryPack = "mixed";
 let customCategories = [];
@@ -457,7 +458,7 @@ function updateFullscreenButton() {
   const exitFullscreen = document.exitFullscreen ?? document.webkitExitFullscreen;
   const isSupported = typeof requestFullscreen === "function" && typeof exitFullscreen === "function" && document.fullscreenEnabled !== false;
   ui.fullscreen.classList.toggle("hidden", !isSupported);
-  if (isSupported) ui.fullscreen.textContent = getFullscreenElement() ? "Tam Ekrandan Çık" : "Tam Ekran";
+  if (isSupported) ui.fullscreen.textContent = getFullscreenElement() ? "⛶ Tam Ekrandan Çık" : "⛶ Tam Ekran";
 }
 
 async function toggleFullscreen() {
@@ -597,7 +598,7 @@ function applyCategoryPack() {
 
 function updateStartButton() {
   const hasGameMode = activeGameMode === LEARNING_MODE || activeGameMode === QUICK_MODE || activeGameMode === MATCHING_MODE || activeGameMode === LISTENING_MODE || activeGameMode === NUMBER_MATCH_MODE || activeGameMode === COLOR_MATCH_MODE || activeGameMode === SORTING_MODE;
-  ui.start.disabled = !selectedPlayer || !hasGameMode || (activeGameMode !== MATCHING_MODE && activeGameMode !== LISTENING_MODE && activeGameMode !== NUMBER_MATCH_MODE && activeGameMode !== COLOR_MATCH_MODE && activeGameMode !== SORTING_MODE && activeCategoryPack === "custom" && !getPackCategories().length);
+  ui.start.disabled = !hasGameMode || (activeGameMode !== MATCHING_MODE && activeGameMode !== LISTENING_MODE && activeGameMode !== NUMBER_MATCH_MODE && activeGameMode !== COLOR_MATCH_MODE && activeGameMode !== SORTING_MODE && activeCategoryPack === "custom" && !getPackCategories().length);
 }
 
 function getPersonalizedWelcomeMessage() {
@@ -1534,7 +1535,6 @@ function finishSortingGame() {
   isSortingCompleted = true;
   clearSortingInteraction();
   ui.sortingFeedback.textContent = "Harika! Tüm nesneleri grupladın!";
-  ui.sortingFinishHome.classList.remove("hidden");
   animations.celebrate();
   ui.sortingCelebration.innerHTML = ui.celebration.innerHTML;
   ui.sortingCelebration.classList.remove("burst");
@@ -1561,7 +1561,6 @@ function startSortingGame() {
   ui.summary.classList.add("hidden");
   ui.bonus.classList.add("hidden");
   ui.sorting.classList.remove("hidden");
-  ui.sortingFinishHome.classList.add("hidden");
   ui.sortingFeedback.textContent = "Bir nesneye dokun, sonra kutusuna dokun. İstersen sürükle.";
   renderSortingGame();
   startPlayTime();
@@ -1622,19 +1621,13 @@ function setInputEnabled(enabled) {
 }
 
 function setGameActionsEnabled(enabled) {
-  ui.home.disabled = !enabled;
   ui.next.disabled = !enabled;
   ui.pause.disabled = !enabled;
   ui.bonusPause.disabled = !enabled;
-  ui.matchingHome.disabled = !enabled;
   ui.matchingPause.disabled = !enabled;
-  ui.listeningHome.disabled = !enabled;
   ui.listeningPause.disabled = !enabled;
-  ui.numberMatchHome.disabled = !enabled;
   ui.numberMatchPause.disabled = !enabled;
-  ui.colorMatchHome.disabled = !enabled;
   ui.colorMatchPause.disabled = !enabled;
-  ui.sortingHome.disabled = !enabled;
   ui.sortingPause.disabled = !enabled;
 }
 
@@ -2086,8 +2079,8 @@ function resetSession() {
   engine.resetSession();
 }
 
-async function startGame() {
-  if (isPaused || isStartingGame || !selectedPlayer || (activeGameMode !== LEARNING_MODE && activeGameMode !== QUICK_MODE && activeGameMode !== MATCHING_MODE && activeGameMode !== LISTENING_MODE && activeGameMode !== NUMBER_MATCH_MODE && activeGameMode !== COLOR_MATCH_MODE && activeGameMode !== SORTING_MODE) || (activeGameMode !== MATCHING_MODE && activeGameMode !== LISTENING_MODE && activeGameMode !== NUMBER_MATCH_MODE && activeGameMode !== COLOR_MATCH_MODE && activeGameMode !== SORTING_MODE && activeCategoryPack === "custom" && !getPackCategories().length)) return;
+async function startGame({ skipWelcome = false } = {}) {
+  if (isPaused || isStartingGame || (activeGameMode !== LEARNING_MODE && activeGameMode !== QUICK_MODE && activeGameMode !== MATCHING_MODE && activeGameMode !== LISTENING_MODE && activeGameMode !== NUMBER_MATCH_MODE && activeGameMode !== COLOR_MATCH_MODE && activeGameMode !== SORTING_MODE) || (activeGameMode !== MATCHING_MODE && activeGameMode !== LISTENING_MODE && activeGameMode !== NUMBER_MATCH_MODE && activeGameMode !== COLOR_MATCH_MODE && activeGameMode !== SORTING_MODE && activeCategoryPack === "custom" && !getPackCategories().length)) return;
   ensureDailyGoal();
   renderDailyGoal();
   window.clearTimeout(sessionCelebrationTimer);
@@ -2123,6 +2116,10 @@ async function startGame() {
     startPlayTime();
     startWakeLock();
     clearSpeech();
+    if (skipWelcome) {
+      showQuestion();
+      return;
+    }
     isWelcomeSequenceActive = true;
     if (await playWelcomeSequence()) showQuestion();
   } finally {
@@ -2136,8 +2133,9 @@ function speakWelcome() {
   speech.speak(WELCOME_MESSAGE, TURKISH_LANGUAGE);
 }
 
-function goHome() {
+function goHome(shouldSpeak = true) {
   if (isPaused) return;
+  closeGameMenu();
   clearSpeech();
   stopWakeLock();
   window.clearTimeout(sessionCelebrationTimer);
@@ -2147,7 +2145,7 @@ function goHome() {
   window.clearTimeout(numberMatchCompletionTimer);
   window.clearTimeout(colorMatchCompletionTimer);
   stopPlayTime();
-  if (!ui.quiz.classList.contains("hidden")) saveGameProgress();
+  clearSavedProgress();
   isBalloonBonusActive = false;
   window.clearTimeout(balloonBonusTimer);
   window.clearTimeout(balloonPopTimer);
@@ -2213,12 +2211,46 @@ function goHome() {
   ui.colorMatch.classList.add("hidden");
   ui.sorting.classList.add("hidden");
   ui.welcome.classList.remove("hidden");
-  speakWelcome();
+  if (shouldSpeak) speakWelcome();
 }
 
-ui.start.addEventListener("click", startGame);
+function closeGameMenu() {
+  ui.gameMenu.classList.add("hidden");
+  ui.menuButton.setAttribute("aria-expanded", "false");
+}
+
+function toggleGameMenu() {
+  const willOpen = ui.gameMenu.classList.contains("hidden");
+  ui.gameMenu.classList.toggle("hidden", !willOpen);
+  ui.menuButton.setAttribute("aria-expanded", String(willOpen));
+  if (willOpen) ui.gameMenu.querySelector("button")?.focus();
+}
+
+function openHomeSection(selector) {
+  goHome(false);
+  const section = document.querySelector(selector);
+  section?.scrollIntoView({ block: "start" });
+  section?.querySelector("button, input")?.focus();
+}
+
+function handleMenuNavigation(target) {
+  closeGameMenu();
+  if (target === "rewards") {
+    goHome(false);
+    openAchievements();
+    return;
+  }
+  if (target === "learning") openHomeSection(".game-mode-section");
+  else if (target === "mini-games") openHomeSection(".mini-games-section");
+  else if (target === "players") openHomeSection(".player-selection");
+  else goHome(false);
+}
+
+ui.start.addEventListener("click", () => startGame());
 ui.fullscreen.addEventListener("click", toggleFullscreen);
-ui.achievements.addEventListener("click", openAchievements);
+ui.settings.addEventListener("click", openParentDashboard);
+ui.menuButton.addEventListener("click", toggleGameMenu);
+ui.menuItems.forEach(button => button.addEventListener("click", () => handleMenuNavigation(button.dataset.menuTarget)));
 ui.welcomeSound.addEventListener("click", speakWelcome);
 ui.learningMode.addEventListener("click", () => setGameMode(LEARNING_MODE));
 ui.quickMode.addEventListener("click", () => setGameMode(QUICK_MODE));
@@ -2236,18 +2268,11 @@ ui.customPlayerName.addEventListener("input", updateCustomPlayer);
 ui.customPlayerName.addEventListener("keydown", event => {
   if (event.key === "Enter" && selectedPlayer && (activeGameMode === LEARNING_MODE || activeGameMode === QUICK_MODE || activeGameMode === MATCHING_MODE || activeGameMode === LISTENING_MODE || activeGameMode === NUMBER_MATCH_MODE || activeGameMode === COLOR_MATCH_MODE || activeGameMode === SORTING_MODE)) startGame();
 });
-ui.home.addEventListener("click", goHome);
-ui.matchingHome.addEventListener("click", goHome);
 ui.matchingPause.addEventListener("click", pauseGame);
-ui.listeningHome.addEventListener("click", goHome);
 ui.listeningPause.addEventListener("click", pauseGame);
-ui.numberMatchHome.addEventListener("click", goHome);
 ui.numberMatchPause.addEventListener("click", pauseGame);
-ui.colorMatchHome.addEventListener("click", goHome);
 ui.colorMatchPause.addEventListener("click", pauseGame);
-ui.sortingHome.addEventListener("click", goHome);
 ui.sortingPause.addEventListener("click", pauseGame);
-ui.sortingFinishHome.addEventListener("click", goHome);
 ui.listeningReplay.addEventListener("click", () => {
   if (!isPaused && !isListeningSpeaking && !isListeningTransitioning && !isListeningRevealing) speakListeningWord();
 });
@@ -2263,16 +2288,10 @@ ui.replay.addEventListener("click", () => {
 ui.next.addEventListener("click", () => {
   if (!isPaused) showQuestion();
 });
-ui.playAgain.addEventListener("click", startGame);
-ui.summaryHome.addEventListener("click", goHome);
+ui.playAgain.addEventListener("click", () => startGame());
 ui.pause.addEventListener("click", pauseGame);
 ui.bonusPause.addEventListener("click", pauseGame);
 ui.resume.addEventListener("click", resumeGame);
-ui.parentLogo.addEventListener("pointerdown", () => {
-  window.clearTimeout(parentHoldTimer);
-  parentHoldTimer = window.setTimeout(openParentDashboard, PARENT_HOLD_DURATION);
-});
-["pointerup", "pointercancel", "pointerleave"].forEach(eventName => ui.parentLogo.addEventListener(eventName, () => window.clearTimeout(parentHoldTimer)));
 ui.parentDashboardClose.addEventListener("click", closeParentDashboard);
 ui.achievementsModalClose.addEventListener("click", closeAchievements);
 document.addEventListener("fullscreenchange", updateFullscreenButton);
@@ -2283,11 +2302,15 @@ document.addEventListener("visibilitychange", () => {
 });
 window.addEventListener("pagehide", stopWakeLock);
 document.addEventListener("pointerdown", event => {
+  if (!ui.gameMenu.classList.contains("hidden") && !event.target.closest("#game-menu, #menu-button")) closeGameMenu();
   if (event.target.closest("button:not(:disabled)")) audio.playButton();
+});
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") closeGameMenu();
 });
 window.addEventListener("load", async () => {
   [engine] = await Promise.all([gameReady, speech.ready]);
-  setGameMode(activeGameMode);
+  setGameMode(LEARNING_MODE);
   restoreCategoryPack();
   applyCategoryPack();
   renderCategoryPackSelection();
@@ -2295,7 +2318,8 @@ window.addEventListener("load", async () => {
   ensureDailyGoal();
   renderDailyGoal();
   restoreStoredLearningStats();
-  if (!restoreSavedProgress()) window.setTimeout(speakWelcome, 400);
+  clearSavedProgress();
+  startGame({ skipWelcome: true });
 });
 
 updateFullscreenButton();

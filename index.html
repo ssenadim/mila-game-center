@@ -13,6 +13,18 @@
   <body>
     <main class="game-shell">
       <div class="cloud cloud-one"></div><div class="cloud cloud-two"></div>
+      <button id="menu-button" class="menu-button global-control-button" type="button" aria-label="Oyun menüsünü aç" aria-expanded="false" aria-controls="game-menu">☰</button>
+      <div class="top-right-controls" aria-label="Uygulama kontrolleri">
+        <button id="fullscreen-button" class="global-control-button" type="button">⛶ Tam Ekran</button>
+        <button id="settings-button" class="global-control-button" type="button">⚙️ Ayarlar</button>
+      </div>
+      <nav id="game-menu" class="game-menu hidden" aria-label="Oyun menüsü">
+        <button type="button" data-menu-target="learning">Öğrenme Modları</button>
+        <button type="button" data-menu-target="mini-games">Mini Oyunlar</button>
+        <button type="button" data-menu-target="rewards">Kazandıklarım</button>
+        <button type="button" data-menu-target="players">Oyuncu Değiştir</button>
+        <button type="button" data-menu-target="home">Ana Sayfa</button>
+      </nav>
       <section id="welcome-screen" class="screen welcome-screen" aria-labelledby="welcome-title">
         <div class="mascot" aria-hidden="true"><span class="ear ear-left"></span><span class="ear ear-right"></span><span class="face"><span class="eye"></span><span class="eye"></span><span class="smile"></span></span></div>
         <p class="eyebrow">MİLA'YA ÖZEL</p>
@@ -41,8 +53,6 @@
           <div><strong>Günün Görevi</strong><p id="daily-goal-title"></p><span id="daily-goal-progress"></span></div>
         </section>
         <button id="start-button" class="primary-button" type="button" disabled>Hadi başlayalım <span aria-hidden="true">✦</span></button>
-        <button id="fullscreen-button" class="fullscreen-button" type="button">Tam Ekran</button>
-        <button id="achievements-button" class="achievements-button" type="button">Kazandıklarım</button>
         <button id="welcome-sound-button" class="sound-button" type="button" aria-label="Hoş geldin mesajını tekrar dinle">🔊 Dinle</button>
         <div class="mode-selection" aria-label="Oyun modu seçimi">
           <section class="game-mode-section" aria-labelledby="learning-modes-title">
@@ -83,7 +93,6 @@
           <span class="mascot-hand mascot-hand-right">✋</span>
         </div>
         <header class="quiz-header">
-          <button id="home-button" class="icon-button" type="button" aria-label="Ana sayfaya dön">⌂</button>
           <div class="progress-wrap">
             <div class="progress-label"><span id="question-count">Soru 1</span><span id="score">⭐ 0</span></div>
             <div class="progress-bar" aria-label="10 soruluk tur ilerlemesi"><span id="progress-fill"></span></div>
@@ -105,7 +114,6 @@
 
       <section id="matching-screen" class="screen matching-screen hidden" aria-live="polite" aria-labelledby="matching-title">
         <header class="matching-header">
-          <button id="matching-home-button" class="icon-button" type="button" aria-label="Ana sayfaya dön">⌂</button>
           <div><p class="eyebrow">EŞİNİ BUL</p><h2 id="matching-title">Aynı kartları bul!</h2></div>
           <button id="matching-pause-button" class="icon-button" type="button" aria-label="Oyunu duraklat">⏸</button>
         </header>
@@ -115,7 +123,6 @@
 
       <section id="listening-screen" class="screen listening-screen hidden" aria-live="polite" aria-labelledby="listening-title">
         <header class="matching-header">
-          <button id="listening-home-button" class="icon-button" type="button" aria-label="Ana sayfaya dön">⌂</button>
           <div><p class="eyebrow">DİNLE VE SEÇ</p><h2 id="listening-title">Sesi dinle!</h2></div>
           <button id="listening-pause-button" class="icon-button" type="button" aria-label="Oyunu duraklat">⏸</button>
         </header>
@@ -126,7 +133,6 @@
 
       <section id="number-match-screen" class="screen number-match-screen hidden" aria-live="polite" aria-labelledby="number-match-title">
         <header class="matching-header">
-          <button id="number-match-home-button" class="icon-button" type="button" aria-label="Ana sayfaya dön">⌂</button>
           <div><p class="eyebrow">SAYIYI BUL</p><h2 id="number-match-title">Sayıyı dinle!</h2></div>
           <button id="number-match-pause-button" class="icon-button" type="button" aria-label="Oyunu duraklat">⏸</button>
         </header>
@@ -137,7 +143,6 @@
 
       <section id="color-match-screen" class="screen color-match-screen hidden" aria-live="polite" aria-labelledby="color-match-title">
         <header class="matching-header">
-          <button id="color-match-home-button" class="icon-button" type="button" aria-label="Ana sayfaya dön">⌂</button>
           <div><p class="eyebrow">RENGİ BUL</p><h2 id="color-match-title">Doğru rengi bul!</h2></div>
           <button id="color-match-pause-button" class="icon-button" type="button" aria-label="Oyunu duraklat">⏸</button>
         </header>
@@ -149,7 +154,6 @@
 
       <section id="sorting-screen" class="screen sorting-screen hidden" aria-live="polite" aria-labelledby="sorting-title">
         <header class="matching-header">
-          <button id="sorting-home-button" class="icon-button" type="button" aria-label="Ana sayfaya dön">⌂</button>
           <div><p class="eyebrow">GRUPLA</p><h2 id="sorting-title">Nereye ait?</h2></div>
           <button id="sorting-pause-button" class="icon-button" type="button" aria-label="Oyunu duraklat">⏸</button>
         </header>
@@ -159,7 +163,6 @@
           <div id="sorting-items" class="sorting-items" aria-label="Gruplanacak nesneler"></div>
           <div id="sorting-destinations" class="sorting-destinations" aria-label="Kategori kutuları"></div>
         </div>
-        <button id="sorting-finish-home-button" class="primary-button hidden" type="button">Ana sayfaya dön <span aria-hidden="true">⌂</span></button>
       </section>
 
       <section id="summary-screen" class="screen summary-screen hidden" aria-live="polite" aria-labelledby="summary-title">
@@ -174,7 +177,6 @@
           <div class="summary-stat category-stat"><span aria-hidden="true">💜</span><strong id="summary-category">-</strong><small>Favori kategori</small></div>
         </div>
         <button id="play-again-button" class="primary-button" type="button">Yeniden oyna <span aria-hidden="true">↻</span></button>
-        <button id="summary-home-button" class="sound-button" type="button">Ana sayfa</button>
       </section>
 
       <section id="balloon-bonus" class="screen balloon-bonus hidden" aria-live="polite" aria-labelledby="balloon-title">
