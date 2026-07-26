@@ -19,23 +19,43 @@
         <button id="settings-button" class="global-control-button" type="button">⚙️ Ayarlar</button>
       </div>
       <nav id="game-menu" class="game-menu hidden" aria-label="Oyun menüsü">
-        <button type="button" data-menu-target="learning-path">🗺️ Öğrenme Yolu</button>
-        <button type="button" data-menu-target="learning">Öğrenme Modları</button>
-        <button type="button" data-menu-target="mini-games">Mini Oyunlar</button>
-        <button type="button" data-menu-target="rewards">Kazandıklarım</button>
-        <button type="button" data-menu-target="players">Oyuncu Değiştir</button>
         <button type="button" data-menu-target="home">Ana Sayfa</button>
+        <button type="button" data-menu-target="learning">🧭 Öğren</button>
+        <button type="button" data-menu-target="mini-games">🎮 Mini Oyunlar</button>
+        <button type="button" data-menu-target="learning-path">🗺️ Öğrenme Yolu</button>
+        <button type="button" data-menu-target="rewards">🏆 Kazandıklarım</button>
+        <button type="button" data-menu-target="players">👤 Oyuncu Değiştir</button>
       </nav>
       <section id="welcome-screen" class="screen welcome-screen" aria-labelledby="welcome-title">
         <div class="mascot" aria-hidden="true"><span class="ear ear-left"></span><span class="ear ear-right"></span><span class="face"><span class="eye"></span><span class="eye"></span><span class="smile"></span></span></div>
-        <p class="eyebrow">MİLA'YA ÖZEL</p>
-        <h1 id="welcome-title">Öğrenme<br /><span>Macerası</span></h1>
-        <p class="welcome-copy">Renkleri, hayvanları ve sayıları keşfetmeye hazır mısın?</p>
-        <section class="player-selection" aria-labelledby="player-selection-title">
-          <h2 id="player-selection-title">Kim oynuyor?</h2>
+        <p class="eyebrow">OYUN MERKEZİ</p>
+        <h1 id="welcome-title" tabindex="-1">Öğrenme <span>Macerası</span></h1>
+        <p class="welcome-copy">Bugün ne yapmak istersin?</p>
+        <section class="selected-player-card" aria-labelledby="selected-player-summary">
+          <strong id="selected-player-summary" role="status">Henüz bir oyuncu seçilmedi</strong>
+          <button id="home-player-change-button" class="compact-action-button" type="button">Oyuncu Değiştir</button>
+        </section>
+        <section id="daily-goal-card" class="daily-goal-card hidden" aria-live="polite">
+          <span class="daily-goal-icon" aria-hidden="true">☀️</span>
+          <div><strong>Günün Görevi</strong><p id="daily-goal-title"></p><span id="daily-goal-progress"></span></div>
+        </section>
+        <div class="home-navigation-grid" aria-label="Oyun Merkezi bölümleri">
+          <button class="home-navigation-card learn-card" type="button" data-home-target="learning"><strong>🧭 Öğren</strong><span>Yeni şeyler keşfet</span></button>
+          <button class="home-navigation-card games-card" type="button" data-home-target="mini-games"><strong>🎮 Mini Oyunlar</strong><span>Eğlenceli oyunlar oyna</span></button>
+          <button class="home-navigation-card path-card" type="button" data-home-target="learning-path"><strong>🗺️ Öğrenme Yolu</strong><span>Adım adım ilerle</span></button>
+          <button class="home-navigation-card rewards-card" type="button" data-home-target="rewards"><strong>🏆 Kazandıklarım</strong><span>Ödüllerine bak</span></button>
+        </div>
+        <button id="welcome-sound-button" class="sound-button" type="button" aria-label="Hoş geldin mesajını tekrar dinle">🔊 Dinle</button>
+      </section>
+
+      <section id="player-selection-screen" class="screen focused-app-screen hidden" aria-labelledby="player-selection-title">
+        <p class="eyebrow">OYUNCU SEÇİMİ</p>
+        <h2 id="player-selection-title" tabindex="-1">Kim oynuyor?</h2>
+        <p class="app-view-copy">Oyuna devam etmek için bir isim seç.</p>
+        <section class="player-selection" aria-label="Oyuncu seçimi">
           <div class="player-options" aria-label="Oyuncu seçimi">
             <button class="player-button" type="button" data-player-name="Mila" aria-pressed="false">Mila</button>
-	    <button class="player-button" type="button" data-player-name="Deniz" aria-pressed="false">Deniz</button>
+            <button class="player-button" type="button" data-player-name="Deniz" aria-pressed="false">Deniz</button>
             <button class="player-button" type="button" data-player-name="Elis" aria-pressed="false">Elis</button>
             <button class="player-button" type="button" data-player-name="Açelya" aria-pressed="false">Açelya</button>
             <button class="player-button" type="button" data-player-name="Alp" aria-pressed="false">Alp</button>
@@ -49,13 +69,15 @@
           <p id="player-selection-guidance" class="player-selection-guidance hidden" role="status">Önce kim oynuyor, seçelim.</p>
           <label id="custom-player-label" class="custom-player-label hidden" for="custom-player-name">İsmini yaz</label>
           <input id="custom-player-name" class="custom-player-input hidden" type="text" maxlength="20" autocomplete="name" />
+          <button id="custom-player-confirm-button" class="primary-button custom-player-confirm hidden" type="button" disabled>Bu isimle devam et</button>
         </section>
-        <section id="daily-goal-card" class="daily-goal-card hidden" aria-live="polite">
-          <span class="daily-goal-icon" aria-hidden="true">☀️</span>
-          <div><strong>Günün Görevi</strong><p id="daily-goal-title"></p><span id="daily-goal-progress"></span></div>
-        </section>
-        <button id="start-button" class="primary-button" type="button" disabled>Hadi başlayalım <span aria-hidden="true">✦</span></button>
-        <button id="welcome-sound-button" class="sound-button" type="button" aria-label="Hoş geldin mesajını tekrar dinle">🔊 Dinle</button>
+        <button id="player-selection-home-button" class="sound-button view-home-button" type="button">⌂ Ana Sayfa</button>
+      </section>
+
+      <section id="learning-center-screen" class="screen focused-app-screen hidden" aria-labelledby="learning-center-title">
+        <p class="eyebrow">ÖĞRENME MERKEZİ</p>
+        <h2 id="learning-center-title" tabindex="-1">🧭 Öğren</h2>
+        <p class="app-view-copy">Nasıl öğrenmek istediğini seç.</p>
         <button id="learning-path-button" class="learning-path-entry-button" type="button"><strong>🗺️ Öğrenme Yolu</strong><span>Adım adım keşfet!</span></button>
         <div class="mode-selection" aria-label="Oyun modu seçimi">
           <section class="game-mode-section" aria-labelledby="learning-modes-title">
@@ -63,16 +85,6 @@
             <div class="mode-card-grid learning-modes-grid">
               <button id="learning-mode-button" class="mode-button" type="button" aria-pressed="true"><strong>Öğrenme Modu</strong><span>Önce bütün seçenekleri dinle, sonra cevapla.</span></button>
               <button id="quick-mode-button" class="mode-button" type="button" aria-pressed="false"><strong>Hızlı Oyun</strong><span>Soruyu dinle, cevabı biliyorsan hemen seç.</span></button>
-            </div>
-          </section>
-          <section class="game-mode-section mini-games-section" aria-labelledby="mini-games-title">
-            <h2 id="mini-games-title">Mini Oyunlar</h2>
-            <div class="mode-card-grid mini-games-grid">
-              <button id="matching-mode-button" class="mode-button matching-mode-button" type="button"><strong>🧩 Eşini Bul</strong><span>Kartları aç ve aynı olanları bul.</span></button>
-              <button id="listening-mode-button" class="mode-button listening-mode-button" type="button"><strong>👂 Dinle ve Seç</strong><span>Kelimeyi dinle, doğru resmi seç.</span></button>
-              <button id="number-match-mode-button" class="mode-button number-match-mode-button" type="button"><strong>🔢 Sayıyı Bul</strong><span>Sayıyı dinle, doğru rakamı seç.</span></button>
-              <button id="color-match-mode-button" class="mode-button color-match-mode-button" type="button"><strong>🎨 Rengi Bul</strong><span>Rengi dinle ya da oku, doğru kartı seç.</span></button>
-              <button id="sorting-mode-button" class="mode-button sorting-mode-button" type="button"><strong>🧺 Grupla</strong><span>Nesneleri doğru kutuya yerleştir.</span></button>
             </div>
           </section>
         </div>
@@ -87,11 +99,29 @@
           </div>
           <div id="custom-category-options" class="custom-category-options hidden" aria-label="Özel kategori seçimi"></div>
         </section>
+        <button id="start-button" class="primary-button learning-start-button" type="button" disabled>Hadi başlayalım <span aria-hidden="true">✦</span></button>
+        <button id="learning-center-home-button" class="sound-button view-home-button" type="button">⌂ Ana Sayfa</button>
+      </section>
+
+      <section id="mini-games-screen" class="screen focused-app-screen hidden" aria-labelledby="mini-games-title">
+        <p class="eyebrow">MİNİ OYUNLAR</p>
+        <h2 id="mini-games-title" tabindex="-1">🎮 Mini Oyunlar</h2>
+        <p class="app-view-copy">Oynamak istediğin oyunu seç.</p>
+        <section class="game-mode-section mini-games-section" aria-label="Mini oyun seçimi">
+          <div class="mode-card-grid mini-games-grid">
+            <button id="matching-mode-button" class="mode-button matching-mode-button" type="button"><strong>🧩 Eşini Bul</strong><span>Kartları aç ve aynı olanları bul.</span></button>
+            <button id="listening-mode-button" class="mode-button listening-mode-button" type="button"><strong>👂 Dinle ve Seç</strong><span>Kelimeyi dinle, doğru resmi seç.</span></button>
+            <button id="number-match-mode-button" class="mode-button number-match-mode-button" type="button"><strong>🔢 Sayıyı Bul</strong><span>Sayıyı dinle, doğru rakamı seç.</span></button>
+            <button id="color-match-mode-button" class="mode-button color-match-mode-button" type="button"><strong>🎨 Rengi Bul</strong><span>Rengi dinle ya da oku, doğru kartı seç.</span></button>
+            <button id="sorting-mode-button" class="mode-button sorting-mode-button" type="button"><strong>🧺 Grupla</strong><span>Nesneleri doğru kutuya yerleştir.</span></button>
+          </div>
+        </section>
+        <button id="mini-games-home-button" class="sound-button view-home-button" type="button">⌂ Ana Sayfa</button>
       </section>
 
       <section id="learning-path-screen" class="screen learning-path-screen hidden" aria-live="polite" aria-labelledby="learning-path-title">
         <p class="eyebrow">ADIM ADIM ÖĞREN</p>
-        <h2 id="learning-path-title">🗺️ Öğrenme Yolu</h2>
+        <h2 id="learning-path-title" tabindex="-1">🗺️ Öğrenme Yolu</h2>
         <p id="learning-path-guidance" class="learning-path-copy">Bir bölüm seç ve öğrenmeye başla!</p>
         <div id="learning-path-stages" class="learning-path-stages" aria-label="Öğrenme yolu aşamaları"></div>
         <button id="learning-path-home-button" class="sound-button learning-path-home-button" type="button">⌂ Ana Sayfa</button>

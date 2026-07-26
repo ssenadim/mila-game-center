@@ -51,6 +51,42 @@ The project is already working and is developed through small incremental update
 * Child-facing replay actions should use understandable text labels such as "Yeni Oyun" or "Tekrar Oyna".
 * Do not rely on an icon without a text label when an action creates a new session.
 
+## Application View Navigation
+
+### App-like View Navigation
+
+* The application may remain a single-page and single-index.html experience, but primary areas must behave as separate application views.
+* Do not build the main navigation as anchors or scroll-to-section behavior inside one long page.
+* Selecting a primary navigation destination must hide unrelated primary content and show only the selected view.
+* Primary areas such as Home, Learning, Mini Games, Learning Path, Rewards and Player Selection must not all remain expanded on the same screen.
+* Keep each primary view focused on one user intention.
+* Avoid requiring children to scroll through unrelated areas to reach a selected destination.
+* On mobile and tablet, prefer view switching over long dashboard-style vertical pages.
+
+### Home Screen
+
+* The Home screen must be a compact application hub, not a container for every feature.
+* Show concise entry points to major areas rather than rendering the complete contents of those areas.
+* Detailed player selection, learning configuration and Mini Game lists should appear only inside their relevant views.
+* The currently selected player may be represented on Home with a compact status and an explicit Player Change action.
+
+### Navigation State
+
+* Use the existing screen and hidden-state system where possible.
+* A primary navigation action should:
+  * close the current primary view
+  * open the requested primary view
+  * reset the document position appropriately
+  * move focus to the new view when suitable
+* Do not introduce a routing framework solely to switch existing single-page views.
+* Do not use fragile arbitrary timeouts for navigation, focus or scrolling.
+
+### Child-facing Application Design
+
+* A child should see only the controls and choices relevant to the current activity.
+* Do not place Learning controls, Mini Game controls and Player Selection controls together in one continuously expanded page.
+* Avoid scroll-dependent discovery for core application destinations.
+
 ## Speech
 
 * Preserve the existing speech queue and cancellation behavior.
