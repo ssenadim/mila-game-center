@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=8.1" />
+    <link rel="stylesheet" href="styles.css?v=8.2.1" />
   </head>
   <body>
     <main class="game-shell">
@@ -97,7 +97,15 @@
             <button class="category-pack-button" type="button" data-category-pack="numbers" aria-pressed="false">Sayılar</button>
             <button class="category-pack-button" type="button" data-category-pack="custom" aria-pressed="false">Özel</button>
           </div>
-          <div id="custom-category-options" class="custom-category-options hidden" aria-label="Özel kategori seçimi"></div>
+          <section id="custom-category-browser" class="custom-category-browser hidden" aria-labelledby="custom-category-heading">
+            <div class="custom-category-summary">
+              <strong id="custom-category-heading">Kategorilerini seç</strong>
+              <span id="custom-category-count" role="status">0 kategori seçildi</span>
+              <button id="custom-category-reset-button" type="button">Seçimi Temizle</button>
+            </div>
+            <div id="category-group-tabs" class="category-group-tabs" role="tablist" aria-label="Kategori grupları"></div>
+            <div id="custom-category-options" class="custom-category-options" role="tabpanel" aria-live="polite" aria-label="Özel kategori seçimi"></div>
+          </section>
         </section>
         <button id="start-button" class="primary-button learning-start-button" type="button" disabled>Hadi başlayalım <span aria-hidden="true">✦</span></button>
         <button id="learning-center-home-button" class="sound-button view-home-button" type="button">⌂ Ana Sayfa</button>
@@ -350,7 +358,8 @@
     <script src="js/services/AnimationHelper.js?v=6.6"></script>
     <script src="js/QuestionEngine.js?v=6.4"></script>
     <script src="js/NewMiniGames.js?v=8.1"></script>
+    <script src="js/LearningCategories.js?v=8.2"></script>
     <script src="data/offline-data.js"></script>
-    <script src="app.js?v=8.1"></script>
+    <script src="app.js?v=8.2"></script>
   </body>
 </html>

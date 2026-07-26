@@ -59,7 +59,7 @@ const SORTING_ITEMS = [
   { name: "Dog", visual: "🐶", group: "animals" }, { name: "Cat", visual: "🐱", group: "animals" }, { name: "Lion", visual: "🦁", group: "animals" }, { name: "Elephant", visual: "🐘", group: "animals" }
 ];
 const SORTING_DESTINATIONS = { fruits: { icon: "🍎", label: "Meyveler" }, animals: { icon: "🐾", label: "Hayvanlar" } };
-const LISTENING_CATEGORIES = ["Fruits", "Animals", "Colors", "Numbers"];
+const LISTENING_CATEGORIES = ["Fruits", "Animals", "Colors", "Numbers", "Vegetables", "Foods", "Drinks", "Vehicles", "SeaAnimals", "Birds", "FarmAnimals", "Toys", "Clothes", "Jobs", "Nature", "Space", "Actions", "Emotions"];
 const LISTENING_VISUALS = {
   Apple: "🍎", Banana: "🍌", Grape: "🍇", Grapes: "🍇", Orange: "🍊", Lemon: "🍋", Blueberry: "🫐", Kiwi: "🥝", Cherry: "🍒", Pear: "🍐", Peach: "🍑",
   Lion: "🦁", Elephant: "🐘", Cat: "🐱", Monkey: "🐒", Dog: "🐶", Bird: "🐦", Fish: "🐟", Tiger: "🐯", Bear: "🐻", Rabbit: "🐰"
@@ -67,7 +67,7 @@ const LISTENING_VISUALS = {
 const LISTENING_COLOR_VISUALS = { Blue: "🔵", Yellow: "🟡", Red: "🔴", Green: "🟢", Purple: "🟣", Orange: "🟠", Pink: "🩷", Brown: "🟤" };
 const LISTENING_NUMBER_VISUALS = { One: "1️⃣", Two: "2️⃣", Three: "3️⃣", Four: "4️⃣", Five: "5️⃣", Six: "6️⃣", Seven: "7️⃣", Eight: "8️⃣" };
 const MATCHING_PAIR_COUNT = 8;
-const MATCHING_CATEGORY_DEFINITIONS = [
+const BASE_MATCHING_CATEGORY_DEFINITIONS = [
   { id: "colors", label: "Renkler", icon: "🎨", items: Object.values(LISTENING_COLOR_VISUALS) },
   { id: "animals", label: "Hayvanlar", icon: "🐾", items: ["🦁", "🐘", "🐱", "🐒", "🐶", "🐦", "🐟", "🐯"] },
   { id: "fruits", label: "Meyveler", icon: "🍎", items: ["🍎", "🍌", "🍊", "🍓", "🍇", "🍋", "🥝", "🍒"] },
@@ -82,6 +82,18 @@ const MATCHING_CATEGORY_DEFINITIONS = [
   { id: "nature", label: "Doğa", icon: "🌳", items: ["🌳", "🌻", "⛰️", "☀️", "🌙", "☁️", "🌈", "❄️"] },
   { id: "space", label: "Uzay", icon: "🚀", items: ["🚀", "🪐", "🧑‍🚀", "🛰️", "⭐", "🌙", "☄️", "🛸"] },
   { id: "buildings", label: "Binalar", icon: "🏠", items: ["🏠", "🏫", "🏥", "🏰", "🏭", "🏨", "🏦", "🏪"] }
+];
+const SHARED_MATCHING_CATEGORY_IDS = ["Vegetables", "Birds", "FarmAnimals", "WildAnimals", "KitchenItems", "SchoolItems", "Weather", "Emotions"];
+const MATCHING_CATEGORY_DEFINITIONS = [
+  ...BASE_MATCHING_CATEGORY_DEFINITIONS,
+  ...window.MilaLearningCategories.CATEGORIES
+    .filter(category => SHARED_MATCHING_CATEGORY_IDS.includes(category.id))
+    .map(category => ({
+      id: `learning-${category.id}`,
+      label: category.title,
+      icon: category.icon,
+      items: category.items.filter(item => item.visual).map(item => ({ id: item.id, visual: item.visual }))
+    }))
 ];
 
 function getMatchingItemId(item) {
@@ -137,6 +149,7 @@ const ui = {
   menuButton: document.querySelector("#menu-button"), gameMenu: document.querySelector("#game-menu"), menuItems: document.querySelectorAll("[data-menu-target]"), settings: document.querySelector("#settings-button"),
   start: document.querySelector("#start-button"), fullscreen: document.querySelector("#fullscreen-button"), achievements: document.querySelector("#achievements-button"), welcomeSound: document.querySelector("#welcome-sound-button"), learningMode: document.querySelector("#learning-mode-button"), quickMode: document.querySelector("#quick-mode-button"), matchingMode: document.querySelector("#matching-mode-button"), listeningMode: document.querySelector("#listening-mode-button"), numberMatchMode: document.querySelector("#number-match-mode-button"), colorMatchMode: document.querySelector("#color-match-mode-button"), sortingMode: document.querySelector("#sorting-mode-button"), missingItemMode: document.querySelector("#missing-item-mode-button"), shadowMode: document.querySelector("#shadow-mode-button"), initialLetterMode: document.querySelector("#initial-letter-mode-button"), soundMemoryMode: document.querySelector("#sound-memory-mode-button"), puzzleMode: document.querySelector("#puzzle-mode-button"), playerButtons: document.querySelectorAll(".player-button"), customPlayer: document.querySelector("#custom-player-button"), customPlayerLabel: document.querySelector("#custom-player-label"), customPlayerName: document.querySelector("#custom-player-name"), categoryPackButtons: document.querySelectorAll(".category-pack-button"), customCategoryOptions: document.querySelector("#custom-category-options"), home: document.querySelector("#home-button"), replay: document.querySelector("#question-sound-button"), matching: document.querySelector("#matching-screen"), matchingCategorySelection: document.querySelector("#matching-category-selection"), matchingCategoryOptions: document.querySelector("#matching-category-options"), matchingGameArea: document.querySelector("#matching-game-area"), matchingCategoryLabel: document.querySelector("#matching-category-label"), matchingCards: document.querySelector("#matching-cards"), matchingCelebration: document.querySelector("#matching-celebration"), matchingFeedback: document.querySelector("#matching-feedback"), matchingCompletionActions: document.querySelector("#matching-completion-actions"), matchingCompletionTime: document.querySelector("#matching-completion-time"), matchingReplay: document.querySelector("#matching-replay-button"), matchingCategories: document.querySelector("#matching-categories-button"), matchingHome: document.querySelector("#matching-home-button"), matchingPause: document.querySelector("#matching-pause-button"), listening: document.querySelector("#listening-screen"), listeningCards: document.querySelector("#listening-cards"), listeningCelebration: document.querySelector("#listening-celebration"), listeningFeedback: document.querySelector("#listening-feedback"), listeningReplay: document.querySelector("#listening-replay-button"), listeningHome: document.querySelector("#listening-home-button"), listeningPause: document.querySelector("#listening-pause-button"), numberMatch: document.querySelector("#number-match-screen"), numberMatchCards: document.querySelector("#number-match-cards"), numberMatchCelebration: document.querySelector("#number-match-celebration"), numberMatchFeedback: document.querySelector("#number-match-feedback"), numberMatchReplay: document.querySelector("#number-match-replay-button"), numberMatchHome: document.querySelector("#number-match-home-button"), numberMatchPause: document.querySelector("#number-match-pause-button"), colorMatch: document.querySelector("#color-match-screen"), colorMatchCards: document.querySelector("#color-match-cards"), colorMatchCelebration: document.querySelector("#color-match-celebration"), colorMatchFeedback: document.querySelector("#color-match-feedback"), colorMatchWrittenPrompt: document.querySelector("#color-match-written-prompt"), colorMatchPrompt: document.querySelector("#color-match-prompt"), colorMatchWordListen: document.querySelector("#color-match-word-listen-button"), colorMatchReplay: document.querySelector("#color-match-replay-button"), colorMatchHome: document.querySelector("#color-match-home-button"), colorMatchPause: document.querySelector("#color-match-pause-button"), sorting: document.querySelector("#sorting-screen"), sortingItems: document.querySelector("#sorting-items"), sortingDestinations: document.querySelector("#sorting-destinations"), sortingCelebration: document.querySelector("#sorting-celebration"), sortingFeedback: document.querySelector("#sorting-feedback"), sortingHome: document.querySelector("#sorting-home-button"), sortingPause: document.querySelector("#sorting-pause-button"), sortingFinishHome: document.querySelector("#sorting-finish-home-button"),
   newMiniGame: document.querySelector("#new-mini-game-screen"), newMiniGameEyebrow: document.querySelector("#new-mini-game-eyebrow"), newMiniGameTitle: document.querySelector("#new-mini-game-title"), newMiniGameHome: document.querySelector("#new-mini-game-home-button"), newMiniGamePause: document.querySelector("#new-mini-game-pause-button"), newMiniGameSetup: document.querySelector("#new-mini-game-setup"), newMiniGameArea: document.querySelector("#new-mini-game-area"), newMiniGameProgressLabel: document.querySelector("#new-mini-game-progress-label"), newMiniGameProgressFill: document.querySelector("#new-mini-game-progress-fill"), newMiniGamePrompt: document.querySelector("#new-mini-game-prompt"), newMiniGameListen: document.querySelector("#new-mini-game-listen-button"), newMiniGameVisual: document.querySelector("#new-mini-game-visual"), newMiniGameChoices: document.querySelector("#new-mini-game-choices"), newMiniGameFeedback: document.querySelector("#new-mini-game-feedback"), newMiniGameCompletion: document.querySelector("#new-mini-game-completion"), newMiniGameCompletionCopy: document.querySelector("#new-mini-game-completion-copy"), newMiniGameReplay: document.querySelector("#new-mini-game-replay-button"), newMiniGameChange: document.querySelector("#new-mini-game-change-button"), newMiniGameCompletionHome: document.querySelector("#new-mini-game-completion-home-button"),
+  customCategoryBrowser: document.querySelector("#custom-category-browser"), categoryGroupTabs: document.querySelector("#category-group-tabs"), customCategoryCount: document.querySelector("#custom-category-count"), customCategoryReset: document.querySelector("#custom-category-reset-button"),
   category: document.querySelector("#category-pill"), visual: document.querySelector("#question-visual"), celebration: document.querySelector("#celebration"), mascot: document.querySelector("#game-mascot"), prompt: document.querySelector("#question-prompt"),
   answers: document.querySelector("#answers"), feedback: document.querySelector("#feedback"), next: document.querySelector("#next-button"), count: document.querySelector("#question-count"), score: document.querySelector("#score"), streak: document.querySelector("#streak"), progress: document.querySelector("#progress-fill"),
   playAgain: document.querySelector("#play-again-button"), summaryHome: document.querySelector("#summary-home-button"), summaryStats: document.querySelector("#summary-stats"), summaryStars: document.querySelector("#summary-stars"), summaryCorrect: document.querySelector("#summary-correct"), summaryStreak: document.querySelector("#summary-streak"), summaryCategory: document.querySelector("#summary-category"), summaryTitle: document.querySelector("#summary-title"), summaryCopy: document.querySelector(".summary-copy"), rewardPopup: document.querySelector("#reward-popup"), rewardSticker: document.querySelector("#reward-sticker"), achievementPopup: document.querySelector("#achievement-popup"), achievementPopupIcon: document.querySelector("#achievement-popup-icon"), achievementPopupTitle: document.querySelector("#achievement-popup-title"), dailyGoalCard: document.querySelector("#daily-goal-card"), dailyGoalTitle: document.querySelector("#daily-goal-title"), dailyGoalProgress: document.querySelector("#daily-goal-progress"), dailyGoalPopup: document.querySelector("#daily-goal-popup"), achievementsModal: document.querySelector("#achievements-modal"), achievementsModalClose: document.querySelector("#achievements-modal-close"), achievementsList: document.querySelector("#achievements-list"), rewardsStarCount: document.querySelector("#rewards-star-count"), stickersList: document.querySelector("#stickers-list"), bonus: document.querySelector("#balloon-bonus"), balloonHome: document.querySelector("#bonus-home-button"), balloonTarget: document.querySelector("#balloon-target"), balloons: document.querySelector("#balloons"), pause: document.querySelector("#pause-button"), bonusPause: document.querySelector("#bonus-pause-button"), pauseOverlay: document.querySelector("#pause-overlay"), resume: document.querySelector("#resume-button"), parentLogo: document.querySelector("#welcome-title"), parentDashboard: document.querySelector("#parent-dashboard"), parentDashboardClose: document.querySelector("#parent-dashboard-close"), parentDashboardTitle: document.querySelector("#parent-dashboard-title"), parentPlayTime: document.querySelector("#parent-play-time"), parentQuestions: document.querySelector("#parent-questions"), parentCorrect: document.querySelector("#parent-correct"), parentCategory: document.querySelector("#parent-category"), parentStreak: document.querySelector("#parent-streak"), parentDifficultWords: document.querySelector("#parent-difficult-words")
@@ -144,7 +157,9 @@ const ui = {
 
 const appUtils = window.MilaUtils;
 const newMiniGames = window.MilaNewMiniGames;
+const learningCategories = window.MilaLearningCategories;
 newMiniGames.validateContent();
+learningCategories.validateCategories();
 const speech = new window.MilaSpeechService();
 const audio = new window.MilaAudioHelper();
 const animations = new window.MilaAnimationHelper(ui.visual, ui.celebration);
@@ -183,6 +198,9 @@ let activeGameMode = LEARNING_MODE;
 let isWelcomeSequenceActive = false;
 let activeCategoryPack = "mixed";
 let customCategories = [];
+let activeCategoryGroup = learningCategories.GROUPS[0].id;
+let activeLearningSessionCategories = [];
+let activeLearningSessionType;
 let wakeLock;
 let wakeLockRequest;
 let shouldKeepWakeLock = false;
@@ -705,11 +723,9 @@ function getAvailableCategories() {
 
 function getPackCategories(pack = activeCategoryPack) {
   const availableCategories = getAvailableCategories().map(category => category.category);
-  if (pack === "words") return availableCategories.filter(category => !["Colors", "Shapes", "Numbers"].includes(category));
-  if (pack === "colors-shapes") return availableCategories.filter(category => ["Colors", "Shapes"].includes(category));
-  if (pack === "numbers") return availableCategories.filter(category => category === "Numbers");
   if (pack === "custom") return customCategories.filter(category => availableCategories.includes(category));
-  return availableCategories;
+  const packDefinition = learningCategories.PACKS[pack] ?? learningCategories.PACKS.mixed;
+  return packDefinition.filter(category => availableCategories.includes(category));
 }
 
 function saveCategoryPack() {
@@ -724,18 +740,58 @@ function saveCategoryPack() {
 function restoreCategoryPack() {
   activeCategoryPack = "mixed";
   customCategories = [];
+  activeCategoryGroup = learningCategories.GROUPS[0].id;
   try {
     const storageKey = getPlayerStorageKey(CATEGORY_PACK_STORAGE_KEY);
     const savedPack = storageKey ? JSON.parse(window.localStorage.getItem(storageKey)) : undefined;
     const availableCategories = getAvailableCategories().map(category => category.category);
     const validPacks = ["mixed", "words", "colors-shapes", "numbers", "custom"];
-    customCategories = Array.isArray(savedPack?.categories) ? [...new Set(savedPack.categories.filter(category => availableCategories.includes(category)))] : [];
+    customCategories = learningCategories.sanitizeSavedSelection(savedPack?.categories).filter(category => availableCategories.includes(category));
     activeCategoryPack = validPacks.includes(savedPack?.pack) ? savedPack.pack : "mixed";
     if (!getPackCategories(activeCategoryPack).length) activeCategoryPack = "mixed";
   } catch {
     activeCategoryPack = "mixed";
     customCategories = [];
   }
+}
+
+function getCategoriesForGroup(groupId) {
+  const available = new Set(getAvailableCategories().map(category => category.category));
+  return learningCategories.CATEGORIES.filter(category => category.group === groupId && available.has(category.id));
+}
+
+function selectCategoryGroup(groupId, { focusCategory = false } = {}) {
+  if (!learningCategories.GROUPS.some(group => group.id === groupId)) return;
+  clearSpeech();
+  activeCategoryGroup = groupId;
+  renderCategoryPackSelection();
+  if (focusCategory) ui.customCategoryOptions.querySelector("button")?.focus();
+}
+
+function renderCategoryGroupTabs() {
+  ui.categoryGroupTabs.textContent = "";
+  learningCategories.GROUPS.forEach((group, index) => {
+    const button = document.createElement("button");
+    button.id = `category-group-${group.id}`;
+    button.className = "category-group-tab";
+    button.type = "button";
+    button.role = "tab";
+    button.setAttribute("aria-selected", String(group.id === activeCategoryGroup));
+    button.setAttribute("aria-controls", "custom-category-options");
+    button.tabIndex = group.id === activeCategoryGroup ? 0 : -1;
+    button.innerHTML = `<span aria-hidden="true">${group.icon}</span>${group.title}`;
+    button.addEventListener("click", () => selectCategoryGroup(group.id));
+    button.addEventListener("keydown", event => {
+      if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+      event.preventDefault();
+      const groups = learningCategories.GROUPS;
+      const nextIndex = event.key === "Home" ? 0 : event.key === "End" ? groups.length - 1 : (index + (event.key === "ArrowRight" ? 1 : -1) + groups.length) % groups.length;
+      selectCategoryGroup(groups[nextIndex].id);
+      ui.categoryGroupTabs.querySelector(`#category-group-${groups[nextIndex].id}`)?.focus();
+    });
+    ui.categoryGroupTabs.append(button);
+  });
+  ui.customCategoryOptions.setAttribute("aria-labelledby", `category-group-${activeCategoryGroup}`);
 }
 
 function renderCategoryPackSelection() {
@@ -747,21 +803,26 @@ function renderCategoryPackSelection() {
     button.classList.toggle("hidden", !isAvailable);
     button.setAttribute("aria-pressed", String(button.dataset.categoryPack === activeCategoryPack));
   });
+  renderCategoryGroupTabs();
   ui.customCategoryOptions.textContent = "";
-  availableCategories.forEach(category => {
+  getCategoriesForGroup(activeCategoryGroup).forEach(category => {
     const button = document.createElement("button");
     button.className = "custom-category-button";
     button.type = "button";
-    button.textContent = category.label;
-    button.setAttribute("aria-pressed", String(customCategories.includes(category.category)));
+    button.setAttribute("aria-pressed", String(customCategories.includes(category.id)));
+    button.setAttribute("aria-label", `${category.title}, ${customCategories.includes(category.id) ? "seçildi" : "seçilmedi"}`);
+    button.innerHTML = `<span class="custom-category-button-icon" aria-hidden="true">${category.icon}</span><span class="custom-category-button-copy"><strong>${category.title}</strong><small>${category.description}</small></span><span class="custom-category-button-check" aria-hidden="true">${customCategories.includes(category.id) ? "✓" : "+"}</span>`;
     button.addEventListener("click", () => {
-      customCategories = customCategories.includes(category.category) ? customCategories.filter(name => name !== category.category) : [...customCategories, category.category];
+      customCategories = customCategories.includes(category.id) ? customCategories.filter(name => name !== category.id) : [...customCategories, category.id];
       saveCategoryPack();
       renderCategoryPackSelection();
+      ui.customCategoryOptions.querySelector(`[aria-label^="${category.title},"]`)?.focus();
     });
     ui.customCategoryOptions.append(button);
   });
-  ui.customCategoryOptions.classList.toggle("hidden", activeCategoryPack !== "custom" || availableCategoryNames.length === 0);
+  ui.customCategoryCount.textContent = `${customCategories.length} kategori seçildi`;
+  ui.customCategoryReset.disabled = customCategories.length === 0;
+  ui.customCategoryBrowser.classList.toggle("hidden", activeCategoryPack !== "custom" || availableCategoryNames.length === 0);
   updateStartButton();
 }
 
@@ -1086,7 +1147,7 @@ function restoreSavedProgress() {
   hideAllScreens();
   ui.quiz.classList.remove("hidden");
   ui.category.textContent = currentQuestion.label;
-  ui.visual.textContent = currentQuestion.visual;
+  renderQuestionVisual(currentQuestion);
   ui.prompt.textContent = currentQuestion.prompt;
   ui.feedback.textContent = "";
   updateScoreboard();
@@ -1111,12 +1172,13 @@ function loadParentData() {
         bestStreak: Number.isFinite(savedData.bestStreak) ? savedData.bestStreak : 0,
         matchingPairsCompleted: Number.isFinite(savedData.matchingPairsCompleted) ? savedData.matchingPairsCompleted : 0,
         miniGamesStarted: savedData.miniGamesStarted && typeof savedData.miniGamesStarted === "object" && !Array.isArray(savedData.miniGamesStarted) ? savedData.miniGamesStarted : {},
-        miniGamesCompleted: savedData.miniGamesCompleted && typeof savedData.miniGamesCompleted === "object" && !Array.isArray(savedData.miniGamesCompleted) ? savedData.miniGamesCompleted : {}
+        miniGamesCompleted: savedData.miniGamesCompleted && typeof savedData.miniGamesCompleted === "object" && !Array.isArray(savedData.miniGamesCompleted) ? savedData.miniGamesCompleted : {},
+        categoryProgress: savedData.categoryProgress && typeof savedData.categoryProgress === "object" && !Array.isArray(savedData.categoryProgress) ? savedData.categoryProgress : {}
       };
     }
-    return { playTime: 0, questionsAnswered: 0, correctAnswers: 0, categoryCounts: {}, difficultWords: {}, bestStreak: 0, matchingPairsCompleted: 0, miniGamesStarted: {}, miniGamesCompleted: {} };
+    return { playTime: 0, questionsAnswered: 0, correctAnswers: 0, categoryCounts: {}, difficultWords: {}, bestStreak: 0, matchingPairsCompleted: 0, miniGamesStarted: {}, miniGamesCompleted: {}, categoryProgress: {} };
   } catch {
-    return { playTime: 0, questionsAnswered: 0, correctAnswers: 0, categoryCounts: {}, difficultWords: {}, bestStreak: 0, matchingPairsCompleted: 0, miniGamesStarted: {}, miniGamesCompleted: {} };
+    return { playTime: 0, questionsAnswered: 0, correctAnswers: 0, categoryCounts: {}, difficultWords: {}, bestStreak: 0, matchingPairsCompleted: 0, miniGamesStarted: {}, miniGamesCompleted: {}, categoryProgress: {} };
   }
 }
 
@@ -1149,12 +1211,53 @@ function getDifficultWords() {
   return words.length ? words.join(", ") : "Henüz yok";
 }
 
+function getCategoryProgress(categoryId) {
+  parentData.categoryProgress = parentData.categoryProgress && typeof parentData.categoryProgress === "object" ? parentData.categoryProgress : {};
+  const saved = parentData.categoryProgress[categoryId];
+  if (!saved || typeof saved !== "object" || Array.isArray(saved)) {
+    parentData.categoryProgress[categoryId] = { played: 0, questions: 0, correct: 0, completions: 0, sessionTypes: {} };
+  }
+  const progress = parentData.categoryProgress[categoryId];
+  progress.sessionTypes = progress.sessionTypes && typeof progress.sessionTypes === "object" ? progress.sessionTypes : {};
+  return progress;
+}
+
+function recordLearningSessionStarted(categories, sessionType) {
+  activeLearningSessionCategories = [...new Set(categories)];
+  activeLearningSessionType = sessionType;
+  activeLearningSessionCategories.forEach(categoryId => {
+    const progress = getCategoryProgress(categoryId);
+    progress.played = (Number(progress.played) || 0) + 1;
+    const typeProgress = progress.sessionTypes[sessionType] && typeof progress.sessionTypes[sessionType] === "object" ? progress.sessionTypes[sessionType] : {};
+    typeProgress.started = (Number(typeProgress.started) || 0) + 1;
+    progress.sessionTypes[sessionType] = typeProgress;
+  });
+  saveParentData();
+}
+
+function recordLearningSessionCompleted() {
+  if (!activeLearningSessionCategories.length || !activeLearningSessionType) return;
+  activeLearningSessionCategories.forEach(categoryId => {
+    const progress = getCategoryProgress(categoryId);
+    progress.completions = (Number(progress.completions) || 0) + 1;
+    const typeProgress = progress.sessionTypes[activeLearningSessionType] && typeof progress.sessionTypes[activeLearningSessionType] === "object" ? progress.sessionTypes[activeLearningSessionType] : {};
+    typeProgress.completed = (Number(typeProgress.completed) || 0) + 1;
+    progress.sessionTypes[activeLearningSessionType] = typeProgress;
+  });
+  saveParentData();
+  activeLearningSessionCategories = [];
+  activeLearningSessionType = undefined;
+}
+
 function updateParentData(wasCorrect) {
   parentData.questionsAnswered += 1;
   parentData.categoryCounts[currentQuestion.label] = (parentData.categoryCounts[currentQuestion.label] ?? 0) + 1;
+  const categoryProgress = getCategoryProgress(currentQuestion.category);
+  categoryProgress.questions = (Number(categoryProgress.questions) || 0) + 1;
   if (wasCorrect) {
     parentData.correctAnswers += 1;
     parentData.bestStreak = Math.max(parentData.bestStreak, streak);
+    categoryProgress.correct = (Number(categoryProgress.correct) || 0) + 1;
   } else {
     parentData.difficultWords[currentQuestion.correct] = (parentData.difficultWords[currentQuestion.correct] ?? 0) + 1;
   }
@@ -1341,10 +1444,11 @@ function startMatchingGame() {
 
 function getListeningVisual(answer, category) {
   const matchingQuestion = engine.questions.find(question => question.category === category && question.correct === answer);
-  if (matchingQuestion?.visual) return matchingQuestion.visual;
-  if (category === "Colors") return LISTENING_COLOR_VISUALS[answer] ?? "🎨";
-  if (category === "Numbers") return LISTENING_NUMBER_VISUALS[answer] ?? "🔢";
-  return LISTENING_VISUALS[answer] ?? "❔";
+  if (matchingQuestion?.visualSvg) return { svg: matchingQuestion.visualSvg };
+  if (matchingQuestion?.visual) return { visual: matchingQuestion.visual };
+  if (category === "Colors") return { visual: LISTENING_COLOR_VISUALS[answer] ?? "🎨" };
+  if (category === "Numbers") return { visual: LISTENING_NUMBER_VISUALS[answer] ?? "🔢" };
+  return { visual: LISTENING_VISUALS[answer] ?? "❔" };
 }
 
 function selectListeningQuestion() {
@@ -1362,7 +1466,11 @@ function renderListeningCards() {
     const isCorrect = answer === currentListeningQuestion?.correct;
     button.className = `listening-card${isListeningTransitioning && isCorrect ? " correct" : ""}${isListeningRevealing && isCorrect ? " correct-answer-reveal" : ""}${listeningWrongIndex === index ? " try-again-choice" : ""}`;
     button.type = "button";
-    button.textContent = getListeningVisual(answer, currentListeningQuestion.category);
+    const visual = getListeningVisual(answer, currentListeningQuestion.category);
+    if (visual.svg) {
+      button.classList.add("listening-card-svg");
+      button.innerHTML = visual.svg;
+    } else button.textContent = visual.visual;
     button.setAttribute("aria-label", "Seçenek");
     button.disabled = isPaused || isListeningSpeaking || isListeningTransitioning || isListeningRevealing;
     button.addEventListener("click", () => answerListeningQuestion(index));
@@ -2625,6 +2733,7 @@ async function loadJson(url) {
 }
 
 async function loadQuestionEngine() {
+  if (learningCategories?.questions?.length) return new window.MilaQuestionEngine(learningCategories.questions);
   if (window.location.protocol === "file:") return new window.MilaQuestionEngine(window.MilaOfflineQuestions);
   const index = await loadJson(DATA_INDEX_URL);
   const categoryData = await Promise.all(index.files.map(file => loadJson(`./data/${file}`)));
@@ -2943,6 +3052,13 @@ function renderAnswers() {
   });
 }
 
+function renderQuestionVisual(question) {
+  ui.visual.textContent = "";
+  ui.visual.classList.toggle("question-visual-svg", Boolean(question?.visualSvg));
+  if (question?.visualSvg) ui.visual.innerHTML = question.visualSvg;
+  else ui.visual.textContent = question?.visual ?? "";
+}
+
 function triggerMascotReaction(reactionClass) {
   window.clearTimeout(mascotReactionTimer);
   ui.mascot.classList.remove("mascot-celebrate", "mascot-encourage");
@@ -2960,7 +3076,7 @@ async function playQuestionSequence(keepInputDisabled = false) {
   clearSpeech();
   const run = audioRun;
   setInputEnabled(false);
-  await speech.speak(currentQuestion.questionPrompt ?? currentQuestion.prompt, ENGLISH_LANGUAGE);
+  await speech.speak(currentQuestion.questionPrompt ?? currentQuestion.prompt, currentQuestion.promptLanguage ?? ENGLISH_LANGUAGE);
   if (!isActiveAudio(run)) return false;
   if (isQuickPlay) setInputEnabled(true);
   await appUtils.wait(QUESTION_DELAY);
@@ -2975,7 +3091,7 @@ async function playQuestionSequence(keepInputDisabled = false) {
   }
   await appUtils.wait(QUESTION_DELAY);
   if (!isActiveAudio(run)) return false;
-  await speech.speak(currentQuestion.questionPrompt ?? currentQuestion.prompt, ENGLISH_LANGUAGE);
+  await speech.speak(currentQuestion.questionPrompt ?? currentQuestion.prompt, currentQuestion.promptLanguage ?? ENGLISH_LANGUAGE);
   if (!isActiveAudio(run)) return false;
   if (!keepInputDisabled && !isQuickPlay) setInputEnabled(true);
   return true;
@@ -3016,7 +3132,7 @@ function showQuestion() {
   currentAnswers = engine.getAnswers(currentQuestion, activeLearningPathStage ? { phase: learningPathQuestionPhase, simplify: isLearningPathRecoveryQuestion } : undefined);
   questionNumber += 1;
   ui.category.textContent = currentQuestion.label;
-  ui.visual.textContent = currentQuestion.visual;
+  renderQuestionVisual(currentQuestion);
   ui.prompt.textContent = currentQuestion.questionPrompt ?? currentQuestion.prompt;
   ui.feedback.textContent = "";
   ui.feedback.className = "feedback";
@@ -3030,6 +3146,7 @@ function showQuestion() {
 async function showSessionSummary() {
   if (isSessionSummaryShowing) return;
   isSessionSummaryShowing = true;
+  recordLearningSessionCompleted();
   clearSpeech();
   stopWakeLock();
   const run = audioRun;
@@ -3260,6 +3377,7 @@ async function startGame({ skipWelcome = false, miniGameMode } = {}) {
     restoreStoredLearningStats();
     if (activeLearningPathStage) engine.setActiveCategories(activeLearningPathStage.categories);
     else applyCategoryPack();
+    recordLearningSessionStarted(activeLearningPathStage ? activeLearningPathStage.categories : getPackCategories(), activeLearningPathStage ? "learning-path" : gameMode);
     hideAllScreens();
     ui.quiz.classList.remove("hidden");
     resetSession();
@@ -3331,6 +3449,8 @@ function goHome(shouldSpeak = true, destination = "home") {
   pendingCorrectTransition = false;
   currentQuestion = undefined;
   currentAnswers = [];
+  activeLearningSessionCategories = [];
+  activeLearningSessionType = undefined;
   isSpeaking = false;
   isMatchingGameActive = false;
   matchingCards = [];
@@ -3529,6 +3649,13 @@ ui.initialLetterMode.addEventListener("click", () => launchMiniGame(INITIAL_LETT
 ui.soundMemoryMode.addEventListener("click", () => launchMiniGame(SOUND_MEMORY_MODE));
 ui.puzzleMode.addEventListener("click", () => launchMiniGame(PUZZLE_MODE));
 ui.categoryPackButtons.forEach(button => button.addEventListener("click", () => setCategoryPack(button.dataset.categoryPack)));
+ui.customCategoryReset.addEventListener("click", () => {
+  if (!customCategories.length) return;
+  customCategories = [];
+  saveCategoryPack();
+  renderCategoryPackSelection();
+  ui.customCategoryReset.focus();
+});
 ui.playerButtons.forEach(button => button.addEventListener("click", () => {
   if (button === ui.customPlayer) selectCustomPlayer();
   else {

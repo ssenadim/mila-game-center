@@ -225,6 +225,7 @@ class QuestionEngine {
   }
 
   getQuestionType(question) {
+    if (question?.forceQuestionType) return question.forceQuestionType;
     if (!this.canUseRecognition(question)) return "selection";
     const recentTypes = this.recentQuestionTypes.slice(-2);
     if (recentTypes.length === 2 && recentTypes.every(type => type === recentTypes[0])) return recentTypes[0] === "recognition" ? "selection" : "recognition";
@@ -236,8 +237,10 @@ class QuestionEngine {
 
   getQuestionPrompt(question) {
     if (question.questionType === "recognition") {
+      if (question.recognitionPrompt) return question.recognitionPrompt;
       return ({ Fruits: "What fruit is this?", Colors: "What color is this?", Numbers: "What number is this?", Animals: "What animal is this?", Shapes: "What shape is this?" })[question.category] ?? question.prompt;
     }
+    if (question.selectionPrompt) return question.selectionPrompt;
     const target = question.correct;
     return ({ Fruits: `Touch the ${target}.`, Colors: `Touch ${target}.`, Numbers: `Touch number ${target.toLowerCase()}.`, Animals: `Touch the ${target}.`, Shapes: `Touch the ${target}.`, Letters: `Touch letter ${target}.`, Emoji: `Touch ${target}.` })[question.category] ?? question.prompt;
   }
@@ -256,7 +259,9 @@ class QuestionEngine {
     const categoryQuestions = this.questions.filter(item => item.category === question.category);
     const categoryAnswers = categoryQuestions.flatMap(item => [item.correct, ...(Array.isArray(item.answers) ? item.answers : [])]);
     const validAnswers = [...new Set(categoryAnswers.filter(answer => typeof answer === "string" && answer.trim()))];
-    const requestedAnswerCount = Array.isArray(question.answers) && question.answers.length ? question.answers.length : 4;
+    const configuredAnswerCount = Array.isArray(question.answers) && question.answers.length ? question.answers.length : 4;
+    const progressiveAnswerCount = simplify || phase === "warm-up" ? 2 : phase === "confidence" || this.difficulty >= .65 ? 4 : 3;
+    const requestedAnswerCount = question.progressiveChoices ? Math.min(configuredAnswerCount, progressiveAnswerCount) : configuredAnswerCount;
     const answerCount = Math.min(Math.max(1, requestedAnswerCount), validAnswers.length || 1);
     const useFamiliarDistractors = simplify || phase === "warm-up";
     const familiarAnswerCount = Math.min(validAnswers.length, Math.max(answerCount, Math.ceil(validAnswers.length / 2)));
