@@ -4699,7 +4699,7 @@ window.addEventListener("load", async () => {
   renderDailyGoal();
   restoreStoredLearningStats();
   clearSavedProgress();
-  showPrimaryView(selectedPlayer ? "home" : "players");
+  showPrimaryView(selectedPlayer ? "home" : "players", { focus: !selectedPlayer });
   if (!selectedPlayer) ui.playerGuidance.classList.remove("hidden");
 });
 
