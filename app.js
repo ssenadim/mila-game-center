@@ -122,13 +122,8 @@ const CATEGORY_PACK_STORAGE_KEY = "mila-learning-category-pack";
 const LEARNING_PATH_PROGRESS_STORAGE_KEY = "mila-learning-path-progress";
 const ACHIEVEMENT_STORAGE_KEY = "mila-learning-achievements";
 const DAILY_GOAL_STORAGE_KEY = "mila-learning-daily-goal";
-const LEARNING_PATH_STAGES = [
-  { id: "colors", icon: "🎨", name: "Renkler", categories: ["Colors"] },
-  { id: "numbers", icon: "🔢", name: "Sayılar", categories: ["Numbers"] },
-  { id: "animals", icon: "🐾", name: "Hayvanlar", categories: ["Animals"] },
-  { id: "fruits", icon: "🍎", name: "Meyveler", categories: ["Fruits"] },
-  { id: "mixed-review", icon: "🌈", name: "Karışık Tekrar", categories: ["Colors", "Numbers", "Animals", "Fruits"] }
-];
+const learningPathModel = window.MilaLearningPath;
+const LEARNING_PATH_STAGES = learningPathModel.STAGES;
 const DEFAULT_PLAYERS = ["Mila", "Deniz", "Elis", "Açelya", "Alp", "Aslan Cemal", "Zeynep", "Nova", "Ata", "Hiranur"];
 const ACHIEVEMENTS = [
   { id: "first-star", icon: "⭐", title: "İlk Yıldız", description: "İlk doğru cevabını verdin." },
@@ -145,7 +140,7 @@ const DAILY_GOALS = [
 ];
 
 const ui = {
-  shell: document.querySelector(".game-shell"), welcome: document.querySelector("#welcome-screen"), learningCenter: document.querySelector("#learning-center-screen"), miniGames: document.querySelector("#mini-games-screen"), playerSelectionScreen: document.querySelector("#player-selection-screen"), playerSelection: document.querySelector(".player-selection"), playerGuidance: document.querySelector("#player-selection-guidance"), selectedPlayerSummary: document.querySelector("#selected-player-summary"), homePlayerChange: document.querySelector("#home-player-change-button"), homeNavigationCards: document.querySelectorAll("[data-home-target]"), learningCenterHome: document.querySelector("#learning-center-home-button"), miniGamesHome: document.querySelector("#mini-games-home-button"), playerSelectionHome: document.querySelector("#player-selection-home-button"), customPlayerConfirm: document.querySelector("#custom-player-confirm-button"), miniGamesSection: document.querySelector(".mini-games-section"), miniGameButtons: document.querySelectorAll(".mini-games-grid .mode-button"), learningPath: document.querySelector("#learning-path-screen"), learningPathStages: document.querySelector("#learning-path-stages"), learningPathGuidance: document.querySelector("#learning-path-guidance"), learningPathEntry: document.querySelector("#learning-path-button"), learningPathHome: document.querySelector("#learning-path-home-button"), learningPathReturn: document.querySelector("#learning-path-return-button"), learningPathNext: document.querySelector("#learning-path-next-button"), learningPathNextLabel: document.querySelector("#learning-path-next-label"), learningPathCompletion: document.querySelector("#learning-path-completion"), learningPathCompletionIcon: document.querySelector("#learning-path-completion-icon"), learningPathCompletionStage: document.querySelector("#learning-path-completion-stage"), learningPathCompletionParticipation: document.querySelector("#learning-path-completion-participation"), learningPathCompletionCorrect: document.querySelector("#learning-path-completion-correct"), quiz: document.querySelector("#quiz-screen"), summary: document.querySelector("#summary-screen"),
+  shell: document.querySelector(".game-shell"), welcome: document.querySelector("#welcome-screen"), learningCenter: document.querySelector("#learning-center-screen"), miniGames: document.querySelector("#mini-games-screen"), playerSelectionScreen: document.querySelector("#player-selection-screen"), playerSelection: document.querySelector(".player-selection"), playerGuidance: document.querySelector("#player-selection-guidance"), selectedPlayerSummary: document.querySelector("#selected-player-summary"), homePlayerChange: document.querySelector("#home-player-change-button"), homeNavigationCards: document.querySelectorAll("[data-home-target]"), learningCenterHome: document.querySelector("#learning-center-home-button"), miniGamesHome: document.querySelector("#mini-games-home-button"), playerSelectionHome: document.querySelector("#player-selection-home-button"), customPlayerConfirm: document.querySelector("#custom-player-confirm-button"), miniGamesSection: document.querySelector(".mini-games-section"), miniGameButtons: document.querySelectorAll(".mini-games-grid .mode-button"), learningPath: document.querySelector("#learning-path-screen"), learningPathStages: document.querySelector("#learning-path-stages"), learningPathGuidance: document.querySelector("#learning-path-guidance"), learningPathRecommendation: document.querySelector("#learning-path-recommendation"), learningPathGroupTabs: document.querySelector("#learning-path-group-tabs"), learningPathGroupTitle: document.querySelector("#learning-path-group-title"), learningPathGroupIcon: document.querySelector("#learning-path-group-icon"), learningPathGroupDescription: document.querySelector("#learning-path-group-description"), learningPathGroupProgress: document.querySelector("#learning-path-group-progress"), learningPathPreviousGroup: document.querySelector("#learning-path-previous-group"), learningPathNextGroup: document.querySelector("#learning-path-next-group"), learningPathEntry: document.querySelector("#learning-path-button"), learningPathHome: document.querySelector("#learning-path-home-button"), learningPathReturn: document.querySelector("#learning-path-return-button"), learningPathNext: document.querySelector("#learning-path-next-button"), learningPathNextLabel: document.querySelector("#learning-path-next-label"), learningPathCompletion: document.querySelector("#learning-path-completion"), learningPathCompletionIcon: document.querySelector("#learning-path-completion-icon"), learningPathCompletionStage: document.querySelector("#learning-path-completion-stage"), learningPathCompletionParticipation: document.querySelector("#learning-path-completion-participation"), learningPathCompletionCorrect: document.querySelector("#learning-path-completion-correct"), quiz: document.querySelector("#quiz-screen"), summary: document.querySelector("#summary-screen"),
   menuButton: document.querySelector("#menu-button"), gameMenu: document.querySelector("#game-menu"), menuItems: document.querySelectorAll("[data-menu-target]"), settings: document.querySelector("#settings-button"),
   start: document.querySelector("#start-button"), fullscreen: document.querySelector("#fullscreen-button"), achievements: document.querySelector("#achievements-button"), welcomeSound: document.querySelector("#welcome-sound-button"), learningMode: document.querySelector("#learning-mode-button"), quickMode: document.querySelector("#quick-mode-button"), matchingMode: document.querySelector("#matching-mode-button"), listeningMode: document.querySelector("#listening-mode-button"), numberMatchMode: document.querySelector("#number-match-mode-button"), colorMatchMode: document.querySelector("#color-match-mode-button"), sortingMode: document.querySelector("#sorting-mode-button"), missingItemMode: document.querySelector("#missing-item-mode-button"), shadowMode: document.querySelector("#shadow-mode-button"), initialLetterMode: document.querySelector("#initial-letter-mode-button"), soundMemoryMode: document.querySelector("#sound-memory-mode-button"), puzzleMode: document.querySelector("#puzzle-mode-button"), playerButtons: document.querySelectorAll(".player-button"), customPlayer: document.querySelector("#custom-player-button"), customPlayerLabel: document.querySelector("#custom-player-label"), customPlayerName: document.querySelector("#custom-player-name"), categoryPackButtons: document.querySelectorAll(".category-pack-button"), customCategoryOptions: document.querySelector("#custom-category-options"), home: document.querySelector("#home-button"), replay: document.querySelector("#question-sound-button"), matching: document.querySelector("#matching-screen"), matchingCategorySelection: document.querySelector("#matching-category-selection"), matchingCategoryOptions: document.querySelector("#matching-category-options"), matchingGameArea: document.querySelector("#matching-game-area"), matchingCategoryLabel: document.querySelector("#matching-category-label"), matchingCards: document.querySelector("#matching-cards"), matchingCelebration: document.querySelector("#matching-celebration"), matchingFeedback: document.querySelector("#matching-feedback"), matchingCompletionActions: document.querySelector("#matching-completion-actions"), matchingCompletionTime: document.querySelector("#matching-completion-time"), matchingReplay: document.querySelector("#matching-replay-button"), matchingCategories: document.querySelector("#matching-categories-button"), matchingHome: document.querySelector("#matching-home-button"), matchingPause: document.querySelector("#matching-pause-button"), listening: document.querySelector("#listening-screen"), listeningCards: document.querySelector("#listening-cards"), listeningCelebration: document.querySelector("#listening-celebration"), listeningFeedback: document.querySelector("#listening-feedback"), listeningReplay: document.querySelector("#listening-replay-button"), listeningHome: document.querySelector("#listening-home-button"), listeningPause: document.querySelector("#listening-pause-button"), numberMatch: document.querySelector("#number-match-screen"), numberMatchCards: document.querySelector("#number-match-cards"), numberMatchCelebration: document.querySelector("#number-match-celebration"), numberMatchFeedback: document.querySelector("#number-match-feedback"), numberMatchReplay: document.querySelector("#number-match-replay-button"), numberMatchHome: document.querySelector("#number-match-home-button"), numberMatchPause: document.querySelector("#number-match-pause-button"), colorMatch: document.querySelector("#color-match-screen"), colorMatchCards: document.querySelector("#color-match-cards"), colorMatchCelebration: document.querySelector("#color-match-celebration"), colorMatchFeedback: document.querySelector("#color-match-feedback"), colorMatchWrittenPrompt: document.querySelector("#color-match-written-prompt"), colorMatchPrompt: document.querySelector("#color-match-prompt"), colorMatchWordListen: document.querySelector("#color-match-word-listen-button"), colorMatchReplay: document.querySelector("#color-match-replay-button"), colorMatchHome: document.querySelector("#color-match-home-button"), colorMatchPause: document.querySelector("#color-match-pause-button"), sorting: document.querySelector("#sorting-screen"), sortingItems: document.querySelector("#sorting-items"), sortingDestinations: document.querySelector("#sorting-destinations"), sortingCelebration: document.querySelector("#sorting-celebration"), sortingFeedback: document.querySelector("#sorting-feedback"), sortingHome: document.querySelector("#sorting-home-button"), sortingPause: document.querySelector("#sorting-pause-button"), sortingFinishHome: document.querySelector("#sorting-finish-home-button"),
   newMiniGame: document.querySelector("#new-mini-game-screen"), newMiniGameEyebrow: document.querySelector("#new-mini-game-eyebrow"), newMiniGameTitle: document.querySelector("#new-mini-game-title"), newMiniGameHome: document.querySelector("#new-mini-game-home-button"), newMiniGamePause: document.querySelector("#new-mini-game-pause-button"), newMiniGameSetup: document.querySelector("#new-mini-game-setup"), newMiniGameArea: document.querySelector("#new-mini-game-area"), newMiniGameProgressLabel: document.querySelector("#new-mini-game-progress-label"), newMiniGameProgressFill: document.querySelector("#new-mini-game-progress-fill"), newMiniGamePrompt: document.querySelector("#new-mini-game-prompt"), newMiniGameListen: document.querySelector("#new-mini-game-listen-button"), newMiniGameVisual: document.querySelector("#new-mini-game-visual"), newMiniGameChoices: document.querySelector("#new-mini-game-choices"), newMiniGameFeedback: document.querySelector("#new-mini-game-feedback"), newMiniGameCompletion: document.querySelector("#new-mini-game-completion"), newMiniGameCompletionCopy: document.querySelector("#new-mini-game-completion-copy"), newMiniGameReplay: document.querySelector("#new-mini-game-replay-button"), newMiniGameChange: document.querySelector("#new-mini-game-change-button"), newMiniGameCompletionHome: document.querySelector("#new-mini-game-completion-home-button"),
@@ -160,6 +155,7 @@ const newMiniGames = window.MilaNewMiniGames;
 const learningCategories = window.MilaLearningCategories;
 newMiniGames.validateContent();
 learningCategories.validateCategories();
+learningPathModel.validateRoadmap({ categories: learningCategories.CATEGORIES });
 const speech = new window.MilaSpeechService();
 const audio = new window.MilaAudioHelper();
 const animations = new window.MilaAnimationHelper(ui.visual, ui.celebration);
@@ -275,6 +271,7 @@ let isNewMiniGameActive = false;
 let newMiniGameSessionId = 0;
 let newMiniGameState = createEmptyNewMiniGameState();
 let activeLearningPathStage;
+let activeLearningPathGroupId = learningPathModel.GROUPS[0].id;
 let learningPathQuestionPlan = [];
 let isLearningPathSessionCompleted = false;
 let learningPathPreviousGameMode;
@@ -314,66 +311,158 @@ function loadLearningPathProgress() {
   try {
     const storageKey = getPlayerStorageKey(LEARNING_PATH_PROGRESS_STORAGE_KEY);
     const savedData = storageKey ? JSON.parse(window.localStorage.getItem(storageKey)) : undefined;
-    const completed = savedData?.completed;
-    if (!completed || typeof completed !== "object" || Array.isArray(completed)) return { completed: {} };
-    return {
-      completed: LEARNING_PATH_STAGES.reduce((validProgress, stage) => {
-        if (completed[stage.id] === true) validProgress[stage.id] = true;
-        return validProgress;
-      }, {})
-    };
+    return learningPathModel.normalizeProgress(savedData);
   } catch {
     return { completed: {} };
   }
 }
 
-function completeLearningPathStage() {
-  if (!activeLearningPathStage || isLearningPathSessionCompleted) return;
-  isLearningPathSessionCompleted = true;
-  const progress = loadLearningPathProgress();
-  if (progress.completed[activeLearningPathStage.id]) return;
-  progress.completed[activeLearningPathStage.id] = true;
+function saveLearningPathProgress(progress) {
   try {
     const storageKey = getPlayerStorageKey(LEARNING_PATH_PROGRESS_STORAGE_KEY);
-    if (storageKey) window.localStorage.setItem(storageKey, JSON.stringify(progress));
+    if (storageKey) window.localStorage.setItem(storageKey, JSON.stringify(learningPathModel.normalizeProgress(progress)));
   } catch {
     // The game continues when local storage is unavailable.
   }
 }
 
-function getRecommendedLearningPathStage(progress) {
-  return LEARNING_PATH_STAGES.find(stage => !progress.completed[stage.id]) ?? LEARNING_PATH_STAGES[LEARNING_PATH_STAGES.length - 1];
+function completeLearningPathStage() {
+  if (!activeLearningPathStage || isLearningPathSessionCompleted) return false;
+  isLearningPathSessionCompleted = true;
+  const progress = loadLearningPathProgress();
+  if (progress.completed[activeLearningPathStage.id]) return false;
+  progress.completed[activeLearningPathStage.id] = true;
+  saveLearningPathProgress(progress);
+  return true;
 }
 
-function renderLearningPath() {
+function getRecommendedLearningPathStage(progress) {
+  return learningPathModel.getRecommendedStage(progress);
+}
+
+function getLearningPathLockedReason(stage, progress) {
+  const incompletePrerequisite = stage.prerequisiteStageIds
+    .map(stageId => learningPathModel.stageById(stageId))
+    .find(prerequisite => prerequisite && progress.completed[prerequisite.id] !== true);
+  return incompletePrerequisite ? `Önce ${incompletePrerequisite.title}` : "Önceki bölümü tamamla";
+}
+
+function renderLearningPathGroupTabs() {
+  ui.learningPathGroupTabs.textContent = "";
+  learningPathModel.GROUPS.forEach((group, index) => {
+    const button = document.createElement("button");
+    button.id = `learning-path-group-${group.id}`;
+    button.className = "learning-path-group-tab";
+    button.type = "button";
+    button.role = "tab";
+    button.setAttribute("aria-selected", String(group.id === activeLearningPathGroupId));
+    button.setAttribute("aria-controls", "learning-path-stages");
+    button.tabIndex = group.id === activeLearningPathGroupId ? 0 : -1;
+    button.innerHTML = `<span aria-hidden="true">${group.icon}</span>${group.title}`;
+    button.addEventListener("click", () => selectLearningPathGroup(group.id, { focusTab: true }));
+    button.addEventListener("keydown", event => {
+      if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+      event.preventDefault();
+      const groups = learningPathModel.GROUPS;
+      const nextIndex = event.key === "Home"
+        ? 0
+        : event.key === "End"
+          ? groups.length - 1
+          : (index + (event.key === "ArrowRight" ? 1 : -1) + groups.length) % groups.length;
+      selectLearningPathGroup(groups[nextIndex].id, { focusTab: true });
+    });
+    ui.learningPathGroupTabs.append(button);
+  });
+}
+
+function selectLearningPathGroup(groupId, { focusTab = false, focusHeading = false } = {}) {
+  if (!learningPathModel.groupById(groupId)) return;
+  clearSpeech();
+  activeLearningPathGroupId = groupId;
+  renderLearningPath();
+  if (focusTab) ui.learningPathGroupTabs.querySelector(`#learning-path-group-${groupId}`)?.focus();
+  else if (focusHeading) ui.learningPathGroupTitle.focus({ preventScroll: true });
+}
+
+function moveLearningPathGroup(direction) {
+  const currentIndex = learningPathModel.GROUPS.findIndex(group => group.id === activeLearningPathGroupId);
+  const nextIndex = currentIndex + direction;
+  const nextGroup = learningPathModel.GROUPS[nextIndex];
+  if (nextGroup) selectLearningPathGroup(nextGroup.id, { focusHeading: true });
+}
+
+function renderLearningPath({ focusStageId } = {}) {
   const progress = loadLearningPathProgress();
   const recommendedStage = getRecommendedLearningPathStage(progress);
-  const completedCount = LEARNING_PATH_STAGES.filter(stage => progress.completed[stage.id]).length;
-  const allStagesCompleted = completedCount === LEARNING_PATH_STAGES.length;
+  const implementedStages = LEARNING_PATH_STAGES.filter(stage => stage.implemented);
+  const completedCount = implementedStages.filter(stage => progress.completed[stage.id]).length;
+  const allStagesCompleted = completedCount === implementedStages.length;
+  if (!learningPathModel.groupById(activeLearningPathGroupId)) activeLearningPathGroupId = recommendedStage?.groupId ?? learningPathModel.GROUPS[0].id;
+  const activeGroup = learningPathModel.groupById(activeLearningPathGroupId);
+  const activeGroupIndex = learningPathModel.GROUPS.findIndex(group => group.id === activeGroup.id);
+  const groupProgress = learningPathModel.getGroupProgress(activeGroup.id, progress);
   ui.learningPathGuidance.textContent = allStagesCompleted
-    ? "🌟 Tüm bölümleri tamamladın! İstersen tekrar oynayabilirsin."
+    ? "🌟 Tüm hazır bölümleri tamamladın! İstersen tekrar oynayabilirsin."
     : completedCount > 0
       ? "Harika gidiyorsun! Sıradaki bölüm seni bekliyor."
       : "Bir bölüm seç ve öğrenmeye başla!";
+  ui.learningPathRecommendation.textContent = allStagesCompleted
+    ? `${selectedPlayer ? `${selectedPlayer}, ` : ""}tüm hazır bölümleri tamamladın!`
+    : `${selectedPlayer ? `${selectedPlayer}, ` : ""}sıradaki bölümün: ${recommendedStage.icon} ${recommendedStage.title}`;
+  renderLearningPathGroupTabs();
+  ui.learningPathGroupTitle.textContent = activeGroup.title;
+  ui.learningPathGroupIcon.textContent = activeGroup.icon;
+  ui.learningPathGroupDescription.textContent = activeGroup.description;
+  ui.learningPathGroupProgress.textContent = groupProgress.playable
+    ? `${groupProgress.completed} / ${groupProgress.playable} hazır bölüm tamamlandı${groupProgress.planned ? ` · ${groupProgress.planned} yeni bölüm yakında` : ""}`
+    : `${groupProgress.planned} yeni bölüm yakında`;
+  ui.learningPathPreviousGroup.disabled = activeGroupIndex === 0;
+  ui.learningPathNextGroup.disabled = activeGroupIndex === learningPathModel.GROUPS.length - 1;
+  ui.learningPathPreviousGroup.setAttribute("aria-label", activeGroupIndex > 0 ? `Önceki grup: ${learningPathModel.GROUPS[activeGroupIndex - 1].title}` : "İlk Öğrenme Yolu grubundasın");
+  ui.learningPathNextGroup.setAttribute("aria-label", activeGroupIndex < learningPathModel.GROUPS.length - 1 ? `Sonraki grup: ${learningPathModel.GROUPS[activeGroupIndex + 1].title}` : "Son Öğrenme Yolu grubundasın");
+  ui.learningPathStages.setAttribute("aria-labelledby", `learning-path-group-${activeGroup.id}`);
   ui.learningPathStages.textContent = "";
-  LEARNING_PATH_STAGES.forEach((stage, index) => {
-    const isCompleted = progress.completed[stage.id] === true;
-    const isRecommended = stage === recommendedStage;
-    const button = document.createElement("button");
-    button.className = `learning-path-stage${isCompleted ? " completed" : ""}${isRecommended ? " recommended" : ""}`;
-    button.type = "button";
-    button.dataset.learningPathStage = stage.id;
-    button.setAttribute("aria-label", `${index + 1}. ${stage.name}. ${isCompleted ? `Tamamlandı.${isRecommended ? " Sıradaki." : ""} Tekrar Oyna` : isRecommended ? "Sıradaki. Başla" : "Başla"}.`);
-    const completedProgress = isCompleted
-      ? `<span class="learning-path-stage-progress" role="progressbar" aria-label="${stage.name} bölümü tamamlandı" aria-valuemin="0" aria-valuemax="${getSessionQuestionCount()}" aria-valuenow="${getSessionQuestionCount()}"><span aria-hidden="true"><i></i></span><small>${getSessionQuestionCount()} / ${getSessionQuestionCount()}</small></span>`
-      : "";
-    const stageAction = isCompleted
-      ? `<span class="learning-path-stage-actions">${isRecommended ? '<span class="learning-path-recommended">⭐ Sıradaki</span>' : ""}<span class="learning-path-stage-action">↻ Tekrar Oyna</span></span>`
-      : isRecommended ? '<span class="learning-path-stage-action">⭐ Sıradaki</span>' : "";
-    button.innerHTML = `<span class="learning-path-stage-number">${index + 1}</span><span class="learning-path-stage-icon" aria-hidden="true">${stage.icon}</span><span class="learning-path-stage-content"><strong class="learning-path-stage-name">${stage.name}</strong><span class="learning-path-stage-status">${isCompleted ? "✓ Tamamlandı" : "Başla"}</span>${completedProgress}</span>${stageAction}`;
-    button.addEventListener("click", () => startLearningPathStage(stage.id));
-    ui.learningPathStages.append(button);
+  learningPathModel.stagesForGroup(activeGroup.id).forEach(stage => {
+    const state = learningPathModel.getStageState(stage, progress, recommendedStage);
+    const isInteractive = state !== "planned";
+    const card = document.createElement(isInteractive ? "button" : "div");
+    card.className = `learning-path-stage ${state}`;
+    card.dataset.learningPathStage = stage.id;
+    if (isInteractive) card.type = "button";
+    else card.setAttribute("role", "group");
+    const lockedReason = state === "locked" ? getLearningPathLockedReason(stage, progress) : "";
+    const stateLabel = state === "completed"
+      ? "Tamamlandı. Tekrar Oyna"
+      : state === "current"
+        ? "Sıradaki Bölüm. Başla"
+        : state === "unlocked"
+          ? "Hazır. Başla"
+          : state === "locked"
+            ? `Kilitli. ${lockedReason}`
+            : "Yakında. Yeni bölüm hazırlanıyor";
+    card.setAttribute("aria-label", `${stage.order}. ${stage.title}. ${stateLabel}.`);
+    if (state === "locked") card.disabled = true;
+    const status = state === "completed"
+      ? "✓ Tamamlandı"
+      : state === "current"
+        ? "⭐ Sıradaki Bölüm"
+        : state === "unlocked"
+          ? "Hazır"
+          : state === "locked"
+            ? `🔒 ${lockedReason}`
+            : "🛠️ Yakında";
+    const action = state === "completed"
+      ? "↻ Tekrar Oyna"
+      : state === "current" || state === "unlocked"
+        ? "Başla"
+        : state === "locked"
+          ? "Kilitli"
+          : "Yeni bölüm hazırlanıyor";
+    card.innerHTML = `<span class="learning-path-stage-number">${stage.order}</span><span class="learning-path-stage-icon" aria-hidden="true">${stage.icon}</span><span class="learning-path-stage-content"><strong class="learning-path-stage-name">${stage.title}</strong><span class="learning-path-stage-description">${stage.description}</span><span class="learning-path-stage-status">${status}</span></span><span class="learning-path-stage-action">${action}</span>`;
+    if (learningPathModel.canLaunchStage(stage.id, progress)) card.addEventListener("click", () => startLearningPathStage(stage.id));
+    ui.learningPathStages.append(card);
   });
+  if (focusStageId) ui.learningPathStages.querySelector(`[data-learning-path-stage="${focusStageId}"]:not(:disabled)`)?.focus({ preventScroll: true });
 }
 
 function renderLearningPathCompletion(completionMessage) {
@@ -381,21 +470,31 @@ function renderLearningPathCompletion(completionMessage) {
   ui.learningPathCompletion.classList.toggle("hidden", !isLearningPathCompletion);
   ui.summaryStats.classList.toggle("hidden", isLearningPathCompletion);
   ui.learningPathReturn.classList.toggle("hidden", !isLearningPathCompletion);
-  ui.learningPathNext.classList.toggle("hidden", !isLearningPathCompletion);
   ui.playAgain.innerHTML = isLearningPathCompletion ? 'Tekrar Oyna <span aria-hidden="true">↻</span>' : 'Yeniden oyna <span aria-hidden="true">↻</span>';
-  ui.playAgain.setAttribute("aria-label", isLearningPathCompletion ? `${activeLearningPathStage.name} bölümünü tekrar oyna` : "Yeniden oyna");
-  if (!isLearningPathCompletion) return;
-  const recommendedStage = getRecommendedLearningPathStage(loadLearningPathProgress());
+  ui.playAgain.setAttribute("aria-label", isLearningPathCompletion ? `${activeLearningPathStage.title} bölümünü tekrar oyna` : "Yeniden oyna");
+  if (!isLearningPathCompletion) {
+    ui.learningPathNext.classList.add("hidden");
+    ui.learningPathNext.removeAttribute("data-learning-path-stage");
+    return;
+  }
+  const progress = loadLearningPathProgress();
+  const nextStage = learningPathModel.getNextEligibleStage(activeLearningPathStage.id, progress);
   ui.summaryTitle.textContent = completionMessage ?? getCompletionMessage();
   ui.summaryCopy.textContent = "Yeni şeyler öğreniyorsun!";
   ui.learningPathCompletionIcon.textContent = activeLearningPathStage.icon;
-  ui.learningPathCompletionStage.textContent = `${activeLearningPathStage.name} bölümünü bitirdin!`;
+  ui.learningPathCompletionStage.textContent = `${activeLearningPathStage.title} bölümünü bitirdin!`;
   ui.learningPathCompletionParticipation.textContent = `${questionNumber} soruyu tamamladın`;
   ui.learningPathCompletionCorrect.textContent = `${correctAnswers} doğru cevap`;
-  ui.learningPathCompletion.setAttribute("aria-label", `${activeLearningPathStage.name} bölümü tamamlandı. ${questionNumber} soru tamamlandı.`);
-  ui.learningPathNext.dataset.learningPathStage = recommendedStage.id;
-  ui.learningPathNextLabel.textContent = `Sonraki: ${recommendedStage.icon} ${recommendedStage.name}`;
-  ui.learningPathNext.setAttribute("aria-label", `Sıradaki bölüm: ${recommendedStage.name}`);
+  ui.learningPathCompletion.setAttribute("aria-label", `${activeLearningPathStage.title} bölümü tamamlandı. ${questionNumber} soru tamamlandı. ${correctAnswers} doğru cevap.`);
+  ui.learningPathNext.classList.toggle("hidden", !nextStage);
+  if (nextStage) {
+    ui.learningPathNext.dataset.learningPathStage = nextStage.id;
+    ui.learningPathNextLabel.textContent = `Sonraki: ${nextStage.icon} ${nextStage.title}`;
+    ui.learningPathNext.setAttribute("aria-label", `Sıradaki bölüm: ${nextStage.title}`);
+  } else {
+    ui.learningPathNext.removeAttribute("data-learning-path-stage");
+    ui.learningPathNextLabel.textContent = "";
+  }
 }
 
 function migratePlayerProgress() {
@@ -838,7 +937,7 @@ function applyCategoryPack() {
 }
 
 function getSessionQuestionCount() {
-  return SESSION_QUESTION_COUNT;
+  return activeLearningPathStage?.sessionLength ?? SESSION_QUESTION_COUNT;
 }
 
 function prepareLearningPathQuestionPlan() {
@@ -971,7 +1070,10 @@ function selectPlayer(name) {
   restoreCategoryPack();
   renderCategoryPackSelection();
   renderPlayerSelection();
-  if (!ui.learningPath.classList.contains("hidden")) renderLearningPath();
+  if (!ui.learningPath.classList.contains("hidden")) {
+    activeLearningPathGroupId = getRecommendedLearningPathStage(loadLearningPathProgress())?.groupId ?? learningPathModel.GROUPS[0].id;
+    renderLearningPath();
+  }
 }
 
 function selectCustomPlayer() {
@@ -1013,7 +1115,10 @@ function updateCustomPlayer() {
     setGameMode(getSavedGameMode());
     restoreCategoryPack();
     renderCategoryPackSelection();
-    if (!ui.learningPath.classList.contains("hidden")) renderLearningPath();
+    if (!ui.learningPath.classList.contains("hidden")) {
+      activeLearningPathGroupId = getRecommendedLearningPathStage(loadLearningPathProgress())?.groupId ?? learningPathModel.GROUPS[0].id;
+      renderLearningPath();
+    }
   } else {
     dailyGoalData = {};
     resetDailyGoalPopup();
@@ -2917,6 +3022,7 @@ function updateScoreboard() {
   ui.count.textContent = `Soru ${questionNumber}/${sessionQuestionCount}`;
   ui.score.textContent = `⭐ ${stars}`;
   ui.streak.textContent = `🔥 Seri: ${streak}`;
+  ui.progress.parentElement?.setAttribute("aria-label", `${sessionQuestionCount} soruluk tur ilerlemesi`);
   ui.progress.style.width = `${Math.min(100, (questionNumber / sessionQuestionCount) * 100)}%`;
 }
 
@@ -3306,10 +3412,16 @@ function startLearningPathStage(stageId) {
     showPlayerSelectionGuidance();
     return;
   }
-  const stage = LEARNING_PATH_STAGES.find(pathStage => pathStage.id === stageId);
-  if (!engine || !stage) return;
-  const availableCategories = stage.categories.filter(category => engine.questions.some(question => question.category === category));
-  if (!availableCategories.length) return;
+  const stage = learningPathModel.stageById(stageId);
+  const progress = loadLearningPathProgress();
+  if (!engine || !stage || !learningPathModel.canLaunchStage(stage.id, progress)) return;
+  const availableCategories = stage.categoryIds.filter(category => engine.questions.some(question => question.category === category));
+  const validationPlan = engine.createSessionPlan(availableCategories, stage.sessionLength, { gentleProgression: true });
+  if (availableCategories.length !== stage.categoryIds.length || validationPlan.length !== stage.sessionLength) {
+    console.warn(`[Sprint 8.3.1 Öğrenme Yolu] ${stage.id} için tamamlanabilir oturum üretilemedi.`);
+    ui.learningPathGuidance.textContent = "Bu bölüm hazırlanıyor. Başka bir hazır bölüm seçebilirsin.";
+    return;
+  }
   clearSpeech();
   window.clearTimeout(sessionCelebrationTimer);
   if (!activeLearningPathStage) learningPathPreviousGameMode = activeGameMode;
@@ -3336,7 +3448,7 @@ async function startGame({ skipWelcome = false, miniGameMode } = {}) {
     showPlayerSelectionGuidance();
     return;
   }
-  if (isPaused || isStartingGame || (!isMiniGameLaunch && gameMode !== LEARNING_MODE && gameMode !== QUICK_MODE) || (!isMiniGameLaunch && activeCategoryPack === "custom" && !getPackCategories().length)) return;
+  if (isPaused || isStartingGame || (!isMiniGameLaunch && gameMode !== LEARNING_MODE && gameMode !== QUICK_MODE) || (!activeLearningPathStage && !isMiniGameLaunch && activeCategoryPack === "custom" && !getPackCategories().length)) return;
   setGameNavigationBusy(false);
   const startRun = audioRun;
   ensureDailyGoal();
@@ -3380,6 +3492,7 @@ async function startGame({ skipWelcome = false, miniGameMode } = {}) {
     recordLearningSessionStarted(activeLearningPathStage ? activeLearningPathStage.categories : getPackCategories(), activeLearningPathStage ? "learning-path" : gameMode);
     hideAllScreens();
     ui.quiz.classList.remove("hidden");
+    if (activeLearningPathStage) ui.quiz.focus({ preventScroll: true });
     resetSession();
     startPlayTime();
     startWakeLock();
@@ -3591,7 +3704,10 @@ function navigateToPrimaryView(viewName) {
     showPlayerSelectionGuidance();
     return;
   }
-  if (viewName === "learning-path") renderLearningPath();
+  if (viewName === "learning-path") {
+    openLearningPath();
+    return;
+  }
   goHome(false, viewName);
 }
 
@@ -3608,13 +3724,18 @@ function leaveGameFor(destination) {
   goHome(false, destination === "games" ? "mini-games" : "home");
 }
 
-function openLearningPath() {
+function openLearningPath(options = {}) {
   if (!selectedPlayer) {
     showPlayerSelectionGuidance();
     return;
   }
-  renderLearningPath();
+  const focusStageId = typeof options.focusStageId === "string" ? options.focusStageId : undefined;
+  const progress = loadLearningPathProgress();
+  const focusStage = focusStageId ? learningPathModel.stageById(focusStageId) : undefined;
+  const recommendedStage = getRecommendedLearningPathStage(progress);
+  activeLearningPathGroupId = focusStage?.groupId ?? recommendedStage?.groupId ?? learningPathModel.GROUPS[0].id;
   goHome(false, "learning-path");
+  renderLearningPath({ focusStageId });
 }
 
 function handleMenuNavigation(target) {
@@ -3622,10 +3743,12 @@ function handleMenuNavigation(target) {
 }
 
 ui.start.addEventListener("click", () => startGame());
-ui.learningPathEntry.addEventListener("click", openLearningPath);
+ui.learningPathEntry.addEventListener("click", () => openLearningPath());
 ui.learningPathHome.addEventListener("click", () => goHome(false));
-ui.learningPathReturn.addEventListener("click", openLearningPath);
+ui.learningPathReturn.addEventListener("click", () => openLearningPath({ focusStageId: activeLearningPathStage?.id }));
 ui.learningPathNext.addEventListener("click", startNextLearningPathStage);
+ui.learningPathPreviousGroup.addEventListener("click", () => moveLearningPathGroup(-1));
+ui.learningPathNextGroup.addEventListener("click", () => moveLearningPathGroup(1));
 ui.fullscreen.addEventListener("click", toggleFullscreen);
 ui.settings.addEventListener("click", openParentDashboard);
 ui.menuButton.addEventListener("click", toggleGameMenu);

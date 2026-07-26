@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=8.2.1" />
+    <link rel="stylesheet" href="styles.css?v=8.3.1" />
   </head>
   <body>
     <main class="game-shell">
@@ -136,11 +136,25 @@
         <p class="eyebrow">ADIM ADIM ÖĞREN</p>
         <h2 id="learning-path-title" tabindex="-1">🗺️ Öğrenme Yolu</h2>
         <p id="learning-path-guidance" class="learning-path-copy">Bir bölüm seç ve öğrenmeye başla!</p>
-        <div id="learning-path-stages" class="learning-path-stages" aria-label="Öğrenme yolu aşamaları"></div>
+        <p id="learning-path-recommendation" class="learning-path-recommendation" role="status"></p>
+        <div id="learning-path-group-tabs" class="learning-path-group-tabs" role="tablist" aria-label="Öğrenme Yolu grupları"></div>
+        <section class="learning-path-group-card" aria-labelledby="learning-path-group-title">
+          <div class="learning-path-group-heading">
+            <button id="learning-path-previous-group" class="learning-path-group-navigation" type="button" aria-label="Önceki Öğrenme Yolu grubu">‹</button>
+            <div>
+              <span id="learning-path-group-icon" class="learning-path-group-icon" aria-hidden="true">🌟</span>
+              <h3 id="learning-path-group-title" tabindex="-1">İlk Keşifler</h3>
+              <p id="learning-path-group-description">Renkleri, şekilleri, sayıları ve harfleri keşfet.</p>
+              <p id="learning-path-group-progress" class="learning-path-group-progress">0 / 4 hazır bölüm tamamlandı</p>
+            </div>
+            <button id="learning-path-next-group" class="learning-path-group-navigation" type="button" aria-label="Sonraki Öğrenme Yolu grubu">›</button>
+          </div>
+          <div id="learning-path-stages" class="learning-path-stages" role="tabpanel" aria-labelledby="learning-path-group-title"></div>
+        </section>
         <button id="learning-path-home-button" class="sound-button learning-path-home-button" type="button">⌂ Ana Sayfa</button>
       </section>
 
-      <section id="quiz-screen" class="screen quiz-screen hidden" aria-live="polite">
+      <section id="quiz-screen" class="screen quiz-screen hidden" aria-live="polite" tabindex="-1">
         <div id="game-mascot" class="game-mascot" aria-hidden="true">
           <span class="mascot-hand mascot-hand-left">✋</span>
           <span class="mascot-character">🐻</span>
@@ -359,7 +373,8 @@
     <script src="js/QuestionEngine.js?v=6.4"></script>
     <script src="js/NewMiniGames.js?v=8.1"></script>
     <script src="js/LearningCategories.js?v=8.2"></script>
+    <script src="js/LearningPath.js?v=8.3.1"></script>
     <script src="data/offline-data.js"></script>
-    <script src="app.js?v=8.2"></script>
+    <script src="app.js?v=8.3.1"></script>
   </body>
 </html>
