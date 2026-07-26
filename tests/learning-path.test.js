@@ -68,8 +68,8 @@ test("every stage belongs to exactly one group in deterministic order", () => {
 test("every implemented stage generates a complete valid Learning Path session", () => {
   const engine = new QuestionEngine(categories.questions);
   const implemented = roadmap.STAGES.filter(stage => stage.implemented);
-  assert.equal(implemented.length, 22);
-  implemented.filter(stage => !numberLearning.NUMBER_STAGE_IDS.includes(stage.id)).forEach(stage => {
+  assert.equal(implemented.length, 25);
+  implemented.filter(stage => !numberLearning.PLAYABLE_STAGE_IDS.includes(stage.id)).forEach(stage => {
     const plan = engine.createSessionPlan(stage.categoryIds, stage.sessionLength, { gentleProgression: true });
     assert.equal(plan.length, stage.sessionLength, `${stage.id} session is incomplete`);
     assert.ok(plan.every(question => stage.categoryIds.includes(question.category)));
@@ -92,14 +92,16 @@ test("first stage unlocks normally and completion unlocks the next implemented s
   assert.equal(roadmap.getNextEligibleStage("recognize-colors", afterColors).id, "recognize-shapes");
 });
 
-test("number stages unlock sequentially and planned operation stages remain unavailable", () => {
+test("number and addition stages unlock sequentially while subtraction remains planned", () => {
   const throughWordWorld = completedThrough(10);
   assert.equal(roadmap.canLaunchStage("count-objects", throughWordWorld), true);
   assert.equal(roadmap.getStageState(roadmap.stageById("count-objects"), throughWordWorld), "current");
   assert.equal(roadmap.canLaunchStage("order-numbers", throughWordWorld), false);
   assert.equal(roadmap.getNextEligibleStage("nature-space", throughWordWorld).id, "count-objects");
   assert.equal(roadmap.getRecommendedStage(throughWordWorld).id, "count-objects");
-  assert.equal(roadmap.canLaunchStage("addition-preparation", completedThrough(16)), false);
+  assert.equal(roadmap.canLaunchStage("addition-preparation", completedThrough(16)), true);
+  assert.equal(roadmap.canLaunchStage("add-two-numbers", completedThrough(16)), false);
+  assert.equal(roadmap.canLaunchStage("subtraction-preparation", completedThrough(19)), false);
 });
 
 test("completed stages remain replayable while locked stages cannot launch", () => {
@@ -115,6 +117,7 @@ test("recommended and group progress count only implemented stages", () => {
   assert.equal(roadmap.getRecommendedStage(progress).id, "animals");
   assert.deepEqual(roadmap.getGroupProgress("first-discoveries", progress), { completed: 4, playable: 4, planned: 0 });
   assert.deepEqual(roadmap.getGroupProgress("number-world", progress), { completed: 0, playable: 6, planned: 0 });
+  assert.deepEqual(roadmap.getGroupProgress("first-operations", progress), { completed: 0, playable: 3, planned: 4 });
   assert.deepEqual(roadmap.getGroupProgress("daily-life", progress), { completed: 0, playable: 6, planned: 2 });
 });
 
@@ -159,7 +162,7 @@ test("validation rejects invalid learning types and unsupported playable definit
   assert.equal(roadmap.validateRoadmap({ stages: invalidType, categories: categories.CATEGORIES, warn: () => {} }).valid, false);
   const noCategories = roadmap.STAGES.map(stage => stage.id === "recognize-colors" ? { ...stage, categoryIds: [] } : stage);
   assert.equal(roadmap.validateRoadmap({ stages: noCategories, categories: categories.CATEGORIES, warn: () => {} }).valid, false);
-  const futureAsPlayable = roadmap.STAGES.map(stage => stage.id === "add-two-numbers" ? { ...stage, implemented: true } : stage);
+  const futureAsPlayable = roadmap.STAGES.map(stage => stage.id === "subtraction-preparation" ? { ...stage, implemented: true } : stage);
   assert.equal(roadmap.validateRoadmap({ stages: futureAsPlayable, categories: categories.CATEGORIES, warn: () => {} }).valid, false);
 });
 
@@ -175,7 +178,7 @@ test("Learning Path UI wires focused groups, safe stage launches and summary nav
   assert.match(app, /learningPathModel\.canLaunchStage\(stage\.id, progress\)/);
   assert.match(app, /!activeLearningPathStage && !isMiniGameLaunch && activeCategoryPack === "custom"/);
   assert.match(app, /learningPathModel\.getNextEligibleStage\(activeLearningPathStage\.id, progress\)/);
-  assert.match(app, /ui\.learningPathNext\.classList\.toggle\("hidden", !nextStage\)/);
+  assert.match(app, /ui\.learningPathNext\.classList\.toggle\("hidden", !nextStage && !plannedNextStage\)/);
   assert.match(app, /progress\.completed\[activeLearningPathStage\.id\]\) return false;/);
   assert.match(app, /openLearningPath\(\{ focusStageId: activeLearningPathStage\?\.id \}\)/);
   assert.match(app, /if \(activeLearningPathStage\) ui\.quiz\.focus\(\{ preventScroll: true \}\)/);

@@ -144,7 +144,7 @@ const ui = {
   menuButton: document.querySelector("#menu-button"), gameMenu: document.querySelector("#game-menu"), menuItems: document.querySelectorAll("[data-menu-target]"), settings: document.querySelector("#settings-button"),
   start: document.querySelector("#start-button"), fullscreen: document.querySelector("#fullscreen-button"), achievements: document.querySelector("#achievements-button"), welcomeSound: document.querySelector("#welcome-sound-button"), learningMode: document.querySelector("#learning-mode-button"), quickMode: document.querySelector("#quick-mode-button"), matchingMode: document.querySelector("#matching-mode-button"), listeningMode: document.querySelector("#listening-mode-button"), numberMatchMode: document.querySelector("#number-match-mode-button"), colorMatchMode: document.querySelector("#color-match-mode-button"), sortingMode: document.querySelector("#sorting-mode-button"), missingItemMode: document.querySelector("#missing-item-mode-button"), shadowMode: document.querySelector("#shadow-mode-button"), initialLetterMode: document.querySelector("#initial-letter-mode-button"), soundMemoryMode: document.querySelector("#sound-memory-mode-button"), puzzleMode: document.querySelector("#puzzle-mode-button"), playerButtons: document.querySelectorAll(".player-button"), customPlayer: document.querySelector("#custom-player-button"), customPlayerLabel: document.querySelector("#custom-player-label"), customPlayerName: document.querySelector("#custom-player-name"), categoryPackButtons: document.querySelectorAll(".category-pack-button"), customCategoryOptions: document.querySelector("#custom-category-options"), home: document.querySelector("#home-button"), replay: document.querySelector("#question-sound-button"), matching: document.querySelector("#matching-screen"), matchingCategorySelection: document.querySelector("#matching-category-selection"), matchingCategoryOptions: document.querySelector("#matching-category-options"), matchingGameArea: document.querySelector("#matching-game-area"), matchingCategoryLabel: document.querySelector("#matching-category-label"), matchingCards: document.querySelector("#matching-cards"), matchingCelebration: document.querySelector("#matching-celebration"), matchingFeedback: document.querySelector("#matching-feedback"), matchingCompletionActions: document.querySelector("#matching-completion-actions"), matchingCompletionTime: document.querySelector("#matching-completion-time"), matchingReplay: document.querySelector("#matching-replay-button"), matchingCategories: document.querySelector("#matching-categories-button"), matchingHome: document.querySelector("#matching-home-button"), matchingPause: document.querySelector("#matching-pause-button"), listening: document.querySelector("#listening-screen"), listeningCards: document.querySelector("#listening-cards"), listeningCelebration: document.querySelector("#listening-celebration"), listeningFeedback: document.querySelector("#listening-feedback"), listeningReplay: document.querySelector("#listening-replay-button"), listeningHome: document.querySelector("#listening-home-button"), listeningPause: document.querySelector("#listening-pause-button"), numberMatch: document.querySelector("#number-match-screen"), numberMatchCards: document.querySelector("#number-match-cards"), numberMatchCelebration: document.querySelector("#number-match-celebration"), numberMatchFeedback: document.querySelector("#number-match-feedback"), numberMatchReplay: document.querySelector("#number-match-replay-button"), numberMatchHome: document.querySelector("#number-match-home-button"), numberMatchPause: document.querySelector("#number-match-pause-button"), colorMatch: document.querySelector("#color-match-screen"), colorMatchCards: document.querySelector("#color-match-cards"), colorMatchCelebration: document.querySelector("#color-match-celebration"), colorMatchFeedback: document.querySelector("#color-match-feedback"), colorMatchWrittenPrompt: document.querySelector("#color-match-written-prompt"), colorMatchPrompt: document.querySelector("#color-match-prompt"), colorMatchWordListen: document.querySelector("#color-match-word-listen-button"), colorMatchReplay: document.querySelector("#color-match-replay-button"), colorMatchHome: document.querySelector("#color-match-home-button"), colorMatchPause: document.querySelector("#color-match-pause-button"), sorting: document.querySelector("#sorting-screen"), sortingItems: document.querySelector("#sorting-items"), sortingDestinations: document.querySelector("#sorting-destinations"), sortingCelebration: document.querySelector("#sorting-celebration"), sortingFeedback: document.querySelector("#sorting-feedback"), sortingHome: document.querySelector("#sorting-home-button"), sortingPause: document.querySelector("#sorting-pause-button"), sortingFinishHome: document.querySelector("#sorting-finish-home-button"),
   newMiniGame: document.querySelector("#new-mini-game-screen"), newMiniGameEyebrow: document.querySelector("#new-mini-game-eyebrow"), newMiniGameTitle: document.querySelector("#new-mini-game-title"), newMiniGameHome: document.querySelector("#new-mini-game-home-button"), newMiniGamePause: document.querySelector("#new-mini-game-pause-button"), newMiniGameSetup: document.querySelector("#new-mini-game-setup"), newMiniGameArea: document.querySelector("#new-mini-game-area"), newMiniGameProgressLabel: document.querySelector("#new-mini-game-progress-label"), newMiniGameProgressFill: document.querySelector("#new-mini-game-progress-fill"), newMiniGamePrompt: document.querySelector("#new-mini-game-prompt"), newMiniGameListen: document.querySelector("#new-mini-game-listen-button"), newMiniGameVisual: document.querySelector("#new-mini-game-visual"), newMiniGameChoices: document.querySelector("#new-mini-game-choices"), newMiniGameFeedback: document.querySelector("#new-mini-game-feedback"), newMiniGameCompletion: document.querySelector("#new-mini-game-completion"), newMiniGameCompletionCopy: document.querySelector("#new-mini-game-completion-copy"), newMiniGameReplay: document.querySelector("#new-mini-game-replay-button"), newMiniGameChange: document.querySelector("#new-mini-game-change-button"), newMiniGameCompletionHome: document.querySelector("#new-mini-game-completion-home-button"),
-  numberLearning: document.querySelector("#number-learning-screen"), numberLearningTitle: document.querySelector("#number-learning-title"), numberLearningPath: document.querySelector("#number-learning-path-button"), numberLearningPause: document.querySelector("#number-learning-pause-button"), numberLearningProgressLabel: document.querySelector("#number-learning-progress-label"), numberLearningProgressFill: document.querySelector("#number-learning-progress-fill"), numberLearningScore: document.querySelector("#number-learning-score"), numberLearningListen: document.querySelector("#number-learning-listen-button"), numberLearningPrompt: document.querySelector("#number-learning-prompt"), numberLearningVisual: document.querySelector("#number-learning-visual"), numberLearningAnswers: document.querySelector("#number-learning-answers"), numberLearningCheck: document.querySelector("#number-learning-check-button"), numberLearningFeedback: document.querySelector("#number-learning-feedback"),
+  numberLearning: document.querySelector("#number-learning-screen"), numberLearningTitle: document.querySelector("#number-learning-title"), numberLearningPath: document.querySelector("#number-learning-path-button"), numberLearningPause: document.querySelector("#number-learning-pause-button"), numberLearningProgressLabel: document.querySelector("#number-learning-progress-label"), numberLearningProgressFill: document.querySelector("#number-learning-progress-fill"), numberLearningScore: document.querySelector("#number-learning-score"), numberLearningListen: document.querySelector("#number-learning-listen-button"), numberLearningPrompt: document.querySelector("#number-learning-prompt"), numberLearningVisual: document.querySelector("#number-learning-visual"), numberLearningSupportActions: document.querySelector("#number-learning-support-actions"), numberLearningCombine: document.querySelector("#number-learning-combine-button"), numberLearningHelp: document.querySelector("#number-learning-help-button"), numberLearningCount: document.querySelector("#number-learning-count-button"), numberLearningAnswers: document.querySelector("#number-learning-answers"), numberLearningCheck: document.querySelector("#number-learning-check-button"), numberLearningFeedback: document.querySelector("#number-learning-feedback"),
   customCategoryBrowser: document.querySelector("#custom-category-browser"), categoryGroupTabs: document.querySelector("#category-group-tabs"), customCategoryCount: document.querySelector("#custom-category-count"), customCategoryReset: document.querySelector("#custom-category-reset-button"),
   category: document.querySelector("#category-pill"), visual: document.querySelector("#question-visual"), celebration: document.querySelector("#celebration"), mascot: document.querySelector("#game-mascot"), prompt: document.querySelector("#question-prompt"),
   answers: document.querySelector("#answers"), feedback: document.querySelector("#feedback"), next: document.querySelector("#next-button"), count: document.querySelector("#question-count"), score: document.querySelector("#score"), streak: document.querySelector("#streak"), progress: document.querySelector("#progress-fill"),
@@ -277,6 +277,7 @@ let isNumberLearningActive = false;
 let numberLearningSessionId = 0;
 let numberLearningTimer;
 let numberLearningState;
+let numberLearningSupportRun = 0;
 let activeLearningPathStage;
 let activeLearningPathGroupId = learningPathModel.GROUPS[0].id;
 let learningPathQuestionPlan = [];
@@ -485,7 +486,9 @@ function renderLearningPathCompletion(completionMessage) {
     return;
   }
   const progress = loadLearningPathProgress();
-  const nextStage = learningPathModel.getNextEligibleStage(activeLearningPathStage.id, progress);
+  const isAdditionBoundary = activeLearningPathStage.id === "visual-addition";
+  const plannedNextStage = isAdditionBoundary ? learningPathModel.stageById("subtraction-preparation") : undefined;
+  const nextStage = isAdditionBoundary ? undefined : learningPathModel.getNextEligibleStage(activeLearningPathStage.id, progress);
   ui.summaryTitle.textContent = completionMessage ?? getCompletionMessage();
   ui.summaryCopy.textContent = "Yeni şeyler öğreniyorsun!";
   ui.learningPathCompletionIcon.textContent = activeLearningPathStage.icon;
@@ -493,11 +496,16 @@ function renderLearningPathCompletion(completionMessage) {
   ui.learningPathCompletionParticipation.textContent = `${questionNumber} soruyu tamamladın`;
   ui.learningPathCompletionCorrect.textContent = `${correctAnswers} doğru cevap`;
   ui.learningPathCompletion.setAttribute("aria-label", `${activeLearningPathStage.title} bölümü tamamlandı. ${questionNumber} soru tamamlandı. ${correctAnswers} doğru cevap.`);
-  ui.learningPathNext.classList.toggle("hidden", !nextStage);
+  ui.learningPathNext.classList.toggle("hidden", !nextStage && !plannedNextStage);
+  ui.learningPathNext.disabled = Boolean(plannedNextStage);
   if (nextStage) {
     ui.learningPathNext.dataset.learningPathStage = nextStage.id;
     ui.learningPathNextLabel.textContent = `Sonraki: ${nextStage.icon} ${nextStage.title}`;
     ui.learningPathNext.setAttribute("aria-label", `Sıradaki bölüm: ${nextStage.title}`);
+  } else if (plannedNextStage) {
+    ui.learningPathNext.removeAttribute("data-learning-path-stage");
+    ui.learningPathNextLabel.textContent = `Sonraki: ${plannedNextStage.icon} ${plannedNextStage.title} · Yakında`;
+    ui.learningPathNext.setAttribute("aria-label", `Sıradaki bölüm ${plannedNextStage.title}, yakında`);
   } else {
     ui.learningPathNext.removeAttribute("data-learning-path-stage");
     ui.learningPathNextLabel.textContent = "";
@@ -2853,7 +2861,22 @@ async function loadQuestionEngine() {
 }
 
 function createEmptyNumberLearningState() {
-  return { stageId: undefined, roundNumber: 0, totalRounds: 0, round: undefined, ordering: undefined, selectedNumber: undefined, inputLocked: false, speaking: false, pendingResult: undefined };
+  return {
+    stageId: undefined,
+    roundNumber: 0,
+    totalRounds: 0,
+    round: undefined,
+    ordering: undefined,
+    selectedNumber: undefined,
+    inputLocked: false,
+    speaking: false,
+    pendingResult: undefined,
+    attempts: 0,
+    helpShown: false,
+    combined: false,
+    counting: false,
+    recentEquations: []
+  };
 }
 
 function clearNumberLearningTimer() {
@@ -2863,6 +2886,7 @@ function clearNumberLearningTimer() {
 
 function cleanupNumberLearning({ preserveStage = false } = {}) {
   numberLearningSessionId += 1;
+  numberLearningSupportRun += 1;
   clearNumberLearningTimer();
   if (isNumberLearningActive) clearSpeech();
   isNumberLearningActive = false;
@@ -2870,8 +2894,13 @@ function cleanupNumberLearning({ preserveStage = false } = {}) {
   if (!preserveStage) ui.numberLearning.classList.add("hidden");
   ui.numberLearningVisual.textContent = "";
   ui.numberLearningAnswers.textContent = "";
+  ui.numberLearningAnswers.classList.remove("visual-total-answers");
   ui.numberLearningFeedback.textContent = "";
   ui.numberLearningCheck.classList.add("hidden");
+  ui.numberLearningCombine.classList.add("hidden");
+  ui.numberLearningHelp.classList.add("hidden");
+  ui.numberLearningCount.classList.add("hidden");
+  ui.numberLearningCount.setAttribute("aria-pressed", "false");
 }
 
 function renderQuantityVisual(container, visual, { neutralLabel } = {}) {
@@ -2899,6 +2928,10 @@ function setNumberLearningInputEnabled(enabled) {
   const canUse = enabled && !isPaused && !numberLearningState.inputLocked && !numberLearningState.speaking;
   ui.numberLearning.querySelectorAll("button").forEach(button => {
     if (button === ui.numberLearningPath || button === ui.numberLearningPause) return;
+    if (button === ui.numberLearningCount && numberLearningState.counting) {
+      button.disabled = isPaused;
+      return;
+    }
     const orderingIncomplete = button === ui.numberLearningCheck && numberLearningState.ordering?.slots.some(value => value === null);
     button.disabled = !canUse || orderingIncomplete;
   });
@@ -2986,6 +3019,163 @@ function createNumberChoice(value, accessibleLabel, onSelect) {
   return button;
 }
 
+function renderAdditionQuantity(container, visual, { neutralLabel, groupLabel } = {}) {
+  container.className = "addition-quantity";
+  container.setAttribute("role", "img");
+  container.setAttribute("aria-label", neutralLabel ?? `${visual.quantity} tane ${groupLabel ?? visual.groupLabel.toLocaleLowerCase("tr-TR")} nesnesi`);
+  if (visual.quantity === 0) {
+    const empty = document.createElement("span");
+    empty.className = "addition-empty-group";
+    empty.textContent = "0 tane · boş";
+    empty.setAttribute("aria-hidden", "true");
+    container.append(empty);
+    return;
+  }
+  let objectIndex = 0;
+  visual.blocks.forEach((blockSize, blockIndex) => {
+    const block = document.createElement("span");
+    block.className = `addition-quantity-block${blockSize === 10 ? " ten-block" : ""}`;
+    block.setAttribute("aria-hidden", "true");
+    for (let index = 0; index < blockSize; index += 1) {
+      const object = document.createElement("span");
+      object.className = "addition-object";
+      object.dataset.countIndex = String(objectIndex);
+      object.textContent = visual.symbol;
+      block.append(object);
+      objectIndex += 1;
+    }
+    if (blockIndex > 0) block.classList.add("remainder-block");
+    container.append(block);
+  });
+}
+
+function createAdditionSymbol(symbol, label) {
+  const element = document.createElement("span");
+  element.className = "addition-symbol";
+  element.textContent = symbol;
+  element.setAttribute("role", "img");
+  element.setAttribute("aria-label", label);
+  return element;
+}
+
+function renderAdditionGroups(round, { help = false } = {}) {
+  const equation = document.createElement("div");
+  equation.className = `addition-visual-equation${numberLearningState.combined ? " combined" : ""}${help ? " help-equation" : ""}`;
+  equation.setAttribute("aria-label", round.accessibleEquation);
+  const firstGroup = document.createElement("div");
+  firstGroup.className = "addition-group first-group";
+  renderAdditionQuantity(firstGroup, round.firstVisual);
+  const secondGroup = document.createElement("div");
+  secondGroup.className = "addition-group second-group";
+  renderAdditionQuantity(secondGroup, round.secondVisual);
+  equation.append(firstGroup, createAdditionSymbol("+", "artı"), secondGroup);
+  if (round.type === "visual-addition" || help) {
+    equation.append(createAdditionSymbol("=", "eşittir"));
+    const result = document.createElement("span");
+    result.className = "addition-result-question";
+    result.textContent = "?";
+    result.setAttribute("role", "img");
+    result.setAttribute("aria-label", "sonuç");
+    equation.append(result);
+  }
+  return equation;
+}
+
+function renderAdditionRoundVisual(round) {
+  if (round.type === "numeric-addition") {
+    const equation = document.createElement("div");
+    equation.className = "numeric-addition-equation";
+    equation.setAttribute("role", "img");
+    equation.setAttribute("aria-label", `${numberLearning.getTurkishNumber(round.first)} artı ${numberLearning.getTurkishNumber(round.second)} eşittir sonuç`);
+    [
+      { text: round.first, label: `${round.first}` },
+      { text: "+", label: "artı" },
+      { text: round.second, label: `${round.second}` },
+      { text: "=", label: "eşittir" },
+      { text: "?", label: "sonuç" }
+    ].forEach(part => {
+      const span = document.createElement("span");
+      span.textContent = part.text;
+      span.setAttribute("aria-label", part.label);
+      equation.append(span);
+    });
+    ui.numberLearningVisual.append(equation);
+    if (numberLearningState.helpShown) ui.numberLearningVisual.append(renderAdditionGroups(round, { help: true }));
+    return;
+  }
+  ui.numberLearningVisual.append(renderAdditionGroups(round));
+}
+
+function renderAdditionSupport(round) {
+  ui.numberLearningCombine.classList.toggle("hidden", !round.canCombine || numberLearningState.combined);
+  ui.numberLearningHelp.classList.toggle("hidden", !round.hasVisualHelp);
+  ui.numberLearningHelp.classList.toggle("emphasized", round.hasVisualHelp && numberLearningState.attempts > 0 && !numberLearningState.helpShown);
+  ui.numberLearningHelp.setAttribute("aria-pressed", String(numberLearningState.helpShown));
+  ui.numberLearningCount.classList.toggle("hidden", !round.hasCountingSupport);
+  ui.numberLearningCount.setAttribute("aria-pressed", String(numberLearningState.counting));
+  ui.numberLearningCount.textContent = numberLearningState.counting ? "■ Saymayı Durdur" : "👆 Birlikte Say";
+}
+
+function showAdditionVisualHelp() {
+  if (!isNumberLearningActive || isPaused || numberLearningState.inputLocked || numberLearningState.speaking) return;
+  clearSpeech();
+  numberLearningSupportRun += 1;
+  numberLearningState.helpShown = true;
+  numberLearningState.counting = false;
+  renderNumberLearningRound();
+  ui.numberLearningFeedback.textContent = "Nesneleri tek tek sayabilirsin.";
+  ui.numberLearningFeedback.className = "matching-feedback";
+}
+
+async function combineAdditionGroups() {
+  if (!isNumberLearningActive || isPaused || numberLearningState.inputLocked || numberLearningState.speaking || numberLearningState.combined) return;
+  clearSpeech();
+  const sessionId = numberLearningSessionId;
+  numberLearningState.combined = true;
+  numberLearningState.speaking = true;
+  renderNumberLearningRound();
+  await speech.speak("Grupları birleştirelim.", TURKISH_LANGUAGE);
+  if (!isNumberLearningActive || isPaused || sessionId !== numberLearningSessionId) return;
+  numberLearningState.speaking = false;
+  setNumberLearningInputEnabled(true);
+}
+
+async function toggleAdditionCounting() {
+  if (!isNumberLearningActive || isPaused || numberLearningState.inputLocked) return;
+  numberLearningSupportRun += 1;
+  const supportRun = numberLearningSupportRun;
+  clearSpeech();
+  if (numberLearningState.counting) {
+    numberLearningState.counting = false;
+    numberLearningState.speaking = false;
+    ui.numberLearningVisual.querySelectorAll(".addition-object").forEach(object => object.classList.remove("counting-active"));
+    renderAdditionSupport(numberLearningState.round);
+    setNumberLearningInputEnabled(true);
+    ui.numberLearningFeedback.textContent = "Saymayı istediğinde yeniden başlatabilirsin.";
+    return;
+  }
+  numberLearningState.counting = true;
+  numberLearningState.speaking = true;
+  renderAdditionSupport(numberLearningState.round);
+  setNumberLearningInputEnabled(false);
+  const objects = [...ui.numberLearningVisual.querySelectorAll(".addition-group .addition-object")];
+  for (let index = 0; index < objects.length; index += 1) {
+    if (!isNumberLearningActive || isPaused || supportRun !== numberLearningSupportRun) return;
+    objects.forEach(object => object.classList.remove("counting-active"));
+    objects[index].classList.add("counting-active");
+    await speech.speak(numberLearning.getTurkishNumber(index + 1), TURKISH_LANGUAGE);
+    if (!isNumberLearningActive || isPaused || supportRun !== numberLearningSupportRun) return;
+    await appUtils.wait(120);
+  }
+  objects.forEach(object => object.classList.remove("counting-active"));
+  if (!isNumberLearningActive || isPaused || supportRun !== numberLearningSupportRun) return;
+  numberLearningState.counting = false;
+  numberLearningState.speaking = false;
+  renderAdditionSupport(numberLearningState.round);
+  setNumberLearningInputEnabled(true);
+  ui.numberLearningFeedback.textContent = "Şimdi toplamı seçebilirsin.";
+}
+
 function renderNumberLearningRound() {
   if (!isNumberLearningActive || !numberLearningState?.round) return;
   const round = numberLearningState.round;
@@ -2996,9 +3186,18 @@ function renderNumberLearningRound() {
   ui.numberLearningPrompt.textContent = round.prompt;
   ui.numberLearningVisual.textContent = "";
   ui.numberLearningAnswers.textContent = "";
+  ui.numberLearningAnswers.classList.toggle("visual-total-answers", Boolean(round.usesVisualChoices));
   ui.numberLearningCheck.classList.add("hidden");
+  ui.numberLearningCombine.classList.add("hidden");
+  ui.numberLearningHelp.classList.add("hidden");
+  ui.numberLearningCount.classList.add("hidden");
   ui.numberLearningFeedback.className = "matching-feedback";
 
+  const isAdditionRound = ["addition-preparation", "numeric-addition", "visual-addition"].includes(round.type);
+  if (isAdditionRound) {
+    renderAdditionRoundVisual(round);
+    renderAdditionSupport(round);
+  }
   if (round.type === "counting") renderQuantityVisual(ui.numberLearningVisual, round.visual);
   if (round.type === "neighbor") {
     const sequence = document.createElement("div");
@@ -3016,6 +3215,19 @@ function renderNumberLearningRound() {
   }
   if (round.type === "ordering") {
     renderNumberLearningOrdering();
+  } else if (isAdditionRound && round.usesVisualChoices) {
+    round.choices.forEach((value, index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "number-learning-choice quantity-choice addition-total-choice";
+      button.dataset.numberValue = String(value);
+      button.setAttribute("aria-label", `Toplam seçeneği ${index + 1}`);
+      const visual = document.createElement("span");
+      renderAdditionQuantity(visual, numberLearning.createQuantityVisual(value, numberLearning.VISUAL_GROUPS.findIndex(group => group.id === round.visualGroupId), numberLearningState.roundNumber - 1), { neutralLabel: `Toplam seçeneği ${index + 1}` });
+      button.append(visual);
+      button.addEventListener("click", () => answerNumberLearning(button, value));
+      ui.numberLearningAnswers.append(button);
+    });
   } else if (round.type === "equal-quantity") {
     round.choices.forEach((choice, index) => {
       const button = document.createElement("button");
@@ -3042,11 +3254,26 @@ function beginNumberLearningRound() {
   numberLearningState.inputLocked = false;
   numberLearningState.speaking = false;
   numberLearningState.selectedNumber = undefined;
-  numberLearningState.round = numberLearning.createRound(numberLearningState.stageId, numberLearningState.roundNumber, numberLearningState.totalRounds);
+  numberLearningState.attempts = 0;
+  numberLearningState.helpShown = false;
+  numberLearningState.combined = false;
+  numberLearningState.counting = false;
+  numberLearningSupportRun += 1;
+  numberLearningState.round = numberLearning.createRound(
+    numberLearningState.stageId,
+    numberLearningState.roundNumber,
+    numberLearningState.totalRounds,
+    Math.random,
+    { recentEquations: numberLearningState.recentEquations }
+  );
   if (!numberLearning.validateRound(numberLearningState.round)) {
     console.warn(`[Sprint 8.3.2 Sayılar] ${numberLearningState.stageId} için tur üretilemedi.`);
     openLearningPath({ focusStageId: numberLearningState.stageId });
     return;
+  }
+  if (numberLearning.ADDITION_STAGE_IDS.includes(numberLearningState.stageId)) {
+    const equationKey = `${numberLearningState.round.first}+${numberLearningState.round.second}`;
+    numberLearningState.recentEquations = [equationKey, ...numberLearningState.recentEquations].slice(0, 10);
   }
   numberLearningState.ordering = numberLearningState.round.type === "ordering" ? numberLearning.createOrderingState(numberLearningState.round) : undefined;
   questionNumber = numberLearningState.roundNumber;
@@ -3078,27 +3305,49 @@ function recordNumberLearningInteraction(wasCorrect, answerValue) {
 async function answerNumberLearning(button, value) {
   if (!isNumberLearningActive || isPaused || numberLearningState.inputLocked || numberLearningState.speaking) return;
   const isCorrect = value === numberLearningState.round.correct;
+  const isAdditionRound = numberLearning.ADDITION_STAGE_IDS.includes(numberLearningState.stageId);
+  if (!isCorrect && isAdditionRound) numberLearningState.attempts += 1;
   numberLearningState.inputLocked = true;
-  numberLearningState.pendingResult = isCorrect ? "correct" : "wrong";
+  numberLearningState.pendingResult = isCorrect ? "correct" : isAdditionRound && numberLearningState.attempts >= 3 ? "advance" : "wrong";
   clearSpeech();
+  numberLearningSupportRun += 1;
+  numberLearningState.counting = false;
+  if (!isCorrect && isAdditionRound && numberLearningState.attempts >= 2) {
+    if (numberLearningState.round.hasVisualHelp) numberLearningState.helpShown = true;
+    if (numberLearningState.round.canCombine) numberLearningState.combined = true;
+  }
   recordNumberLearningInteraction(isCorrect, value);
   renderNumberLearningRound();
   const matchingButton = ui.numberLearningAnswers.querySelector(`[data-number-value="${value}"]`) ?? button;
   matchingButton?.classList.add(isCorrect ? "correct" : "try-again-choice");
-  ui.numberLearningFeedback.textContent = isCorrect ? "Harika!" : "Bir daha düşünelim.";
+  const correctMessage = isAdditionRound ? "Toplamı buldun!" : "Harika!";
+  const retryMessage = isAdditionRound
+    ? numberLearningState.attempts >= 3
+      ? "Birlikte bulduk. Doğru toplamı görelim."
+      : numberLearningState.attempts === 2
+        ? "Nesnelerden yardım alabilirsin."
+        : "Bir daha sayalım."
+    : "Bir daha düşünelim.";
+  ui.numberLearningFeedback.textContent = isCorrect ? correctMessage : retryMessage;
   ui.numberLearningFeedback.className = `matching-feedback ${isCorrect ? "success" : "try-again"}`;
   if (isCorrect) {
     animations.celebrate();
     audio.playSuccess();
-    await advanceNumberLearningAfterFeedback("Harika!");
+    await advanceNumberLearningAfterFeedback(correctMessage);
   } else {
     const sessionId = numberLearningSessionId;
-    await speech.speak("Bir daha düşünelim.", TURKISH_LANGUAGE);
+    if (isAdditionRound && numberLearningState.attempts >= 3) {
+      const correctButton = ui.numberLearningAnswers.querySelector(`[data-number-value="${numberLearningState.round.correct}"]`);
+      correctButton?.classList.add("correct-answer-reveal");
+      await advanceNumberLearningAfterFeedback("Birlikte bulduk. Şimdi devam edelim.");
+      return;
+    }
+    await speech.speak(retryMessage, TURKISH_LANGUAGE);
     if (!isNumberLearningActive || isPaused || sessionId !== numberLearningSessionId) return;
     numberLearningState.inputLocked = false;
     numberLearningState.pendingResult = undefined;
     renderNumberLearningRound();
-    ui.numberLearningFeedback.textContent = "Tekrar deneyebilirsin.";
+    ui.numberLearningFeedback.textContent = isAdditionRound ? "Tekrar seçebilirsin." : "Tekrar deneyebilirsin.";
   }
 }
 
@@ -3182,7 +3431,10 @@ function startNumberLearningStage(stage) {
   numberLearningState.stageId = stage.id;
   numberLearningState.roundNumber = 1;
   numberLearningState.totalRounds = stage.sessionLength;
-  recordLearningSessionStarted([`LearningPath:${stage.id}`], "learning-path-number");
+  recordLearningSessionStarted(
+    [`LearningPath:${stage.id}`],
+    numberLearning.ADDITION_STAGE_IDS.includes(stage.id) ? "learning-path-addition" : "learning-path-number"
+  );
   ensureDailyGoal();
   renderDailyGoal();
   hideAllScreens();
@@ -3256,7 +3508,10 @@ function pauseGame() {
   if (isNewMiniGameActive) pauseNewMiniGameState();
   if (isNumberLearningActive) {
     clearNumberLearningTimer();
+    numberLearningSupportRun += 1;
+    numberLearningState.counting = false;
     numberLearningState.speaking = false;
+    ui.numberLearningVisual.querySelectorAll(".addition-object").forEach(object => object.classList.remove("counting-active"));
     setNumberLearningInputEnabled(false);
   }
   ui.pauseOverlay.classList.remove("hidden");
@@ -3353,7 +3608,7 @@ function resumeGame() {
     if (numberLearningState.pendingResult === "wrong") {
       numberLearningState.pendingResult = undefined;
       numberLearningState.inputLocked = false;
-    } else if (numberLearningState.pendingResult === "correct") {
+    } else if (numberLearningState.pendingResult === "correct" || numberLearningState.pendingResult === "advance") {
       numberLearningState.pendingResult = undefined;
       if (numberLearningState.roundNumber >= numberLearningState.totalRounds) finishNumberLearningStage();
       else {
@@ -3788,7 +4043,7 @@ function startLearningPathStage(stageId) {
   const stage = learningPathModel.stageById(stageId);
   const progress = loadLearningPathProgress();
   if (!engine || !stage || !learningPathModel.canLaunchStage(stage.id, progress)) return;
-  if (numberLearning.NUMBER_STAGE_IDS.includes(stage.id)) {
+  if (numberLearning.PLAYABLE_STAGE_IDS.includes(stage.id)) {
     startNumberLearningStage(stage);
     return;
   }
@@ -4193,6 +4448,9 @@ ui.numberLearningPause.addEventListener("click", pauseGame);
 ui.numberLearningPath.addEventListener("click", () => openLearningPath({ focusStageId: activeLearningPathStage?.id }));
 ui.numberLearningListen.addEventListener("click", speakNumberLearningPrompt);
 ui.numberLearningCheck.addEventListener("click", checkNumberLearningOrdering);
+ui.numberLearningHelp.addEventListener("click", showAdditionVisualHelp);
+ui.numberLearningCombine.addEventListener("click", combineAdditionGroups);
+ui.numberLearningCount.addEventListener("click", toggleAdditionCounting);
 ui.newMiniGameReplay.addEventListener("click", replayNewMiniGame);
 ui.newMiniGameChange.addEventListener("click", changeNewMiniGameSetup);
 ui.newMiniGameListen.addEventListener("click", () => {
