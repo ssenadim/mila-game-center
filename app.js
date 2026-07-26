@@ -1306,6 +1306,12 @@ function startMatchingSession(categoryId = matchingSelectedCategory) {
   isMatchingSessionStarting = false;
 }
 
+function replayMatchingWithNewCategory() {
+  const otherCategories = MATCHING_CATEGORIES.filter(category => category.id !== matchingSelectedCategory);
+  const nextCategory = appUtils.randomItem(otherCategories);
+  startMatchingSession(nextCategory?.id ?? matchingSelectedCategory);
+}
+
 function startMatchingGame() {
   isGameNavigationBusy = false;
   isMatchingSessionStarting = false;
@@ -2824,7 +2830,7 @@ ui.numberMatchHome.addEventListener("click", () => leaveGameFor("games"));
 ui.colorMatchHome.addEventListener("click", () => leaveGameFor("games"));
 ui.sortingHome.addEventListener("click", () => leaveGameFor("games"));
 ui.balloonHome.addEventListener("click", () => leaveGameFor("home"));
-ui.matchingReplay.addEventListener("click", () => startMatchingSession());
+ui.matchingReplay.addEventListener("click", replayMatchingWithNewCategory);
 ui.matchingCategories.addEventListener("click", showMatchingCategorySelection);
 ui.matchingPause.addEventListener("click", pauseGame);
 ui.listeningPause.addEventListener("click", pauseGame);
