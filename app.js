@@ -59,10 +59,13 @@ const LISTENING_VISUALS = {
 };
 const LISTENING_COLOR_VISUALS = { Blue: "🔵", Yellow: "🟡", Red: "🔴", Green: "🟢", Purple: "🟣", Orange: "🟠", Pink: "🩷", Brown: "🟤" };
 const LISTENING_NUMBER_VISUALS = { One: "1️⃣", Two: "2️⃣", Three: "3️⃣", Four: "4️⃣", Five: "5️⃣", Six: "6️⃣", Seven: "7️⃣", Eight: "8️⃣" };
-const MATCHING_CATEGORIES = [
+const MATCHING_PAIR_COUNT = 8;
+const MATCHING_CATEGORY_DEFINITIONS = [
   { id: "colors", label: "Renkler", icon: "🎨", symbols: Object.values(LISTENING_COLOR_VISUALS) },
-  { id: "animals", label: "Hayvanlar", icon: "🐾", symbols: ["🦁", "🐘", "🐱", "🐒", "🐶", "🐦", "🐟", "🐯"] }
+  { id: "animals", label: "Hayvanlar", icon: "🐾", symbols: ["🦁", "🐘", "🐱", "🐒", "🐶", "🐦", "🐟", "🐯"] },
+  { id: "fruits", label: "Meyveler", icon: "🍎", symbols: ["🍎", "🍌", "🍊", "🍓", "🍇", "🍋", "🥝", "🍒"] }
 ];
+const MATCHING_CATEGORIES = MATCHING_CATEGORY_DEFINITIONS.filter(category => new Set(category.symbols).size >= MATCHING_PAIR_COUNT);
 const GAME_MODE_STORAGE_KEY = "mila-learning-game-mode";
 const PLAYER_STORAGE_KEY = "mila-learning-player";
 const PLAYER_PROGRESS_MIGRATION_STORAGE_KEY = "mila-learning-player-progress-migrated";
@@ -1158,7 +1161,7 @@ function openMatchingCard(index) {
     ui.matchingFeedback.textContent = getCorrectFeedbackMessage();
     renderMatchingCards();
     audio.playSuccess();
-    if (matchingPairsFound === 8) completeMatchingGame();
+    if (matchingPairsFound === MATCHING_PAIR_COUNT) completeMatchingGame();
     return;
   }
   matchingPendingFlip = true;
@@ -1202,11 +1205,11 @@ function showMatchingCategorySelection() {
 function startMatchingSession(categoryId = matchingSelectedCategory) {
   if (isMatchingSessionStarting || isMatchingGameActive) return;
   const category = MATCHING_CATEGORIES.find(item => item.id === categoryId);
-  if (!category || category.symbols.length < 8) return;
+  if (!category || new Set(category.symbols).size < MATCHING_PAIR_COUNT) return;
   isMatchingSessionStarting = true;
   matchingSelectedCategory = category.id;
   isMatchingGameActive = true;
-  matchingCards = appUtils.shuffle(category.symbols.slice(0, 8).flatMap(symbol => [symbol, symbol])).map(symbol => ({ symbol, revealed: false, completed: false }));
+  matchingCards = appUtils.shuffle(category.symbols.slice(0, MATCHING_PAIR_COUNT).flatMap(symbol => [symbol, symbol])).map(symbol => ({ symbol, revealed: false, completed: false }));
   matchingOpenCards = [];
   matchingPairsFound = 0;
   matchingPendingFlip = false;
