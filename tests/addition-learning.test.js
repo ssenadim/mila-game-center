@@ -132,7 +132,7 @@ test("sessions avoid exact repeats and immediate commutative duplicates while an
   });
 });
 
-test("Learning Path unlocks addition sequentially and keeps subtraction planned", () => {
+test("Learning Path unlocks addition sequentially and then opens subtraction preparation", () => {
   const throughNumbers = {
     completed: Object.fromEntries(roadmap.STAGES.filter(stage => stage.order <= 16 && stage.implemented).map(stage => [stage.id, true]))
   };
@@ -143,10 +143,10 @@ test("Learning Path unlocks addition sequentially and keeps subtraction planned"
   const afterNumeric = { completed: { ...afterPreparation.completed, "add-two-numbers": true } };
   assert.equal(roadmap.canLaunchStage("visual-addition", afterNumeric), true);
   const afterVisual = { completed: { ...afterNumeric.completed, "visual-addition": true } };
-  assert.equal(roadmap.canLaunchStage("subtraction-preparation", afterVisual), false);
+  assert.equal(roadmap.canLaunchStage("subtraction-preparation", afterVisual), true);
 });
 
-test("focused UI wires help, combine, counting, lifecycle cleanup and planned subtraction boundary", () => {
+test("focused UI wires help, combine, counting and lifecycle cleanup", () => {
   const app = fs.readFileSync(path.join(root, "app.js"), "utf8");
   const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
   const css = fs.readFileSync(path.join(root, "styles.css"), "utf8");
@@ -161,8 +161,6 @@ test("focused UI wires help, combine, counting, lifecycle cleanup and planned su
   assert.match(app, /numberLearningState\.attempts >= 3/);
   const cleanupBody = app.match(/function cleanupNumberLearning[\s\S]*?(?=\n}\n\nfunction renderQuantityVisual)/)?.[0] ?? "";
   assert.doesNotMatch(cleanupBody, /\bround\./);
-  assert.match(app, /activeLearningPathStage\.id === "visual-addition"/);
-  assert.match(app, /stageById\("subtraction-preparation"\)/);
   assert.match(css, /@media\(max-width:390px\)[\s\S]*\.addition-visual-equation/);
   assert.match(css, /@media\(prefers-reduced-motion:reduce\)/);
 });

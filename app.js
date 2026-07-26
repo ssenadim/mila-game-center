@@ -486,9 +486,9 @@ function renderLearningPathCompletion(completionMessage) {
     return;
   }
   const progress = loadLearningPathProgress();
-  const isAdditionBoundary = activeLearningPathStage.id === "visual-addition";
-  const plannedNextStage = isAdditionBoundary ? learningPathModel.stageById("subtraction-preparation") : undefined;
-  const nextStage = isAdditionBoundary ? undefined : learningPathModel.getNextEligibleStage(activeLearningPathStage.id, progress);
+  const isOperationsBoundary = activeLearningPathStage.id === "visual-subtraction";
+  const plannedNextStage = isOperationsBoundary ? learningPathModel.stageById("mixed-operations") : undefined;
+  const nextStage = isOperationsBoundary ? undefined : learningPathModel.getNextEligibleStage(activeLearningPathStage.id, progress);
   ui.summaryTitle.textContent = completionMessage ?? getCompletionMessage();
   ui.summaryCopy.textContent = "Yeni şeyler öğreniyorsun!";
   ui.learningPathCompletionIcon.textContent = activeLearningPathStage.icon;
@@ -2875,6 +2875,8 @@ function createEmptyNumberLearningState() {
     helpShown: false,
     combined: false,
     counting: false,
+    removal: undefined,
+    removalConfirmed: false,
     recentEquations: []
   };
 }
@@ -3107,6 +3109,7 @@ function renderAdditionRoundVisual(round) {
 }
 
 function renderAdditionSupport(round) {
+  ui.numberLearningCombine.textContent = "🤝 Birleştir";
   ui.numberLearningCombine.classList.toggle("hidden", !round.canCombine || numberLearningState.combined);
   ui.numberLearningHelp.classList.toggle("hidden", !round.hasVisualHelp);
   ui.numberLearningHelp.classList.toggle("emphasized", round.hasVisualHelp && numberLearningState.attempts > 0 && !numberLearningState.helpShown);
@@ -3114,6 +3117,112 @@ function renderAdditionSupport(round) {
   ui.numberLearningCount.classList.toggle("hidden", !round.hasCountingSupport);
   ui.numberLearningCount.setAttribute("aria-pressed", String(numberLearningState.counting));
   ui.numberLearningCount.textContent = numberLearningState.counting ? "■ Saymayı Durdur" : "👆 Birlikte Say";
+}
+
+function toggleSubtractionObject(itemIndex) {
+  if (!isNumberLearningActive || isPaused || numberLearningState.inputLocked || numberLearningState.speaking || numberLearningState.removalConfirmed) return;
+  const changed = numberLearning.toggleRemovalSelection(numberLearningState.removal, itemIndex);
+  if (!changed) {
+    ui.numberLearningFeedback.textContent = `${numberLearningState.round.removed} nesne göndermen yeterli.`;
+    return;
+  }
+  renderNumberLearningRound();
+  const selectedCount = numberLearningState.removal.selectedIndices.length;
+  ui.numberLearningFeedback.textContent = selectedCount === numberLearningState.round.removed
+    ? "Hazır! Şimdi kontrol edebilirsin."
+    : `${numberLearningState.round.removed - selectedCount} nesne daha seç.`;
+}
+
+function renderSubtractionObjects(container, round, { interactive = false, remainingOnly = false } = {}) {
+  container.className = "subtraction-object-group";
+  const selected = new Set(numberLearningState.removal?.selectedIndices ?? []);
+  const useManualSelection = round.manualRemoval && selected.size > 0;
+  container.setAttribute("aria-label", interactive
+    ? `${round.first} nesne. Gidecek ${round.removed} nesneyi seç.`
+    : remainingOnly ? "Kalan nesneler" : `${round.first} nesneden ${round.removed} tanesi gidiyor.`);
+  if (remainingOnly && round.result === 0) {
+    const empty = document.createElement("span");
+    empty.className = "addition-empty-group";
+    empty.textContent = "Hiç kalmadı · 0";
+    container.append(empty);
+    return;
+  }
+  const count = remainingOnly ? round.result : round.first;
+  for (let index = 0; index < count; index += 1) {
+    const isRemoved = !remainingOnly && (interactive || useManualSelection ? selected.has(index) : index >= round.result);
+    const object = document.createElement(interactive ? "button" : "span");
+    if (interactive) {
+      object.type = "button";
+      object.setAttribute("aria-pressed", String(isRemoved));
+      object.setAttribute("aria-label", `${index + 1}. nesne, ${isRemoved ? "gidecek olarak seçildi" : "seçilmedi"}`);
+      object.addEventListener("click", () => toggleSubtractionObject(index));
+    } else {
+      object.setAttribute("aria-hidden", "true");
+    }
+    object.className = `subtraction-object ${isRemoved ? "removed" : "remaining"}`;
+    object.dataset.countIndex = String(index);
+    object.textContent = round.startVisual.symbol;
+    container.append(object);
+  }
+}
+
+function renderSubtractionVisualAid(round, { help = false } = {}) {
+  const wrapper = document.createElement("div");
+  wrapper.className = `subtraction-visual-equation${help ? " help-equation" : ""}`;
+  wrapper.setAttribute("aria-label", round.accessibleEquation);
+  if (round.pattern === "before-after" && !round.manualRemoval) {
+    const before = document.createElement("div");
+    before.className = "subtraction-group before-group";
+    renderSubtractionObjects(before, round);
+    before.querySelectorAll(".removed").forEach(object => object.classList.remove("removed"));
+    const arrow = createAdditionSymbol("→", "sonra");
+    const after = document.createElement("div");
+    after.className = "subtraction-group remaining-group";
+    renderSubtractionObjects(after, round, { remainingOnly: true });
+    wrapper.append(before, arrow, after);
+    return wrapper;
+  }
+  const group = document.createElement("div");
+  group.className = "subtraction-group";
+  renderSubtractionObjects(group, round, { interactive: round.manualRemoval && !numberLearningState.removalConfirmed });
+  wrapper.append(group);
+  const equationHint = document.createElement("span");
+  equationHint.className = "subtraction-result-question";
+  equationHint.textContent = `${round.first} − ${round.removed} = ?`;
+  equationHint.setAttribute("aria-hidden", "true");
+  wrapper.append(equationHint);
+  return wrapper;
+}
+
+function renderSubtractionRoundVisual(round) {
+  if (round.type === "numeric-subtraction") {
+    const equation = document.createElement("div");
+    equation.className = "numeric-addition-equation numeric-subtraction-equation";
+    equation.setAttribute("role", "img");
+    equation.setAttribute("aria-label", `${round.first} eksi ${round.removed} eşittir sonuç`);
+    equation.textContent = round.equation;
+    ui.numberLearningVisual.append(equation);
+    if (numberLearningState.helpShown) ui.numberLearningVisual.append(renderSubtractionVisualAid(round, { help: true }));
+    return;
+  }
+  ui.numberLearningVisual.append(renderSubtractionVisualAid(round));
+}
+
+function renderSubtractionSupport(round) {
+  const awaitingRemoval = round.manualRemoval && !numberLearningState.removalConfirmed;
+  ui.numberLearningCombine.textContent = "👋 Gidenleri Ayır";
+  ui.numberLearningCombine.classList.toggle("hidden", !awaitingRemoval);
+  ui.numberLearningHelp.classList.toggle("hidden", !round.hasVisualHelp);
+  ui.numberLearningHelp.classList.toggle("emphasized", round.hasVisualHelp && numberLearningState.attempts > 0 && !numberLearningState.helpShown);
+  ui.numberLearningHelp.setAttribute("aria-pressed", String(numberLearningState.helpShown));
+  const canCount = round.hasCountingSupport && !awaitingRemoval || round.hasVisualHelp && numberLearningState.helpShown;
+  ui.numberLearningCount.classList.toggle("hidden", !canCount);
+  ui.numberLearningCount.setAttribute("aria-pressed", String(numberLearningState.counting));
+  ui.numberLearningCount.textContent = numberLearningState.counting ? "■ Saymayı Durdur" : "👆 Kalanları Say";
+  if (awaitingRemoval) {
+    ui.numberLearningCheck.textContent = "Gidenleri Kontrol Et";
+    ui.numberLearningCheck.classList.remove("hidden");
+  }
 }
 
 function showAdditionVisualHelp() {
@@ -3127,8 +3236,20 @@ function showAdditionVisualHelp() {
   ui.numberLearningFeedback.className = "matching-feedback";
 }
 
+function showArithmeticVisualHelp() {
+  showAdditionVisualHelp();
+}
+
 async function combineAdditionGroups() {
-  if (!isNumberLearningActive || isPaused || numberLearningState.inputLocked || numberLearningState.speaking || numberLearningState.combined) return;
+  if (!isNumberLearningActive || isPaused || numberLearningState.inputLocked || numberLearningState.speaking) return;
+  if (numberLearning.SUBTRACTION_STAGE_IDS.includes(numberLearningState.stageId)) {
+    if (!numberLearningState.round.manualRemoval || numberLearningState.removalConfirmed) return;
+    numberLearningState.removal.selectedIndices = Array.from({ length: numberLearningState.round.removed }, (_, index) => numberLearningState.round.first - index - 1);
+    renderNumberLearningRound();
+    ui.numberLearningFeedback.textContent = "Gidecek nesneler ayrıldı. Şimdi kontrol et.";
+    return;
+  }
+  if (numberLearningState.combined) return;
   clearSpeech();
   const sessionId = numberLearningSessionId;
   numberLearningState.combined = true;
@@ -3148,7 +3269,7 @@ async function toggleAdditionCounting() {
   if (numberLearningState.counting) {
     numberLearningState.counting = false;
     numberLearningState.speaking = false;
-    ui.numberLearningVisual.querySelectorAll(".addition-object").forEach(object => object.classList.remove("counting-active"));
+    ui.numberLearningVisual.querySelectorAll(".addition-object, .subtraction-object").forEach(object => object.classList.remove("counting-active"));
     renderAdditionSupport(numberLearningState.round);
     setNumberLearningInputEnabled(true);
     ui.numberLearningFeedback.textContent = "Saymayı istediğinde yeniden başlatabilirsin.";
@@ -3158,7 +3279,14 @@ async function toggleAdditionCounting() {
   numberLearningState.speaking = true;
   renderAdditionSupport(numberLearningState.round);
   setNumberLearningInputEnabled(false);
-  const objects = [...ui.numberLearningVisual.querySelectorAll(".addition-group .addition-object")];
+  const isSubtractionRound = numberLearning.SUBTRACTION_STAGE_IDS.includes(numberLearningState.stageId);
+  const subtractionVisual = ui.numberLearningVisual.querySelector(".subtraction-visual-equation:last-child");
+  const explicitRemaining = subtractionVisual ? [...subtractionVisual.querySelectorAll(".remaining-group .subtraction-object.remaining")] : [];
+  const objects = isSubtractionRound
+    ? explicitRemaining.length
+      ? explicitRemaining
+      : [...(subtractionVisual?.querySelectorAll(".subtraction-group .subtraction-object.remaining:not(.removed)") ?? [])]
+    : [...ui.numberLearningVisual.querySelectorAll(".addition-group .addition-object")];
   for (let index = 0; index < objects.length; index += 1) {
     if (!isNumberLearningActive || isPaused || supportRun !== numberLearningSupportRun) return;
     objects.forEach(object => object.classList.remove("counting-active"));
@@ -3173,7 +3301,7 @@ async function toggleAdditionCounting() {
   numberLearningState.speaking = false;
   renderAdditionSupport(numberLearningState.round);
   setNumberLearningInputEnabled(true);
-  ui.numberLearningFeedback.textContent = "Şimdi toplamı seçebilirsin.";
+  ui.numberLearningFeedback.textContent = isSubtractionRound ? "Şimdi kalan sayıyı seçebilirsin." : "Şimdi toplamı seçebilirsin.";
 }
 
 function renderNumberLearningRound() {
@@ -3186,17 +3314,24 @@ function renderNumberLearningRound() {
   ui.numberLearningPrompt.textContent = round.prompt;
   ui.numberLearningVisual.textContent = "";
   ui.numberLearningAnswers.textContent = "";
+  ui.numberLearningAnswers.setAttribute("aria-label", "Cevap seçenekleri");
   ui.numberLearningAnswers.classList.toggle("visual-total-answers", Boolean(round.usesVisualChoices));
   ui.numberLearningCheck.classList.add("hidden");
+  ui.numberLearningCheck.textContent = "Kontrol Et";
   ui.numberLearningCombine.classList.add("hidden");
   ui.numberLearningHelp.classList.add("hidden");
   ui.numberLearningCount.classList.add("hidden");
   ui.numberLearningFeedback.className = "matching-feedback";
 
   const isAdditionRound = ["addition-preparation", "numeric-addition", "visual-addition"].includes(round.type);
+  const isSubtractionRound = ["subtraction-preparation", "numeric-subtraction", "visual-subtraction"].includes(round.type);
   if (isAdditionRound) {
     renderAdditionRoundVisual(round);
     renderAdditionSupport(round);
+  }
+  if (isSubtractionRound) {
+    renderSubtractionRoundVisual(round);
+    renderSubtractionSupport(round);
   }
   if (round.type === "counting") renderQuantityVisual(ui.numberLearningVisual, round.visual);
   if (round.type === "neighbor") {
@@ -3215,6 +3350,8 @@ function renderNumberLearningRound() {
   }
   if (round.type === "ordering") {
     renderNumberLearningOrdering();
+  } else if (round.manualRemoval && !numberLearningState.removalConfirmed) {
+    ui.numberLearningAnswers.setAttribute("aria-label", "Kalan sayı seçenekleri, nesneler gönderildikten sonra açılır");
   } else if (isAdditionRound && round.usesVisualChoices) {
     round.choices.forEach((value, index) => {
       const button = document.createElement("button");
@@ -3258,6 +3395,8 @@ function beginNumberLearningRound() {
   numberLearningState.helpShown = false;
   numberLearningState.combined = false;
   numberLearningState.counting = false;
+  numberLearningState.removal = undefined;
+  numberLearningState.removalConfirmed = false;
   numberLearningSupportRun += 1;
   numberLearningState.round = numberLearning.createRound(
     numberLearningState.stageId,
@@ -3267,13 +3406,18 @@ function beginNumberLearningRound() {
     { recentEquations: numberLearningState.recentEquations }
   );
   if (!numberLearning.validateRound(numberLearningState.round)) {
-    console.warn(`[Sprint 8.3.2 Sayılar] ${numberLearningState.stageId} için tur üretilemedi.`);
+    console.warn(`[Sayı Öğrenme] ${numberLearningState.stageId} için tur üretilemedi.`);
     openLearningPath({ focusStageId: numberLearningState.stageId });
     return;
   }
   if (numberLearning.ADDITION_STAGE_IDS.includes(numberLearningState.stageId)) {
     const equationKey = `${numberLearningState.round.first}+${numberLearningState.round.second}`;
     numberLearningState.recentEquations = [equationKey, ...numberLearningState.recentEquations].slice(0, 10);
+  }
+  if (numberLearning.SUBTRACTION_STAGE_IDS.includes(numberLearningState.stageId)) {
+    const equationKey = `${numberLearningState.round.first}-${numberLearningState.round.removed}`;
+    numberLearningState.recentEquations = [equationKey, ...numberLearningState.recentEquations].slice(0, 10);
+    numberLearningState.removal = numberLearning.createRemovalState(numberLearningState.round);
   }
   numberLearningState.ordering = numberLearningState.round.type === "ordering" ? numberLearning.createOrderingState(numberLearningState.round) : undefined;
   questionNumber = numberLearningState.roundNumber;
@@ -3306,13 +3450,15 @@ async function answerNumberLearning(button, value) {
   if (!isNumberLearningActive || isPaused || numberLearningState.inputLocked || numberLearningState.speaking) return;
   const isCorrect = value === numberLearningState.round.correct;
   const isAdditionRound = numberLearning.ADDITION_STAGE_IDS.includes(numberLearningState.stageId);
-  if (!isCorrect && isAdditionRound) numberLearningState.attempts += 1;
+  const isSubtractionRound = numberLearning.SUBTRACTION_STAGE_IDS.includes(numberLearningState.stageId);
+  const isArithmeticRound = isAdditionRound || isSubtractionRound;
+  if (!isCorrect && isArithmeticRound) numberLearningState.attempts += 1;
   numberLearningState.inputLocked = true;
-  numberLearningState.pendingResult = isCorrect ? "correct" : isAdditionRound && numberLearningState.attempts >= 3 ? "advance" : "wrong";
+  numberLearningState.pendingResult = isCorrect ? "correct" : isArithmeticRound && numberLearningState.attempts >= 3 ? "advance" : "wrong";
   clearSpeech();
   numberLearningSupportRun += 1;
   numberLearningState.counting = false;
-  if (!isCorrect && isAdditionRound && numberLearningState.attempts >= 2) {
+  if (!isCorrect && isArithmeticRound && numberLearningState.attempts >= 2) {
     if (numberLearningState.round.hasVisualHelp) numberLearningState.helpShown = true;
     if (numberLearningState.round.canCombine) numberLearningState.combined = true;
   }
@@ -3320,12 +3466,12 @@ async function answerNumberLearning(button, value) {
   renderNumberLearningRound();
   const matchingButton = ui.numberLearningAnswers.querySelector(`[data-number-value="${value}"]`) ?? button;
   matchingButton?.classList.add(isCorrect ? "correct" : "try-again-choice");
-  const correctMessage = isAdditionRound ? "Toplamı buldun!" : "Harika!";
-  const retryMessage = isAdditionRound
+  const correctMessage = isAdditionRound ? "Toplamı buldun!" : isSubtractionRound ? "Kalanları buldun!" : "Harika!";
+  const retryMessage = isArithmeticRound
     ? numberLearningState.attempts >= 3
-      ? "Birlikte bulduk. Doğru toplamı görelim."
+      ? isSubtractionRound ? "Birlikte bulduk. Doğru kalanı görelim." : "Birlikte bulduk. Doğru toplamı görelim."
       : numberLearningState.attempts === 2
-        ? "Nesnelerden yardım alabilirsin."
+        ? isSubtractionRound ? "Kalan nesnelerden yardım alabilirsin." : "Nesnelerden yardım alabilirsin."
         : "Bir daha sayalım."
     : "Bir daha düşünelim.";
   ui.numberLearningFeedback.textContent = isCorrect ? correctMessage : retryMessage;
@@ -3336,7 +3482,7 @@ async function answerNumberLearning(button, value) {
     await advanceNumberLearningAfterFeedback(correctMessage);
   } else {
     const sessionId = numberLearningSessionId;
-    if (isAdditionRound && numberLearningState.attempts >= 3) {
+    if (isArithmeticRound && numberLearningState.attempts >= 3) {
       const correctButton = ui.numberLearningAnswers.querySelector(`[data-number-value="${numberLearningState.round.correct}"]`);
       correctButton?.classList.add("correct-answer-reveal");
       await advanceNumberLearningAfterFeedback("Birlikte bulduk. Şimdi devam edelim.");
@@ -3347,8 +3493,47 @@ async function answerNumberLearning(button, value) {
     numberLearningState.inputLocked = false;
     numberLearningState.pendingResult = undefined;
     renderNumberLearningRound();
-    ui.numberLearningFeedback.textContent = isAdditionRound ? "Tekrar seçebilirsin." : "Tekrar deneyebilirsin.";
+    ui.numberLearningFeedback.textContent = isArithmeticRound ? "Tekrar seçebilirsin." : "Tekrar deneyebilirsin.";
   }
+}
+
+async function checkSubtractionRemoval() {
+  if (!isNumberLearningActive || isPaused || numberLearningState.inputLocked || numberLearningState.speaking || !numberLearningState.round?.manualRemoval) return;
+  const sessionId = numberLearningSessionId;
+  numberLearningState.inputLocked = true;
+  setNumberLearningInputEnabled(false);
+  if (!numberLearning.isRemovalSelectionComplete(numberLearningState.removal)) {
+    const missing = numberLearningState.round.removed - numberLearningState.removal.selectedIndices.length;
+    const message = missing > 0 ? `${missing} nesne daha seç.` : "Giden nesnelere bir daha bakalım.";
+    ui.numberLearningFeedback.textContent = message;
+    ui.numberLearningFeedback.className = "matching-feedback try-again";
+    clearSpeech();
+    await speech.speak(message, TURKISH_LANGUAGE);
+    if (!isNumberLearningActive || isPaused || sessionId !== numberLearningSessionId) return;
+    numberLearningState.inputLocked = false;
+    setNumberLearningInputEnabled(true);
+    return;
+  }
+  clearSpeech();
+  numberLearningState.removalConfirmed = true;
+  numberLearningState.speaking = true;
+  numberLearningState.round.prompt = "Kaç tane kaldı?";
+  numberLearningState.round.speech = "Kaç tane kaldı?";
+  renderNumberLearningRound();
+  ui.numberLearningFeedback.textContent = "Harika ayırdın. Şimdi kalanları bul.";
+  await speech.speak("Şimdi kaç tane kaldı?", TURKISH_LANGUAGE);
+  if (!isNumberLearningActive || isPaused || sessionId !== numberLearningSessionId) return;
+  numberLearningState.speaking = false;
+  numberLearningState.inputLocked = false;
+  setNumberLearningInputEnabled(true);
+}
+
+function checkFocusedNumberLearning() {
+  if (numberLearningState.round?.manualRemoval && !numberLearningState.removalConfirmed) {
+    checkSubtractionRemoval();
+    return;
+  }
+  checkNumberLearningOrdering();
 }
 
 async function checkNumberLearningOrdering() {
@@ -3433,7 +3618,11 @@ function startNumberLearningStage(stage) {
   numberLearningState.totalRounds = stage.sessionLength;
   recordLearningSessionStarted(
     [`LearningPath:${stage.id}`],
-    numberLearning.ADDITION_STAGE_IDS.includes(stage.id) ? "learning-path-addition" : "learning-path-number"
+    numberLearning.ADDITION_STAGE_IDS.includes(stage.id)
+      ? "learning-path-addition"
+      : numberLearning.SUBTRACTION_STAGE_IDS.includes(stage.id)
+        ? "learning-path-subtraction"
+        : "learning-path-number"
   );
   ensureDailyGoal();
   renderDailyGoal();
@@ -4447,8 +4636,8 @@ ui.newMiniGamePause.addEventListener("click", pauseGame);
 ui.numberLearningPause.addEventListener("click", pauseGame);
 ui.numberLearningPath.addEventListener("click", () => openLearningPath({ focusStageId: activeLearningPathStage?.id }));
 ui.numberLearningListen.addEventListener("click", speakNumberLearningPrompt);
-ui.numberLearningCheck.addEventListener("click", checkNumberLearningOrdering);
-ui.numberLearningHelp.addEventListener("click", showAdditionVisualHelp);
+ui.numberLearningCheck.addEventListener("click", checkFocusedNumberLearning);
+ui.numberLearningHelp.addEventListener("click", showArithmeticVisualHelp);
 ui.numberLearningCombine.addEventListener("click", combineAdditionGroups);
 ui.numberLearningCount.addEventListener("click", toggleAdditionCounting);
 ui.newMiniGameReplay.addEventListener("click", replayNewMiniGame);

@@ -55,7 +55,10 @@
     LEARNING_TYPES.QUANTITY_COMPARISON,
     LEARNING_TYPES.ADDITION_PREPARATION,
     LEARNING_TYPES.NUMERIC_ADDITION,
-    LEARNING_TYPES.VISUAL_ADDITION
+    LEARNING_TYPES.VISUAL_ADDITION,
+    LEARNING_TYPES.SUBTRACTION_PREPARATION,
+    LEARNING_TYPES.NUMERIC_SUBTRACTION,
+    LEARNING_TYPES.VISUAL_SUBTRACTION
   ]);
 
   const GROUPS = [
@@ -126,9 +129,9 @@
     { id: "addition-preparation", title: "Toplamaya Hazırlık", icon: "➕", description: "Grupları bir araya getirmeye hazırlan.", groupId: "first-operations", order: 17, learningType: LEARNING_TYPES.ADDITION_PREPARATION, categoryIds: [], prerequisiteStageIds: ["equal-quantities"], sessionLength: 8, implemented: true },
     { id: "add-two-numbers", title: "İki Sayıyı Topla", icon: "➕", description: "İki küçük sayıyı topla.", groupId: "first-operations", order: 18, learningType: LEARNING_TYPES.NUMERIC_ADDITION, categoryIds: [], prerequisiteStageIds: ["addition-preparation"], sessionLength: 10, implemented: true },
     { id: "visual-addition", title: "Görsellerle Toplama", icon: "🍎", description: "Resimleri sayarak toplamayı keşfet.", groupId: "first-operations", order: 19, learningType: LEARNING_TYPES.VISUAL_ADDITION, categoryIds: [], prerequisiteStageIds: ["add-two-numbers"], sessionLength: 10, implemented: true },
-    { id: "subtraction-preparation", title: "Çıkarmaya Hazırlık", icon: "➖", description: "Bir gruptan nesne ayırmaya hazırlan.", groupId: "first-operations", order: 20, learningType: LEARNING_TYPES.SUBTRACTION_PREPARATION, categoryIds: [], prerequisiteStageIds: ["visual-addition"], sessionLength: 10, implemented: false },
-    { id: "subtract-smaller-from-greater", title: "Büyük Sayıdan Küçük Sayıyı Çıkar", icon: "➖", description: "Küçük sayıyı büyük sayıdan çıkar.", groupId: "first-operations", order: 21, learningType: LEARNING_TYPES.NUMERIC_SUBTRACTION, categoryIds: [], prerequisiteStageIds: ["subtraction-preparation"], sessionLength: 10, implemented: false },
-    { id: "visual-subtraction", title: "Görsellerle Çıkarma", icon: "🧸", description: "Resimlerden ayırarak çıkarmayı keşfet.", groupId: "first-operations", order: 22, learningType: LEARNING_TYPES.VISUAL_SUBTRACTION, categoryIds: [], prerequisiteStageIds: ["subtract-smaller-from-greater"], sessionLength: 10, implemented: false },
+    { id: "subtraction-preparation", title: "Çıkarmaya Hazırlık", icon: "➖", description: "Bir gruptan nesne ayırmaya hazırlan.", groupId: "first-operations", order: 20, learningType: LEARNING_TYPES.SUBTRACTION_PREPARATION, categoryIds: [], prerequisiteStageIds: ["visual-addition"], sessionLength: 8, implemented: true },
+    { id: "subtract-smaller-from-greater", title: "Büyük Sayıdan Küçük Sayıyı Çıkar", icon: "➖", description: "Küçük sayıyı büyük sayıdan çıkar.", groupId: "first-operations", order: 21, learningType: LEARNING_TYPES.NUMERIC_SUBTRACTION, categoryIds: [], prerequisiteStageIds: ["subtraction-preparation"], sessionLength: 10, implemented: true },
+    { id: "visual-subtraction", title: "Görsellerle Çıkarma", icon: "🧸", description: "Resimlerden ayırarak çıkarmayı keşfet.", groupId: "first-operations", order: 22, learningType: LEARNING_TYPES.VISUAL_SUBTRACTION, categoryIds: [], prerequisiteStageIds: ["subtract-smaller-from-greater"], sessionLength: 10, implemented: true },
     { id: "mixed-operations", title: "Karışık İşlemler", icon: "🧮", description: "Toplama ve çıkarma ipuçlarını ayırt et.", groupId: "first-operations", order: 23, learningType: LEARNING_TYPES.MIXED_OPERATIONS, categoryIds: [], prerequisiteStageIds: ["visual-subtraction"], sessionLength: 10, implemented: false },
 
     { id: "odd-one-out", title: "Hangisi Farklı?", icon: "🔎", description: "Diğerlerinden farklı olanı bul.", groupId: "think-find", order: 24, learningType: LEARNING_TYPES.ODD_ONE_OUT, categoryIds: [], prerequisiteStageIds: ["mixed-operations"], sessionLength: 8, implemented: false },
@@ -307,7 +310,10 @@
           LEARNING_TYPES.QUANTITY_COMPARISON,
           LEARNING_TYPES.ADDITION_PREPARATION,
           LEARNING_TYPES.NUMERIC_ADDITION,
-          LEARNING_TYPES.VISUAL_ADDITION
+          LEARNING_TYPES.VISUAL_ADDITION,
+          LEARNING_TYPES.SUBTRACTION_PREPARATION,
+          LEARNING_TYPES.NUMERIC_SUBTRACTION,
+          LEARNING_TYPES.VISUAL_SUBTRACTION
         ].includes(stage.learningType);
         if (!stage.categoryIds.length && !isCustomNumberStage) problems.push(`${stage.id}: oynanabilir aşamada kategori yok.`);
         const allowedStrategies = STRATEGIES_BY_LEARNING_TYPE[stage.learningType] ?? [];

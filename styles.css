@@ -388,3 +388,31 @@ button { font:inherit; cursor:pointer; }
   .number-learning-support-actions .sound-button.emphasized{animation:none}
   .addition-group,.addition-object{transition:none}
 }
+
+/* Sprint 8.3.4: subtraction preparation, numeric subtraction and visual subtraction. */
+.subtraction-visual-equation{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;width:100%;max-width:610px}
+.subtraction-group{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;min-width:min(100%,260px);min-height:96px;padding:9px;border:3px solid #c9d9f4;border-radius:20px;background:#f3f8ff}
+.subtraction-object-group{display:grid;grid-template-columns:repeat(5,minmax(44px,1fr));align-items:center;justify-content:center;gap:5px;width:100%;max-width:310px}
+.subtraction-object{display:grid;place-items:center;min-width:44px;min-height:44px;padding:2px;border:3px solid transparent;border-radius:13px;background:#fff;font-size:clamp(1.35rem,4vw,2rem);line-height:1;transition:transform .2s ease,opacity .2s ease,background .2s ease}
+button.subtraction-object{cursor:pointer;box-shadow:0 3px 0 #b7c8e5;touch-action:manipulation}
+button.subtraction-object:focus-visible{outline:4px solid #5539a6;outline-offset:2px}
+.subtraction-object.removed{border-color:#d28b8b;background:#fff0f0;opacity:.62;text-decoration:line-through;transform:translateY(5px) scale(.9)}
+.subtraction-object.counting-active{outline:3px solid #e1b936;background:#fff0a8;opacity:1;transform:scale(1.14)}
+.subtraction-result-question{display:grid;place-items:center;min-width:150px;min-height:58px;padding:6px 14px;border:3px dashed #9e8ec2;border-radius:16px;background:#fff;color:#493a85;font:900 clamp(1.8rem,7vw,3rem)/1 "Baloo 2",cursive}
+.subtraction-visual-equation .addition-symbol{flex:0 0 auto}
+.numeric-subtraction-equation{letter-spacing:.02em}
+
+@media(max-width:600px){
+  .subtraction-visual-equation{gap:6px}
+  .subtraction-group{min-height:82px;padding:6px;border-radius:16px}
+  .subtraction-object-group{grid-template-columns:repeat(5,minmax(42px,1fr));gap:3px}
+  .subtraction-object{min-width:42px;min-height:42px;font-size:1.3rem}
+  .subtraction-result-question{min-width:132px;min-height:50px}
+}
+@media(max-width:390px){
+  .subtraction-object-group{grid-template-columns:repeat(5,minmax(39px,1fr))}
+  .subtraction-object{min-width:39px;min-height:39px;font-size:1.14rem}
+}
+@media(prefers-reduced-motion:reduce){
+  .subtraction-object{transition:none}
+}

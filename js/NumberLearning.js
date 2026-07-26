@@ -16,8 +16,14 @@
     "add-two-numbers",
     "visual-addition"
   ]);
-  const PLAYABLE_STAGE_IDS = Object.freeze([...NUMBER_STAGE_IDS, ...ADDITION_STAGE_IDS]);
+  const SUBTRACTION_STAGE_IDS = Object.freeze([
+    "subtraction-preparation",
+    "subtract-smaller-from-greater",
+    "visual-subtraction"
+  ]);
+  const PLAYABLE_STAGE_IDS = Object.freeze([...NUMBER_STAGE_IDS, ...ADDITION_STAGE_IDS, ...SUBTRACTION_STAGE_IDS]);
   const PREPARATION_PATTERNS = Object.freeze(["combine-groups", "add-more", "find-total"]);
+  const SUBTRACTION_PATTERNS = Object.freeze(["some-left", "remove-from-basket", "before-after", "short-story"]);
   const VISUAL_GROUPS = Object.freeze([
     { id: "animals", label: "Hayvanlar", symbols: ["🐶", "🐱", "🐰"] },
     { id: "fruits", label: "Meyveler", symbols: ["🍎", "🍐", "🍓"] },
@@ -304,6 +310,121 @@
     };
   }
 
+  function getSubtractionDifficulty(stageId, roundNumber, totalRounds) {
+    const base = getDifficulty(roundNumber, totalRounds);
+    if (base.level === 1) {
+      return { level: 1, firstMin: 2, firstMax: 5, choiceCount: 2, allowZero: false };
+    }
+    if (base.level === 2) {
+      return { level: 2, firstMin: 3, firstMax: 10, choiceCount: 3, allowZero: [4, 7].includes(roundNumber) };
+    }
+    return {
+      level: 3,
+      firstMin: 5,
+      firstMax: stageId === "subtraction-preparation" ? 15 : 20,
+      choiceCount: stageId === "subtract-smaller-from-greater" && roundNumber === totalRounds ? 4 : 3,
+      allowZero: [7, 9].includes(roundNumber)
+    };
+  }
+
+  function isRecentSubtraction(first, removed, recentEquations) {
+    return recentEquations.includes(`${first}-${removed}`) || recentEquations[0]?.startsWith(`${first}-`);
+  }
+
+  function generateSubtraction(stageId, roundNumber, totalRounds, recentEquations = [], rng = Math.random) {
+    const difficulty = getSubtractionDifficulty(stageId, roundNumber, totalRounds);
+    for (let attempt = 0; attempt < 18; attempt += 1) {
+      const first = difficulty.firstMin + randomIndex(difficulty.firstMax - difficulty.firstMin + 1, rng);
+      let removed = 1 + randomIndex(Math.max(1, first), rng);
+      if (difficulty.allowZero && attempt === 0) removed = roundNumber % 2 === 0 ? 0 : first;
+      const result = first - removed;
+      if (first < removed || result < 0 || first === 0 && removed === 0) continue;
+      if (!difficulty.allowZero && (removed === 0 || result === 0)) continue;
+      if (isRecentSubtraction(first, removed, recentEquations)) continue;
+      return { first, removed, result, difficulty };
+    }
+    const candidates = [];
+    for (let first = difficulty.firstMin; first <= difficulty.firstMax; first += 1) {
+      for (let removed = difficulty.allowZero ? 0 : 1; removed <= first; removed += 1) {
+        const result = first - removed;
+        if (!difficulty.allowZero && result === 0 || isRecentSubtraction(first, removed, recentEquations)) continue;
+        candidates.push({ first, removed, result });
+      }
+    }
+    if (candidates.length) {
+      return { ...candidates[(roundNumber - 1) % candidates.length], difficulty, usedFallback: true };
+    }
+    return { first: 3, removed: 1, result: 2, difficulty, usedFallback: true };
+  }
+
+  function makeSubtractionChoices(correct, count, first, removed, roundNumber) {
+    const candidates = [
+      first,
+      removed,
+      correct + 1,
+      correct - 1,
+      correct + 2,
+      correct - 2,
+      ...range(0, MAX_NUMBER)
+    ];
+    const distractors = [...new Set(candidates)]
+      .filter(value => Number.isInteger(value) && value >= MIN_NUMBER && value <= MAX_NUMBER && value !== correct)
+      .slice(0, count - 1);
+    distractors.splice((roundNumber - 1) % count, 0, correct);
+    return distractors;
+  }
+
+  function createSubtractionRound(stageId, roundNumber, totalRounds, {
+    rng = Math.random,
+    recentEquations = [],
+    warn = console.warn
+  } = {}) {
+    const generated = generateSubtraction(stageId, roundNumber, totalRounds, recentEquations, rng);
+    if (generated.usedFallback) warn(`[Sprint 8.3.4 Çıkarma] ${stageId} için güvenli yedek tur kullanıldı.`);
+    const { first, removed, result, difficulty } = generated;
+    const groupIndex = (roundNumber - 1) % VISUAL_GROUPS.length;
+    const symbolIndex = roundNumber - 1;
+    const startVisual = createQuantityVisual(first, groupIndex, symbolIndex);
+    const pattern = stageId === "subtraction-preparation"
+      ? SUBTRACTION_PATTERNS[(roundNumber - 1) % SUBTRACTION_PATTERNS.length]
+      : stageId === "visual-subtraction"
+        ? SUBTRACTION_PATTERNS[(roundNumber - 1) % 3]
+        : undefined;
+    const prompt = stageId === "subtract-smaller-from-greater"
+      ? `${first} − ${removed} kaç eder?`
+      : pattern === "remove-from-basket"
+        ? `${removed} nesneyi gönder.`
+        : pattern === "before-after"
+          ? "Kaç tane kaldı?"
+          : pattern === "short-story"
+            ? `${removed} tanesi gitti. Kaç tane kaldı?`
+            : "Gidenlerden sonra kaç tane kaldı?";
+    return {
+      type: stageId === "subtraction-preparation" ? "subtraction-preparation" : stageId === "subtract-smaller-from-greater" ? "numeric-subtraction" : "visual-subtraction",
+      stageId,
+      first,
+      removed,
+      result,
+      correct: result,
+      equation: `${first} − ${removed} = ?`,
+      accessibleEquation: `${getTurkishNumber(first)} nesne vardı. ${getTurkishNumber(removed)} nesne gitti. Kalan sayıyı seç.`,
+      prompt,
+      speech: stageId === "subtract-smaller-from-greater"
+        ? `${getTurkishNumber(first)} eksi ${getTurkishNumber(removed)} kaç eder?`
+        : `${getTurkishNumber(first)} nesne vardı. ${getTurkishNumber(removed)} nesne gitti. Kaç tane kaldı?`,
+      choices: makeSubtractionChoices(result, difficulty.choiceCount, first, removed, roundNumber),
+      startVisual,
+      removedVisual: createQuantityVisual(removed, groupIndex, symbolIndex),
+      remainingVisual: createQuantityVisual(result, groupIndex, symbolIndex),
+      visualGroupId: startVisual.groupId,
+      pattern,
+      manualRemoval: stageId === "subtraction-preparation" && pattern === "remove-from-basket",
+      hasVisualHelp: stageId === "subtract-smaller-from-greater",
+      hasCountingSupport: stageId !== "subtract-smaller-from-greater",
+      difficulty
+    };
+  }
+
   function createRound(stageId, roundNumber, totalRounds, rng = Math.random, context = {}) {
     if (stageId === "count-objects") return createCountingRound(roundNumber, totalRounds, rng);
     if (stageId === "order-numbers") return createOrderingRound(roundNumber, totalRounds, rng);
@@ -312,6 +433,7 @@
     if (stageId === "find-smaller-number") return createComparisonRound("smaller", roundNumber, totalRounds, rng);
     if (stageId === "equal-quantities") return createEqualQuantityRound(roundNumber, totalRounds, rng);
     if (ADDITION_STAGE_IDS.includes(stageId)) return createAdditionRound(stageId, roundNumber, totalRounds, { ...context, rng });
+    if (SUBTRACTION_STAGE_IDS.includes(stageId)) return createSubtractionRound(stageId, roundNumber, totalRounds, { ...context, rng });
     return undefined;
   }
 
@@ -331,6 +453,26 @@
     return Boolean(state?.slots.every((value, index) => value === state.target[index]));
   }
 
+  function createRemovalState(round) {
+    return { required: round?.removed || 0, itemCount: round?.first || 0, selectedIndices: [] };
+  }
+
+  function toggleRemovalSelection(state, itemIndex) {
+    if (!state || !Number.isInteger(itemIndex) || itemIndex < 0 || itemIndex >= state.itemCount) return false;
+    const existingIndex = state.selectedIndices.indexOf(itemIndex);
+    if (existingIndex >= 0) {
+      state.selectedIndices.splice(existingIndex, 1);
+      return true;
+    }
+    if (state.selectedIndices.length >= state.required) return false;
+    state.selectedIndices.push(itemIndex);
+    return true;
+  }
+
+  function isRemovalSelectionComplete(state) {
+    return Boolean(state && state.selectedIndices.length === state.required);
+  }
+
   function validateRound(round) {
     if (!round || typeof round.prompt !== "string" || typeof round.speech !== "string") return false;
     const validNumber = value => Number.isInteger(value) && value >= MIN_NUMBER && value <= MAX_NUMBER;
@@ -345,6 +487,22 @@
         && round.secondVisual.quantity === round.second
         && round.combinedVisual.quantity === round.result
         && round.firstVisual.symbol === round.secondVisual.symbol
+        && round.choices.filter(value => value === round.correct).length === 1
+        && new Set(round.choices).size === round.choices.length
+        && round.choices.every(validNumber);
+    }
+    if (["subtraction-preparation", "numeric-subtraction", "visual-subtraction"].includes(round.type)) {
+      return validNumber(round.first)
+        && validNumber(round.removed)
+        && !(round.first === 0 && round.removed === 0)
+        && round.first >= round.removed
+        && round.result === round.first - round.removed
+        && round.result >= 0
+        && round.startVisual.quantity === round.first
+        && round.removedVisual.quantity === round.removed
+        && round.remainingVisual.quantity === round.result
+        && round.startVisual.symbol === round.removedVisual.symbol
+        && round.startVisual.symbol === round.remainingVisual.symbol
         && round.choices.filter(value => value === round.correct).length === 1
         && new Set(round.choices).size === round.choices.length
         && round.choices.every(validNumber);
@@ -387,18 +545,28 @@
         }
       });
     });
-    problems.forEach(problem => warn(`[Sprint 8.3.2 Sayılar] ${problem}`));
+    SUBTRACTION_STAGE_IDS.forEach(stageId => {
+      const total = stageId === "subtraction-preparation" ? 8 : 10;
+      range(1, total).forEach(roundNumber => {
+        if (!validateRound(createSubtractionRound(stageId, roundNumber, total, { rng: () => 0.42, warn: () => {} }))) {
+          problems.push(`${stageId} geçerli çıkarma turu üretemedi.`);
+        }
+      });
+    });
+    problems.forEach(problem => warn(`[Sayı Öğrenme] ${problem}`));
     return { valid: problems.length === 0, problems };
   }
 
   const validation = validateContent();
 
   root.MilaNumberLearning = {
-    MIN_NUMBER, MAX_NUMBER, NUMBER_STAGE_IDS, ADDITION_STAGE_IDS, PLAYABLE_STAGE_IDS, PREPARATION_PATTERNS, VISUAL_GROUPS, validation, shuffle, getDifficulty,
+    MIN_NUMBER, MAX_NUMBER, NUMBER_STAGE_IDS, ADDITION_STAGE_IDS, SUBTRACTION_STAGE_IDS, PLAYABLE_STAGE_IDS, PREPARATION_PATTERNS, SUBTRACTION_PATTERNS, VISUAL_GROUPS, validation, shuffle, getDifficulty,
     createQuantityVisual, createCountingRound, createOrderingRound, createNeighborRound,
     createComparisonRound, createEqualQuantityRound, getAdditionDifficulty, getTurkishNumber,
-    generateAddends, createAdditionRound, createRound, createOrderingState,
-    placeOrderingPiece, isOrderingComplete, validateRound, validateContent
+    generateAddends, createAdditionRound, getSubtractionDifficulty, generateSubtraction,
+    makeSubtractionChoices, createSubtractionRound, createRound, createOrderingState,
+    placeOrderingPiece, isOrderingComplete, createRemovalState, toggleRemovalSelection,
+    isRemovalSelectionComplete, validateRound, validateContent
   };
 
   if (typeof module !== "undefined" && module.exports) module.exports = root.MilaNumberLearning;
