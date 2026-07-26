@@ -187,7 +187,7 @@ let activeSortingDrag;
 let isSortingProcessing = false;
 let isSortingCompleted = false;
 let activeLearningPathStage;
-let learningPathCategoryOrder = [];
+let learningPathQuestionPlan = [];
 let isLearningPathSessionCompleted = false;
 let learningPathPreviousGameMode;
 let isSessionSummaryShowing = false;
@@ -701,22 +701,19 @@ function getSessionQuestionCount() {
   return SESSION_QUESTION_COUNT;
 }
 
-function prepareLearningPathCategoryOrder() {
-  learningPathCategoryOrder = [];
-  if (!activeLearningPathStage || activeLearningPathStage.categories.length < 2) return;
-  const categories = activeLearningPathStage.categories.filter(category => engine.questions.some(question => question.category === category));
-  if (!categories.length) return;
-  const balancedCategories = Array.from({ length: getSessionQuestionCount() }, (_, index) => categories[index % categories.length]);
-  learningPathCategoryOrder = appUtils.shuffle(balancedCategories);
+function prepareLearningPathQuestionPlan() {
+  learningPathQuestionPlan = activeLearningPathStage ? engine.createSessionPlan(activeLearningPathStage.categories, getSessionQuestionCount()) : [];
 }
 
-function applyActiveQuestionCategories() {
+function selectNextQuestion() {
+  const plannedQuestion = activeLearningPathStage ? learningPathQuestionPlan[questionNumber] : undefined;
+  if (plannedQuestion) return engine.prepareQuestion(plannedQuestion);
   if (!activeLearningPathStage) {
     applyCategoryPack();
-    return;
+  } else {
+    engine.setActiveCategories(activeLearningPathStage.categories);
   }
-  const nextCategory = learningPathCategoryOrder[questionNumber];
-  engine.setActiveCategories(nextCategory ? [nextCategory] : activeLearningPathStage.categories);
+  return engine.selectQuestion();
 }
 
 function updateStartButton() {
@@ -2063,8 +2060,11 @@ function showQuestion() {
   pendingCorrectTransition = false;
   wrongAttemptsForQuestion = 0;
   isRevealingCorrectAnswer = false;
-  applyActiveQuestionCategories();
-  currentQuestion = engine.selectQuestion();
+  currentQuestion = selectNextQuestion();
+  if (!currentQuestion) {
+    goHome(false);
+    return;
+  }
   currentAnswers = engine.getAnswers(currentQuestion);
   questionNumber += 1;
   ui.category.textContent = currentQuestion.label;
@@ -2213,17 +2213,19 @@ function resetSession() {
   engine.resetSession();
   isLearningPathSessionCompleted = false;
   isSessionSummaryShowing = false;
-  prepareLearningPathCategoryOrder();
+  prepareLearningPathQuestionPlan();
 }
 
 function startLearningPathStage(stageId) {
   if (isPaused || isStartingGame) return;
   const stage = LEARNING_PATH_STAGES.find(pathStage => pathStage.id === stageId);
-  if (!engine || !stage || !stage.categories.every(category => engine.questions.some(question => question.category === category))) return;
+  if (!engine || !stage) return;
+  const availableCategories = stage.categories.filter(category => engine.questions.some(question => question.category === category));
+  if (!availableCategories.length) return;
   clearSpeech();
   window.clearTimeout(sessionCelebrationTimer);
   if (!activeLearningPathStage) learningPathPreviousGameMode = activeGameMode;
-  activeLearningPathStage = stage;
+  activeLearningPathStage = { ...stage, categories: availableCategories };
   activeGameMode = LEARNING_MODE;
   ui.shell.classList.remove("learning-path-open");
   ui.learningPath.classList.add("hidden");
@@ -2373,7 +2375,7 @@ function goHome(shouldSpeak = true) {
   ui.sortingDestinations.textContent = "";
   ui.answers.textContent = "";
   activeLearningPathStage = undefined;
-  learningPathCategoryOrder = [];
+  learningPathQuestionPlan = [];
   isLearningPathSessionCompleted = false;
   isSessionSummaryShowing = false;
   learningPathPreviousGameMode = undefined;

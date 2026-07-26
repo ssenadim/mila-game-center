@@ -24,11 +24,13 @@ class QuestionEngine {
     this.recentQuestionTypes = [];
     this.questionTypeCounts = { recognition: 0, selection: 0 };
     this.categoryCounts = {};
+    this.lastCorrectAnswerPosition = undefined;
   }
 
   getStats(question) {
-    if (!this.learningStats.has(question)) this.learningStats.set(question, { mistakes: 0, successes: 0 });
-    return this.learningStats.get(question);
+    const sourceQuestion = question?._sourceQuestion ?? question;
+    if (!this.learningStats.has(sourceQuestion)) this.learningStats.set(sourceQuestion, { mistakes: 0, successes: 0 });
+    return this.learningStats.get(sourceQuestion);
   }
 
   getAvailableCategories() {
@@ -106,6 +108,77 @@ class QuestionEngine {
     }) ?? questions[questions.length - 1];
   }
 
+  getQuestionIdentity(question) {
+    return question?.id ?? question?.key ?? `${question?.category ?? ""}|${question?.correct ?? ""}|${question?.prompt ?? ""}|${question?.visual ?? ""}`;
+  }
+
+  getTargetIdentity(question) {
+    return question?.targetId ?? (typeof question?.correct === "string" ? question.correct.trim().toLocaleLowerCase("en-US") : "");
+  }
+
+  cloneQuestion(question) {
+    const clone = { ...question, answers: Array.isArray(question.answers) ? [...question.answers] : [] };
+    Object.defineProperty(clone, "_sourceQuestion", { value: question, enumerable: false });
+    return clone;
+  }
+
+  createBalancedCategoryOrder(categories, sessionLength) {
+    if (!categories.length || sessionLength <= 0) return [];
+    const shuffledCategories = window.MilaUtils.shuffle(categories);
+    const baseCount = Math.floor(sessionLength / shuffledCategories.length);
+    const extraCount = sessionLength % shuffledCategories.length;
+    const remaining = new Map(shuffledCategories.map((category, index) => [category, baseCount + (index < extraCount ? 1 : 0)]));
+    const order = [];
+    while (order.length < sessionLength) {
+      const available = shuffledCategories.filter(category => (remaining.get(category) ?? 0) > 0);
+      if (!available.length) break;
+      const lastTwo = order.slice(-2);
+      const streakSafe = lastTwo.length === 2 && lastTwo[0] === lastTwo[1] ? available.filter(category => category !== lastTwo[0]) : available;
+      const candidates = streakSafe.length ? streakSafe : available;
+      const weightedCandidates = candidates.flatMap(category => Array.from({ length: remaining.get(category) ?? 0 }, () => category));
+      const selectedCategory = window.MilaUtils.randomItem(weightedCandidates.length ? weightedCandidates : candidates);
+      order.push(selectedCategory);
+      remaining.set(selectedCategory, (remaining.get(selectedCategory) ?? 1) - 1);
+    }
+    return order;
+  }
+
+  createSessionPlan(categories, requestedLength) {
+    const sessionLength = Math.max(0, Math.floor(Number(requestedLength) || 0));
+    if (!sessionLength) return [];
+    const requestedCategories = Array.isArray(categories) ? [...new Set(categories)] : [];
+    const availableCategories = requestedCategories.filter(category => this.questions.some(question => question.category === category));
+    if (!availableCategories.length) return [];
+    const categoryOrder = this.createBalancedCategoryOrder(availableCategories, sessionLength);
+    const categoryPools = new Map(availableCategories.map(category => [category, {
+      source: this.questions.filter(question => question.category === category),
+      remaining: []
+    }]));
+    const plan = [];
+    categoryOrder.forEach(category => {
+      const pool = categoryPools.get(category);
+      if (!pool?.source.length) return;
+      if (!pool.remaining.length) pool.remaining = window.MilaUtils.shuffle(pool.source);
+      const previousQuestion = plan[plan.length - 1];
+      const previousIdentity = this.getQuestionIdentity(previousQuestion);
+      const previousTarget = this.getTargetIdentity(previousQuestion);
+      let selectedIndex = pool.remaining.findIndex(question => this.getQuestionIdentity(question) !== previousIdentity && this.getTargetIdentity(question) !== previousTarget);
+      if (selectedIndex < 0) selectedIndex = pool.remaining.findIndex(question => this.getQuestionIdentity(question) !== previousIdentity);
+      if (selectedIndex < 0) selectedIndex = 0;
+      const [selectedQuestion] = pool.remaining.splice(selectedIndex, 1);
+      plan.push(this.cloneQuestion(selectedQuestion));
+    });
+    return plan;
+  }
+
+  prepareQuestion(question) {
+    if (!question) return undefined;
+    question.questionType = this.getQuestionType(question);
+    question.questionPrompt = this.getQuestionPrompt(question);
+    this.remember(question);
+    return question;
+  }
+
   selectQuestion() {
     const playableQuestions = this.questions.filter(question => this.activeCategories.includes(question.category));
     const availableQuestions = playableQuestions.length ? playableQuestions : this.questions;
@@ -114,10 +187,7 @@ class QuestionEngine {
     const answerBalanced = categoryBalanced.filter(question => !this.recentAnswers.slice(-RECENT_BALANCE_LIMIT).includes(question.correct));
     const choices = answerBalanced.length ? answerBalanced : categoryBalanced.length ? categoryBalanced : fresh.length ? fresh : availableQuestions;
     const question = this.pickWeighted(choices);
-    question.questionType = this.getQuestionType(question);
-    question.questionPrompt = this.getQuestionPrompt(question);
-    this.remember(question);
-    return question;
+    return this.prepareQuestion(question);
   }
 
   canUseRecognition(question) {
@@ -154,10 +224,22 @@ class QuestionEngine {
   }
 
   getAnswers(question) {
-    const answers = Array.isArray(question.answers) ? question.answers : [];
-    const categoryAnswers = this.questions.filter(item => item.category === question.category).map(item => item.correct);
-    const uniqueAnswers = [...new Set([question.correct, ...answers, ...categoryAnswers].filter(answer => typeof answer === "string" && answer.trim()))];
-    return window.MilaUtils.shuffle(uniqueAnswers.slice(0, 4));
+    if (!question || typeof question.correct !== "string" || !question.correct.trim()) return [];
+    const categoryQuestions = this.questions.filter(item => item.category === question.category);
+    const categoryAnswers = categoryQuestions.flatMap(item => [item.correct, ...(Array.isArray(item.answers) ? item.answers : [])]);
+    const validAnswers = [...new Set(categoryAnswers.filter(answer => typeof answer === "string" && answer.trim()))];
+    const distractors = window.MilaUtils.shuffle(validAnswers.filter(answer => answer !== question.correct));
+    const requestedAnswerCount = Array.isArray(question.answers) && question.answers.length ? question.answers.length : 4;
+    const answerCount = Math.min(Math.max(1, requestedAnswerCount), validAnswers.length || 1);
+    const choices = window.MilaUtils.shuffle([question.correct, ...distractors.slice(0, answerCount - 1)]);
+    const correctPosition = choices.indexOf(question.correct);
+    if (choices.length > 1 && correctPosition === this.lastCorrectAnswerPosition) {
+      const alternativePositions = window.MilaUtils.shuffle(choices.map((_, index) => index).filter(index => index !== correctPosition));
+      const alternativePosition = alternativePositions[0];
+      [choices[correctPosition], choices[alternativePosition]] = [choices[alternativePosition], choices[correctPosition]];
+    }
+    this.lastCorrectAnswerPosition = choices.indexOf(question.correct);
+    return choices;
   }
 
   getFavoriteCategory() {
