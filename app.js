@@ -191,6 +191,9 @@ let learningPathQuestionPlan = [];
 let isLearningPathSessionCompleted = false;
 let learningPathPreviousGameMode;
 let isSessionSummaryShowing = false;
+let learningPathConsecutiveMissedQuestions = 0;
+let isLearningPathRecoveryQuestion = false;
+let learningPathQuestionPhase = "variety";
 
 function getValidPlayerName(name) {
   const playerName = typeof name === "string" ? name.trim() : "";
@@ -702,11 +705,22 @@ function getSessionQuestionCount() {
 }
 
 function prepareLearningPathQuestionPlan() {
-  learningPathQuestionPlan = activeLearningPathStage ? engine.createSessionPlan(activeLearningPathStage.categories, getSessionQuestionCount()) : [];
+  learningPathQuestionPlan = activeLearningPathStage ? engine.createSessionPlan(activeLearningPathStage.categories, getSessionQuestionCount(), { gentleProgression: true }) : [];
 }
 
 function selectNextQuestion() {
-  const plannedQuestion = activeLearningPathStage ? learningPathQuestionPlan[questionNumber] : undefined;
+  learningPathQuestionPhase = activeLearningPathStage ? engine.getSessionPhase(questionNumber, getSessionQuestionCount()) : "variety";
+  let plannedQuestion = activeLearningPathStage ? learningPathQuestionPlan[questionNumber] : undefined;
+  isLearningPathRecoveryQuestion = false;
+  if (activeLearningPathStage && learningPathConsecutiveMissedQuestions >= 2) {
+    const recoveryCategory = plannedQuestion?.category ?? activeLearningPathStage.categories[0];
+    const recoveryQuestion = engine.getFamiliarQuestion(recoveryCategory, currentQuestion);
+    if (recoveryQuestion) {
+      plannedQuestion = recoveryQuestion;
+      isLearningPathRecoveryQuestion = true;
+      learningPathConsecutiveMissedQuestions = 0;
+    }
+  }
   if (plannedQuestion) return engine.prepareQuestion(plannedQuestion);
   if (!activeLearningPathStage) {
     applyCategoryPack();
@@ -2065,7 +2079,7 @@ function showQuestion() {
     goHome(false);
     return;
   }
-  currentAnswers = engine.getAnswers(currentQuestion);
+  currentAnswers = engine.getAnswers(currentQuestion, activeLearningPathStage ? { phase: learningPathQuestionPhase, simplify: isLearningPathRecoveryQuestion } : undefined);
   questionNumber += 1;
   ui.category.textContent = currentQuestion.label;
   ui.visual.textContent = currentQuestion.visual;
@@ -2141,6 +2155,7 @@ async function handleWrongAnswer(button) {
   await appUtils.wait(900);
   if (!isActiveAudio(run)) return;
   isRevealingCorrectAnswer = false;
+  if (activeLearningPathStage) learningPathConsecutiveMissedQuestions += 1;
   if (questionNumber >= getSessionQuestionCount()) showSessionSummary();
   else showQuestion();
 }
@@ -2150,6 +2165,7 @@ async function handleCorrectAnswer(button) {
   clearSpeech();
   const run = audioRun;
   pendingCorrectTransition = true;
+  if (activeLearningPathStage) learningPathConsecutiveMissedQuestions = 0;
   stars += 1;
   if (stars % 10 === 0) awardSticker();
   streak += 1;
@@ -2213,6 +2229,9 @@ function resetSession() {
   engine.resetSession();
   isLearningPathSessionCompleted = false;
   isSessionSummaryShowing = false;
+  learningPathConsecutiveMissedQuestions = 0;
+  isLearningPathRecoveryQuestion = false;
+  learningPathQuestionPhase = "variety";
   prepareLearningPathQuestionPlan();
 }
 
@@ -2378,6 +2397,9 @@ function goHome(shouldSpeak = true) {
   learningPathQuestionPlan = [];
   isLearningPathSessionCompleted = false;
   isSessionSummaryShowing = false;
+  learningPathConsecutiveMissedQuestions = 0;
+  isLearningPathRecoveryQuestion = false;
+  learningPathQuestionPhase = "variety";
   learningPathPreviousGameMode = undefined;
   if (gameModeToRestore) setGameMode(gameModeToRestore);
   ensureDailyGoal();

@@ -137,8 +137,59 @@ test("planned clones still update the existing learning-stat identity", () => {
   assert.equal(engine.getLearningStats()[`${plannedQuestion.category}:${plannedQuestion.correct}`].successes, 1);
 });
 
-test("empty and one-item pools remain valid", () => {
+test("gentle progression uses invisible warm-up, variety, and confidence phases", () => {
+  const engine = new QuestionEngine(questions);
+  assert.equal(engine.getSessionPhase(0, 20), "warm-up");
+  assert.equal(engine.getSessionPhase(4, 20), "warm-up");
+  assert.equal(engine.getSessionPhase(5, 20), "variety");
+  assert.equal(engine.getSessionPhase(14, 20), "variety");
+  assert.equal(engine.getSessionPhase(15, 20), "confidence");
+});
+
+test("gentle plans begin with source-ordered familiar content", () => {
   setRandom(13);
+  const engine = new QuestionEngine(questions);
+  const fruitQuestions = questions.filter(question => question.category === "Fruits");
+  const plan = engine.createSessionPlan(["Fruits"], 20, { gentleProgression: true });
+  assert.deepEqual(plan.slice(0, 3).map(question => question.id), fruitQuestions.map(question => question.id));
+  assert.ok(fruitQuestions.slice(0, 2).some(question => question.id === plan[plan.length - 1].id));
+});
+
+test("recovery selects familiar content while avoiding the previous target", () => {
+  setRandom(14);
+  const engine = new QuestionEngine(questions);
+  const animalQuestions = questions.filter(question => question.category === "Animals");
+  const recoveryQuestion = engine.getFamiliarQuestion("Animals", animalQuestions[0]);
+  assert.ok(animalQuestions.slice(0, 2).some(question => question.id === recoveryQuestion.id));
+  assert.notEqual(recoveryQuestion.correct, animalQuestions[0].correct);
+});
+
+test("warm-up and recovery answer choices use the familiar category vocabulary first", () => {
+  setRandom(15);
+  const colorVocabulary = ["Red", "Blue", "Yellow", "Green", "Purple", "Orange", "Pink", "Brown"];
+  const colorQuestions = [
+    { category: "Colors", label: "Colors", prompt: "Find Red", visual: "red", correct: "Red", answers: colorVocabulary.slice(0, 4) },
+    { category: "Colors", label: "Colors", prompt: "Find Purple", visual: "purple", correct: "Purple", answers: colorVocabulary.slice(4) }
+  ];
+  const engine = new QuestionEngine(colorQuestions);
+  const warmUpChoices = engine.getAnswers(colorQuestions[0], { phase: "warm-up" });
+  assert.ok(warmUpChoices.every(answer => colorVocabulary.slice(0, 4).includes(answer)));
+  const recoveryChoices = engine.getAnswers(colorQuestions[0], { phase: "confidence", simplify: true });
+  assert.ok(recoveryChoices.every(answer => colorVocabulary.slice(0, 4).includes(answer)));
+});
+
+test("replaying gentle progression restarts from a normal warm-up", () => {
+  setRandom(16);
+  const engine = new QuestionEngine(questions);
+  const expectedFirst = questions.find(question => question.category === "Numbers").id;
+  const firstPlan = engine.createSessionPlan(["Numbers"], 20, { gentleProgression: true });
+  const replayPlan = engine.createSessionPlan(["Numbers"], 20, { gentleProgression: true });
+  assert.equal(firstPlan[0].id, expectedFirst);
+  assert.equal(replayPlan[0].id, expectedFirst);
+});
+
+test("empty and one-item pools remain valid", () => {
+  setRandom(17);
   const emptyEngine = new QuestionEngine([]);
   assert.deepEqual(emptyEngine.createSessionPlan(["Colors"], 10), []);
   assert.deepEqual(emptyEngine.getAnswers(undefined), []);

@@ -6,6 +6,8 @@ const MAXIMUM_DIFFICULTY = .8;
 const DEFAULT_DIFFICULTY = .5;
 const SUCCESS_DIFFICULTY_STEP = .03;
 const MISTAKE_DIFFICULTY_STEP = .05;
+const WARM_UP_PORTION = .25;
+const VARIETY_PORTION = .75;
 
 class QuestionEngine {
   constructor(questions) {
@@ -122,6 +124,25 @@ class QuestionEngine {
     return clone;
   }
 
+  getSessionPhase(questionIndex, sessionLength) {
+    if (sessionLength <= 0 || questionIndex < Math.ceil(sessionLength * WARM_UP_PORTION)) return "warm-up";
+    if (questionIndex < Math.ceil(sessionLength * VARIETY_PORTION)) return "variety";
+    return "confidence";
+  }
+
+  getFamiliarQuestions(category) {
+    const categoryQuestions = this.questions.filter(question => question.category === category);
+    return categoryQuestions.slice(0, Math.max(1, Math.ceil(categoryQuestions.length / 2)));
+  }
+
+  getFamiliarQuestion(category, previousQuestion) {
+    const familiarQuestions = this.getFamiliarQuestions(category);
+    if (!familiarQuestions.length) return undefined;
+    const previousTarget = this.getTargetIdentity(previousQuestion);
+    const selectedQuestion = familiarQuestions.find(question => this.getTargetIdentity(question) !== previousTarget) ?? familiarQuestions[0];
+    return this.cloneQuestion(selectedQuestion);
+  }
+
   createBalancedCategoryOrder(categories, sessionLength) {
     if (!categories.length || sessionLength <= 0) return [];
     const shuffledCategories = window.MilaUtils.shuffle(categories);
@@ -143,7 +164,7 @@ class QuestionEngine {
     return order;
   }
 
-  createSessionPlan(categories, requestedLength) {
+  createSessionPlan(categories, requestedLength, { gentleProgression = false } = {}) {
     const sessionLength = Math.max(0, Math.floor(Number(requestedLength) || 0));
     if (!sessionLength) return [];
     const requestedCategories = Array.isArray(categories) ? [...new Set(categories)] : [];
@@ -155,18 +176,25 @@ class QuestionEngine {
       remaining: []
     }]));
     const plan = [];
-    categoryOrder.forEach(category => {
+    categoryOrder.forEach((category, questionIndex) => {
       const pool = categoryPools.get(category);
       if (!pool?.source.length) return;
-      if (!pool.remaining.length) pool.remaining = window.MilaUtils.shuffle(pool.source);
+      const phase = this.getSessionPhase(questionIndex, sessionLength);
+      if (!pool.remaining.length) pool.remaining = gentleProgression && phase === "warm-up" ? [...pool.source] : window.MilaUtils.shuffle(pool.source);
       const previousQuestion = plan[plan.length - 1];
       const previousIdentity = this.getQuestionIdentity(previousQuestion);
       const previousTarget = this.getTargetIdentity(previousQuestion);
-      let selectedIndex = pool.remaining.findIndex(question => this.getQuestionIdentity(question) !== previousIdentity && this.getTargetIdentity(question) !== previousTarget);
+      const familiarIdentities = new Set(this.getFamiliarQuestions(category).map(question => this.getQuestionIdentity(question)));
+      const preferFamiliar = gentleProgression && phase === "confidence" && (questionIndex % 2 === 0 || questionIndex === sessionLength - 1);
+      const preferredQuestions = preferFamiliar ? pool.remaining.filter(question => familiarIdentities.has(this.getQuestionIdentity(question))) : pool.remaining;
+      const selectionPool = preferredQuestions.length ? preferredQuestions : pool.remaining;
+      let selectedQuestion = selectionPool.find(question => this.getQuestionIdentity(question) !== previousIdentity && this.getTargetIdentity(question) !== previousTarget);
+      if (!selectedQuestion) selectedQuestion = selectionPool.find(question => this.getQuestionIdentity(question) !== previousIdentity);
+      let selectedIndex = selectedQuestion ? pool.remaining.indexOf(selectedQuestion) : -1;
       if (selectedIndex < 0) selectedIndex = pool.remaining.findIndex(question => this.getQuestionIdentity(question) !== previousIdentity);
       if (selectedIndex < 0) selectedIndex = 0;
-      const [selectedQuestion] = pool.remaining.splice(selectedIndex, 1);
-      plan.push(this.cloneQuestion(selectedQuestion));
+      const [question] = pool.remaining.splice(selectedIndex, 1);
+      plan.push(this.cloneQuestion(question));
     });
     return plan;
   }
@@ -223,14 +251,18 @@ class QuestionEngine {
     this.categoryCounts[question.label] = (this.categoryCounts[question.label] ?? 0) + 1;
   }
 
-  getAnswers(question) {
+  getAnswers(question, { phase = "variety", simplify = false } = {}) {
     if (!question || typeof question.correct !== "string" || !question.correct.trim()) return [];
     const categoryQuestions = this.questions.filter(item => item.category === question.category);
     const categoryAnswers = categoryQuestions.flatMap(item => [item.correct, ...(Array.isArray(item.answers) ? item.answers : [])]);
     const validAnswers = [...new Set(categoryAnswers.filter(answer => typeof answer === "string" && answer.trim()))];
-    const distractors = window.MilaUtils.shuffle(validAnswers.filter(answer => answer !== question.correct));
     const requestedAnswerCount = Array.isArray(question.answers) && question.answers.length ? question.answers.length : 4;
     const answerCount = Math.min(Math.max(1, requestedAnswerCount), validAnswers.length || 1);
+    const useFamiliarDistractors = simplify || phase === "warm-up";
+    const familiarAnswerCount = Math.min(validAnswers.length, Math.max(answerCount, Math.ceil(validAnswers.length / 2)));
+    const distractorPool = (useFamiliarDistractors ? validAnswers.slice(0, familiarAnswerCount) : validAnswers).filter(answer => answer !== question.correct);
+    const fallbackDistractors = validAnswers.filter(answer => answer !== question.correct && !distractorPool.includes(answer));
+    const distractors = [...window.MilaUtils.shuffle(distractorPool), ...window.MilaUtils.shuffle(fallbackDistractors)];
     const choices = window.MilaUtils.shuffle([question.correct, ...distractors.slice(0, answerCount - 1)]);
     const correctPosition = choices.indexOf(question.correct);
     if (choices.length > 1 && correctPosition === this.lastCorrectAnswerPosition) {
