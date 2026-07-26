@@ -19,6 +19,7 @@
         <button id="settings-button" class="global-control-button" type="button">⚙️ Ayarlar</button>
       </div>
       <nav id="game-menu" class="game-menu hidden" aria-label="Oyun menüsü">
+        <button type="button" data-menu-target="learning-path">🗺️ Öğrenme Yolu</button>
         <button type="button" data-menu-target="learning">Öğrenme Modları</button>
         <button type="button" data-menu-target="mini-games">Mini Oyunlar</button>
         <button type="button" data-menu-target="rewards">Kazandıklarım</button>
@@ -54,6 +55,7 @@
         </section>
         <button id="start-button" class="primary-button" type="button" disabled>Hadi başlayalım <span aria-hidden="true">✦</span></button>
         <button id="welcome-sound-button" class="sound-button" type="button" aria-label="Hoş geldin mesajını tekrar dinle">🔊 Dinle</button>
+        <button id="learning-path-button" class="learning-path-entry-button" type="button"><strong>🗺️ Öğrenme Yolu</strong><span>Adım adım keşfet!</span></button>
         <div class="mode-selection" aria-label="Oyun modu seçimi">
           <section class="game-mode-section" aria-labelledby="learning-modes-title">
             <h2 id="learning-modes-title">Öğrenme Modları</h2>
@@ -84,6 +86,14 @@
           </div>
           <div id="custom-category-options" class="custom-category-options hidden" aria-label="Özel kategori seçimi"></div>
         </section>
+      </section>
+
+      <section id="learning-path-screen" class="screen learning-path-screen hidden" aria-live="polite" aria-labelledby="learning-path-title">
+        <p class="eyebrow">ADIM ADIM ÖĞREN</p>
+        <h2 id="learning-path-title">🗺️ Öğrenme Yolu</h2>
+        <p class="learning-path-copy">Bir durak seç ve başlayalım!</p>
+        <div id="learning-path-stages" class="learning-path-stages" aria-label="Öğrenme yolu aşamaları"></div>
+        <button id="learning-path-home-button" class="sound-button learning-path-home-button" type="button">⌂ Ana Sayfa</button>
       </section>
 
       <section id="quiz-screen" class="screen quiz-screen hidden" aria-live="polite">
@@ -176,7 +186,10 @@
           <div class="summary-stat"><span aria-hidden="true">🔥</span><strong id="summary-streak">0</strong><small>En iyi seri</small></div>
           <div class="summary-stat category-stat"><span aria-hidden="true">💜</span><strong id="summary-category">-</strong><small>Favori kategori</small></div>
         </div>
-        <button id="play-again-button" class="primary-button" type="button">Yeniden oyna <span aria-hidden="true">↻</span></button>
+        <div class="summary-actions">
+          <button id="play-again-button" class="primary-button" type="button">Yeniden oyna <span aria-hidden="true">↻</span></button>
+          <button id="learning-path-return-button" class="primary-button learning-path-return-button hidden" type="button">Öğrenme Yoluna Dön</button>
+        </div>
       </section>
 
       <section id="balloon-bonus" class="screen balloon-bonus hidden" aria-live="polite" aria-labelledby="balloon-title">
