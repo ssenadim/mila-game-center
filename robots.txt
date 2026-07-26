@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Replace the reserved .example hostname with the verified production hostname before deployment.
+Sitemap: https://mila-game-center.vercel.app/sitemap.xml

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Mila Oyun Merkezi">
+  <rect width="64" height="64" rx="16" fill="#7c5ce0"/>
+  <circle cx="32" cy="33" r="20" fill="#ffd75a" stroke="#fffdf8" stroke-width="4"/>
+  <circle cx="25" cy="31" r="2.5" fill="#30285a"/>
+  <circle cx="39" cy="31" r="2.5" fill="#30285a"/>
+  <path d="M24 40c5 5 11 5 16 0" fill="none" stroke="#30285a" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="m50 8 2.2 4.4 4.8.7-3.5 3.4.8 4.8-4.3-2.2-4.3 2.2.8-4.8-3.5-3.4 4.8-.7Z" fill="#fffdf8"/>
+</svg>
