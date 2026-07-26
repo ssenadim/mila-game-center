@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=6.7" />
+    <link rel="stylesheet" href="styles.css?v=6.9" />
   </head>
   <body>
     <main class="game-shell">
@@ -46,6 +46,7 @@
             <button class="player-button" type="button" data-player-name="Hiranur" aria-pressed="false">Hiranur</button>
             <button id="custom-player-button" class="player-button custom-player-button" type="button" aria-pressed="false">Başka bir isim</button>
           </div>
+          <p id="player-selection-guidance" class="player-selection-guidance hidden" role="status">Önce kim oynuyor, seçelim.</p>
           <label id="custom-player-label" class="custom-player-label hidden" for="custom-player-name">İsmini yaz</label>
           <input id="custom-player-name" class="custom-player-input hidden" type="text" maxlength="20" autocomplete="name" />
         </section>
@@ -67,11 +68,11 @@
           <section class="game-mode-section mini-games-section" aria-labelledby="mini-games-title">
             <h2 id="mini-games-title">Mini Oyunlar</h2>
             <div class="mode-card-grid mini-games-grid">
-              <button id="matching-mode-button" class="mode-button matching-mode-button" type="button" aria-pressed="false"><strong>🧩 Eşini Bul</strong><span>Kartları aç ve aynı olanları bul.</span></button>
-              <button id="listening-mode-button" class="mode-button listening-mode-button" type="button" aria-pressed="false"><strong>👂 Dinle ve Seç</strong><span>Kelimeyi dinle, doğru resmi seç.</span></button>
-              <button id="number-match-mode-button" class="mode-button number-match-mode-button" type="button" aria-pressed="false"><strong>🔢 Sayıyı Bul</strong><span>Sayıyı dinle, doğru rakamı seç.</span></button>
-              <button id="color-match-mode-button" class="mode-button color-match-mode-button" type="button" aria-pressed="false"><strong>🎨 Rengi Bul</strong><span>Rengi dinle ya da oku, doğru kartı seç.</span></button>
-              <button id="sorting-mode-button" class="mode-button sorting-mode-button" type="button" aria-pressed="false"><strong>🧺 Grupla</strong><span>Nesneleri doğru kutuya yerleştir.</span></button>
+              <button id="matching-mode-button" class="mode-button matching-mode-button" type="button"><strong>🧩 Eşini Bul</strong><span>Kartları aç ve aynı olanları bul.</span></button>
+              <button id="listening-mode-button" class="mode-button listening-mode-button" type="button"><strong>👂 Dinle ve Seç</strong><span>Kelimeyi dinle, doğru resmi seç.</span></button>
+              <button id="number-match-mode-button" class="mode-button number-match-mode-button" type="button"><strong>🔢 Sayıyı Bul</strong><span>Sayıyı dinle, doğru rakamı seç.</span></button>
+              <button id="color-match-mode-button" class="mode-button color-match-mode-button" type="button"><strong>🎨 Rengi Bul</strong><span>Rengi dinle ya da oku, doğru kartı seç.</span></button>
+              <button id="sorting-mode-button" class="mode-button sorting-mode-button" type="button"><strong>🧺 Grupla</strong><span>Nesneleri doğru kutuya yerleştir.</span></button>
             </div>
           </section>
         </div>
@@ -289,6 +290,6 @@
     <script src="js/services/AnimationHelper.js?v=6.6"></script>
     <script src="js/QuestionEngine.js?v=6.4"></script>
     <script src="data/offline-data.js"></script>
-    <script src="app.js?v=6.8"></script>
+    <script src="app.js?v=6.9"></script>
   </body>
 </html>
