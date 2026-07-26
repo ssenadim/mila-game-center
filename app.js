@@ -6,8 +6,20 @@ const SUCCESS_NEXT_DELAY = 1000;
 const ENGLISH_LANGUAGE = "en-US";
 const TURKISH_LANGUAGE = "tr-TR";
 const WELCOME_MESSAGE = "Merhaba! Haydi oynayalım!";
-const PRAISE_MESSAGES = ["Harikasın", "Süpersin", "Muhteşemsin", "Aferin", "Çok güzel", "Mükemmel", "Devam et", "Bravo"];
-const RETRY_MESSAGES = ["Bir daha deneyelim!", "Yaklaşıyorsun!", "Bir kez daha bakalım.", "Sorun değil.", "Hadi tekrar deneyelim!"];
+const PRAISE_MESSAGES = [
+  "Harika", "Süper", "Çok güzel", "Bravo", "Mükemmel", "Aferin", "İşte bu", "Harika gidiyorsun",
+  "Çok iyi düşündün", "Bunu başardın", "Güzel seçim", "Aynen böyle", "Muhteşem", "Şahane",
+  "Devam edelim", "Çok güzel ilerliyorsun", "Ne güzel öğrendin", "Çok iyi"
+];
+const RETRY_MESSAGES = [
+  "Bir daha deneyelim 😊", "Yaklaştın!", "Hadi birlikte bulalım.", "Sorun değil.", "Devam edelim.",
+  "Bu da öğrenmenin bir parçası.", "Tekrar bakalım.", "Birlikte deneyebiliriz."
+];
+const MOTIVATION_MESSAGES = ["Harika gidiyorsun!", "Çok güzel ilerliyorsun!", "Biraz daha devam edelim!", "Öğrenmek çok eğlenceli!"];
+const COMPLETION_MESSAGES = [
+  "Bu etkinliği tamamladın!", "Yeni şeyler öğrendin!", "Seninle gurur duyuyorum!",
+  "Harika bir iş çıkardın!", "Çok güzel tamamladın!"
+];
 const STICKERS = ["⭐", "🌈", "🦋", "🦄", "🚀", "🐱", "🐶"];
 const STICKER_STORAGE_KEY = "mila-learning-stickers";
 const REWARD_POPUP_DURATION = 3000;
@@ -131,9 +143,8 @@ let dailyGoalPopupTimer;
 let isDailyGoalShowing = false;
 let pendingDailyGoalPopup = false;
 let correctAnswersSinceVoice = 2;
-let lastVoiceEncouragement = "";
 let wrongAttemptsForQuestion = 0;
-let lastRetryMessage = "";
+let encouragementHistory = {};
 let isRevealingCorrectAnswer = false;
 let isMatchingGameActive = false;
 let matchingCards = [];
@@ -286,7 +297,7 @@ function renderLearningPath() {
   });
 }
 
-function renderLearningPathCompletion() {
+function renderLearningPathCompletion(completionMessage) {
   const isLearningPathCompletion = Boolean(activeLearningPathStage);
   ui.learningPathCompletion.classList.toggle("hidden", !isLearningPathCompletion);
   ui.summaryStats.classList.toggle("hidden", isLearningPathCompletion);
@@ -296,7 +307,7 @@ function renderLearningPathCompletion() {
   ui.playAgain.setAttribute("aria-label", isLearningPathCompletion ? `${activeLearningPathStage.name} bölümünü tekrar oyna` : "Yeniden oyna");
   if (!isLearningPathCompletion) return;
   const recommendedStage = getRecommendedLearningPathStage(loadLearningPathProgress());
-  ui.summaryTitle.textContent = "Harika iş!";
+  ui.summaryTitle.textContent = completionMessage ?? getCompletionMessage();
   ui.summaryCopy.textContent = "Yeni şeyler öğreniyorsun!";
   ui.learningPathCompletionIcon.textContent = activeLearningPathStage.icon;
   ui.learningPathCompletionStage.textContent = `${activeLearningPathStage.name} bölümünü bitirdin!`;
@@ -744,19 +755,41 @@ function getPersonalizedBonusMessage() {
 }
 
 function getPersonalizedSessionMessage() {
-  return selectedPlayer ? `Harika ${selectedPlayer}! Bugün çok güzel oynadın.` : "Harika! Bugün çok güzel oynadın.";
+  const completionMessage = getCompletionMessage();
+  return selectedPlayer ? `${selectedPlayer}! ${completionMessage}` : completionMessage;
+}
+
+function selectEncouragementMessage(messages, kind) {
+  if (!messages.length) return "";
+  const choices = messages.filter(message => message !== encouragementHistory[kind]);
+  const message = appUtils.randomItem(choices.length ? choices : messages);
+  encouragementHistory[kind] = message;
+  return message;
+}
+
+function resetEncouragementState() {
+  encouragementHistory = {};
+  correctAnswersSinceVoice = 2;
 }
 
 function getPersonalizedPraiseMessage() {
-  const praiseMessage = appUtils.randomItem(PRAISE_MESSAGES);
+  const praiseMessage = selectEncouragementMessage(PRAISE_MESSAGES, "correct");
   return selectedPlayer ? `${praiseMessage} ${selectedPlayer}!` : `${praiseMessage}!`;
 }
 
 function getRetryMessage() {
-  const messages = RETRY_MESSAGES.filter(message => message !== lastRetryMessage);
-  const retryMessage = appUtils.randomItem(messages.length ? messages : RETRY_MESSAGES);
-  lastRetryMessage = retryMessage;
-  return retryMessage;
+  return selectEncouragementMessage(RETRY_MESSAGES, "retry");
+}
+
+function getCompletionMessage() {
+  return selectEncouragementMessage(COMPLETION_MESSAGES, "completion");
+}
+
+function getCorrectFeedbackMessage(progress = 0, total = 0) {
+  const praiseMessage = getPersonalizedPraiseMessage();
+  const shouldAddMotivation = total >= 10 && progress > 1 && progress < total && progress % 5 === 0;
+  if (!shouldAddMotivation) return praiseMessage;
+  return `${praiseMessage} ${selectEncouragementMessage(MOTIVATION_MESSAGES, "motivation")}`;
 }
 
 function shouldPlayVoiceEncouragement() {
@@ -765,8 +798,7 @@ function shouldPlayVoiceEncouragement() {
 }
 
 function getVoiceEncouragementMessage() {
-  const messages = PRAISE_MESSAGES.filter(message => message !== lastVoiceEncouragement);
-  const encouragement = appUtils.randomItem(messages.length ? messages : PRAISE_MESSAGES);
+  const encouragement = selectEncouragementMessage(PRAISE_MESSAGES, "correct");
   return { encouragement, message: selectedPlayer ? `${encouragement} ${selectedPlayer}!` : `${encouragement}!` };
 }
 
@@ -785,6 +817,7 @@ function renderPlayerSelection() {
 function selectPlayer(name) {
   selectedPlayer = getValidPlayerName(name);
   if (!selectedPlayer) return;
+  resetEncouragementState();
   ui.customPlayerName.value = "";
   saveSelectedPlayer();
   parentData = loadParentData();
@@ -804,6 +837,7 @@ function selectPlayer(name) {
 
 function selectCustomPlayer() {
   selectedPlayer = undefined;
+  resetEncouragementState();
   dailyGoalData = {};
   resetDailyGoalPopup();
   renderDailyGoal();
@@ -822,6 +856,7 @@ function updateCustomPlayer() {
   selectedPlayer = playerName;
   ui.customPlayer.setAttribute("aria-pressed", String(Boolean(playerName)));
   if (playerName) {
+    resetEncouragementState();
     saveSelectedPlayer();
     parentData = loadParentData();
     achievementData = loadAchievementData();
@@ -1062,7 +1097,7 @@ function completeMatchingGame() {
   matchingPendingFlip = true;
   parentData.matchingPairsCompleted += 1;
   saveParentData();
-  ui.matchingFeedback.textContent = "Harika! Tüm eşleri buldun!";
+  ui.matchingFeedback.textContent = getCompletionMessage();
   renderMatchingCards();
   animations.celebrate();
   ui.matchingCelebration.innerHTML = ui.celebration.innerHTML;
@@ -1087,14 +1122,14 @@ function openMatchingCard(index) {
     matchingCards[secondIndex].completed = true;
     matchingOpenCards = [];
     matchingPairsFound += 1;
-    ui.matchingFeedback.textContent = "Eşini buldun!";
+    ui.matchingFeedback.textContent = getCorrectFeedbackMessage();
     renderMatchingCards();
     audio.playSuccess();
     if (matchingPairsFound === 3) completeMatchingGame();
     return;
   }
   matchingPendingFlip = true;
-  ui.matchingFeedback.textContent = "Bir kez daha bakalım.";
+  ui.matchingFeedback.textContent = getRetryMessage();
   renderMatchingCards();
   scheduleMatchingFlip();
 }
@@ -1167,7 +1202,7 @@ function finishListeningGame() {
   if (!isListeningGameActive) return;
   isListeningGameActive = false;
   isListeningTransitioning = true;
-  ui.listeningFeedback.textContent = "Harika! Dinleme oyununu tamamladın!";
+  ui.listeningFeedback.textContent = getCompletionMessage();
   renderListeningCards();
   animations.celebrate();
   ui.listeningCelebration.innerHTML = ui.celebration.innerHTML;
@@ -1232,7 +1267,7 @@ async function handleListeningCorrectAnswer() {
   clearSpeech();
   const run = audioRun;
   isListeningTransitioning = true;
-  ui.listeningFeedback.textContent = "Harika!";
+  ui.listeningFeedback.textContent = getCorrectFeedbackMessage(listeningRound, LISTENING_SESSION_ROUNDS);
   renderListeningCards();
   animations.celebrate();
   ui.listeningCelebration.innerHTML = ui.celebration.innerHTML;
@@ -1309,7 +1344,7 @@ function finishNumberMatchGame() {
   if (!isNumberMatchGameActive) return;
   isNumberMatchGameActive = false;
   isNumberMatchTransitioning = true;
-  ui.numberMatchFeedback.textContent = "Harika! Sayıları bulma oyununu tamamladın!";
+  ui.numberMatchFeedback.textContent = getCompletionMessage();
   renderNumberMatchCards();
   animations.celebrate();
   ui.numberMatchCelebration.innerHTML = ui.celebration.innerHTML;
@@ -1375,7 +1410,7 @@ async function handleNumberMatchCorrectAnswer() {
   clearSpeech();
   const run = audioRun;
   isNumberMatchTransitioning = true;
-  ui.numberMatchFeedback.textContent = "Harika!";
+  ui.numberMatchFeedback.textContent = getCorrectFeedbackMessage(numberMatchRound, NUMBER_MATCH_SESSION_ROUNDS);
   renderNumberMatchCards();
   animations.celebrate();
   ui.numberMatchCelebration.innerHTML = ui.celebration.innerHTML;
@@ -1452,7 +1487,7 @@ function finishColorMatchGame() {
   if (!isColorMatchGameActive) return;
   isColorMatchGameActive = false;
   isColorMatchTransitioning = true;
-  ui.colorMatchFeedback.textContent = "Harika! Renkleri bulma oyununu tamamladın!";
+  ui.colorMatchFeedback.textContent = getCompletionMessage();
   renderColorMatchCards();
   animations.celebrate();
   ui.colorMatchCelebration.innerHTML = ui.celebration.innerHTML;
@@ -1519,7 +1554,7 @@ async function handleColorMatchCorrectAnswer() {
   clearSpeech();
   const run = audioRun;
   isColorMatchTransitioning = true;
-  ui.colorMatchFeedback.textContent = "Harika!";
+  ui.colorMatchFeedback.textContent = getCorrectFeedbackMessage(colorMatchRound, COLOR_MATCH_SESSION_ROUNDS);
   renderColorMatchCards();
   animations.celebrate();
   ui.colorMatchCelebration.innerHTML = ui.celebration.innerHTML;
@@ -1652,7 +1687,7 @@ function placeSortingItem(item, destinationGroup) {
   clearSortingInteraction();
   if (item.group === destinationGroup) {
     item.completed = true;
-    ui.sortingFeedback.textContent = "Harika, doğru kutu!";
+    ui.sortingFeedback.textContent = getCorrectFeedbackMessage();
     audio.playSuccess();
     if (sortingItems.every(sortingItem => sortingItem.completed)) {
       finishSortingGame();
@@ -1670,7 +1705,7 @@ function finishSortingGame() {
   isSortingGameActive = false;
   isSortingCompleted = true;
   clearSortingInteraction();
-  ui.sortingFeedback.textContent = "Harika! Tüm nesneleri grupladın!";
+  ui.sortingFeedback.textContent = getCompletionMessage();
   animations.celebrate();
   ui.sortingCelebration.innerHTML = ui.celebration.innerHTML;
   ui.sortingCelebration.classList.remove("burst");
@@ -2109,7 +2144,7 @@ async function showSessionSummary() {
   ui.summaryCategory.textContent = engine.getFavoriteCategory();
   ui.summaryTitle.textContent = celebrationMessage;
   ui.summaryCopy.textContent = `${questionNumber} soru tamamlandı!`;
-  renderLearningPathCompletion();
+  renderLearningPathCompletion(celebrationMessage);
   ui.quiz.classList.add("hidden");
   ui.summary.classList.remove("hidden");
   animations.celebrate();
@@ -2181,7 +2216,7 @@ async function handleCorrectAnswer(button) {
   button.classList.add("correct");
   setInputEnabled(false);
   const voiceEncouragement = shouldPlayVoiceEncouragement() ? getVoiceEncouragementMessage() : undefined;
-  ui.feedback.textContent = voiceEncouragement?.message ?? getPersonalizedPraiseMessage();
+  ui.feedback.textContent = voiceEncouragement?.message ?? getCorrectFeedbackMessage(questionNumber, getSessionQuestionCount());
   ui.feedback.className = "feedback success";
   updateScoreboard();
   ui.next.classList.add("hidden");
@@ -2190,7 +2225,6 @@ async function handleCorrectAnswer(button) {
   await appUtils.wait(300);
   if (!isActiveAudio(run)) return;
   if (voiceEncouragement) {
-    lastVoiceEncouragement = voiceEncouragement.encouragement;
     correctAnswersSinceVoice = 0;
     await speech.speak(ui.feedback.textContent, TURKISH_LANGUAGE);
   }
@@ -2220,10 +2254,7 @@ function resetSession() {
   questionNumber = 0;
   currentAnswers = [];
   pendingCorrectTransition = false;
-  correctAnswersSinceVoice = 2;
-  lastVoiceEncouragement = "";
   wrongAttemptsForQuestion = 0;
-  lastRetryMessage = "";
   isRevealingCorrectAnswer = false;
   clearSavedProgress();
   engine.resetSession();
@@ -2272,6 +2303,7 @@ async function startGame({ skipWelcome = false } = {}) {
   isStartingGame = true;
   try {
     [engine] = await Promise.all([gameReady, speech.ready]);
+    resetEncouragementState();
     if (activeGameMode === MATCHING_MODE) {
       startMatchingGame();
       return;
@@ -2326,6 +2358,7 @@ function goHome(shouldSpeak = true) {
   ui.shell.classList.remove("learning-path-open");
   closeGameMenu();
   clearSpeech();
+  resetEncouragementState();
   stopWakeLock();
   window.clearTimeout(sessionCelebrationTimer);
   window.clearTimeout(matchingFlipTimer);
