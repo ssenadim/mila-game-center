@@ -11,12 +11,20 @@
     <link rel="stylesheet" href="styles.css?v=8.3.1" />
   </head>
   <body>
-    <main class="game-shell">
-      <div class="cloud cloud-one"></div><div class="cloud cloud-two"></div>
+    <main class="game-shell" data-world-theme="sunny">
+      <div class="cloud cloud-one" aria-hidden="true"></div><div class="cloud cloud-two" aria-hidden="true"></div>
+      <div class="world-decorations" aria-hidden="true">
+        <span class="world-decoration world-decoration-one"></span>
+        <span class="world-decoration world-decoration-two"></span>
+        <span class="world-decoration world-decoration-three"></span>
+        <span class="world-decoration world-decoration-four"></span>
+        <span class="world-decoration world-decoration-five"></span>
+      </div>
       <button id="menu-button" class="menu-button global-control-button" type="button" aria-label="Oyun menüsünü aç" aria-expanded="false" aria-controls="game-menu">☰</button>
       <div class="top-right-controls" aria-label="Uygulama kontrolleri">
-        <button id="fullscreen-button" class="global-control-button" type="button">⛶ Tam Ekran</button>
-        <button id="settings-button" class="global-control-button" type="button">⚙️ Ayarlar</button>
+        <button id="fullscreen-button" class="global-control-button" type="button"><span aria-hidden="true">⛶</span> <span class="control-label">Tam Ekran</span></button>
+        <button id="world-theme-button" class="global-control-button world-theme-button" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="world-theme-panel" aria-label="Oyun Dünyasını seç"><span aria-hidden="true">🎨</span> <span class="control-label">Dünya</span></button>
+        <button id="settings-button" class="global-control-button" type="button"><span aria-hidden="true">⚙️</span> <span class="control-label">Ayarlar</span></button>
       </div>
       <nav id="game-menu" class="game-menu hidden" aria-label="Oyun menüsü">
         <button type="button" data-menu-target="home">Ana Sayfa</button>
@@ -348,6 +356,17 @@
       <div id="daily-goal-popup" class="daily-goal-popup hidden" role="status" aria-live="polite">
         <span aria-hidden="true">☀️</span><strong>Günün Görevi Tamamlandı!</strong>
       </div>
+      <section id="world-theme-panel" class="world-theme-modal hidden" role="dialog" aria-modal="true" aria-labelledby="world-theme-title" aria-describedby="world-theme-guidance">
+        <div class="world-theme-panel">
+          <button id="world-theme-close" class="world-theme-close" type="button" aria-label="Oyun Dünyası seçimini kapat">×</button>
+          <p class="eyebrow">OYUN DÜNYASI</p>
+          <h2 id="world-theme-title" tabindex="-1">Oyun Dünyası</h2>
+          <p id="world-theme-guidance" class="world-theme-guidance">Bugün hangi dünyada oynayalım?</p>
+          <div id="world-theme-options" class="world-theme-options" role="group" aria-label="Oyun Dünyaları"></div>
+          <p id="world-theme-status" class="sr-only" role="status" aria-live="polite"></p>
+          <button id="world-theme-confirm" class="primary-button world-theme-confirm" type="button">Bu Dünyada Oyna</button>
+        </div>
+      </section>
       <section id="pause-overlay" class="pause-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="pause-title">
         <div class="pause-card">
           <span aria-hidden="true">⏸</span>
@@ -399,6 +418,7 @@
     <script src="js/LearningCategories.js?v=8.2"></script>
     <script src="js/LearningPath.js?v=8.3.4"></script>
     <script src="js/NumberLearning.js?v=8.3.4"></script>
+    <script src="js/WorldThemes.js?v=1"></script>
     <script src="data/offline-data.js"></script>
     <script src="app.js?v=8.3.4"></script>
   </body>

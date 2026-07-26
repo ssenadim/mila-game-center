@@ -416,3 +416,99 @@ button.subtraction-object:focus-visible{outline:4px solid #5539a6;outline-offset
 @media(prefers-reduced-motion:reduce){
   .subtraction-object{transition:none}
 }
+
+/* Oyun Dünyaları: one root attribute, shared tokens and fixed decorative layers. */
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.game-shell{
+  --world-background-start:#8edcf1;
+  --world-background-middle:#c7f2ed;
+  --world-background-end:#e4f7cf;
+  --world-landscape:#7fd090;
+  --world-landscape-shadow:#afe694;
+  --world-accent:#5f49b6;
+  --world-accent-secondary:#ef746f;
+  --world-cloud:#fffdf8d9;
+  --world-decor-one:"🌞";
+  --world-decor-two:"🦋";
+  --world-decor-three:"🐦";
+  --world-decor-four:"🌼";
+  --world-decor-five:"☁️";
+  background:linear-gradient(180deg,var(--world-background-start) 0%,var(--world-background-middle) 54%,var(--world-background-end) 100%);
+  transition:background .35s ease;
+  isolation:isolate;
+}
+.game-shell::after{z-index:0;background:var(--world-landscape);box-shadow:0 -28px 0 var(--world-landscape-shadow);transition:background .35s ease,box-shadow .35s ease}
+.cloud{z-index:0;background:var(--world-cloud);transition:background .35s ease,opacity .35s ease}
+.world-decorations{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;user-select:none}
+.world-decoration{position:absolute;display:grid;place-items:center;width:76px;height:76px;font-size:clamp(2rem,5vw,3.6rem);line-height:1;filter:drop-shadow(0 3px 2px #493a8526);opacity:.82;animation:worldFloat 7s ease-in-out infinite}
+.world-decoration::before{display:block}
+.world-decoration-one{top:11%;left:4%;font-size:4rem}.world-decoration-one::before{content:var(--world-decor-one)}
+.world-decoration-two{top:34%;left:12%;animation-delay:-1.5s}.world-decoration-two::before{content:var(--world-decor-two)}
+.world-decoration-three{top:18%;right:10%;animation-delay:-3s}.world-decoration-three::before{content:var(--world-decor-three)}
+.world-decoration-four{right:5%;bottom:13%;animation-delay:-4.5s}.world-decoration-four::before{content:var(--world-decor-four)}
+.world-decoration-five{left:24%;bottom:8%;animation-delay:-6s}.world-decoration-five::before{content:var(--world-decor-five)}
+@keyframes worldFloat{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-10px) rotate(3deg)}}
+@keyframes worldFall{0%{transform:translateY(-16px) rotate(0)}50%{transform:translate(12px,44px) rotate(90deg)}100%{transform:translate(-5px,100px) rotate(180deg)}}
+@keyframes worldTwinkle{0%,100%{opacity:.48;transform:scale(.9)}50%{opacity:.9;transform:scale(1.08)}}
+
+.game-shell[data-world-theme="sunny"]{--world-background-start:#78d7f2;--world-background-middle:#c4f0ef;--world-background-end:#e5f6c7;--world-landscape:#78cd8c;--world-landscape-shadow:#aee58f;--world-accent:#5b4bb0;--world-accent-secondary:#ed7771;--world-cloud:#fffdf8e8}
+.game-shell[data-world-theme="spring"]{--world-background-start:#d9c7f6;--world-background-middle:#ffd9e8;--world-background-end:#ccefc9;--world-landscape:#82cf91;--world-landscape-shadow:#b4e5a2;--world-accent:#8757bd;--world-accent-secondary:#e96f9c;--world-decor-one:"🌸";--world-decor-two:"🦋";--world-decor-three:"🌷";--world-decor-four:"🌿";--world-decor-five:"🌼"}
+.game-shell[data-world-theme="summer"]{--world-background-start:#66d5f2;--world-background-middle:#a9ecf1;--world-background-end:#f9e89e;--world-landscape:#59c7c5;--world-landscape-shadow:#f5d77b;--world-accent:#167f9f;--world-accent-secondary:#ee8054;--world-decor-one:"☀️";--world-decor-two:"⛵";--world-decor-three:"🌴";--world-decor-four:"🐚";--world-decor-five:"🌊"}
+.game-shell[data-world-theme="autumn"]{--world-background-start:#efb46b;--world-background-middle:#f4d39a;--world-background-end:#d5d19a;--world-landscape:#9f934f;--world-landscape-shadow:#cf863e;--world-accent:#8a4f2b;--world-accent-secondary:#bd5d31;--world-decor-one:"🍁";--world-decor-two:"🍂";--world-decor-three:"🍃";--world-decor-four:"🌰";--world-decor-five:"🦔"}
+.game-shell[data-world-theme="autumn"] .world-decoration-one,.game-shell[data-world-theme="autumn"] .world-decoration-two,.game-shell[data-world-theme="autumn"] .world-decoration-three{animation-name:worldFall;animation-duration:9s}
+.game-shell[data-world-theme="winter"]{--world-background-start:#b9d7f1;--world-background-middle:#e4e5f8;--world-background-end:#f8fbff;--world-landscape:#eaf5fa;--world-landscape-shadow:#cbdcf2;--world-accent:#566cae;--world-accent-secondary:#8d6db5;--world-cloud:#ffffffed;--world-decor-one:"❄️";--world-decor-two:"⛄";--world-decor-three:"🌨️";--world-decor-four:"🌲";--world-decor-five:"❄️"}
+.game-shell[data-world-theme="winter"] .world-decoration-one,.game-shell[data-world-theme="winter"] .world-decoration-three,.game-shell[data-world-theme="winter"] .world-decoration-five{animation-name:worldFall;animation-duration:10s}
+.game-shell[data-world-theme="night"]{--world-background-start:#283b82;--world-background-middle:#46539a;--world-background-end:#8793c5;--world-landscape:#587273;--world-landscape-shadow:#789894;--world-accent:#6656be;--world-accent-secondary:#e496b4;--world-cloud:#e7e9ffb8;--world-decor-one:"🌙";--world-decor-two:"⭐";--world-decor-three:"✨";--world-decor-four:"🦉";--world-decor-five:"💫"}
+.game-shell[data-world-theme="night"] .world-decoration-two,.game-shell[data-world-theme="night"] .world-decoration-three,.game-shell[data-world-theme="night"] .world-decoration-five{animation-name:worldTwinkle;animation-duration:4s}
+.game-shell[data-world-theme="unicorn"]{--world-background-start:#cdb9fa;--world-background-middle:#ffcce8;--world-background-end:#bcecea;--world-landscape:#cab7ef;--world-landscape-shadow:#f2b7dc;--world-accent:#8b4fc1;--world-accent-secondary:#e461a4;--world-cloud:#fffaffdf;--world-decor-one:"🦄";--world-decor-two:"🌈";--world-decor-three:"⭐";--world-decor-four:"💖";--world-decor-five:"☁️"}
+.game-shell[data-world-theme="space"]{--world-background-start:#22225f;--world-background-middle:#44317e;--world-background-end:#7259a4;--world-landscape:#38437b;--world-landscape-shadow:#5c4e91;--world-accent:#6354c6;--world-accent-secondary:#de6fba;--world-cloud:#cdd3ff70;--world-decor-one:"🚀";--world-decor-two:"🪐";--world-decor-three:"🌟";--world-decor-four:"🌍";--world-decor-five:"☄️"}
+.game-shell[data-world-theme="space"] .world-decoration-three,.game-shell[data-world-theme="space"] .world-decoration-five{animation-name:worldTwinkle;animation-duration:4.5s}
+.game-shell[data-world-theme="dinosaur"]{--world-background-start:#f1b875;--world-background-middle:#d8d59b;--world-background-end:#a9d49c;--world-landscape:#60945f;--world-landscape-shadow:#83b66b;--world-accent:#527c43;--world-accent-secondary:#b8673d;--world-decor-one:"🦕";--world-decor-two:"🌋";--world-decor-three:"🌿";--world-decor-four:"🦖";--world-decor-five:"⛰️"}
+.game-shell[data-world-theme="forest"]{--world-background-start:#7fc9ad;--world-background-middle:#b5d9a8;--world-background-end:#e2db9f;--world-landscape:#4f8958;--world-landscape-shadow:#74ad68;--world-accent:#39734c;--world-accent-secondary:#a75d45;--world-decor-one:"🌳";--world-decor-two:"🐇";--world-decor-three:"🦉";--world-decor-four:"🍄";--world-decor-five:"🦊"}
+
+.game-shell[data-world-theme="night"] .screen,.game-shell[data-world-theme="space"] .screen{filter:drop-shadow(0 2px 0 #ffffff24)}
+.game-shell[data-world-theme] .eyebrow{color:var(--world-accent)}
+.game-shell[data-world-theme] .welcome-screen h1 span{color:var(--world-accent-secondary)}
+.game-shell[data-world-theme] .primary-button{background:var(--world-accent)}
+
+.world-theme-modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:18px;background:rgba(36,28,72,.64);backdrop-filter:blur(5px)}
+.world-theme-panel{position:relative;width:min(100%,760px);max-height:calc(100dvh - 36px);overflow:auto;padding:25px 22px 22px;border:4px solid #fff;border-radius:30px;background:#fffdf8;color:#30285a;box-shadow:0 16px 0 rgba(43,31,88,.28)}
+.world-theme-panel h2{margin:2px 42px 4px;font-family:"Baloo 2",cursive;font-size:clamp(2rem,7vw,3.2rem);line-height:1}
+.world-theme-guidance{margin:0 0 17px;font-weight:900;color:#65588e}
+.world-theme-close{position:absolute;top:12px;right:12px;display:grid;place-items:center;width:46px;height:46px;border:0;border-radius:50%;background:#eee9ff;color:#493a85;font-size:2rem;font-weight:900}
+.world-theme-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.world-theme-option{display:grid;grid-template-columns:54px minmax(0,1fr) auto;align-items:center;gap:9px;min-width:0;min-height:82px;padding:10px;border:3px solid #d7cfff;border-radius:20px;background:#f8f5ff;color:#493a85;text-align:left;box-shadow:0 4px 0 #b4a5df;touch-action:manipulation}
+.world-theme-option[aria-pressed="true"]{border-color:var(--world-accent);background:#fff7d8;box-shadow:0 4px 0 var(--world-accent)}
+.world-theme-option-icon{display:grid;place-items:center;width:52px;height:52px;border-radius:17px;background:#fff;font-size:2.2rem}
+.world-theme-option-copy{min-width:0}.world-theme-option-copy strong,.world-theme-option-copy small{display:block}.world-theme-option-copy strong{font-family:"Baloo 2",cursive;font-size:1.12rem;line-height:1.05}.world-theme-option-copy small{margin-top:3px;color:#6c6090;font-size:.72rem;font-weight:900;line-height:1.12}
+.world-theme-option-check{padding:5px 7px;border-radius:12px;background:#ece7fa;color:#665690;font-size:.68rem;font-weight:900;white-space:nowrap}
+.world-theme-option[aria-pressed="true"] .world-theme-option-check{background:#dcedc9;color:#286027}
+.world-theme-confirm{display:block;width:min(100%,340px);min-height:62px;margin:19px auto 2px}
+.world-theme-option:focus-visible,.world-theme-close:focus-visible,.world-theme-confirm:focus-visible{outline:4px solid #f2c94c;outline-offset:3px}
+
+@media(max-width:600px){
+  .control-label{display:none}
+  .top-right-controls .global-control-button{min-width:46px;padding:7px}
+  .world-theme-modal{padding:8px}
+  .world-theme-panel{max-height:calc(100dvh - 16px);padding:20px 10px 14px;border-radius:24px}
+  .world-theme-panel h2{margin-left:38px;margin-right:38px}
+  .world-theme-options{gap:8px}
+  .world-theme-option{grid-template-columns:42px minmax(0,1fr);min-height:72px;padding:8px 7px;border-radius:17px}
+  .world-theme-option-icon{width:40px;height:40px;font-size:1.75rem}
+  .world-theme-option-copy strong{font-size:.92rem}
+  .world-theme-option-copy small{font-size:.64rem}
+  .world-theme-option-check{grid-column:2;justify-self:start;margin-top:-4px;padding:3px 6px}
+  .world-decoration{opacity:.55}
+  .world-decoration-two{left:2%}.world-decoration-three{right:2%}
+}
+@media(max-width:390px){
+  .world-theme-options{grid-template-columns:1fr 1fr}
+  .world-theme-option{display:grid;grid-template-columns:36px minmax(0,1fr);min-height:68px}
+  .world-theme-option-icon{width:34px;height:34px;font-size:1.5rem}
+  .world-theme-option-copy small{display:none}
+  .world-theme-confirm{min-height:56px;margin-top:12px}
+}
+@media(prefers-reduced-motion:reduce){
+  .game-shell,.game-shell::after,.cloud{transition:none}
+  .world-decoration{animation:none!important}
+}

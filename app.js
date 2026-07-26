@@ -141,7 +141,7 @@ const DAILY_GOALS = [
 
 const ui = {
   shell: document.querySelector(".game-shell"), welcome: document.querySelector("#welcome-screen"), learningCenter: document.querySelector("#learning-center-screen"), miniGames: document.querySelector("#mini-games-screen"), playerSelectionScreen: document.querySelector("#player-selection-screen"), playerSelection: document.querySelector(".player-selection"), playerGuidance: document.querySelector("#player-selection-guidance"), selectedPlayerSummary: document.querySelector("#selected-player-summary"), homePlayerChange: document.querySelector("#home-player-change-button"), homeNavigationCards: document.querySelectorAll("[data-home-target]"), learningCenterHome: document.querySelector("#learning-center-home-button"), miniGamesHome: document.querySelector("#mini-games-home-button"), playerSelectionHome: document.querySelector("#player-selection-home-button"), customPlayerConfirm: document.querySelector("#custom-player-confirm-button"), miniGamesSection: document.querySelector(".mini-games-section"), miniGameButtons: document.querySelectorAll(".mini-games-grid .mode-button"), learningPath: document.querySelector("#learning-path-screen"), learningPathStages: document.querySelector("#learning-path-stages"), learningPathGuidance: document.querySelector("#learning-path-guidance"), learningPathRecommendation: document.querySelector("#learning-path-recommendation"), learningPathGroupTabs: document.querySelector("#learning-path-group-tabs"), learningPathGroupTitle: document.querySelector("#learning-path-group-title"), learningPathGroupIcon: document.querySelector("#learning-path-group-icon"), learningPathGroupDescription: document.querySelector("#learning-path-group-description"), learningPathGroupProgress: document.querySelector("#learning-path-group-progress"), learningPathPreviousGroup: document.querySelector("#learning-path-previous-group"), learningPathNextGroup: document.querySelector("#learning-path-next-group"), learningPathEntry: document.querySelector("#learning-path-button"), learningPathHome: document.querySelector("#learning-path-home-button"), learningPathReturn: document.querySelector("#learning-path-return-button"), learningPathNext: document.querySelector("#learning-path-next-button"), learningPathNextLabel: document.querySelector("#learning-path-next-label"), learningPathCompletion: document.querySelector("#learning-path-completion"), learningPathCompletionIcon: document.querySelector("#learning-path-completion-icon"), learningPathCompletionStage: document.querySelector("#learning-path-completion-stage"), learningPathCompletionParticipation: document.querySelector("#learning-path-completion-participation"), learningPathCompletionCorrect: document.querySelector("#learning-path-completion-correct"), quiz: document.querySelector("#quiz-screen"), summary: document.querySelector("#summary-screen"),
-  menuButton: document.querySelector("#menu-button"), gameMenu: document.querySelector("#game-menu"), menuItems: document.querySelectorAll("[data-menu-target]"), settings: document.querySelector("#settings-button"),
+  menuButton: document.querySelector("#menu-button"), gameMenu: document.querySelector("#game-menu"), menuItems: document.querySelectorAll("[data-menu-target]"), settings: document.querySelector("#settings-button"), worldThemeButton: document.querySelector("#world-theme-button"), worldThemePanel: document.querySelector("#world-theme-panel"), worldThemeClose: document.querySelector("#world-theme-close"), worldThemeOptions: document.querySelector("#world-theme-options"), worldThemeStatus: document.querySelector("#world-theme-status"), worldThemeConfirm: document.querySelector("#world-theme-confirm"),
   start: document.querySelector("#start-button"), fullscreen: document.querySelector("#fullscreen-button"), achievements: document.querySelector("#achievements-button"), welcomeSound: document.querySelector("#welcome-sound-button"), learningMode: document.querySelector("#learning-mode-button"), quickMode: document.querySelector("#quick-mode-button"), matchingMode: document.querySelector("#matching-mode-button"), listeningMode: document.querySelector("#listening-mode-button"), numberMatchMode: document.querySelector("#number-match-mode-button"), colorMatchMode: document.querySelector("#color-match-mode-button"), sortingMode: document.querySelector("#sorting-mode-button"), missingItemMode: document.querySelector("#missing-item-mode-button"), shadowMode: document.querySelector("#shadow-mode-button"), initialLetterMode: document.querySelector("#initial-letter-mode-button"), soundMemoryMode: document.querySelector("#sound-memory-mode-button"), puzzleMode: document.querySelector("#puzzle-mode-button"), playerButtons: document.querySelectorAll(".player-button"), customPlayer: document.querySelector("#custom-player-button"), customPlayerLabel: document.querySelector("#custom-player-label"), customPlayerName: document.querySelector("#custom-player-name"), categoryPackButtons: document.querySelectorAll(".category-pack-button"), customCategoryOptions: document.querySelector("#custom-category-options"), home: document.querySelector("#home-button"), replay: document.querySelector("#question-sound-button"), matching: document.querySelector("#matching-screen"), matchingCategorySelection: document.querySelector("#matching-category-selection"), matchingCategoryOptions: document.querySelector("#matching-category-options"), matchingGameArea: document.querySelector("#matching-game-area"), matchingCategoryLabel: document.querySelector("#matching-category-label"), matchingCards: document.querySelector("#matching-cards"), matchingCelebration: document.querySelector("#matching-celebration"), matchingFeedback: document.querySelector("#matching-feedback"), matchingCompletionActions: document.querySelector("#matching-completion-actions"), matchingCompletionTime: document.querySelector("#matching-completion-time"), matchingReplay: document.querySelector("#matching-replay-button"), matchingCategories: document.querySelector("#matching-categories-button"), matchingHome: document.querySelector("#matching-home-button"), matchingPause: document.querySelector("#matching-pause-button"), listening: document.querySelector("#listening-screen"), listeningCards: document.querySelector("#listening-cards"), listeningCelebration: document.querySelector("#listening-celebration"), listeningFeedback: document.querySelector("#listening-feedback"), listeningReplay: document.querySelector("#listening-replay-button"), listeningHome: document.querySelector("#listening-home-button"), listeningPause: document.querySelector("#listening-pause-button"), numberMatch: document.querySelector("#number-match-screen"), numberMatchCards: document.querySelector("#number-match-cards"), numberMatchCelebration: document.querySelector("#number-match-celebration"), numberMatchFeedback: document.querySelector("#number-match-feedback"), numberMatchReplay: document.querySelector("#number-match-replay-button"), numberMatchHome: document.querySelector("#number-match-home-button"), numberMatchPause: document.querySelector("#number-match-pause-button"), colorMatch: document.querySelector("#color-match-screen"), colorMatchCards: document.querySelector("#color-match-cards"), colorMatchCelebration: document.querySelector("#color-match-celebration"), colorMatchFeedback: document.querySelector("#color-match-feedback"), colorMatchWrittenPrompt: document.querySelector("#color-match-written-prompt"), colorMatchPrompt: document.querySelector("#color-match-prompt"), colorMatchWordListen: document.querySelector("#color-match-word-listen-button"), colorMatchReplay: document.querySelector("#color-match-replay-button"), colorMatchHome: document.querySelector("#color-match-home-button"), colorMatchPause: document.querySelector("#color-match-pause-button"), sorting: document.querySelector("#sorting-screen"), sortingItems: document.querySelector("#sorting-items"), sortingDestinations: document.querySelector("#sorting-destinations"), sortingCelebration: document.querySelector("#sorting-celebration"), sortingFeedback: document.querySelector("#sorting-feedback"), sortingHome: document.querySelector("#sorting-home-button"), sortingPause: document.querySelector("#sorting-pause-button"), sortingFinishHome: document.querySelector("#sorting-finish-home-button"),
   newMiniGame: document.querySelector("#new-mini-game-screen"), newMiniGameEyebrow: document.querySelector("#new-mini-game-eyebrow"), newMiniGameTitle: document.querySelector("#new-mini-game-title"), newMiniGameHome: document.querySelector("#new-mini-game-home-button"), newMiniGamePause: document.querySelector("#new-mini-game-pause-button"), newMiniGameSetup: document.querySelector("#new-mini-game-setup"), newMiniGameArea: document.querySelector("#new-mini-game-area"), newMiniGameProgressLabel: document.querySelector("#new-mini-game-progress-label"), newMiniGameProgressFill: document.querySelector("#new-mini-game-progress-fill"), newMiniGamePrompt: document.querySelector("#new-mini-game-prompt"), newMiniGameListen: document.querySelector("#new-mini-game-listen-button"), newMiniGameVisual: document.querySelector("#new-mini-game-visual"), newMiniGameChoices: document.querySelector("#new-mini-game-choices"), newMiniGameFeedback: document.querySelector("#new-mini-game-feedback"), newMiniGameCompletion: document.querySelector("#new-mini-game-completion"), newMiniGameCompletionCopy: document.querySelector("#new-mini-game-completion-copy"), newMiniGameReplay: document.querySelector("#new-mini-game-replay-button"), newMiniGameChange: document.querySelector("#new-mini-game-change-button"), newMiniGameCompletionHome: document.querySelector("#new-mini-game-completion-home-button"),
   numberLearning: document.querySelector("#number-learning-screen"), numberLearningTitle: document.querySelector("#number-learning-title"), numberLearningPath: document.querySelector("#number-learning-path-button"), numberLearningPause: document.querySelector("#number-learning-pause-button"), numberLearningProgressLabel: document.querySelector("#number-learning-progress-label"), numberLearningProgressFill: document.querySelector("#number-learning-progress-fill"), numberLearningScore: document.querySelector("#number-learning-score"), numberLearningListen: document.querySelector("#number-learning-listen-button"), numberLearningPrompt: document.querySelector("#number-learning-prompt"), numberLearningVisual: document.querySelector("#number-learning-visual"), numberLearningSupportActions: document.querySelector("#number-learning-support-actions"), numberLearningCombine: document.querySelector("#number-learning-combine-button"), numberLearningHelp: document.querySelector("#number-learning-help-button"), numberLearningCount: document.querySelector("#number-learning-count-button"), numberLearningAnswers: document.querySelector("#number-learning-answers"), numberLearningCheck: document.querySelector("#number-learning-check-button"), numberLearningFeedback: document.querySelector("#number-learning-feedback"),
@@ -154,6 +154,7 @@ const ui = {
 const appUtils = window.MilaUtils;
 const newMiniGames = window.MilaNewMiniGames;
 const numberLearning = window.MilaNumberLearning;
+const worldThemes = window.MilaWorldThemes;
 const learningCategories = window.MilaLearningCategories;
 newMiniGames.validateContent();
 learningCategories.validateCategories();
@@ -178,6 +179,19 @@ let rewardPopupTimer;
 let balloonBonusTimer;
 let isBalloonBonusActive = false;
 let selectedPlayer = getSavedPlayer();
+let worldThemeStorage;
+try {
+  worldThemeStorage = window.localStorage;
+} catch {
+  worldThemeStorage = undefined;
+}
+const worldThemeManager = new worldThemes.WorldThemeManager({
+  rootElement: ui.shell,
+  storage: worldThemeStorage,
+  warn: message => console.warn(message)
+});
+worldThemeManager.restore(selectedPlayer);
+let worldThemeReturnFocus;
 migratePlayerProgress();
 let parentData = loadParentData();
 let achievementData = loadAchievementData();
@@ -761,6 +775,61 @@ function closeAchievements() {
   rewardsReturnFocus = undefined;
 }
 
+function renderWorldThemeOptions() {
+  ui.worldThemeOptions.textContent = "";
+  worldThemes.WORLD_THEMES.forEach(theme => {
+    const isSelected = theme.id === worldThemeManager.activeThemeId;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "world-theme-option";
+    button.dataset.worldTheme = theme.id;
+    button.setAttribute("aria-pressed", String(isSelected));
+    button.setAttribute("aria-label", `${theme.name}, ${theme.subtitle}${isSelected ? ", seçili" : ""}`);
+    button.innerHTML = `<span class="world-theme-option-icon" aria-hidden="true">${theme.icon}</span><span class="world-theme-option-copy"><strong>${theme.name}</strong><small>${theme.subtitle}</small></span><span class="world-theme-option-check" aria-hidden="true">${isSelected ? "✓ Seçili" : "Seç"}</span>`;
+    button.addEventListener("click", () => selectWorldTheme(theme.id));
+    ui.worldThemeOptions.append(button);
+  });
+}
+
+function selectWorldTheme(themeId) {
+  const activeThemeId = worldThemeManager.save(themeId, selectedPlayer);
+  renderWorldThemeOptions();
+  const activeTheme = worldThemeManager.getTheme(activeThemeId);
+  ui.worldThemeStatus.textContent = `${activeTheme.name} seçildi.`;
+  ui.worldThemeOptions.querySelector(`[data-world-theme="${activeThemeId}"]`)?.focus({ preventScroll: true });
+}
+
+function openWorldThemePanel() {
+  worldThemeReturnFocus = document.activeElement;
+  renderWorldThemeOptions();
+  ui.worldThemePanel.classList.remove("hidden");
+  ui.worldThemeButton.setAttribute("aria-expanded", "true");
+  ui.worldThemeClose.focus({ preventScroll: true });
+}
+
+function closeWorldThemePanel() {
+  if (ui.worldThemePanel.classList.contains("hidden")) return;
+  ui.worldThemePanel.classList.add("hidden");
+  ui.worldThemeButton.setAttribute("aria-expanded", "false");
+  const returnTarget = worldThemeReturnFocus?.isConnected ? worldThemeReturnFocus : ui.worldThemeButton;
+  returnTarget.focus({ preventScroll: true });
+  worldThemeReturnFocus = undefined;
+}
+
+function keepWorldThemeFocusInside(event) {
+  if (event.key !== "Tab" || ui.worldThemePanel.classList.contains("hidden")) return;
+  const focusable = [...ui.worldThemePanel.querySelectorAll("button:not(:disabled)")];
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault();
+    first.focus();
+  }
+}
+
 function getFullscreenElement() {
   return document.fullscreenElement ?? document.webkitFullscreenElement;
 }
@@ -770,7 +839,11 @@ function updateFullscreenButton() {
   const exitFullscreen = document.exitFullscreen ?? document.webkitExitFullscreen;
   const isSupported = typeof requestFullscreen === "function" && typeof exitFullscreen === "function" && document.fullscreenEnabled !== false;
   ui.fullscreen.classList.toggle("hidden", !isSupported);
-  if (isSupported) ui.fullscreen.textContent = getFullscreenElement() ? "⛶ Tam Ekrandan Çık" : "⛶ Tam Ekran";
+  if (isSupported) {
+    const label = getFullscreenElement() ? "Tam Ekrandan Çık" : "Tam Ekran";
+    ui.fullscreen.setAttribute("aria-label", label);
+    ui.fullscreen.innerHTML = `<span aria-hidden="true">⛶</span> <span class="control-label">${label}</span>`;
+  }
 }
 
 async function toggleFullscreen() {
@@ -1069,6 +1142,7 @@ function showPlayerSelectionGuidance() {
 function selectPlayer(name) {
   selectedPlayer = getValidPlayerName(name);
   if (!selectedPlayer) return;
+  worldThemeManager.restore(selectedPlayer);
   clearPlayerSelectionGuidance();
   resetEncouragementState();
   ui.customPlayerName.value = "";
@@ -1093,6 +1167,7 @@ function selectPlayer(name) {
 
 function selectCustomPlayer() {
   selectedPlayer = undefined;
+  worldThemeManager.restore();
   clearPlayerSelectionGuidance();
   resetEncouragementState();
   dailyGoalData = {};
@@ -1116,6 +1191,7 @@ function updateCustomPlayer() {
   ui.customPlayer.setAttribute("aria-pressed", String(Boolean(playerName)));
   ui.customPlayerConfirm.disabled = !playerName;
   if (playerName) {
+    worldThemeManager.restore(playerName);
     clearPlayerSelectionGuidance();
     resetEncouragementState();
     saveSelectedPlayer();
@@ -1135,6 +1211,7 @@ function updateCustomPlayer() {
       renderLearningPath();
     }
   } else {
+    worldThemeManager.restore();
     dailyGoalData = {};
     resetDailyGoalPopup();
     renderDailyGoal();
@@ -4573,6 +4650,10 @@ ui.learningPathNext.addEventListener("click", startNextLearningPathStage);
 ui.learningPathPreviousGroup.addEventListener("click", () => moveLearningPathGroup(-1));
 ui.learningPathNextGroup.addEventListener("click", () => moveLearningPathGroup(1));
 ui.fullscreen.addEventListener("click", toggleFullscreen);
+ui.worldThemeButton.addEventListener("click", openWorldThemePanel);
+ui.worldThemeClose.addEventListener("click", closeWorldThemePanel);
+ui.worldThemeConfirm.addEventListener("click", closeWorldThemePanel);
+ui.worldThemePanel.addEventListener("keydown", keepWorldThemeFocusInside);
 ui.settings.addEventListener("click", openParentDashboard);
 ui.menuButton.addEventListener("click", toggleGameMenu);
 ui.menuItems.forEach(button => button.addEventListener("click", () => handleMenuNavigation(button.dataset.menuTarget)));
@@ -4686,10 +4767,14 @@ document.addEventListener("pointerdown", event => {
   if (event.target.closest("button:not(:disabled)")) audio.playButton();
 });
 document.addEventListener("keydown", event => {
-  if (event.key === "Escape") closeGameMenu();
+  if (event.key === "Escape") {
+    closeWorldThemePanel();
+    closeGameMenu();
+  }
 });
 window.addEventListener("load", async () => {
   [engine] = await Promise.all([gameReady, speech.ready]);
+  worldThemeManager.restore(selectedPlayer);
   setGameMode(getSavedGameMode());
   restoreCategoryPack();
   applyCategoryPack();
