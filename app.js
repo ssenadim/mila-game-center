@@ -145,6 +145,7 @@ const ui = {
   start: document.querySelector("#start-button"), fullscreen: document.querySelector("#fullscreen-button"), achievements: document.querySelector("#achievements-button"), welcomeSound: document.querySelector("#welcome-sound-button"), learningMode: document.querySelector("#learning-mode-button"), quickMode: document.querySelector("#quick-mode-button"), matchingMode: document.querySelector("#matching-mode-button"), listeningMode: document.querySelector("#listening-mode-button"), numberMatchMode: document.querySelector("#number-match-mode-button"), colorMatchMode: document.querySelector("#color-match-mode-button"), sortingMode: document.querySelector("#sorting-mode-button"), missingItemMode: document.querySelector("#missing-item-mode-button"), shadowMode: document.querySelector("#shadow-mode-button"), initialLetterMode: document.querySelector("#initial-letter-mode-button"), soundMemoryMode: document.querySelector("#sound-memory-mode-button"), puzzleMode: document.querySelector("#puzzle-mode-button"), playerButtons: document.querySelectorAll(".player-button"), customPlayer: document.querySelector("#custom-player-button"), customPlayerLabel: document.querySelector("#custom-player-label"), customPlayerName: document.querySelector("#custom-player-name"), categoryPackButtons: document.querySelectorAll(".category-pack-button"), customCategoryOptions: document.querySelector("#custom-category-options"), home: document.querySelector("#home-button"), replay: document.querySelector("#question-sound-button"), matching: document.querySelector("#matching-screen"), matchingCategorySelection: document.querySelector("#matching-category-selection"), matchingCategoryOptions: document.querySelector("#matching-category-options"), matchingGameArea: document.querySelector("#matching-game-area"), matchingCategoryLabel: document.querySelector("#matching-category-label"), matchingCards: document.querySelector("#matching-cards"), matchingCelebration: document.querySelector("#matching-celebration"), matchingFeedback: document.querySelector("#matching-feedback"), matchingCompletionActions: document.querySelector("#matching-completion-actions"), matchingCompletionTime: document.querySelector("#matching-completion-time"), matchingReplay: document.querySelector("#matching-replay-button"), matchingCategories: document.querySelector("#matching-categories-button"), matchingHome: document.querySelector("#matching-home-button"), matchingPause: document.querySelector("#matching-pause-button"), listening: document.querySelector("#listening-screen"), listeningCards: document.querySelector("#listening-cards"), listeningCelebration: document.querySelector("#listening-celebration"), listeningFeedback: document.querySelector("#listening-feedback"), listeningReplay: document.querySelector("#listening-replay-button"), listeningHome: document.querySelector("#listening-home-button"), listeningPause: document.querySelector("#listening-pause-button"), numberMatch: document.querySelector("#number-match-screen"), numberMatchCards: document.querySelector("#number-match-cards"), numberMatchCelebration: document.querySelector("#number-match-celebration"), numberMatchFeedback: document.querySelector("#number-match-feedback"), numberMatchReplay: document.querySelector("#number-match-replay-button"), numberMatchHome: document.querySelector("#number-match-home-button"), numberMatchPause: document.querySelector("#number-match-pause-button"), colorMatch: document.querySelector("#color-match-screen"), colorMatchCards: document.querySelector("#color-match-cards"), colorMatchCelebration: document.querySelector("#color-match-celebration"), colorMatchFeedback: document.querySelector("#color-match-feedback"), colorMatchWrittenPrompt: document.querySelector("#color-match-written-prompt"), colorMatchPrompt: document.querySelector("#color-match-prompt"), colorMatchWordListen: document.querySelector("#color-match-word-listen-button"), colorMatchReplay: document.querySelector("#color-match-replay-button"), colorMatchHome: document.querySelector("#color-match-home-button"), colorMatchPause: document.querySelector("#color-match-pause-button"), sorting: document.querySelector("#sorting-screen"), sortingItems: document.querySelector("#sorting-items"), sortingDestinations: document.querySelector("#sorting-destinations"), sortingCelebration: document.querySelector("#sorting-celebration"), sortingFeedback: document.querySelector("#sorting-feedback"), sortingHome: document.querySelector("#sorting-home-button"), sortingPause: document.querySelector("#sorting-pause-button"), sortingFinishHome: document.querySelector("#sorting-finish-home-button"),
   newMiniGame: document.querySelector("#new-mini-game-screen"), newMiniGameEyebrow: document.querySelector("#new-mini-game-eyebrow"), newMiniGameTitle: document.querySelector("#new-mini-game-title"), newMiniGameHome: document.querySelector("#new-mini-game-home-button"), newMiniGamePause: document.querySelector("#new-mini-game-pause-button"), newMiniGameSetup: document.querySelector("#new-mini-game-setup"), newMiniGameArea: document.querySelector("#new-mini-game-area"), newMiniGameProgressLabel: document.querySelector("#new-mini-game-progress-label"), newMiniGameProgressFill: document.querySelector("#new-mini-game-progress-fill"), newMiniGamePrompt: document.querySelector("#new-mini-game-prompt"), newMiniGameListen: document.querySelector("#new-mini-game-listen-button"), newMiniGameVisual: document.querySelector("#new-mini-game-visual"), newMiniGameChoices: document.querySelector("#new-mini-game-choices"), newMiniGameFeedback: document.querySelector("#new-mini-game-feedback"), newMiniGameCompletion: document.querySelector("#new-mini-game-completion"), newMiniGameCompletionCopy: document.querySelector("#new-mini-game-completion-copy"), newMiniGameReplay: document.querySelector("#new-mini-game-replay-button"), newMiniGameChange: document.querySelector("#new-mini-game-change-button"), newMiniGameCompletionHome: document.querySelector("#new-mini-game-completion-home-button"),
   numberLearning: document.querySelector("#number-learning-screen"), numberLearningTitle: document.querySelector("#number-learning-title"), numberLearningPath: document.querySelector("#number-learning-path-button"), numberLearningPause: document.querySelector("#number-learning-pause-button"), numberLearningProgressLabel: document.querySelector("#number-learning-progress-label"), numberLearningProgressFill: document.querySelector("#number-learning-progress-fill"), numberLearningScore: document.querySelector("#number-learning-score"), numberLearningListen: document.querySelector("#number-learning-listen-button"), numberLearningPrompt: document.querySelector("#number-learning-prompt"), numberLearningVisual: document.querySelector("#number-learning-visual"), numberLearningSupportActions: document.querySelector("#number-learning-support-actions"), numberLearningCombine: document.querySelector("#number-learning-combine-button"), numberLearningHelp: document.querySelector("#number-learning-help-button"), numberLearningCount: document.querySelector("#number-learning-count-button"), numberLearningAnswers: document.querySelector("#number-learning-answers"), numberLearningCheck: document.querySelector("#number-learning-check-button"), numberLearningFeedback: document.querySelector("#number-learning-feedback"),
+  logicAttention: document.querySelector("#logic-attention-screen"), logicAttentionTitle: document.querySelector("#logic-attention-title"), logicAttentionPath: document.querySelector("#logic-attention-path-button"), logicAttentionPause: document.querySelector("#logic-attention-pause-button"), logicAttentionProgressLabel: document.querySelector("#logic-attention-progress-label"), logicAttentionProgressFill: document.querySelector("#logic-attention-progress-fill"), logicAttentionScore: document.querySelector("#logic-attention-score"), logicAttentionListen: document.querySelector("#logic-attention-listen-button"), logicAttentionPrompt: document.querySelector("#logic-attention-prompt"), logicAttentionVisual: document.querySelector("#logic-attention-visual"), logicAttentionChoices: document.querySelector("#logic-attention-choices"), logicAttentionActions: document.querySelector("#logic-attention-actions"), logicAttentionReady: document.querySelector("#logic-attention-ready-button"), logicAttentionCheck: document.querySelector("#logic-attention-check-button"), logicAttentionRestart: document.querySelector("#logic-attention-restart-button"), logicAttentionFeedback: document.querySelector("#logic-attention-feedback"),
   customCategoryBrowser: document.querySelector("#custom-category-browser"), categoryGroupTabs: document.querySelector("#category-group-tabs"), customCategoryCount: document.querySelector("#custom-category-count"), customCategoryReset: document.querySelector("#custom-category-reset-button"),
   category: document.querySelector("#category-pill"), visual: document.querySelector("#question-visual"), celebration: document.querySelector("#celebration"), mascot: document.querySelector("#game-mascot"), prompt: document.querySelector("#question-prompt"),
   answers: document.querySelector("#answers"), feedback: document.querySelector("#feedback"), next: document.querySelector("#next-button"), count: document.querySelector("#question-count"), score: document.querySelector("#score"), streak: document.querySelector("#streak"), progress: document.querySelector("#progress-fill"),
@@ -153,10 +154,12 @@ const ui = {
 
 const appUtils = window.MilaUtils;
 const newMiniGames = window.MilaNewMiniGames;
+const logicAttention = window.MilaLogicAttention;
 const numberLearning = window.MilaNumberLearning;
 const worldThemes = window.MilaWorldThemes;
 const learningCategories = window.MilaLearningCategories;
 newMiniGames.validateContent();
+logicAttention.validateContent();
 learningCategories.validateCategories();
 learningPathModel.validateRoadmap({ categories: learningCategories.CATEGORIES });
 numberLearning.validateContent();
@@ -292,6 +295,9 @@ let numberLearningSessionId = 0;
 let numberLearningTimer;
 let numberLearningState;
 let numberLearningSupportRun = 0;
+let isLogicAttentionActive = false;
+let logicAttentionSessionId = 0;
+let logicAttentionState;
 let activeLearningPathStage;
 let activeLearningPathGroupId = learningPathModel.GROUPS[0].id;
 let learningPathQuestionPlan = [];
@@ -500,9 +506,7 @@ function renderLearningPathCompletion(completionMessage) {
     return;
   }
   const progress = loadLearningPathProgress();
-  const isOperationsBoundary = activeLearningPathStage.id === "visual-subtraction";
-  const plannedNextStage = isOperationsBoundary ? learningPathModel.stageById("mixed-operations") : undefined;
-  const nextStage = isOperationsBoundary ? undefined : learningPathModel.getNextEligibleStage(activeLearningPathStage.id, progress);
+  const nextStage = learningPathModel.getNextEligibleStage(activeLearningPathStage.id, progress);
   ui.summaryTitle.textContent = completionMessage ?? getCompletionMessage();
   ui.summaryCopy.textContent = "Yeni şeyler öğreniyorsun!";
   ui.learningPathCompletionIcon.textContent = activeLearningPathStage.icon;
@@ -510,16 +514,12 @@ function renderLearningPathCompletion(completionMessage) {
   ui.learningPathCompletionParticipation.textContent = `${questionNumber} soruyu tamamladın`;
   ui.learningPathCompletionCorrect.textContent = `${correctAnswers} doğru cevap`;
   ui.learningPathCompletion.setAttribute("aria-label", `${activeLearningPathStage.title} bölümü tamamlandı. ${questionNumber} soru tamamlandı. ${correctAnswers} doğru cevap.`);
-  ui.learningPathNext.classList.toggle("hidden", !nextStage && !plannedNextStage);
-  ui.learningPathNext.disabled = Boolean(plannedNextStage);
+  ui.learningPathNext.classList.toggle("hidden", !nextStage);
+  ui.learningPathNext.disabled = false;
   if (nextStage) {
     ui.learningPathNext.dataset.learningPathStage = nextStage.id;
     ui.learningPathNextLabel.textContent = `Sonraki: ${nextStage.icon} ${nextStage.title}`;
     ui.learningPathNext.setAttribute("aria-label", `Sıradaki bölüm: ${nextStage.title}`);
-  } else if (plannedNextStage) {
-    ui.learningPathNext.removeAttribute("data-learning-path-stage");
-    ui.learningPathNextLabel.textContent = `Sonraki: ${plannedNextStage.icon} ${plannedNextStage.title} · Yakında`;
-    ui.learningPathNext.setAttribute("aria-label", `Sıradaki bölüm ${plannedNextStage.title}, yakında`);
   } else {
     ui.learningPathNext.removeAttribute("data-learning-path-stage");
     ui.learningPathNextLabel.textContent = "";
@@ -3713,6 +3713,506 @@ function startNumberLearningStage(stage) {
   beginNumberLearningRound();
 }
 
+function createEmptyLogicAttentionState() {
+  return {
+    stageId: undefined,
+    roundNumber: 0,
+    totalRounds: 0,
+    round: undefined,
+    attempts: 0,
+    inputLocked: false,
+    speaking: false,
+    missing: undefined,
+    sequence: undefined,
+    maze: undefined,
+    completed: false,
+    pendingResult: undefined,
+    recentKeys: []
+  };
+}
+
+function cleanupLogicAttention() {
+  logicAttentionSessionId += 1;
+  if (isLogicAttentionActive) clearSpeech();
+  isLogicAttentionActive = false;
+  logicAttentionState = createEmptyLogicAttentionState();
+  ui.logicAttention.classList.add("hidden");
+  ui.logicAttentionVisual.textContent = "";
+  ui.logicAttentionChoices.textContent = "";
+  ui.logicAttentionFeedback.textContent = "";
+  [ui.logicAttentionReady, ui.logicAttentionCheck, ui.logicAttentionRestart].forEach(button => button.classList.add("hidden"));
+}
+
+function setLogicAttentionInputEnabled(enabled) {
+  if (!logicAttentionState) return;
+  const canUse = enabled && isLogicAttentionActive && !isPaused && !logicAttentionState.inputLocked && !logicAttentionState.speaking;
+  ui.logicAttention.querySelectorAll("button").forEach(button => {
+    if (button === ui.logicAttentionPath || button === ui.logicAttentionPause) return;
+    if (button.classList.contains("logic-sequence-slot") && !button.classList.contains("filled")) {
+      button.disabled = true;
+      return;
+    }
+    button.disabled = !canUse;
+  });
+  ui.logicAttentionPath.disabled = isPaused;
+  ui.logicAttentionPause.disabled = isPaused;
+  if (!ui.logicAttentionCheck.classList.contains("hidden")) {
+    ui.logicAttentionCheck.disabled = !canUse || logicAttentionState.sequence?.slots.some(value => value === null);
+  }
+}
+
+async function speakLogicAttentionPrompt() {
+  if (!isLogicAttentionActive || isPaused || !logicAttentionState?.round || logicAttentionState.speaking) return false;
+  clearSpeech();
+  const sessionId = logicAttentionSessionId;
+  logicAttentionState.speaking = true;
+  setLogicAttentionInputEnabled(false);
+  await speech.speak(logicAttentionState.round.speech, TURKISH_LANGUAGE);
+  if (!isLogicAttentionActive || isPaused || sessionId !== logicAttentionSessionId) return false;
+  logicAttentionState.speaking = false;
+  setLogicAttentionInputEnabled(true);
+  return true;
+}
+
+function createLogicVisual(item, { showLabel = true } = {}) {
+  const wrapper = document.createElement("span");
+  wrapper.className = "logic-sequence-step";
+  const visual = document.createElement("span");
+  visual.className = "logic-choice-visual";
+  visual.textContent = item.visual;
+  if (item.color) visual.style.color = item.color;
+  if (item.scale) visual.style.setProperty("--logic-scale", item.scale);
+  visual.setAttribute("aria-hidden", "true");
+  wrapper.append(visual);
+  if (showLabel && item.label) {
+    const label = document.createElement("small");
+    label.textContent = item.label;
+    wrapper.append(label);
+  }
+  return wrapper;
+}
+
+function addLogicChoice(item, onClick, { shadow = false } = {}) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = `logic-choice${shadow ? " shadow" : ""}`;
+  button.dataset.logicChoice = item.id;
+  button.setAttribute("aria-label", shadow ? "Gölge seçeneği" : item.label);
+  if (shadow) {
+    const image = document.createElement("img");
+    image.src = newMiniGameSvgUrl(item.svg);
+    image.alt = "";
+    button.append(image);
+  } else {
+    button.append(createLogicVisual(item));
+  }
+  button.addEventListener("click", onClick);
+  ui.logicAttentionChoices.append(button);
+  return button;
+}
+
+function resetLogicAttentionRoundView() {
+  ui.logicAttentionVisual.textContent = "";
+  ui.logicAttentionChoices.textContent = "";
+  ui.logicAttentionFeedback.textContent = "";
+  ui.logicAttentionFeedback.className = "matching-feedback";
+  [ui.logicAttentionReady, ui.logicAttentionCheck, ui.logicAttentionRestart].forEach(button => button.classList.add("hidden"));
+}
+
+function renderLogicSelectionRound() {
+  const round = logicAttentionState.round;
+  if (round.type === "oddOneOut") {
+    round.choices.forEach(item => addLogicChoice(item, event => answerLogicAttentionChoice(event.currentTarget, item.id)));
+    return;
+  }
+  if (round.type === "patternCompletion") {
+    const row = document.createElement("div");
+    row.className = "logic-pattern-row";
+    round.sequence.forEach(item => {
+      const card = document.createElement("span");
+      card.className = "logic-pattern-item";
+      card.append(createLogicVisual(item, { showLabel: false }));
+      row.append(card);
+    });
+    const question = document.createElement("span");
+    question.className = "logic-pattern-question";
+    question.textContent = "?";
+    question.setAttribute("aria-label", "Sıradaki öğe");
+    row.append(question);
+    ui.logicAttentionVisual.append(row);
+    round.choices.forEach(item => addLogicChoice(item, event => answerLogicAttentionChoice(event.currentTarget, item.id)));
+    return;
+  }
+  if (round.type === "shadowMatching") {
+    const source = document.createElement("img");
+    source.className = "logic-shadow-source";
+    source.src = newMiniGameSvgUrl(round.source.svg);
+    source.alt = round.source.label;
+    ui.logicAttentionVisual.append(source);
+    round.choices.forEach(item => addLogicChoice(item, event => answerLogicAttentionChoice(event.currentTarget, item.id), { shadow: true }));
+    return;
+  }
+  if (round.type === "grouping") {
+    const reference = document.createElement("div");
+    reference.className = "logic-reference-wrap";
+    const label = document.createElement("span");
+    label.className = "logic-reference-label";
+    label.textContent = "Bununla aynı grupta olanı bul:";
+    const card = document.createElement("span");
+    card.className = "logic-reference-card";
+    card.append(createLogicVisual(round.reference));
+    reference.append(label, card);
+    ui.logicAttentionVisual.append(reference);
+    round.choices.forEach(item => addLogicChoice(item, event => answerLogicAttentionChoice(event.currentTarget, item.id)));
+  }
+}
+
+function renderLogicMissingRound() {
+  const round = logicAttentionState.round;
+  const row = document.createElement("div");
+  row.className = "logic-item-row";
+  if (logicAttentionState.missing.phase === "observe") {
+    round.presented.forEach(item => {
+      const card = document.createElement("span");
+      card.className = "logic-item-card";
+      card.append(createLogicVisual(item, { showLabel: false }));
+      row.append(card);
+    });
+    ui.logicAttentionPrompt.textContent = "Resimlere dikkat et.";
+    ui.logicAttentionReady.classList.remove("hidden");
+  } else {
+    round.presented.forEach(item => {
+      const card = document.createElement("span");
+      card.className = `logic-item-card${item.id === round.missing.id ? " missing-placeholder" : ""}`;
+      if (item.id === round.missing.id) {
+        card.textContent = "?";
+        card.setAttribute("aria-label", "Eksilen resim");
+      } else card.append(createLogicVisual(item, { showLabel: false }));
+      row.append(card);
+    });
+    round.choices.forEach(item => addLogicChoice(item, event => answerLogicAttentionChoice(event.currentTarget, item.id)));
+  }
+  ui.logicAttentionVisual.append(row);
+}
+
+function getLogicSequenceStep(stepId) {
+  return logicAttentionState.round.steps.find(step => step.id === stepId);
+}
+
+function renderLogicSequenceRound() {
+  const state = logicAttentionState.sequence;
+  const board = document.createElement("div");
+  board.className = "logic-sequence-board";
+  board.style.setProperty("--sequence-count", state.target.length);
+  const slots = document.createElement("div");
+  slots.className = "logic-sequence-slots";
+  slots.setAttribute("aria-label", "Sıralama alanı");
+  state.slots.forEach((stepId, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `logic-sequence-slot${stepId ? " filled" : ""}`;
+    button.disabled = !stepId;
+    button.setAttribute("aria-label", stepId ? `${index + 1}. sıradaki ${getLogicSequenceStep(stepId).label}. Seçimi geri al.` : `${index + 1}. sıra boş`);
+    if (stepId) {
+      button.append(createLogicVisual(getLogicSequenceStep(stepId)));
+      button.addEventListener("click", () => {
+        if (isPaused || logicAttentionState.inputLocked) return;
+        logicAttention.removeSequenceStep(state, index);
+        renderLogicAttentionRound();
+      });
+    }
+    slots.append(button);
+  });
+  const tray = document.createElement("div");
+  tray.className = "logic-sequence-tray";
+  tray.setAttribute("aria-label", "Sıralanacak resimler");
+  state.pieces.forEach(stepId => {
+    const step = getLogicSequenceStep(stepId);
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "logic-sequence-piece";
+    button.setAttribute("aria-label", `${step.label} resmini sıraya ekle`);
+    button.append(createLogicVisual(step));
+    button.addEventListener("click", () => {
+      if (isPaused || logicAttentionState.inputLocked) return;
+      logicAttention.placeSequenceStep(state, stepId);
+      renderLogicAttentionRound();
+    });
+    tray.append(button);
+  });
+  board.append(slots, tray);
+  ui.logicAttentionVisual.append(board);
+  ui.logicAttentionCheck.classList.remove("hidden");
+}
+
+function renderLogicMazeRound() {
+  const round = logicAttentionState.round;
+  const state = logicAttentionState.maze;
+  const maze = document.createElement("div");
+  maze.className = "logic-maze";
+  maze.style.setProperty("--maze-size", round.size);
+  maze.setAttribute("role", "grid");
+  maze.setAttribute("aria-label", `${round.theme.startLabel} ile ${round.theme.goalLabel} arasındaki ${round.size} çarpı ${round.size} labirent`);
+  const visited = new Set(state.pathHistory);
+  Array.from({ length: round.size * round.size }, (_, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "logic-maze-cell";
+    button.setAttribute("role", "gridcell");
+    if (round.blocked.includes(index)) {
+      button.classList.add("wall");
+      button.setAttribute("aria-label", "Kapalı yol");
+      button.setAttribute("aria-disabled", "true");
+    } else {
+      if (visited.has(index)) button.classList.add("path-visited");
+      if (index === state.current) {
+        button.classList.add("current");
+        button.textContent = round.theme.startVisual;
+        button.setAttribute("aria-label", `${round.theme.startLabel} burada`);
+      } else if (index === round.goal) {
+        button.textContent = round.theme.goalVisual;
+        button.setAttribute("aria-label", `Hedef: ${round.theme.goalLabel}`);
+      } else button.setAttribute("aria-label", "Açık yol");
+    }
+    button.addEventListener("click", () => moveLogicMaze(index));
+    maze.append(button);
+  });
+  const controls = document.createElement("div");
+  controls.className = "logic-maze-controls";
+  [["up", "↑", "Yukarı git"], ["left", "←", "Sola git"], ["down", "↓", "Aşağı git"], ["right", "→", "Sağa git"]].forEach(([direction, symbol, label]) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "logic-maze-control";
+    button.dataset.direction = direction;
+    button.setAttribute("aria-label", label);
+    button.textContent = symbol;
+    button.addEventListener("click", () => moveLogicMazeDirection(direction));
+    controls.append(button);
+  });
+  ui.logicAttentionVisual.append(maze, controls);
+  ui.logicAttentionRestart.classList.remove("hidden");
+}
+
+function renderLogicAttentionRound() {
+  if (!logicAttentionState?.round) return;
+  resetLogicAttentionRoundView();
+  const round = logicAttentionState.round;
+  ui.logicAttentionTitle.textContent = activeLearningPathStage.title;
+  ui.logicAttentionPrompt.textContent = round.prompt;
+  ui.logicAttentionProgressLabel.textContent = `${logicAttentionState.roundNumber} / ${logicAttentionState.totalRounds}`;
+  ui.logicAttentionProgressFill.style.width = `${(logicAttentionState.roundNumber / logicAttentionState.totalRounds) * 100}%`;
+  ui.logicAttentionScore.textContent = `⭐ ${correctAnswers}`;
+  if (["oddOneOut", "patternCompletion", "shadowMatching", "grouping"].includes(round.type)) renderLogicSelectionRound();
+  else if (round.type === "missingItem") renderLogicMissingRound();
+  else if (round.type === "sequenceOrdering") renderLogicSequenceRound();
+  else if (round.type === "simpleMaze") renderLogicMazeRound();
+  setLogicAttentionInputEnabled(true);
+}
+
+function recordLogicAttentionInteraction(wasCorrect, answerValue) {
+  currentQuestion = {
+    label: activeLearningPathStage.title,
+    category: `LearningPath:${activeLearningPathStage.id}`,
+    correct: String(logicAttentionState.round.correctId ?? logicAttentionState.round.target?.join("-") ?? logicAttentionState.round.goal)
+  };
+  if (!wasCorrect) {
+    streak = 0;
+    updateParentData(false);
+    return;
+  }
+  stars += 1;
+  streak += 1;
+  bestStreak = Math.max(bestStreak, streak);
+  correctAnswers += 1;
+  updateParentData(true);
+  checkAchievements();
+  updateDailyGoalOnCorrectAnswer();
+}
+
+async function giveLogicRetry(button, message = "Bir daha bakalım.") {
+  const sessionId = logicAttentionSessionId;
+  logicAttentionState.attempts += 1;
+  logicAttentionState.inputLocked = true;
+  logicAttentionState.pendingResult = "wrong";
+  clearSpeech();
+  recordLogicAttentionInteraction(false, button?.dataset.logicChoice ?? "yanlış");
+  button?.classList.add("try-again-choice");
+  if (logicAttentionState.attempts >= 2) {
+    ui.logicAttentionChoices.querySelector(`[data-logic-choice="${logicAttentionState.round.correctId}"]`)?.classList.add("correct-answer-reveal");
+    message = "Dikkatlice inceleyelim. Yeşil ipucuna bakabilirsin.";
+  }
+  ui.logicAttentionFeedback.textContent = message;
+  ui.logicAttentionFeedback.className = "matching-feedback try-again";
+  await speech.speak(message, TURKISH_LANGUAGE);
+  if (!isLogicAttentionActive || isPaused || sessionId !== logicAttentionSessionId) return;
+  logicAttentionState.pendingResult = undefined;
+  logicAttentionState.inputLocked = false;
+  setLogicAttentionInputEnabled(true);
+}
+
+async function completeLogicAttentionRound(message) {
+  if (!isLogicAttentionActive || isPaused || logicAttentionState.inputLocked || logicAttentionState.completed) return;
+  const sessionId = logicAttentionSessionId;
+  logicAttentionState.inputLocked = true;
+  logicAttentionState.pendingResult = "correct";
+  recordLogicAttentionInteraction(true, logicAttentionState.round.correctId ?? logicAttentionState.round.goal);
+  ui.logicAttentionFeedback.textContent = message;
+  ui.logicAttentionFeedback.className = "matching-feedback success";
+  setLogicAttentionInputEnabled(false);
+  animations.celebrate();
+  audio.playSuccess();
+  clearSpeech();
+  await speech.speak(message, TURKISH_LANGUAGE);
+  if (!isLogicAttentionActive || isPaused || sessionId !== logicAttentionSessionId) return;
+  logicAttentionState.pendingResult = undefined;
+  if (logicAttentionState.roundNumber >= logicAttentionState.totalRounds) {
+    finishLogicAttentionStage();
+    return;
+  }
+  logicAttentionState.roundNumber += 1;
+  beginLogicAttentionRound();
+}
+
+function answerLogicAttentionChoice(button, itemId) {
+  if (!isLogicAttentionActive || isPaused || logicAttentionState.inputLocked || logicAttentionState.speaking) return;
+  if (itemId !== logicAttentionState.round.correctId) {
+    giveLogicRetry(button, logicAttentionState.attempts ? "Başka bir seçenek deneyebilirsin." : "Bir daha bakalım.");
+    return;
+  }
+  button.classList.add("correct-answer-reveal");
+  completeLogicAttentionRound(logicAttentionState.round.type === "shadowMatching" ? "Doğru gölgeyi buldun!" : "Harika!");
+}
+
+function revealLogicMissingItem() {
+  if (!isLogicAttentionActive || isPaused || logicAttentionState.inputLocked || logicAttentionState.missing?.phase !== "observe") return;
+  logicAttention.revealMissingItem(logicAttentionState.missing);
+  logicAttentionState.round.prompt = "Hangisi eksik?";
+  logicAttentionState.round.speech = "Hangisi eksik?";
+  renderLogicAttentionRound();
+  speakLogicAttentionPrompt();
+}
+
+async function checkLogicSequence() {
+  if (!isLogicAttentionActive || isPaused || logicAttentionState.inputLocked || logicAttentionState.sequence?.slots.some(value => value === null)) return;
+  if (!logicAttention.isSequenceCorrect(logicAttentionState.sequence)) {
+    await giveLogicRetry(undefined, "Sıraya bir daha bakalım. Kartlara dokunup değiştirebilirsin.");
+    return;
+  }
+  await completeLogicAttentionRound("Doğru sırayı buldun!");
+}
+
+function announceBlockedLogicMaze(reason) {
+  const message = reason === "blocked" ? "Bu yol kapalı." : "Yanındaki bir yolu seç.";
+  ui.logicAttentionFeedback.textContent = message;
+  ui.logicAttentionFeedback.className = "matching-feedback try-again";
+  clearSpeech();
+  speech.speak(message, TURKISH_LANGUAGE);
+}
+
+function handleLogicMazeResult(result) {
+  if (!result.moved) {
+    announceBlockedLogicMaze(result.reason);
+    return;
+  }
+  renderLogicAttentionRound();
+  if (result.completed) completeLogicAttentionRound("Yolu buldun!");
+}
+
+function moveLogicMaze(target) {
+  if (!isLogicAttentionActive || isPaused || logicAttentionState.inputLocked || logicAttentionState.round.type !== "simpleMaze") return;
+  handleLogicMazeResult(logicAttention.moveMaze(logicAttentionState.maze, logicAttentionState.round, target));
+}
+
+function moveLogicMazeDirection(direction) {
+  if (!isLogicAttentionActive || isPaused || logicAttentionState.inputLocked || logicAttentionState.round.type !== "simpleMaze") return;
+  handleLogicMazeResult(logicAttention.moveMazeDirection(logicAttentionState.maze, logicAttentionState.round, direction));
+}
+
+function restartLogicMaze() {
+  if (!isLogicAttentionActive || isPaused || logicAttentionState.inputLocked || logicAttentionState.round.type !== "simpleMaze") return;
+  logicAttention.restartMaze(logicAttentionState.maze, logicAttentionState.round);
+  ui.logicAttentionFeedback.textContent = "Baştan başlayabilirsin.";
+  renderLogicAttentionRound();
+  ui.logicAttentionFeedback.textContent = "Baştan başlayabilirsin.";
+}
+
+function beginLogicAttentionRound() {
+  if (!isLogicAttentionActive || isPaused) return;
+  const round = logicAttention.createRound(logicAttentionState.stageId, logicAttentionState.roundNumber, logicAttentionState.totalRounds);
+  if (!logicAttention.validateRound(round)) {
+    console.warn(`[Sprint 8.3.5.1 Mantık ve Dikkat] ${logicAttentionState.stageId} için tamamlanabilir tur üretilemedi.`);
+    openLearningPath({ focusStageId: logicAttentionState.stageId });
+    return;
+  }
+  logicAttentionState.round = round;
+  logicAttentionState.attempts = 0;
+  logicAttentionState.inputLocked = false;
+  logicAttentionState.speaking = false;
+  logicAttentionState.missing = round.type === "missingItem" ? logicAttention.createMissingState(round) : undefined;
+  logicAttentionState.sequence = round.type === "sequenceOrdering" ? logicAttention.createSequenceState(round) : undefined;
+  logicAttentionState.maze = round.type === "simpleMaze" ? logicAttention.createMazeState(round) : undefined;
+  logicAttentionState.recentKeys = [round.key, ...logicAttentionState.recentKeys.filter(key => key !== round.key)].slice(0, 3);
+  questionNumber = logicAttentionState.roundNumber;
+  renderLogicAttentionRound();
+  ui.logicAttentionPrompt.focus({ preventScroll: true });
+  if (round.type === "missingItem") {
+    round.speech = "Resimlere dikkat et. Hazır olduğunda Hazırım düğmesine dokun.";
+  }
+  speakLogicAttentionPrompt();
+}
+
+async function finishLogicAttentionStage() {
+  if (!isLogicAttentionActive || isSessionSummaryShowing) return;
+  isSessionSummaryShowing = true;
+  logicAttentionState.completed = true;
+  recordLearningSessionCompleted();
+  clearSpeech();
+  stopWakeLock();
+  stopPlayTime();
+  completeLearningPathStage();
+  const celebrationMessage = getPersonalizedSessionMessage();
+  ui.summaryStars.textContent = stars;
+  ui.summaryCorrect.textContent = correctAnswers;
+  ui.summaryStreak.textContent = bestStreak;
+  ui.summaryCategory.textContent = activeLearningPathStage.title;
+  ui.summaryTitle.textContent = celebrationMessage;
+  ui.summaryCopy.textContent = `${questionNumber} etkinlik tamamlandı!`;
+  renderLearningPathCompletion(celebrationMessage);
+  isLogicAttentionActive = false;
+  ui.logicAttention.classList.add("hidden");
+  ui.summary.classList.remove("hidden");
+  animations.celebrate();
+  audio.playCelebration();
+  await speech.speak(celebrationMessage, TURKISH_LANGUAGE);
+}
+
+function startLogicAttentionStage(stage) {
+  cleanupLogicAttention();
+  clearSpeech();
+  window.clearTimeout(sessionCelebrationTimer);
+  if (!activeLearningPathStage) learningPathPreviousGameMode = activeGameMode;
+  activeLearningPathStage = { ...stage, categories: [] };
+  activeGameMode = LEARNING_MODE;
+  resetSession();
+  logicAttentionSessionId += 1;
+  isLogicAttentionActive = true;
+  logicAttentionState = createEmptyLogicAttentionState();
+  logicAttentionState.stageId = stage.id;
+  logicAttentionState.roundNumber = 1;
+  logicAttentionState.totalRounds = stage.sessionLength;
+  recordLearningSessionStarted([`LearningPath:${stage.id}`], "learning-path-logic-attention");
+  ensureDailyGoal();
+  renderDailyGoal();
+  hideAllScreens();
+  ui.shell.classList.remove("learning-path-open");
+  ui.logicAttention.classList.remove("hidden");
+  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  ui.logicAttentionTitle.focus({ preventScroll: true });
+  startPlayTime();
+  startWakeLock();
+  beginLogicAttentionRound();
+}
+
 function clearSpeech() {
   audioRun += 1;
   speech.clear();
@@ -3740,10 +4240,11 @@ function setGameActionsEnabled(enabled) {
   ui.sortingPause.disabled = !enabled;
   ui.newMiniGamePause.disabled = !enabled;
   ui.numberLearningPause.disabled = !enabled;
+  ui.logicAttentionPause.disabled = !enabled;
 }
 
 function pauseGame() {
-  if (isPaused || (ui.quiz.classList.contains("hidden") && !isBalloonBonusActive && !isMatchingGameActive && !isListeningGameActive && !isNumberMatchGameActive && !isColorMatchGameActive && !isSortingGameActive && !isNewMiniGameActive && !isNumberLearningActive)) return;
+  if (isPaused || (ui.quiz.classList.contains("hidden") && !isBalloonBonusActive && !isMatchingGameActive && !isListeningGameActive && !isNumberMatchGameActive && !isColorMatchGameActive && !isSortingGameActive && !isNewMiniGameActive && !isNumberLearningActive && !isLogicAttentionActive)) return;
   isPaused = true;
   clearSpeech();
   stopPlayTime();
@@ -3779,6 +4280,10 @@ function pauseGame() {
     numberLearningState.speaking = false;
     ui.numberLearningVisual.querySelectorAll(".addition-object").forEach(object => object.classList.remove("counting-active"));
     setNumberLearningInputEnabled(false);
+  }
+  if (isLogicAttentionActive) {
+    logicAttentionState.speaking = false;
+    setLogicAttentionInputEnabled(false);
   }
   ui.pauseOverlay.classList.remove("hidden");
   ui.resume.focus();
@@ -3884,6 +4389,28 @@ function resumeGame() {
       return;
     }
     renderNumberLearningRound();
+    return;
+  }
+  if (isLogicAttentionActive) {
+    logicAttentionState.speaking = false;
+    if (logicAttentionState.pendingResult === "wrong") {
+      logicAttentionState.pendingResult = undefined;
+      logicAttentionState.inputLocked = false;
+      renderLogicAttentionRound();
+      ui.logicAttentionFeedback.textContent = "Tekrar deneyebilirsin.";
+      return;
+    }
+    if (logicAttentionState.pendingResult === "correct") {
+      logicAttentionState.pendingResult = undefined;
+      logicAttentionState.inputLocked = false;
+      if (logicAttentionState.roundNumber >= logicAttentionState.totalRounds) finishLogicAttentionStage();
+      else {
+        logicAttentionState.roundNumber += 1;
+        beginLogicAttentionRound();
+      }
+      return;
+    }
+    renderLogicAttentionRound();
     return;
   }
   if (isWelcomeSequenceActive) {
@@ -4313,6 +4840,10 @@ function startLearningPathStage(stageId) {
     startNumberLearningStage(stage);
     return;
   }
+  if (logicAttention.STAGE_IDS.includes(stage.id)) {
+    startLogicAttentionStage(stage);
+    return;
+  }
   const availableCategories = stage.categoryIds.filter(category => engine.questions.some(question => question.category === category));
   const validationPlan = engine.createSessionPlan(availableCategories, stage.sessionLength, { gentleProgression: true });
   if (availableCategories.length !== stage.categoryIds.length || validationPlan.length !== stage.sessionLength) {
@@ -4432,6 +4963,7 @@ function goHome(shouldSpeak = true, destination = "home") {
   clearSpeech();
   cleanupNewMiniGame();
   cleanupNumberLearning();
+  cleanupLogicAttention();
   setSessionNavigationBusy(false);
   resetEncouragementState();
   stopWakeLock();
@@ -4538,6 +5070,7 @@ function goHome(shouldSpeak = true, destination = "home") {
   ui.sorting.classList.add("hidden");
   ui.newMiniGame.classList.add("hidden");
   ui.numberLearning.classList.add("hidden");
+  ui.logicAttention.classList.add("hidden");
   ui.learningPathReturn.classList.add("hidden");
   ui.learningPathNext.classList.add("hidden");
   ui.learningPathCompletion.classList.add("hidden");
@@ -4715,9 +5248,23 @@ ui.colorMatchPause.addEventListener("click", pauseGame);
 ui.sortingPause.addEventListener("click", pauseGame);
 ui.newMiniGamePause.addEventListener("click", pauseGame);
 ui.numberLearningPause.addEventListener("click", pauseGame);
+ui.logicAttentionPause.addEventListener("click", pauseGame);
 ui.numberLearningPath.addEventListener("click", () => openLearningPath({ focusStageId: activeLearningPathStage?.id }));
+ui.logicAttentionPath.addEventListener("click", () => openLearningPath({ focusStageId: activeLearningPathStage?.id }));
 ui.numberLearningListen.addEventListener("click", speakNumberLearningPrompt);
+ui.logicAttentionListen.addEventListener("click", speakLogicAttentionPrompt);
 ui.numberLearningCheck.addEventListener("click", checkFocusedNumberLearning);
+ui.logicAttentionReady.addEventListener("click", revealLogicMissingItem);
+ui.logicAttentionCheck.addEventListener("click", checkLogicSequence);
+ui.logicAttentionRestart.addEventListener("click", restartLogicMaze);
+ui.logicAttention.addEventListener("keydown", event => {
+  if (!isLogicAttentionActive || isPaused || logicAttentionState?.round?.type !== "simpleMaze") return;
+  const directionByKey = { ArrowUp: "up", ArrowDown: "down", ArrowLeft: "left", ArrowRight: "right" };
+  const direction = directionByKey[event.key];
+  if (!direction) return;
+  event.preventDefault();
+  moveLogicMazeDirection(direction);
+});
 ui.numberLearningHelp.addEventListener("click", showArithmeticVisualHelp);
 ui.numberLearningCombine.addEventListener("click", combineAdditionGroups);
 ui.numberLearningCount.addEventListener("click", toggleAdditionCounting);

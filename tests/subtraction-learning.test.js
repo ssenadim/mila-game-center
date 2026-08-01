@@ -127,8 +127,8 @@ test("focused UI provides tap removal, remaining-only counting, cleanup, pause a
   assert.match(app, /\.subtraction-object\.remaining:not\(\.removed\)/);
   assert.match(app, /numberLearningSupportRun \+= 1/);
   assert.match(app, /clearNumberLearningTimer\(\)/);
-  assert.match(app, /activeLearningPathStage\.id === "visual-subtraction"/);
-  assert.match(app, /stageById\("mixed-operations"\)/);
+  assert.match(app, /const nextStage = learningPathModel\.getNextEligibleStage/);
+  assert.match(app, /logicAttention\.STAGE_IDS\.includes\(stage\.id\)/);
   assert.match(html, /id="number-learning-path-button"[\s\S]*Öğrenme Yolu/);
   assert.match(html, /id="number-learning-pause-button"/);
   assert.match(css, /\.subtraction-object\{[\s\S]*min-width:44px;min-height:44px/);

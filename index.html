@@ -255,6 +255,29 @@
         <p id="number-learning-feedback" class="matching-feedback" role="status"></p>
       </section>
 
+      <section id="logic-attention-screen" class="screen logic-attention-screen hidden" aria-live="polite" aria-labelledby="logic-attention-title" tabindex="-1">
+        <header class="matching-header logic-attention-header">
+          <div><p class="eyebrow">DÜŞÜN VE BUL</p><h2 id="logic-attention-title" tabindex="-1">Dikkatle bak!</h2></div>
+          <button id="logic-attention-path-button" class="game-destination-button" type="button">🗺️ Öğrenme Yolu</button>
+          <button id="logic-attention-pause-button" class="icon-button" type="button" aria-label="Oyunu duraklat">⏸</button>
+        </header>
+        <div class="number-learning-progress logic-attention-progress">
+          <strong id="logic-attention-progress-label">1 / 8</strong>
+          <span class="progress-bar" aria-hidden="true"><i id="logic-attention-progress-fill"></i></span>
+          <span id="logic-attention-score">⭐ 0</span>
+        </div>
+        <button id="logic-attention-listen-button" class="replay-button" type="button" aria-label="Yönergeyi tekrar dinle"><span aria-hidden="true">🔊</span> Tekrar Dinle</button>
+        <p id="logic-attention-prompt" class="number-learning-prompt" tabindex="-1"></p>
+        <div id="logic-attention-visual" class="logic-attention-visual"></div>
+        <div id="logic-attention-choices" class="logic-attention-choices" aria-label="Cevap seçenekleri"></div>
+        <div id="logic-attention-actions" class="logic-attention-actions">
+          <button id="logic-attention-ready-button" class="primary-button hidden" type="button">Hazırım</button>
+          <button id="logic-attention-check-button" class="primary-button hidden" type="button">Kontrol Et</button>
+          <button id="logic-attention-restart-button" class="sound-button hidden" type="button">Baştan Başla</button>
+        </div>
+        <p id="logic-attention-feedback" class="matching-feedback" role="status" aria-live="polite"></p>
+      </section>
+
       <section id="matching-screen" class="screen matching-screen hidden" aria-live="polite" aria-labelledby="matching-title">
         <header class="matching-header">
           <div><p class="eyebrow">EŞİNİ BUL</p><h2 id="matching-title">Aynı kartları bul!</h2></div>
@@ -457,11 +480,12 @@
     <script src="js/services/AnimationHelper.js?v=6.6"></script>
     <script src="js/QuestionEngine.js?v=6.4"></script>
     <script src="js/NewMiniGames.js?v=8.1"></script>
+    <script src="js/LogicAttention.js?v=8.3.5.1"></script>
     <script src="js/LearningCategories.js?v=8.2"></script>
-    <script src="js/LearningPath.js?v=8.3.4"></script>
+    <script src="js/LearningPath.js?v=8.3.5.1"></script>
     <script src="js/NumberLearning.js?v=8.3.4"></script>
     <script src="js/WorldThemes.js?v=1"></script>
     <script src="data/offline-data.js"></script>
-    <script src="app.js?v=8.3.4"></script>
+    <script src="app.js?v=8.3.5.1"></script>
   </body>
 </html>

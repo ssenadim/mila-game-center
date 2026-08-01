@@ -58,7 +58,14 @@
     LEARNING_TYPES.VISUAL_ADDITION,
     LEARNING_TYPES.SUBTRACTION_PREPARATION,
     LEARNING_TYPES.NUMERIC_SUBTRACTION,
-    LEARNING_TYPES.VISUAL_SUBTRACTION
+    LEARNING_TYPES.VISUAL_SUBTRACTION,
+    LEARNING_TYPES.ODD_ONE_OUT,
+    LEARNING_TYPES.MISSING_ITEM,
+    LEARNING_TYPES.PATTERN_COMPLETION,
+    LEARNING_TYPES.SEQUENCE_ORDERING,
+    LEARNING_TYPES.SHADOW_MATCHING,
+    LEARNING_TYPES.GROUPING,
+    LEARNING_TYPES.SIMPLE_MAZE
   ]);
 
   const GROUPS = [
@@ -134,20 +141,20 @@
     { id: "visual-subtraction", title: "Görsellerle Çıkarma", icon: "🧸", description: "Resimlerden ayırarak çıkarmayı keşfet.", groupId: "first-operations", order: 22, learningType: LEARNING_TYPES.VISUAL_SUBTRACTION, categoryIds: [], prerequisiteStageIds: ["subtract-smaller-from-greater"], sessionLength: 10, implemented: true },
     { id: "mixed-operations", title: "Karışık İşlemler", icon: "🧮", description: "Toplama ve çıkarma ipuçlarını ayırt et.", groupId: "first-operations", order: 23, learningType: LEARNING_TYPES.MIXED_OPERATIONS, categoryIds: [], prerequisiteStageIds: ["visual-subtraction"], sessionLength: 10, implemented: false },
 
-    { id: "odd-one-out", title: "Hangisi Farklı?", icon: "🔎", description: "Diğerlerinden farklı olanı bul.", groupId: "think-find", order: 24, learningType: LEARNING_TYPES.ODD_ONE_OUT, categoryIds: [], prerequisiteStageIds: ["mixed-operations"], sessionLength: 8, implemented: false },
-    { id: "missing-item", title: "Hangisi Eksik?", icon: "🫣", description: "Kaybolan resmi hatırla.", groupId: "think-find", order: 25, learningType: LEARNING_TYPES.MISSING_ITEM, categoryIds: [], prerequisiteStageIds: ["odd-one-out"], sessionLength: 8, implemented: false },
-    { id: "complete-pattern", title: "Örüntüyü Tamamla", icon: "🔶", description: "Tekrar eden sıranın devamını bul.", groupId: "think-find", order: 26, learningType: LEARNING_TYPES.PATTERN_COMPLETION, categoryIds: [], prerequisiteStageIds: ["missing-item"], sessionLength: 8, implemented: false },
-    { id: "sequence-order", title: "Doğru Sırayı Bul", icon: "📶", description: "Olayları doğru sıraya koy.", groupId: "think-find", order: 27, learningType: LEARNING_TYPES.SEQUENCE_ORDERING, categoryIds: [], prerequisiteStageIds: ["complete-pattern"], sessionLength: 8, implemented: false },
-    { id: "shadow-matching", title: "Gölgesini Bul", icon: "🌑", description: "Resmi doğru gölgeyle eşleştir.", groupId: "think-find", order: 28, learningType: LEARNING_TYPES.SHADOW_MATCHING, categoryIds: [], prerequisiteStageIds: ["sequence-order"], sessionLength: 8, implemented: false },
-    { id: "same-group", title: "Aynı Grubu Bul", icon: "🧺", description: "Birlikte olan nesneleri bul.", groupId: "think-find", order: 29, learningType: LEARNING_TYPES.GROUPING, categoryIds: [], prerequisiteStageIds: ["shadow-matching"], sessionLength: 8, implemented: false },
-    { id: "simple-maze", title: "Basit Labirent", icon: "🌀", description: "Kısa yolu takip ederek çıkışı bul.", groupId: "think-find", order: 30, learningType: LEARNING_TYPES.SIMPLE_MAZE, categoryIds: [], prerequisiteStageIds: ["same-group"], sessionLength: 6, implemented: false },
+    { id: "odd-one-out", title: "Hangisi Farklı?", icon: "🔎", description: "Diğerlerinden farklı olanı bul.", groupId: "think-find", order: 24, learningType: LEARNING_TYPES.ODD_ONE_OUT, categoryIds: [], prerequisiteStageIds: ["visual-subtraction"], sessionLength: 8, implemented: true },
+    { id: "missing-item", title: "Hangisi Eksik?", icon: "🫣", description: "Kaybolan resmi hatırla.", groupId: "think-find", order: 25, learningType: LEARNING_TYPES.MISSING_ITEM, categoryIds: [], prerequisiteStageIds: ["odd-one-out"], sessionLength: 8, implemented: true },
+    { id: "complete-pattern", title: "Örüntüyü Tamamla", icon: "🔶", description: "Tekrar eden sıranın devamını bul.", groupId: "think-find", order: 26, learningType: LEARNING_TYPES.PATTERN_COMPLETION, categoryIds: [], prerequisiteStageIds: ["missing-item"], sessionLength: 8, implemented: true },
+    { id: "sequence-order", title: "Doğru Sırayı Bul", icon: "📶", description: "Olayları doğru sıraya koy.", groupId: "think-find", order: 27, learningType: LEARNING_TYPES.SEQUENCE_ORDERING, categoryIds: [], prerequisiteStageIds: ["complete-pattern"], sessionLength: 7, implemented: true },
+    { id: "shadow-matching", title: "Gölgesini Bul", icon: "🌑", description: "Resmi doğru gölgeyle eşleştir.", groupId: "think-find", order: 28, learningType: LEARNING_TYPES.SHADOW_MATCHING, categoryIds: [], prerequisiteStageIds: ["sequence-order"], sessionLength: 8, implemented: true },
+    { id: "same-group", title: "Aynı Grubu Bul", icon: "🧺", description: "Birlikte olan nesneleri bul.", groupId: "think-find", order: 29, learningType: LEARNING_TYPES.GROUPING, categoryIds: [], prerequisiteStageIds: ["shadow-matching"], sessionLength: 8, implemented: true },
+    { id: "simple-maze", title: "Basit Labirent", icon: "🌀", description: "Kısa yolu takip ederek çıkışı bul.", groupId: "think-find", order: 30, learningType: LEARNING_TYPES.SIMPLE_MAZE, categoryIds: [], prerequisiteStageIds: ["same-group"], sessionLength: 5, implemented: true },
 
-    { id: "emotions", title: "Duygular", icon: "😊", description: "Yüzlerdeki duyguları tanı.", groupId: "daily-life", order: 31, learningType: LEARNING_TYPES.EMOTION_RECOGNITION, categoryIds: ["Emotions"], prerequisiteStageIds: ["nature-space"], sessionLength: 20, implemented: true },
-    { id: "weather", title: "Hava Durumu", icon: "🌦️", description: "Bugünün havasını anlatan resmi bul.", groupId: "daily-life", order: 32, learningType: LEARNING_TYPES.WEATHER_RECOGNITION, categoryIds: ["Weather"], prerequisiteStageIds: ["emotions"], sessionLength: 20, implemented: true },
-    { id: "seasons", title: "Mevsimler", icon: "🍂", description: "Mevsimleri ve işaretlerini tanı.", groupId: "daily-life", order: 33, learningType: LEARNING_TYPES.SEASON_RECOGNITION, categoryIds: ["Seasons"], prerequisiteStageIds: ["weather"], sessionLength: 20, implemented: true },
-    { id: "positions", title: "Konum Kavramları", icon: "📍", description: "Nesnelerin nerede olduğunu bul.", groupId: "daily-life", order: 34, learningType: LEARNING_TYPES.POSITION_RECOGNITION, categoryIds: ["Positions"], prerequisiteStageIds: ["seasons"], sessionLength: 20, implemented: true },
-    { id: "opposites", title: "Zıt Kavramlar", icon: "↔️", description: "Birbirinin zıttı olan kavramları bul.", groupId: "daily-life", order: 35, learningType: LEARNING_TYPES.OPPOSITE_RECOGNITION, categoryIds: ["Opposites"], prerequisiteStageIds: ["positions"], sessionLength: 20, implemented: true },
-    { id: "daily-actions", title: "Günlük Eylemler", icon: "🏃", description: "Gün içinde yaptığımız eylemleri tanı.", groupId: "daily-life", order: 36, learningType: LEARNING_TYPES.ACTION_RECOGNITION, categoryIds: ["Actions"], prerequisiteStageIds: ["opposites"], sessionLength: 20, implemented: true },
+    { id: "emotions", title: "Duygular", icon: "😊", description: "Yüzlerdeki duyguları tanı.", groupId: "daily-life", order: 31, learningType: LEARNING_TYPES.EMOTION_RECOGNITION, categoryIds: ["Emotions"], prerequisiteStageIds: ["simple-maze"], sessionLength: 20, implemented: false },
+    { id: "weather", title: "Hava Durumu", icon: "🌦️", description: "Bugünün havasını anlatan resmi bul.", groupId: "daily-life", order: 32, learningType: LEARNING_TYPES.WEATHER_RECOGNITION, categoryIds: ["Weather"], prerequisiteStageIds: ["emotions"], sessionLength: 20, implemented: false },
+    { id: "seasons", title: "Mevsimler", icon: "🍂", description: "Mevsimleri ve işaretlerini tanı.", groupId: "daily-life", order: 33, learningType: LEARNING_TYPES.SEASON_RECOGNITION, categoryIds: ["Seasons"], prerequisiteStageIds: ["weather"], sessionLength: 20, implemented: false },
+    { id: "positions", title: "Konum Kavramları", icon: "📍", description: "Nesnelerin nerede olduğunu bul.", groupId: "daily-life", order: 34, learningType: LEARNING_TYPES.POSITION_RECOGNITION, categoryIds: ["Positions"], prerequisiteStageIds: ["seasons"], sessionLength: 20, implemented: false },
+    { id: "opposites", title: "Zıt Kavramlar", icon: "↔️", description: "Birbirinin zıttı olan kavramları bul.", groupId: "daily-life", order: 35, learningType: LEARNING_TYPES.OPPOSITE_RECOGNITION, categoryIds: ["Opposites"], prerequisiteStageIds: ["positions"], sessionLength: 20, implemented: false },
+    { id: "daily-actions", title: "Günlük Eylemler", icon: "🏃", description: "Gün içinde yaptığımız eylemleri tanı.", groupId: "daily-life", order: 36, learningType: LEARNING_TYPES.ACTION_RECOGNITION, categoryIds: ["Actions"], prerequisiteStageIds: ["opposites"], sessionLength: 20, implemented: false },
     { id: "time-preparation", title: "Saatlere Hazırlık", icon: "🕘", description: "Günün bölümlerini ve saatleri keşfetmeye hazırlan.", groupId: "daily-life", order: 37, learningType: LEARNING_TYPES.TIME_PREPARATION, categoryIds: [], prerequisiteStageIds: ["daily-actions"], sessionLength: 8, implemented: false },
     { id: "money-preparation", title: "Para Kavramına Hazırlık", icon: "🪙", description: "Paraları ve alışveriş kavramını tanımaya hazırlan.", groupId: "daily-life", order: 38, learningType: LEARNING_TYPES.MONEY_PREPARATION, categoryIds: [], prerequisiteStageIds: ["time-preparation"], sessionLength: 8, implemented: false }
   ];
@@ -315,7 +322,16 @@
           LEARNING_TYPES.NUMERIC_SUBTRACTION,
           LEARNING_TYPES.VISUAL_SUBTRACTION
         ].includes(stage.learningType);
-        if (!stage.categoryIds.length && !isCustomNumberStage) problems.push(`${stage.id}: oynanabilir aşamada kategori yok.`);
+        const isCustomLogicStage = [
+          LEARNING_TYPES.ODD_ONE_OUT,
+          LEARNING_TYPES.MISSING_ITEM,
+          LEARNING_TYPES.PATTERN_COMPLETION,
+          LEARNING_TYPES.SEQUENCE_ORDERING,
+          LEARNING_TYPES.SHADOW_MATCHING,
+          LEARNING_TYPES.GROUPING,
+          LEARNING_TYPES.SIMPLE_MAZE
+        ].includes(stage.learningType);
+        if (!stage.categoryIds.length && !isCustomNumberStage && !isCustomLogicStage) problems.push(`${stage.id}: oynanabilir aşamada kategori yok.`);
         const allowedStrategies = STRATEGIES_BY_LEARNING_TYPE[stage.learningType] ?? [];
         stage.categoryIds.forEach(categoryId => {
           const category = categoryById.get(categoryId);

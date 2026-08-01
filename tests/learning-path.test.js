@@ -13,6 +13,8 @@ global.window = {
 const categories = require("../js/LearningCategories.js");
 const roadmap = require("../js/LearningPath.js");
 const numberLearning = require("../js/NumberLearning.js");
+global.MilaNewMiniGames = require("../js/NewMiniGames.js");
+const logicAttention = require("../js/LogicAttention.js");
 require("../js/QuestionEngine.js");
 const QuestionEngine = global.window.MilaQuestionEngine;
 
@@ -68,8 +70,8 @@ test("every stage belongs to exactly one group in deterministic order", () => {
 test("every implemented stage generates a complete valid Learning Path session", () => {
   const engine = new QuestionEngine(categories.questions);
   const implemented = roadmap.STAGES.filter(stage => stage.implemented);
-  assert.equal(implemented.length, 28);
-  implemented.filter(stage => !numberLearning.PLAYABLE_STAGE_IDS.includes(stage.id)).forEach(stage => {
+  assert.equal(implemented.length, 29);
+  implemented.filter(stage => !numberLearning.PLAYABLE_STAGE_IDS.includes(stage.id) && !logicAttention.STAGE_IDS.includes(stage.id)).forEach(stage => {
     const plan = engine.createSessionPlan(stage.categoryIds, stage.sessionLength, { gentleProgression: true });
     assert.equal(plan.length, stage.sessionLength, `${stage.id} session is incomplete`);
     assert.ok(plan.every(question => stage.categoryIds.includes(question.category)));
@@ -121,7 +123,8 @@ test("recommended and group progress count only implemented stages", () => {
   assert.deepEqual(roadmap.getGroupProgress("first-discoveries", progress), { completed: 4, playable: 4, planned: 0 });
   assert.deepEqual(roadmap.getGroupProgress("number-world", progress), { completed: 0, playable: 6, planned: 0 });
   assert.deepEqual(roadmap.getGroupProgress("first-operations", progress), { completed: 0, playable: 6, planned: 1 });
-  assert.deepEqual(roadmap.getGroupProgress("daily-life", progress), { completed: 0, playable: 6, planned: 2 });
+  assert.deepEqual(roadmap.getGroupProgress("think-find", progress), { completed: 0, playable: 7, planned: 0 });
+  assert.deepEqual(roadmap.getGroupProgress("daily-life", progress), { completed: 0, playable: 0, planned: 8 });
 });
 
 test("legacy progress migrates safely without retaining unknown stage IDs", () => {
@@ -181,7 +184,8 @@ test("Learning Path UI wires focused groups, safe stage launches and summary nav
   assert.match(app, /learningPathModel\.canLaunchStage\(stage\.id, progress\)/);
   assert.match(app, /!activeLearningPathStage && !isMiniGameLaunch && activeCategoryPack === "custom"/);
   assert.match(app, /learningPathModel\.getNextEligibleStage\(activeLearningPathStage\.id, progress\)/);
-  assert.match(app, /ui\.learningPathNext\.classList\.toggle\("hidden", !nextStage && !plannedNextStage\)/);
+  assert.match(app, /ui\.learningPathNext\.classList\.toggle\("hidden", !nextStage\)/);
+  assert.match(app, /ui\.learningPathNext\.disabled = false;/);
   assert.match(app, /progress\.completed\[activeLearningPathStage\.id\]\) return false;/);
   assert.match(app, /openLearningPath\(\{ focusStageId: activeLearningPathStage\?\.id \}\)/);
   assert.match(app, /if \(activeLearningPathStage\) ui\.quiz\.focus\(\{ preventScroll: true \}\)/);
