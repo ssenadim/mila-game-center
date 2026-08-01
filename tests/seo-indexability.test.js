@@ -26,6 +26,7 @@ test("one natural title, description, robots directive and canonical are present
 
   assert.equal(matches(/<meta\s+name="description"\s+content="[^"]+"\s*\/?>/gi).length, 1);
   assert.match(metaContent("name", "description"), /çocuklar/i);
+  assert.equal(matches(/<meta\s+name="robots"\s+content="[^"]+"\s*\/?>/gi).length, 1);
   assert.equal(metaContent("name", "robots"), "index, follow, max-image-preview:large");
   assert.equal(matches(/<link\s+rel="canonical"\s+href="[^"]+"\s*\/?>/gi).length, 1);
   assert.match(html, new RegExp(`<link rel="canonical" href="${canonicalUrl}"`));
@@ -33,6 +34,10 @@ test("one natural title, description, robots directive and canonical are present
 });
 
 test("Open Graph and Twitter cards use one consistent absolute social image", () => {
+  assert.equal(matches(/<meta\s+property="og:title"\s+content="[^"]+"\s*\/?>/gi).length, 1);
+  assert.equal(matches(/<meta\s+property="og:description"\s+content="[^"]+"\s*\/?>/gi).length, 1);
+  assert.equal(matches(/<meta\s+property="og:url"\s+content="[^"]+"\s*\/?>/gi).length, 1);
+  assert.equal(matches(/<meta\s+property="og:image"\s+content="[^"]+"\s*\/?>/gi).length, 1);
   assert.equal(metaContent("property", "og:type"), "website");
   assert.equal(metaContent("property", "og:locale"), "tr_TR");
   assert.equal(metaContent("property", "og:site_name"), "Mila Oyun Merkezi");
@@ -41,6 +46,10 @@ test("Open Graph and Twitter cards use one consistent absolute social image", ()
   assert.equal(metaContent("property", "og:url"), canonicalUrl);
   assert.equal(metaContent("property", "og:image"), `${canonicalUrl}og-image.png`);
   assert.ok(metaContent("property", "og:image:alt"));
+  assert.equal(matches(/<meta\s+name="twitter:card"\s+content="[^"]+"\s*\/?>/gi).length, 1);
+  assert.equal(matches(/<meta\s+name="twitter:title"\s+content="[^"]+"\s*\/?>/gi).length, 1);
+  assert.equal(matches(/<meta\s+name="twitter:description"\s+content="[^"]+"\s*\/?>/gi).length, 1);
+  assert.equal(matches(/<meta\s+name="twitter:image"\s+content="[^"]+"\s*\/?>/gi).length, 1);
   assert.equal(metaContent("name", "twitter:card"), "summary_large_image");
   assert.ok(metaContent("name", "twitter:title"));
   assert.ok(metaContent("name", "twitter:description"));
@@ -71,7 +80,7 @@ test("robots and single-page sitemap are root-accessible static files", () => {
   assert.match(sitemap, /<urlset xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9">/);
   assert.equal(matches(/<url>/g, sitemap).length, 1);
   assert.match(sitemap, new RegExp(`<loc>${canonicalUrl}</loc>`));
-  assert.doesNotMatch(sitemap, /#|localhost|vercel\.app/i);
+  assert.doesNotMatch(sitemap, /#|localhost|127\.0\.0\.1|\.example/i);
   assert.doesNotMatch(robots, /Disallow:/i);
 });
 
@@ -95,9 +104,9 @@ test("initial HTML has Turkish semantics and useful visible Home content", () =>
   assert.match(html, /sosyal medya veya video platformuna ihtiyaç duymadan/);
 });
 
-test("deployment placeholder is explicit and no local or preview URL leaks into SEO", () => {
+test("SEO URLs use the detected production host without local, placeholder or preview deployment URLs", () => {
   const seoSources = `${html}\n${robots}\n${sitemap}`;
-  assert.match(html, /SEO_PRODUCTION_URL_PLACEHOLDER/);
-  assert.doesNotMatch(seoSources, /localhost|127\.0\.0\.1|\.vercel\.app/i);
-  assert.equal(matches(/mila-game-center\.vercel.app/g, seoSources).length, 8);
+  assert.doesNotMatch(seoSources, /localhost|127\.0\.0\.1|\.example/i);
+  assert.doesNotMatch(seoSources, /https:\/\/mila-game-center-(?:git-|[a-z0-9]{6,}-)[^/]*\.vercel\.app/i);
+  assert.equal(matches(/mila-game-center\.vercel.app/g, seoSources).length, 7);
 });
