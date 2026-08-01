@@ -385,6 +385,7 @@ button { font:inherit; cursor:pointer; }
   .addition-object{font-size:1rem}
   .addition-total-choice{min-height:104px}
 }
+.logic-hint-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:999px;background:#fff1a8;color:#5f4515;font-size:.72rem;font-weight:900}
 @media(prefers-reduced-motion:reduce){
   .number-learning-support-actions .sound-button.emphasized{animation:none}
   .addition-group,.addition-object{transition:none}

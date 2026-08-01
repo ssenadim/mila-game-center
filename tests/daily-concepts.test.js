@@ -72,6 +72,7 @@ test("Hava Durumu has ten mappings and valid unambiguous clothing associations",
     assert.ok(clothing.id && clothing.visual);
   });
   assert.equal(daily.createWeatherRound(7, 8, seededRandom(7)).family, "clothing");
+  assert.deepEqual([1, 2, 3].map(round => daily.createWeatherRound(round, 8, seededRandom(round)).weatherKey), ["Sunny", "Rainy", "Snowy"]);
 });
 
 test("Mevsimler has four seasons, valid associations and tap ordering", () => {
@@ -104,6 +105,7 @@ test("Zıt Kavramlar has twelve bidirectional pairs and excludes ambiguous answe
   daily.OPPOSITE_PAIRS.forEach(pair => {
     assert.equal(daily.oppositeLookup(pair.first.label).id, pair.second.id);
     assert.equal(daily.oppositeLookup(pair.second.label).id, pair.first.id);
+    assert.notEqual(pair.first.visual, pair.second.visual, pair.id);
   });
   const matching = daily.createOppositeRound(8, 10, seededRandom(8));
   assert.equal(matching.type, "oppositeMatching");
@@ -126,11 +128,20 @@ test("Saatlere Hazırlık uses readable whole hours only and one correct clock",
     assert.equal(clock.minuteAngle, 0);
     assert.equal(clock.hourAngle, hour * 30);
   }
-  Array.from({ length: 8 }, (_, index) => daily.createTimeRound(index + 1, 8, seededRandom(index + 1))).forEach(round => {
+  const rounds = Array.from({ length: 8 }, (_, index) => daily.createTimeRound(index + 1, 8, seededRandom(index + 1)));
+  assert.deepEqual(rounds.filter(round => round.family === "timeOfDay").map(round => round.timeOfDay), ["morning", "evening", "night", "noon"]);
+  rounds.forEach(round => {
     assert.equal(daily.validateRound(round), true);
     if (round.clock) assert.ok(round.clock.hour >= 1 && round.clock.hour <= 12);
     if (round.choices.some(choice => choice.clock)) assert.equal(round.choices.filter(choice => choice.id === round.correctId).length, 1);
   });
+});
+
+test("recent challenge history prevents immediate repetition with bounded regeneration", () => {
+  const first = daily.createRound("weather", 1, 8, { rng: seededRandom(1), warn: () => {} });
+  const next = daily.createRound("weather", 1, 8, { rng: seededRandom(1), recentKeys: [first.key], warn: () => {} });
+  assert.notEqual(next.key, first.key);
+  assert.equal(daily.isRecentChallenge(next, [first.key]), false);
 });
 
 test("Para hazırlığı validates totals, sufficiency and equal amounts without change", () => {
@@ -173,6 +184,8 @@ test("focused UI wires speech, retry, pause, cleanup, keyboard/tap and responsiv
   assert.match(app, /clearSpeech\(\)[\s\S]*speech\.speak\(logicAttentionState\.round\.speech, TURKISH_LANGUAGE\)/);
   assert.match(app, /logicAttentionState\.selection = \["positionPlacement", "oppositeMatching"\]/);
   assert.match(app, /aria-pressed/);
+  assert.match(app, /Konum sahnesi \$\{index \+ 1\}/);
+  assert.match(app, /logic-hint-badge/);
   assert.match(app, /if \(isLogicAttentionActive\)[\s\S]*setLogicAttentionInputEnabled\(false\)/);
   assert.match(app, /cleanupLogicAttention\(\)[\s\S]*logicAttentionSessionId \+= 1/);
   assert.match(app, /completeLearningPathStage\(\)/);

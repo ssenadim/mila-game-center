@@ -3792,6 +3792,11 @@ function createLogicVisual(item, { showLabel = true } = {}) {
     price.textContent = `${item.price} TL`;
     visual.append(price, createMoneyTokens(item.payment.tokens));
   } else if (item.price) {
+    if (item.visual) {
+      const object = document.createElement("span");
+      object.textContent = item.visual;
+      visual.append(object);
+    }
     const price = document.createElement("strong");
     price.className = "daily-price-tag";
     price.textContent = `${item.price} TL`;
@@ -3851,19 +3856,19 @@ function createMoneyTokens(tokens) {
   return group;
 }
 
-function addLogicChoice(item, onClick, { shadow = false } = {}) {
+function addLogicChoice(item, onClick, { shadow = false, showLabel = true, ariaLabel } = {}) {
   const button = document.createElement("button");
   button.type = "button";
   button.className = `logic-choice${shadow ? " shadow" : ""}`;
   button.dataset.logicChoice = item.id;
-  button.setAttribute("aria-label", shadow ? "Gölge seçeneği" : (item.ariaLabel || item.label));
+  button.setAttribute("aria-label", shadow ? "Gölge seçeneği" : (ariaLabel || item.ariaLabel || item.label));
   if (shadow) {
     const image = document.createElement("img");
     image.src = newMiniGameSvgUrl(item.svg);
     image.alt = "";
     button.append(image);
   } else {
-    button.append(createLogicVisual(item, { showLabel: !item.clock }));
+    button.append(createLogicVisual(item, { showLabel: showLabel && !item.clock }));
   }
   button.addEventListener("click", onClick);
   ui.logicAttentionChoices.append(button);
@@ -4068,7 +4073,8 @@ function renderDailySelectionRound() {
     ui.logicAttentionVisual.append(reference);
   }
   round.choices.forEach((item, index) => {
-    const button = addLogicChoice(item, event => answerLogicAttentionChoice(event.currentTarget, item.id));
+    const neutralPositionScene = round.type === "positionRecognition" && round.family === "findScene";
+    const button = addLogicChoice(item, event => answerLogicAttentionChoice(event.currentTarget, item.id), { showLabel: !neutralPositionScene, ariaLabel: neutralPositionScene ? `Konum sahnesi ${index + 1}` : undefined });
     if (item.clock) button.setAttribute("aria-label", `Saat seçeneği ${index + 1}`);
     if (item.tokens) button.setAttribute("aria-label", `${item.label} para seçeneği`);
   });
@@ -4096,12 +4102,13 @@ function renderDailyConfirmRound() {
     reference.append(createLogicVisual(round.reference));
     ui.logicAttentionVisual.append(reference);
   }
-  round.choices.forEach(item => {
+  round.choices.forEach((item, index) => {
+    const neutralPlacement = round.type === "positionPlacement";
     const button = addLogicChoice(item, () => {
       if (isPaused || logicAttentionState.inputLocked || (round.object && !logicAttentionState.selection.objectSelected)) return;
       logicAttentionState.selection.selectedId = item.id;
       renderLogicAttentionRound();
-    });
+    }, { showLabel: !neutralPlacement, ariaLabel: neutralPlacement ? `Yerleştirme alanı ${index + 1}` : undefined });
     const selected = logicAttentionState.selection?.selectedId === item.id;
     button.classList.toggle("selected", selected);
     button.setAttribute("aria-pressed", String(selected));
@@ -4156,8 +4163,16 @@ async function giveLogicRetry(button, message = "Bir daha bakalım.") {
   recordLogicAttentionInteraction(false, button?.dataset.logicChoice ?? "yanlış");
   button?.classList.add("try-again-choice");
   if (logicAttentionState.attempts >= 2) {
-    ui.logicAttentionChoices.querySelector(`[data-logic-choice="${logicAttentionState.round.correctId}"]`)?.classList.add("correct-answer-reveal");
-    message = "Dikkatlice inceleyelim. Yeşil ipucuna bakabilirsin.";
+    const hintChoice = ui.logicAttentionChoices.querySelector(`[data-logic-choice="${logicAttentionState.round.correctId}"]`);
+    hintChoice?.classList.add("correct-answer-reveal");
+    if (hintChoice && !hintChoice.querySelector(".logic-hint-badge")) {
+      const hint = document.createElement("span");
+      hint.className = "logic-hint-badge";
+      hint.textContent = "💡 İpucu";
+      hintChoice.append(hint);
+      hintChoice.setAttribute("aria-label", `${hintChoice.getAttribute("aria-label")}. İpucu: bu seçeneğe bak.`);
+    }
+    message = "Dikkatlice inceleyelim. İpucu olan seçeneğe bakabilirsin.";
   }
   ui.logicAttentionFeedback.textContent = message;
   ui.logicAttentionFeedback.className = "matching-feedback try-again";
@@ -4267,7 +4282,7 @@ function restartLogicMaze() {
 function beginLogicAttentionRound() {
   if (!isLogicAttentionActive || isPaused) return;
   const conceptModule = dailyConcepts.STAGE_IDS.includes(logicAttentionState.stageId) ? dailyConcepts : logicAttention;
-  const round = conceptModule.createRound(logicAttentionState.stageId, logicAttentionState.roundNumber, logicAttentionState.totalRounds);
+  const round = conceptModule.createRound(logicAttentionState.stageId, logicAttentionState.roundNumber, logicAttentionState.totalRounds, { recentKeys: logicAttentionState.recentKeys });
   if (!conceptModule.validateRound(round)) {
     console.warn(`[Öğrenme Yolu] ${logicAttentionState.stageId} için tamamlanabilir tur üretilemedi.`);
     openLearningPath({ focusStageId: logicAttentionState.stageId });
