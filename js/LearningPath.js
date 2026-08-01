@@ -65,7 +65,9 @@
     LEARNING_TYPES.SEQUENCE_ORDERING,
     LEARNING_TYPES.SHADOW_MATCHING,
     LEARNING_TYPES.GROUPING,
-    LEARNING_TYPES.SIMPLE_MAZE
+    LEARNING_TYPES.SIMPLE_MAZE,
+    LEARNING_TYPES.TIME_PREPARATION,
+    LEARNING_TYPES.MONEY_PREPARATION
   ]);
 
   const GROUPS = [
@@ -149,14 +151,14 @@
     { id: "same-group", title: "Aynı Grubu Bul", icon: "🧺", description: "Birlikte olan nesneleri bul.", groupId: "think-find", order: 29, learningType: LEARNING_TYPES.GROUPING, categoryIds: [], prerequisiteStageIds: ["shadow-matching"], sessionLength: 8, implemented: true },
     { id: "simple-maze", title: "Basit Labirent", icon: "🌀", description: "Kısa yolu takip ederek çıkışı bul.", groupId: "think-find", order: 30, learningType: LEARNING_TYPES.SIMPLE_MAZE, categoryIds: [], prerequisiteStageIds: ["same-group"], sessionLength: 5, implemented: true },
 
-    { id: "emotions", title: "Duygular", icon: "😊", description: "Yüzlerdeki duyguları tanı.", groupId: "daily-life", order: 31, learningType: LEARNING_TYPES.EMOTION_RECOGNITION, categoryIds: ["Emotions"], prerequisiteStageIds: ["simple-maze"], sessionLength: 20, implemented: false },
-    { id: "weather", title: "Hava Durumu", icon: "🌦️", description: "Bugünün havasını anlatan resmi bul.", groupId: "daily-life", order: 32, learningType: LEARNING_TYPES.WEATHER_RECOGNITION, categoryIds: ["Weather"], prerequisiteStageIds: ["emotions"], sessionLength: 20, implemented: false },
-    { id: "seasons", title: "Mevsimler", icon: "🍂", description: "Mevsimleri ve işaretlerini tanı.", groupId: "daily-life", order: 33, learningType: LEARNING_TYPES.SEASON_RECOGNITION, categoryIds: ["Seasons"], prerequisiteStageIds: ["weather"], sessionLength: 20, implemented: false },
-    { id: "positions", title: "Konum Kavramları", icon: "📍", description: "Nesnelerin nerede olduğunu bul.", groupId: "daily-life", order: 34, learningType: LEARNING_TYPES.POSITION_RECOGNITION, categoryIds: ["Positions"], prerequisiteStageIds: ["seasons"], sessionLength: 20, implemented: false },
-    { id: "opposites", title: "Zıt Kavramlar", icon: "↔️", description: "Birbirinin zıttı olan kavramları bul.", groupId: "daily-life", order: 35, learningType: LEARNING_TYPES.OPPOSITE_RECOGNITION, categoryIds: ["Opposites"], prerequisiteStageIds: ["positions"], sessionLength: 20, implemented: false },
-    { id: "daily-actions", title: "Günlük Eylemler", icon: "🏃", description: "Gün içinde yaptığımız eylemleri tanı.", groupId: "daily-life", order: 36, learningType: LEARNING_TYPES.ACTION_RECOGNITION, categoryIds: ["Actions"], prerequisiteStageIds: ["opposites"], sessionLength: 20, implemented: false },
-    { id: "time-preparation", title: "Saatlere Hazırlık", icon: "🕘", description: "Günün bölümlerini ve saatleri keşfetmeye hazırlan.", groupId: "daily-life", order: 37, learningType: LEARNING_TYPES.TIME_PREPARATION, categoryIds: [], prerequisiteStageIds: ["daily-actions"], sessionLength: 8, implemented: false },
-    { id: "money-preparation", title: "Para Kavramına Hazırlık", icon: "🪙", description: "Paraları ve alışveriş kavramını tanımaya hazırlan.", groupId: "daily-life", order: 38, learningType: LEARNING_TYPES.MONEY_PREPARATION, categoryIds: [], prerequisiteStageIds: ["time-preparation"], sessionLength: 8, implemented: false }
+    { id: "emotions", title: "Duygular", icon: "😊", description: "Yüzlerdeki duyguları tanı.", groupId: "daily-life", order: 31, learningType: LEARNING_TYPES.EMOTION_RECOGNITION, categoryIds: ["Emotions"], prerequisiteStageIds: ["simple-maze"], sessionLength: 8, implemented: true },
+    { id: "weather", title: "Hava Durumu", icon: "🌦️", description: "Bugünün havasını anlatan resmi bul.", groupId: "daily-life", order: 32, learningType: LEARNING_TYPES.WEATHER_RECOGNITION, categoryIds: ["Weather"], prerequisiteStageIds: ["emotions"], sessionLength: 8, implemented: true },
+    { id: "seasons", title: "Mevsimler", icon: "🍂", description: "Mevsimleri ve işaretlerini tanı.", groupId: "daily-life", order: 33, learningType: LEARNING_TYPES.SEASON_RECOGNITION, categoryIds: ["Seasons"], prerequisiteStageIds: ["weather"], sessionLength: 8, implemented: true },
+    { id: "positions", title: "Konum Kavramları", icon: "📍", description: "Nesnelerin nerede olduğunu bul.", groupId: "daily-life", order: 34, learningType: LEARNING_TYPES.POSITION_RECOGNITION, categoryIds: ["Positions"], prerequisiteStageIds: ["seasons"], sessionLength: 10, implemented: true },
+    { id: "opposites", title: "Zıt Kavramlar", icon: "↔️", description: "Birbirinin zıttı olan kavramları bul.", groupId: "daily-life", order: 35, learningType: LEARNING_TYPES.OPPOSITE_RECOGNITION, categoryIds: ["Opposites"], prerequisiteStageIds: ["positions"], sessionLength: 10, implemented: true },
+    { id: "daily-actions", title: "Günlük Eylemler", icon: "🏃", description: "Gün içinde yaptığımız eylemleri tanı.", groupId: "daily-life", order: 36, learningType: LEARNING_TYPES.ACTION_RECOGNITION, categoryIds: ["Actions"], prerequisiteStageIds: ["opposites"], sessionLength: 8, implemented: true },
+    { id: "time-preparation", title: "Saatlere Hazırlık", icon: "🕘", description: "Günün bölümlerini ve saatleri keşfetmeye hazırlan.", groupId: "daily-life", order: 37, learningType: LEARNING_TYPES.TIME_PREPARATION, categoryIds: [], prerequisiteStageIds: ["daily-actions"], sessionLength: 8, implemented: true },
+    { id: "money-preparation", title: "Para Kavramına Hazırlık", icon: "🪙", description: "Paraları ve alışveriş kavramını tanımaya hazırlan.", groupId: "daily-life", order: 38, learningType: LEARNING_TYPES.MONEY_PREPARATION, categoryIds: [], prerequisiteStageIds: ["time-preparation"], sessionLength: 8, implemented: true }
   ];
 
   const REQUIRED_GROUP_IDS = GROUPS.map(group => group.id);
@@ -331,7 +333,8 @@
           LEARNING_TYPES.GROUPING,
           LEARNING_TYPES.SIMPLE_MAZE
         ].includes(stage.learningType);
-        if (!stage.categoryIds.length && !isCustomNumberStage && !isCustomLogicStage) problems.push(`${stage.id}: oynanabilir aşamada kategori yok.`);
+        const isCustomDailyStage = [LEARNING_TYPES.TIME_PREPARATION, LEARNING_TYPES.MONEY_PREPARATION].includes(stage.learningType);
+        if (!stage.categoryIds.length && !isCustomNumberStage && !isCustomLogicStage && !isCustomDailyStage) problems.push(`${stage.id}: oynanabilir aşamada kategori yok.`);
         const allowedStrategies = STRATEGIES_BY_LEARNING_TYPE[stage.learningType] ?? [];
         stage.categoryIds.forEach(categoryId => {
           const category = categoryById.get(categoryId);

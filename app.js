@@ -145,7 +145,7 @@ const ui = {
   start: document.querySelector("#start-button"), fullscreen: document.querySelector("#fullscreen-button"), achievements: document.querySelector("#achievements-button"), welcomeSound: document.querySelector("#welcome-sound-button"), learningMode: document.querySelector("#learning-mode-button"), quickMode: document.querySelector("#quick-mode-button"), matchingMode: document.querySelector("#matching-mode-button"), listeningMode: document.querySelector("#listening-mode-button"), numberMatchMode: document.querySelector("#number-match-mode-button"), colorMatchMode: document.querySelector("#color-match-mode-button"), sortingMode: document.querySelector("#sorting-mode-button"), missingItemMode: document.querySelector("#missing-item-mode-button"), shadowMode: document.querySelector("#shadow-mode-button"), initialLetterMode: document.querySelector("#initial-letter-mode-button"), soundMemoryMode: document.querySelector("#sound-memory-mode-button"), puzzleMode: document.querySelector("#puzzle-mode-button"), playerButtons: document.querySelectorAll(".player-button"), customPlayer: document.querySelector("#custom-player-button"), customPlayerLabel: document.querySelector("#custom-player-label"), customPlayerName: document.querySelector("#custom-player-name"), categoryPackButtons: document.querySelectorAll(".category-pack-button"), customCategoryOptions: document.querySelector("#custom-category-options"), home: document.querySelector("#home-button"), replay: document.querySelector("#question-sound-button"), matching: document.querySelector("#matching-screen"), matchingCategorySelection: document.querySelector("#matching-category-selection"), matchingCategoryOptions: document.querySelector("#matching-category-options"), matchingGameArea: document.querySelector("#matching-game-area"), matchingCategoryLabel: document.querySelector("#matching-category-label"), matchingCards: document.querySelector("#matching-cards"), matchingCelebration: document.querySelector("#matching-celebration"), matchingFeedback: document.querySelector("#matching-feedback"), matchingCompletionActions: document.querySelector("#matching-completion-actions"), matchingCompletionTime: document.querySelector("#matching-completion-time"), matchingReplay: document.querySelector("#matching-replay-button"), matchingCategories: document.querySelector("#matching-categories-button"), matchingHome: document.querySelector("#matching-home-button"), matchingPause: document.querySelector("#matching-pause-button"), listening: document.querySelector("#listening-screen"), listeningCards: document.querySelector("#listening-cards"), listeningCelebration: document.querySelector("#listening-celebration"), listeningFeedback: document.querySelector("#listening-feedback"), listeningReplay: document.querySelector("#listening-replay-button"), listeningHome: document.querySelector("#listening-home-button"), listeningPause: document.querySelector("#listening-pause-button"), numberMatch: document.querySelector("#number-match-screen"), numberMatchCards: document.querySelector("#number-match-cards"), numberMatchCelebration: document.querySelector("#number-match-celebration"), numberMatchFeedback: document.querySelector("#number-match-feedback"), numberMatchReplay: document.querySelector("#number-match-replay-button"), numberMatchHome: document.querySelector("#number-match-home-button"), numberMatchPause: document.querySelector("#number-match-pause-button"), colorMatch: document.querySelector("#color-match-screen"), colorMatchCards: document.querySelector("#color-match-cards"), colorMatchCelebration: document.querySelector("#color-match-celebration"), colorMatchFeedback: document.querySelector("#color-match-feedback"), colorMatchWrittenPrompt: document.querySelector("#color-match-written-prompt"), colorMatchPrompt: document.querySelector("#color-match-prompt"), colorMatchWordListen: document.querySelector("#color-match-word-listen-button"), colorMatchReplay: document.querySelector("#color-match-replay-button"), colorMatchHome: document.querySelector("#color-match-home-button"), colorMatchPause: document.querySelector("#color-match-pause-button"), sorting: document.querySelector("#sorting-screen"), sortingItems: document.querySelector("#sorting-items"), sortingDestinations: document.querySelector("#sorting-destinations"), sortingCelebration: document.querySelector("#sorting-celebration"), sortingFeedback: document.querySelector("#sorting-feedback"), sortingHome: document.querySelector("#sorting-home-button"), sortingPause: document.querySelector("#sorting-pause-button"), sortingFinishHome: document.querySelector("#sorting-finish-home-button"),
   newMiniGame: document.querySelector("#new-mini-game-screen"), newMiniGameEyebrow: document.querySelector("#new-mini-game-eyebrow"), newMiniGameTitle: document.querySelector("#new-mini-game-title"), newMiniGameHome: document.querySelector("#new-mini-game-home-button"), newMiniGamePause: document.querySelector("#new-mini-game-pause-button"), newMiniGameSetup: document.querySelector("#new-mini-game-setup"), newMiniGameArea: document.querySelector("#new-mini-game-area"), newMiniGameProgressLabel: document.querySelector("#new-mini-game-progress-label"), newMiniGameProgressFill: document.querySelector("#new-mini-game-progress-fill"), newMiniGamePrompt: document.querySelector("#new-mini-game-prompt"), newMiniGameListen: document.querySelector("#new-mini-game-listen-button"), newMiniGameVisual: document.querySelector("#new-mini-game-visual"), newMiniGameChoices: document.querySelector("#new-mini-game-choices"), newMiniGameFeedback: document.querySelector("#new-mini-game-feedback"), newMiniGameCompletion: document.querySelector("#new-mini-game-completion"), newMiniGameCompletionCopy: document.querySelector("#new-mini-game-completion-copy"), newMiniGameReplay: document.querySelector("#new-mini-game-replay-button"), newMiniGameChange: document.querySelector("#new-mini-game-change-button"), newMiniGameCompletionHome: document.querySelector("#new-mini-game-completion-home-button"),
   numberLearning: document.querySelector("#number-learning-screen"), numberLearningTitle: document.querySelector("#number-learning-title"), numberLearningPath: document.querySelector("#number-learning-path-button"), numberLearningPause: document.querySelector("#number-learning-pause-button"), numberLearningProgressLabel: document.querySelector("#number-learning-progress-label"), numberLearningProgressFill: document.querySelector("#number-learning-progress-fill"), numberLearningScore: document.querySelector("#number-learning-score"), numberLearningListen: document.querySelector("#number-learning-listen-button"), numberLearningPrompt: document.querySelector("#number-learning-prompt"), numberLearningVisual: document.querySelector("#number-learning-visual"), numberLearningSupportActions: document.querySelector("#number-learning-support-actions"), numberLearningCombine: document.querySelector("#number-learning-combine-button"), numberLearningHelp: document.querySelector("#number-learning-help-button"), numberLearningCount: document.querySelector("#number-learning-count-button"), numberLearningAnswers: document.querySelector("#number-learning-answers"), numberLearningCheck: document.querySelector("#number-learning-check-button"), numberLearningFeedback: document.querySelector("#number-learning-feedback"),
-  logicAttention: document.querySelector("#logic-attention-screen"), logicAttentionTitle: document.querySelector("#logic-attention-title"), logicAttentionPath: document.querySelector("#logic-attention-path-button"), logicAttentionPause: document.querySelector("#logic-attention-pause-button"), logicAttentionProgressLabel: document.querySelector("#logic-attention-progress-label"), logicAttentionProgressFill: document.querySelector("#logic-attention-progress-fill"), logicAttentionScore: document.querySelector("#logic-attention-score"), logicAttentionListen: document.querySelector("#logic-attention-listen-button"), logicAttentionPrompt: document.querySelector("#logic-attention-prompt"), logicAttentionVisual: document.querySelector("#logic-attention-visual"), logicAttentionChoices: document.querySelector("#logic-attention-choices"), logicAttentionActions: document.querySelector("#logic-attention-actions"), logicAttentionReady: document.querySelector("#logic-attention-ready-button"), logicAttentionCheck: document.querySelector("#logic-attention-check-button"), logicAttentionRestart: document.querySelector("#logic-attention-restart-button"), logicAttentionFeedback: document.querySelector("#logic-attention-feedback"),
+  logicAttention: document.querySelector("#logic-attention-screen"), logicAttentionEyebrow: document.querySelector("#logic-attention-eyebrow"), logicAttentionTitle: document.querySelector("#logic-attention-title"), logicAttentionPath: document.querySelector("#logic-attention-path-button"), logicAttentionPause: document.querySelector("#logic-attention-pause-button"), logicAttentionProgressLabel: document.querySelector("#logic-attention-progress-label"), logicAttentionProgressFill: document.querySelector("#logic-attention-progress-fill"), logicAttentionScore: document.querySelector("#logic-attention-score"), logicAttentionListen: document.querySelector("#logic-attention-listen-button"), logicAttentionPrompt: document.querySelector("#logic-attention-prompt"), logicAttentionVisual: document.querySelector("#logic-attention-visual"), logicAttentionChoices: document.querySelector("#logic-attention-choices"), logicAttentionActions: document.querySelector("#logic-attention-actions"), logicAttentionReady: document.querySelector("#logic-attention-ready-button"), logicAttentionCheck: document.querySelector("#logic-attention-check-button"), logicAttentionRestart: document.querySelector("#logic-attention-restart-button"), logicAttentionFeedback: document.querySelector("#logic-attention-feedback"),
   customCategoryBrowser: document.querySelector("#custom-category-browser"), categoryGroupTabs: document.querySelector("#category-group-tabs"), customCategoryCount: document.querySelector("#custom-category-count"), customCategoryReset: document.querySelector("#custom-category-reset-button"),
   category: document.querySelector("#category-pill"), visual: document.querySelector("#question-visual"), celebration: document.querySelector("#celebration"), mascot: document.querySelector("#game-mascot"), prompt: document.querySelector("#question-prompt"),
   answers: document.querySelector("#answers"), feedback: document.querySelector("#feedback"), next: document.querySelector("#next-button"), count: document.querySelector("#question-count"), score: document.querySelector("#score"), streak: document.querySelector("#streak"), progress: document.querySelector("#progress-fill"),
@@ -155,11 +155,13 @@ const ui = {
 const appUtils = window.MilaUtils;
 const newMiniGames = window.MilaNewMiniGames;
 const logicAttention = window.MilaLogicAttention;
+const dailyConcepts = window.MilaDailyConcepts;
 const numberLearning = window.MilaNumberLearning;
 const worldThemes = window.MilaWorldThemes;
 const learningCategories = window.MilaLearningCategories;
 newMiniGames.validateContent();
 logicAttention.validateContent();
+dailyConcepts.validateContent();
 learningCategories.validateCategories();
 learningPathModel.validateRoadmap({ categories: learningCategories.CATEGORIES });
 numberLearning.validateContent();
@@ -3725,6 +3727,7 @@ function createEmptyLogicAttentionState() {
     missing: undefined,
     sequence: undefined,
     maze: undefined,
+    selection: undefined,
     completed: false,
     pendingResult: undefined,
     recentKeys: []
@@ -3757,7 +3760,9 @@ function setLogicAttentionInputEnabled(enabled) {
   ui.logicAttentionPath.disabled = isPaused;
   ui.logicAttentionPause.disabled = isPaused;
   if (!ui.logicAttentionCheck.classList.contains("hidden")) {
-    ui.logicAttentionCheck.disabled = !canUse || logicAttentionState.sequence?.slots.some(value => value === null);
+    const sequenceIncomplete = Boolean(logicAttentionState.sequence?.slots.some(value => value === null));
+    const selectionIncomplete = Boolean(logicAttentionState.selection && !logicAttentionState.selection.selectedId);
+    ui.logicAttentionCheck.disabled = !canUse || sequenceIncomplete || selectionIncomplete;
   }
 }
 
@@ -3779,7 +3784,25 @@ function createLogicVisual(item, { showLabel = true } = {}) {
   wrapper.className = "logic-sequence-step";
   const visual = document.createElement("span");
   visual.className = "logic-choice-visual";
-  visual.textContent = item.visual;
+  if (item.clock) visual.append(createDailyClock(item.clock));
+  else if (item.tokens) visual.append(createMoneyTokens(item.tokens));
+  else if (item.payment) {
+    const price = document.createElement("strong");
+    price.className = "daily-price-tag";
+    price.textContent = `${item.price} TL`;
+    visual.append(price, createMoneyTokens(item.payment.tokens));
+  } else if (item.price) {
+    const price = document.createElement("strong");
+    price.className = "daily-price-tag";
+    price.textContent = `${item.price} TL`;
+    visual.append(price);
+  } else if (item.svg) {
+    const image = document.createElement("img");
+    image.className = "daily-scene-svg";
+    image.src = newMiniGameSvgUrl(item.svg);
+    image.alt = "";
+    visual.append(image);
+  } else visual.textContent = item.visual;
   if (item.color) visual.style.color = item.color;
   if (item.scale) visual.style.setProperty("--logic-scale", item.scale);
   visual.setAttribute("aria-hidden", "true");
@@ -3792,19 +3815,55 @@ function createLogicVisual(item, { showLabel = true } = {}) {
   return wrapper;
 }
 
+function createDailyClock(clock) {
+  const namespace = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(namespace, "svg");
+  svg.classList.add("daily-clock");
+  svg.setAttribute("viewBox", "0 0 120 120");
+  svg.setAttribute("aria-hidden", "true");
+  const face = document.createElementNS(namespace, "circle");
+  face.setAttribute("cx", "60"); face.setAttribute("cy", "60"); face.setAttribute("r", "53");
+  face.setAttribute("fill", "#fffdf8"); face.setAttribute("stroke", "#493a85"); face.setAttribute("stroke-width", "5");
+  svg.append(face);
+  Array.from({ length: 12 }, (_, index) => {
+    const angle = (index + 1) * Math.PI / 6;
+    const number = document.createElementNS(namespace, "text");
+    number.setAttribute("x", String(60 + Math.sin(angle) * 42)); number.setAttribute("y", String(64 - Math.cos(angle) * 42));
+    number.setAttribute("text-anchor", "middle"); number.setAttribute("font-size", "11"); number.setAttribute("font-weight", "800"); number.textContent = String(index + 1); svg.append(number);
+  });
+  [[clock.hourAngle, 25, 6, "daily-hour-hand"], [clock.minuteAngle, 39, 4, "daily-minute-hand"]].forEach(([angle, length, width, className]) => {
+    const radians = Number(angle) * Math.PI / 180; const hand = document.createElementNS(namespace, "line");
+    hand.classList.add(className); hand.setAttribute("x1", "60"); hand.setAttribute("y1", "60"); hand.setAttribute("x2", String(60 + Math.sin(radians) * Number(length))); hand.setAttribute("y2", String(60 - Math.cos(radians) * Number(length))); hand.setAttribute("stroke", "#493a85"); hand.setAttribute("stroke-width", String(width)); hand.setAttribute("stroke-linecap", "round"); svg.append(hand);
+  });
+  return svg;
+}
+
+function createMoneyTokens(tokens) {
+  const group = document.createElement("span");
+  group.className = "daily-money-tokens";
+  tokens.forEach(token => {
+    const piece = document.createElement("span");
+    piece.className = `daily-money-token ${token.kind}`;
+    piece.textContent = `${token.value} TL`;
+    piece.setAttribute("aria-hidden", "true");
+    group.append(piece);
+  });
+  return group;
+}
+
 function addLogicChoice(item, onClick, { shadow = false } = {}) {
   const button = document.createElement("button");
   button.type = "button";
   button.className = `logic-choice${shadow ? " shadow" : ""}`;
   button.dataset.logicChoice = item.id;
-  button.setAttribute("aria-label", shadow ? "Gölge seçeneği" : item.label);
+  button.setAttribute("aria-label", shadow ? "Gölge seçeneği" : (item.ariaLabel || item.label));
   if (shadow) {
     const image = document.createElement("img");
     image.src = newMiniGameSvgUrl(item.svg);
     image.alt = "";
     button.append(image);
   } else {
-    button.append(createLogicVisual(item));
+    button.append(createLogicVisual(item, { showLabel: !item.clock }));
   }
   button.addEventListener("click", onClick);
   ui.logicAttentionChoices.append(button);
@@ -3993,6 +4052,63 @@ function renderLogicMazeRound() {
   ui.logicAttentionRestart.classList.remove("hidden");
 }
 
+function renderDailySelectionRound() {
+  const round = logicAttentionState.round;
+  if (round.scene) {
+    const scene = document.createElement("div");
+    scene.className = "daily-concept-scene";
+    scene.setAttribute("aria-label", round.scene.label || "Günlük kavram sahnesi");
+    scene.append(createLogicVisual(round.scene, { showLabel: false }));
+    ui.logicAttentionVisual.append(scene);
+  } else if (round.reference) {
+    const reference = document.createElement("div");
+    reference.className = "daily-concept-scene";
+    reference.setAttribute("aria-label", "Eşleştirilecek kavram");
+    reference.append(createLogicVisual(round.reference));
+    ui.logicAttentionVisual.append(reference);
+  }
+  round.choices.forEach((item, index) => {
+    const button = addLogicChoice(item, event => answerLogicAttentionChoice(event.currentTarget, item.id));
+    if (item.clock) button.setAttribute("aria-label", `Saat seçeneği ${index + 1}`);
+    if (item.tokens) button.setAttribute("aria-label", `${item.label} para seçeneği`);
+  });
+}
+
+function renderDailyConfirmRound() {
+  const round = logicAttentionState.round;
+  if (round.object) {
+    const objectButton = document.createElement("button");
+    objectButton.type = "button";
+    objectButton.className = `daily-placement-object${logicAttentionState.selection?.objectSelected ? " selected" : ""}`;
+    objectButton.setAttribute("aria-pressed", String(Boolean(logicAttentionState.selection?.objectSelected)));
+    objectButton.setAttribute("aria-label", "Topu seç");
+    objectButton.append(createLogicVisual(round.object));
+    objectButton.addEventListener("click", () => {
+      if (isPaused || logicAttentionState.inputLocked) return;
+      logicAttentionState.selection.objectSelected = true;
+      renderLogicAttentionRound();
+    });
+    ui.logicAttentionVisual.append(objectButton);
+  } else if (round.reference) {
+    const reference = document.createElement("div");
+    reference.className = "daily-concept-scene";
+    reference.setAttribute("aria-label", "Zıttı bulunacak kavram");
+    reference.append(createLogicVisual(round.reference));
+    ui.logicAttentionVisual.append(reference);
+  }
+  round.choices.forEach(item => {
+    const button = addLogicChoice(item, () => {
+      if (isPaused || logicAttentionState.inputLocked || (round.object && !logicAttentionState.selection.objectSelected)) return;
+      logicAttentionState.selection.selectedId = item.id;
+      renderLogicAttentionRound();
+    });
+    const selected = logicAttentionState.selection?.selectedId === item.id;
+    button.classList.toggle("selected", selected);
+    button.setAttribute("aria-pressed", String(selected));
+  });
+  ui.logicAttentionCheck.classList.remove("hidden");
+}
+
 function renderLogicAttentionRound() {
   if (!logicAttentionState?.round) return;
   resetLogicAttentionRoundView();
@@ -4006,6 +4122,8 @@ function renderLogicAttentionRound() {
   else if (round.type === "missingItem") renderLogicMissingRound();
   else if (round.type === "sequenceOrdering") renderLogicSequenceRound();
   else if (round.type === "simpleMaze") renderLogicMazeRound();
+  else if (["positionPlacement", "oppositeMatching"].includes(round.type)) renderDailyConfirmRound();
+  else renderDailySelectionRound();
   setLogicAttentionInputEnabled(true);
 }
 
@@ -4093,7 +4211,17 @@ function revealLogicMissingItem() {
 }
 
 async function checkLogicSequence() {
-  if (!isLogicAttentionActive || isPaused || logicAttentionState.inputLocked || logicAttentionState.sequence?.slots.some(value => value === null)) return;
+  if (!isLogicAttentionActive || isPaused || logicAttentionState.inputLocked) return;
+  if (logicAttentionState.selection) {
+    if (!logicAttentionState.selection.selectedId) return;
+    if (logicAttentionState.selection.selectedId !== logicAttentionState.round.correctId) {
+      await giveLogicRetry(ui.logicAttentionChoices.querySelector(`[data-logic-choice="${logicAttentionState.selection.selectedId}"]`), "Seçimine bir daha bakalım. Değiştirip yeniden kontrol edebilirsin.");
+      return;
+    }
+    await completeLogicAttentionRound(logicAttentionState.round.type === "positionPlacement" ? "Doğru yere koydun!" : "Zıt kavramı buldun!");
+    return;
+  }
+  if (logicAttentionState.sequence?.slots.some(value => value === null)) return;
   if (!logicAttention.isSequenceCorrect(logicAttentionState.sequence)) {
     await giveLogicRetry(undefined, "Sıraya bir daha bakalım. Kartlara dokunup değiştirebilirsin.");
     return;
@@ -4138,9 +4266,10 @@ function restartLogicMaze() {
 
 function beginLogicAttentionRound() {
   if (!isLogicAttentionActive || isPaused) return;
-  const round = logicAttention.createRound(logicAttentionState.stageId, logicAttentionState.roundNumber, logicAttentionState.totalRounds);
-  if (!logicAttention.validateRound(round)) {
-    console.warn(`[Sprint 8.3.5.1 Mantık ve Dikkat] ${logicAttentionState.stageId} için tamamlanabilir tur üretilemedi.`);
+  const conceptModule = dailyConcepts.STAGE_IDS.includes(logicAttentionState.stageId) ? dailyConcepts : logicAttention;
+  const round = conceptModule.createRound(logicAttentionState.stageId, logicAttentionState.roundNumber, logicAttentionState.totalRounds);
+  if (!conceptModule.validateRound(round)) {
+    console.warn(`[Öğrenme Yolu] ${logicAttentionState.stageId} için tamamlanabilir tur üretilemedi.`);
     openLearningPath({ focusStageId: logicAttentionState.stageId });
     return;
   }
@@ -4151,6 +4280,7 @@ function beginLogicAttentionRound() {
   logicAttentionState.missing = round.type === "missingItem" ? logicAttention.createMissingState(round) : undefined;
   logicAttentionState.sequence = round.type === "sequenceOrdering" ? logicAttention.createSequenceState(round) : undefined;
   logicAttentionState.maze = round.type === "simpleMaze" ? logicAttention.createMazeState(round) : undefined;
+  logicAttentionState.selection = ["positionPlacement", "oppositeMatching"].includes(round.type) ? { objectSelected: !round.object, selectedId: undefined } : undefined;
   logicAttentionState.recentKeys = [round.key, ...logicAttentionState.recentKeys.filter(key => key !== round.key)].slice(0, 3);
   questionNumber = logicAttentionState.roundNumber;
   renderLogicAttentionRound();
@@ -4200,12 +4330,14 @@ function startLogicAttentionStage(stage) {
   logicAttentionState.stageId = stage.id;
   logicAttentionState.roundNumber = 1;
   logicAttentionState.totalRounds = stage.sessionLength;
-  recordLearningSessionStarted([`LearningPath:${stage.id}`], "learning-path-logic-attention");
+  const isDailyConcept = dailyConcepts.STAGE_IDS.includes(stage.id);
+  recordLearningSessionStarted([`LearningPath:${stage.id}`], isDailyConcept ? "learning-path-daily-concepts" : "learning-path-logic-attention");
   ensureDailyGoal();
   renderDailyGoal();
   hideAllScreens();
   ui.shell.classList.remove("learning-path-open");
   ui.logicAttention.classList.remove("hidden");
+  ui.logicAttentionEyebrow.textContent = isDailyConcept ? "GÜNLÜK HAYAT" : "DÜŞÜN VE BUL";
   window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   ui.logicAttentionTitle.focus({ preventScroll: true });
   startPlayTime();
@@ -4840,7 +4972,7 @@ function startLearningPathStage(stageId) {
     startNumberLearningStage(stage);
     return;
   }
-  if (logicAttention.STAGE_IDS.includes(stage.id)) {
+  if (logicAttention.STAGE_IDS.includes(stage.id) || dailyConcepts.STAGE_IDS.includes(stage.id)) {
     startLogicAttentionStage(stage);
     return;
   }

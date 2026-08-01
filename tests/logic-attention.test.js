@@ -36,7 +36,7 @@ test("all seven Düşün ve Bul stages are implemented with exact strategies, or
     if (index > 0) assert.deepEqual(stage.prerequisiteStageIds, [expected[index - 1][0]]);
   });
   assert.deepEqual(learningPath.stageById("odd-one-out").prerequisiteStageIds, ["visual-subtraction"]);
-  assert.ok(learningPath.stagesForGroup("daily-life").every(stage => stage.implemented === false));
+  assert.ok(learningPath.stagesForGroup("daily-life").every(stage => stage.implemented === true));
 });
 
 test("all strategies generate valid gentle rounds and progress from level 1 without exceeding level 3", () => {
@@ -171,17 +171,17 @@ test("Basit Labirent stays within 4x4–6x6, is solvable, blocks invalid moves a
   assert.deepEqual(sizes, new Set([4, 5, 6]));
 });
 
-test("Learning Path unlocks the seven stages sequentially and stops before Günlük Hayat", () => {
+test("Learning Path unlocks the seven stages sequentially and then opens Günlük Hayat", () => {
   const progress = { completed: { "visual-subtraction": true } };
   logic.STAGE_IDS.forEach((stageId, index) => {
     assert.equal(learningPath.canLaunchStage(stageId, progress), true, stageId);
     progress.completed[stageId] = true;
     const next = learningPath.getNextEligibleStage(stageId, progress);
     if (index < logic.STAGE_IDS.length - 1) assert.equal(next.id, logic.STAGE_IDS[index + 1]);
-    else assert.equal(next, undefined);
+    else assert.equal(next.id, "emotions");
   });
   assert.equal(learningPath.getGroupProgress("think-find", progress).completed, 7);
-  assert.equal(learningPath.canLaunchStage("emotions", progress), false);
+  assert.equal(learningPath.canLaunchStage("emotions", progress), true);
 });
 
 test("focused UI wires accessibility, retry, pause, replay, cleanup and player-specific progress", () => {
