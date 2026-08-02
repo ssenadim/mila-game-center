@@ -519,3 +519,5 @@ button.subtraction-object:focus-visible{outline:4px solid #5539a6;outline-offset
   .game-shell,.game-shell::after,.cloud{transition:none}
   .world-decoration{animation:none!important}
 }
+
+.number-learning-visual.operation-help .addition-symbol,.number-learning-visual.operation-help .numeric-addition-equation{color:#5b3bb4;outline:4px solid #f2c94c;outline-offset:4px;border-radius:16px}

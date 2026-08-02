@@ -30,7 +30,7 @@ test("all eight Günlük Hayat stages are implemented with exact learning types 
     assert.equal(stage.order, 31 + index, id);
     assert.equal(roadmap.PLAYABLE_LEARNING_TYPES.has(learningType), true, learningType);
   });
-  assert.equal(roadmap.stageById("mixed-operations").implemented, false);
+  assert.equal(roadmap.stageById("mixed-operations").implemented, true);
 });
 
 test("every strategy generates valid gentle rounds with unique single answers", () => {
@@ -170,7 +170,7 @@ test("Learning Path unlocks all eight stages in order and completes the group", 
   });
   assert.deepEqual(roadmap.getGroupProgress("daily-life", progress), { completed: 8, playable: 8, planned: 0 });
   assert.equal(roadmap.getNextEligibleStage("money-preparation", progress), undefined);
-  assert.equal(roadmap.canLaunchStage("mixed-operations", progress), false);
+  assert.equal(roadmap.canLaunchStage("mixed-operations", progress), true);
 });
 
 test("focused UI wires speech, retry, pause, cleanup, keyboard/tap and responsive visuals", () => {

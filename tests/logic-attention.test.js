@@ -35,7 +35,7 @@ test("all seven Düşün ve Bul stages are implemented with exact strategies, or
     assert.equal(logic.STAGE_CONFIG[id].rounds, rounds);
     if (index > 0) assert.deepEqual(stage.prerequisiteStageIds, [expected[index - 1][0]]);
   });
-  assert.deepEqual(learningPath.stageById("odd-one-out").prerequisiteStageIds, ["visual-subtraction"]);
+  assert.deepEqual(learningPath.stageById("odd-one-out").prerequisiteStageIds, ["mixed-operations"]);
   assert.ok(learningPath.stagesForGroup("daily-life").every(stage => stage.implemented === true));
 });
 
@@ -172,7 +172,7 @@ test("Basit Labirent stays within 4x4–6x6, is solvable, blocks invalid moves a
 });
 
 test("Learning Path unlocks the seven stages sequentially and then opens Günlük Hayat", () => {
-  const progress = { completed: { "visual-subtraction": true } };
+  const progress = { completed: { "mixed-operations": true } };
   logic.STAGE_IDS.forEach((stageId, index) => {
     assert.equal(learningPath.canLaunchStage(stageId, progress), true, stageId);
     progress.completed[stageId] = true;

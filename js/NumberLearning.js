@@ -21,7 +21,9 @@
     "subtract-smaller-from-greater",
     "visual-subtraction"
   ]);
-  const PLAYABLE_STAGE_IDS = Object.freeze([...NUMBER_STAGE_IDS, ...ADDITION_STAGE_IDS, ...SUBTRACTION_STAGE_IDS]);
+  const MIXED_OPERATIONS_STAGE_ID = "mixed-operations";
+  const MIXED_QUESTION_FAMILIES = Object.freeze(["numeric", "visual", "story"]);
+  const PLAYABLE_STAGE_IDS = Object.freeze([...NUMBER_STAGE_IDS, ...ADDITION_STAGE_IDS, ...SUBTRACTION_STAGE_IDS, MIXED_OPERATIONS_STAGE_ID]);
   const PREPARATION_PATTERNS = Object.freeze(["combine-groups", "add-more", "find-total"]);
   const SUBTRACTION_PATTERNS = Object.freeze(["some-left", "remove-from-basket", "before-after", "short-story"]);
   const VISUAL_GROUPS = Object.freeze([
@@ -66,6 +68,51 @@
   function makeChoices(correct, count, min, max, rng = Math.random) {
     const distractors = range(min, max).filter(value => value !== correct);
     return shuffle([correct, ...shuffle(distractors, rng).slice(0, count - 1)], rng);
+  }
+
+  function hasOperationStreak(operationPlan, maximum = 2) {
+    let streak = 0;
+    let previous;
+    return operationPlan.some(entry => {
+      const operation = typeof entry === "string" ? entry : entry.operation;
+      streak = operation === previous ? streak + 1 : 1;
+      previous = operation;
+      return streak > maximum;
+    });
+  }
+
+  function createMixedOperationPlan(totalRounds = 10, rng = Math.random) {
+    if (totalRounds !== 10) return [];
+    const baseOperations = ["addition", "addition", "addition", "addition", "addition", "subtraction", "subtraction", "subtraction", "subtraction", "subtraction"];
+    let operations;
+    for (let attempt = 0; attempt < 24; attempt += 1) {
+      const candidate = shuffle(baseOperations, rng);
+      if (!hasOperationStreak(candidate)) {
+        operations = candidate;
+        break;
+      }
+    }
+    if (!operations) {
+      const fallbacks = [
+        ["addition", "addition", "subtraction", "addition", "subtraction", "subtraction", "addition", "subtraction", "addition", "subtraction"],
+        ["subtraction", "subtraction", "addition", "subtraction", "addition", "addition", "subtraction", "addition", "subtraction", "addition"]
+      ];
+      operations = fallbacks[randomIndex(fallbacks.length, rng)];
+    }
+    const families = {
+      addition: shuffle(["numeric", "numeric", "visual", "visual", "story"], rng),
+      subtraction: shuffle(["numeric", "numeric", "visual", "visual", "story"], rng)
+    };
+    return operations.map(operation => ({ operation, family: families[operation].shift() }));
+  }
+
+  function validateMixedOperationPlan(plan, totalRounds = 10) {
+    if (!Array.isArray(plan) || plan.length !== totalRounds || totalRounds !== 10) return false;
+    const operations = plan.map(entry => entry?.operation);
+    return operations.filter(operation => operation === "addition").length === 5
+      && operations.filter(operation => operation === "subtraction").length === 5
+      && plan.every(entry => MIXED_QUESTION_FAMILIES.includes(entry?.family))
+      && !hasOperationStreak(plan);
   }
 
   function createQuantityVisual(quantity, groupIndex = 0, symbolIndex = 0) {
@@ -425,6 +472,56 @@
     };
   }
 
+  function createMixedOperationsRound(roundNumber, totalRounds = 10, {
+    rng = Math.random,
+    recentEquations = [],
+    operationPlan,
+    warn = console.warn
+  } = {}) {
+    const plan = validateMixedOperationPlan(operationPlan, totalRounds)
+      ? operationPlan
+      : createMixedOperationPlan(totalRounds, rng);
+    const planned = plan[roundNumber - 1];
+    if (!planned) return undefined;
+    const isAddition = planned.operation === "addition";
+    const baseRound = isAddition
+      ? createAdditionRound("add-two-numbers", roundNumber, totalRounds, { rng, recentEquations, warn })
+      : createSubtractionRound("subtract-smaller-from-greater", roundNumber, totalRounds, { rng, recentEquations, warn });
+    const isNumeric = planned.family === "numeric";
+    const isStory = planned.family === "story";
+    const story = isStory
+      ? isAddition
+        ? `${getTurkishNumber(baseRound.first)} ku\u015f vard\u0131. ${getTurkishNumber(baseRound.second)} ku\u015f daha geldi. Ka\u00e7 ku\u015f oldu?`
+        : `${getTurkishNumber(baseRound.first)} balon vard\u0131. ${getTurkishNumber(baseRound.removed)} tanesi u\u00e7tu. Ka\u00e7 balon kald\u0131?`
+      : undefined;
+    const prompt = story ?? (isNumeric
+      ? baseRound.prompt
+      : isAddition ? "Hepsi birlikte ka\u00e7 tane?" : "Ka\u00e7 tane kald\u0131?");
+    return {
+      ...baseRound,
+      type: isAddition
+        ? isNumeric ? "numeric-addition" : "visual-addition"
+        : isNumeric ? "numeric-subtraction" : "visual-subtraction",
+      stageId: MIXED_OPERATIONS_STAGE_ID,
+      operation: planned.operation,
+      family: planned.family,
+      prompt,
+      speech: prompt,
+      story,
+      storyValues: isStory ? {
+        first: baseRound.first,
+        second: isAddition ? baseRound.second : baseRound.removed,
+        result: baseRound.result,
+        operation: planned.operation
+      } : undefined,
+      pattern: isStory ? "short-story" : baseRound.pattern,
+      manualRemoval: false,
+      canCombine: false,
+      hasVisualHelp: isNumeric,
+      hasCountingSupport: !isNumeric
+    };
+  }
+
   function createRound(stageId, roundNumber, totalRounds, rng = Math.random, context = {}) {
     if (stageId === "count-objects") return createCountingRound(roundNumber, totalRounds, rng);
     if (stageId === "order-numbers") return createOrderingRound(roundNumber, totalRounds, rng);
@@ -434,6 +531,7 @@
     if (stageId === "equal-quantities") return createEqualQuantityRound(roundNumber, totalRounds, rng);
     if (ADDITION_STAGE_IDS.includes(stageId)) return createAdditionRound(stageId, roundNumber, totalRounds, { ...context, rng });
     if (SUBTRACTION_STAGE_IDS.includes(stageId)) return createSubtractionRound(stageId, roundNumber, totalRounds, { ...context, rng });
+    if (stageId === MIXED_OPERATIONS_STAGE_ID) return createMixedOperationsRound(roundNumber, totalRounds, { ...context, rng });
     return undefined;
   }
 
@@ -476,6 +574,17 @@
   function validateRound(round) {
     if (!round || typeof round.prompt !== "string" || typeof round.speech !== "string") return false;
     const validNumber = value => Number.isInteger(value) && value >= MIN_NUMBER && value <= MAX_NUMBER;
+    if (round.stageId === MIXED_OPERATIONS_STAGE_ID) {
+      if (!["addition", "subtraction"].includes(round.operation) || !MIXED_QUESTION_FAMILIES.includes(round.family)) return false;
+      if (round.operation === "addition" && !["numeric-addition", "visual-addition"].includes(round.type)) return false;
+      if (round.operation === "subtraction" && !["numeric-subtraction", "visual-subtraction"].includes(round.type)) return false;
+      if (round.family === "numeric" && !round.hasVisualHelp) return false;
+      if (round.family === "story") {
+        if (typeof round.story !== "string" || round.story !== round.prompt || round.story !== round.speech) return false;
+        if (round.storyValues?.first !== round.first || round.storyValues?.result !== round.result || round.storyValues?.operation !== round.operation) return false;
+        if (round.storyValues?.second !== (round.operation === "addition" ? round.second : round.removed)) return false;
+      }
+    }
     if (["addition-preparation", "numeric-addition", "visual-addition"].includes(round.type)) {
       return validNumber(round.first)
         && validNumber(round.second)
@@ -523,6 +632,14 @@
       && round.choices.every(validNumber);
   }
 
+  function validateMixedSession(rounds) {
+    if (!Array.isArray(rounds) || rounds.length !== 10 || rounds.some(round => !validateRound(round))) return false;
+    const plan = rounds.map(round => ({ operation: round.operation, family: round.family }));
+    return validateMixedOperationPlan(plan)
+      && new Set(rounds.filter(round => round.operation === "addition").map(round => round.family)).size === 3
+      && new Set(rounds.filter(round => round.operation === "subtraction").map(round => round.family)).size === 3;
+  }
+
   function validateContent(warn = console.warn) {
     const problems = [];
     const groupIds = VISUAL_GROUPS.map(group => group.id);
@@ -553,6 +670,13 @@
         }
       });
     });
+    const mixedPlan = createMixedOperationPlan(10, () => 0.42);
+    const mixedRounds = range(1, 10).map(roundNumber => createMixedOperationsRound(roundNumber, 10, {
+      rng: () => 0.42,
+      operationPlan: mixedPlan,
+      warn: () => {}
+    }));
+    if (!validateMixedSession(mixedRounds)) problems.push("mixed-operations failed to create a valid mixed session.");
     problems.forEach(problem => warn(`[Sayı Öğrenme] ${problem}`));
     return { valid: problems.length === 0, problems };
   }
@@ -560,11 +684,12 @@
   const validation = validateContent();
 
   root.MilaNumberLearning = {
-    MIN_NUMBER, MAX_NUMBER, NUMBER_STAGE_IDS, ADDITION_STAGE_IDS, SUBTRACTION_STAGE_IDS, PLAYABLE_STAGE_IDS, PREPARATION_PATTERNS, SUBTRACTION_PATTERNS, VISUAL_GROUPS, validation, shuffle, getDifficulty,
+    MIN_NUMBER, MAX_NUMBER, NUMBER_STAGE_IDS, ADDITION_STAGE_IDS, SUBTRACTION_STAGE_IDS, MIXED_OPERATIONS_STAGE_ID, MIXED_QUESTION_FAMILIES, PLAYABLE_STAGE_IDS, PREPARATION_PATTERNS, SUBTRACTION_PATTERNS, VISUAL_GROUPS, validation, shuffle, getDifficulty,
     createQuantityVisual, createCountingRound, createOrderingRound, createNeighborRound,
     createComparisonRound, createEqualQuantityRound, getAdditionDifficulty, getTurkishNumber,
     generateAddends, createAdditionRound, getSubtractionDifficulty, generateSubtraction,
-    makeSubtractionChoices, createSubtractionRound, createRound, createOrderingState,
+    makeSubtractionChoices, createSubtractionRound, createMixedOperationPlan, validateMixedOperationPlan,
+    createMixedOperationsRound, validateMixedSession, createRound, createOrderingState,
     placeOrderingPiece, isOrderingComplete, createRemovalState, toggleRemovalSelection,
     isRemovalSelectionComplete, validateRound, validateContent
   };

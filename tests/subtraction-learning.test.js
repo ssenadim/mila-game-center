@@ -105,7 +105,7 @@ test("sessions vary equations and answer positions without repeating a starting 
   });
 });
 
-test("Learning Path ends this sprint at visual subtraction and keeps mixed operations planned", () => {
+test("Learning Path unlocks mixed operations after visual subtraction", () => {
   const throughAddition = {
     completed: Object.fromEntries(roadmap.STAGES.filter(stage => stage.order <= 19 && stage.implemented).map(stage => [stage.id, true]))
   };
@@ -115,7 +115,7 @@ test("Learning Path ends this sprint at visual subtraction and keeps mixed opera
   const afterNumeric = { completed: { ...afterPreparation.completed, "subtract-smaller-from-greater": true } };
   assert.equal(roadmap.canLaunchStage("visual-subtraction", afterNumeric), true);
   const afterVisual = { completed: { ...afterNumeric.completed, "visual-subtraction": true } };
-  assert.equal(roadmap.canLaunchStage("mixed-operations", afterVisual), false);
+  assert.equal(roadmap.canLaunchStage("mixed-operations", afterVisual), true);
 });
 
 test("focused UI provides tap removal, remaining-only counting, cleanup, pause and boundary behavior", () => {

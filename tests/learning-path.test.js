@@ -71,7 +71,7 @@ test("every stage belongs to exactly one group in deterministic order", () => {
 test("every implemented stage generates a complete valid Learning Path session", () => {
   const engine = new QuestionEngine(categories.questions);
   const implemented = roadmap.STAGES.filter(stage => stage.implemented);
-  assert.equal(implemented.length, 37);
+  assert.equal(implemented.length, 38);
   implemented.filter(stage => !numberLearning.PLAYABLE_STAGE_IDS.includes(stage.id) && !logicAttention.STAGE_IDS.includes(stage.id) && !dailyConcepts.STAGE_IDS.includes(stage.id)).forEach(stage => {
     const plan = engine.createSessionPlan(stage.categoryIds, stage.sessionLength, { gentleProgression: true });
     assert.equal(plan.length, stage.sessionLength, `${stage.id} session is incomplete`);
@@ -107,7 +107,7 @@ test("number, addition and subtraction stages unlock sequentially", () => {
   assert.equal(roadmap.canLaunchStage("subtraction-preparation", completedThrough(19)), true);
   assert.equal(roadmap.canLaunchStage("subtract-smaller-from-greater", completedThrough(19)), false);
   assert.equal(roadmap.canLaunchStage("visual-subtraction", completedThrough(21)), true);
-  assert.equal(roadmap.canLaunchStage("mixed-operations", completedThrough(22)), false);
+  assert.equal(roadmap.canLaunchStage("mixed-operations", completedThrough(22)), true);
 });
 
 test("completed stages remain replayable while locked stages cannot launch", () => {
@@ -123,7 +123,7 @@ test("recommended and group progress count only implemented stages", () => {
   assert.equal(roadmap.getRecommendedStage(progress).id, "animals");
   assert.deepEqual(roadmap.getGroupProgress("first-discoveries", progress), { completed: 4, playable: 4, planned: 0 });
   assert.deepEqual(roadmap.getGroupProgress("number-world", progress), { completed: 0, playable: 6, planned: 0 });
-  assert.deepEqual(roadmap.getGroupProgress("first-operations", progress), { completed: 0, playable: 6, planned: 1 });
+  assert.deepEqual(roadmap.getGroupProgress("first-operations", progress), { completed: 0, playable: 7, planned: 0 });
   assert.deepEqual(roadmap.getGroupProgress("think-find", progress), { completed: 0, playable: 7, planned: 0 });
   assert.deepEqual(roadmap.getGroupProgress("daily-life", progress), { completed: 0, playable: 8, planned: 0 });
 });
@@ -169,8 +169,8 @@ test("validation rejects invalid learning types and unsupported playable definit
   assert.equal(roadmap.validateRoadmap({ stages: invalidType, categories: categories.CATEGORIES, warn: () => {} }).valid, false);
   const noCategories = roadmap.STAGES.map(stage => stage.id === "recognize-colors" ? { ...stage, categoryIds: [] } : stage);
   assert.equal(roadmap.validateRoadmap({ stages: noCategories, categories: categories.CATEGORIES, warn: () => {} }).valid, false);
-  const futureAsPlayable = roadmap.STAGES.map(stage => stage.id === "mixed-operations" ? { ...stage, implemented: true } : stage);
-  assert.equal(roadmap.validateRoadmap({ stages: futureAsPlayable, categories: categories.CATEGORIES, warn: () => {} }).valid, false);
+  const brokenChain = roadmap.STAGES.map(stage => stage.id === "mixed-operations" ? { ...stage, implemented: false } : stage);
+  assert.equal(roadmap.validateRoadmap({ stages: brokenChain, categories: categories.CATEGORIES, warn: () => {} }).valid, false);
 });
 
 test("Learning Path UI wires focused groups, safe stage launches and summary navigation", () => {

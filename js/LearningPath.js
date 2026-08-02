@@ -59,6 +59,7 @@
     LEARNING_TYPES.SUBTRACTION_PREPARATION,
     LEARNING_TYPES.NUMERIC_SUBTRACTION,
     LEARNING_TYPES.VISUAL_SUBTRACTION,
+    LEARNING_TYPES.MIXED_OPERATIONS,
     LEARNING_TYPES.ODD_ONE_OUT,
     LEARNING_TYPES.MISSING_ITEM,
     LEARNING_TYPES.PATTERN_COMPLETION,
@@ -141,9 +142,9 @@
     { id: "subtraction-preparation", title: "Çıkarmaya Hazırlık", icon: "➖", description: "Bir gruptan nesne ayırmaya hazırlan.", groupId: "first-operations", order: 20, learningType: LEARNING_TYPES.SUBTRACTION_PREPARATION, categoryIds: [], prerequisiteStageIds: ["visual-addition"], sessionLength: 8, implemented: true },
     { id: "subtract-smaller-from-greater", title: "Büyük Sayıdan Küçük Sayıyı Çıkar", icon: "➖", description: "Küçük sayıyı büyük sayıdan çıkar.", groupId: "first-operations", order: 21, learningType: LEARNING_TYPES.NUMERIC_SUBTRACTION, categoryIds: [], prerequisiteStageIds: ["subtraction-preparation"], sessionLength: 10, implemented: true },
     { id: "visual-subtraction", title: "Görsellerle Çıkarma", icon: "🧸", description: "Resimlerden ayırarak çıkarmayı keşfet.", groupId: "first-operations", order: 22, learningType: LEARNING_TYPES.VISUAL_SUBTRACTION, categoryIds: [], prerequisiteStageIds: ["subtract-smaller-from-greater"], sessionLength: 10, implemented: true },
-    { id: "mixed-operations", title: "Karışık İşlemler", icon: "🧮", description: "Toplama ve çıkarma ipuçlarını ayırt et.", groupId: "first-operations", order: 23, learningType: LEARNING_TYPES.MIXED_OPERATIONS, categoryIds: [], prerequisiteStageIds: ["visual-subtraction"], sessionLength: 10, implemented: false },
+    { id: "mixed-operations", title: "Karışık İşlemler", icon: "🧮", description: "Toplama ve çıkarma ipuçlarını ayırt et.", groupId: "first-operations", order: 23, learningType: LEARNING_TYPES.MIXED_OPERATIONS, categoryIds: [], prerequisiteStageIds: ["visual-subtraction"], sessionLength: 10, implemented: true },
 
-    { id: "odd-one-out", title: "Hangisi Farklı?", icon: "🔎", description: "Diğerlerinden farklı olanı bul.", groupId: "think-find", order: 24, learningType: LEARNING_TYPES.ODD_ONE_OUT, categoryIds: [], prerequisiteStageIds: ["visual-subtraction"], sessionLength: 8, implemented: true },
+    { id: "odd-one-out", title: "Hangisi Farklı?", icon: "🔎", description: "Diğerlerinden farklı olanı bul.", groupId: "think-find", order: 24, learningType: LEARNING_TYPES.ODD_ONE_OUT, categoryIds: [], prerequisiteStageIds: ["mixed-operations"], sessionLength: 8, implemented: true },
     { id: "missing-item", title: "Hangisi Eksik?", icon: "🫣", description: "Kaybolan resmi hatırla.", groupId: "think-find", order: 25, learningType: LEARNING_TYPES.MISSING_ITEM, categoryIds: [], prerequisiteStageIds: ["odd-one-out"], sessionLength: 8, implemented: true },
     { id: "complete-pattern", title: "Örüntüyü Tamamla", icon: "🔶", description: "Tekrar eden sıranın devamını bul.", groupId: "think-find", order: 26, learningType: LEARNING_TYPES.PATTERN_COMPLETION, categoryIds: [], prerequisiteStageIds: ["missing-item"], sessionLength: 8, implemented: true },
     { id: "sequence-order", title: "Doğru Sırayı Bul", icon: "📶", description: "Olayları doğru sıraya koy.", groupId: "think-find", order: 27, learningType: LEARNING_TYPES.SEQUENCE_ORDERING, categoryIds: [], prerequisiteStageIds: ["complete-pattern"], sessionLength: 7, implemented: true },
@@ -224,16 +225,20 @@
     return stage.prerequisiteStageIds.every(stageId => completed[stageId] === true);
   }
 
+  function isPlayableStage(stage) {
+    return Boolean(stage?.implemented && PLAYABLE_LEARNING_TYPES.has(stage.learningType));
+  }
+
   function canLaunchStage(stageId, progress, stages = STAGES) {
     const stage = stageById(stageId, stages);
-    if (!stage?.implemented) return false;
+    if (!isPlayableStage(stage)) return false;
     return progress?.completed?.[stage.id] === true || prerequisitesComplete(stage, progress);
   }
 
   function getRecommendedStage(progress, stages = STAGES) {
     const ordered = [...stages].sort((first, second) => first.order - second.order);
-    const recommended = ordered.find(stage => stage.implemented && progress?.completed?.[stage.id] !== true && prerequisitesComplete(stage, progress));
-    return recommended ?? ordered.find(stage => stage.implemented);
+    const recommended = ordered.find(stage => isPlayableStage(stage) && progress?.completed?.[stage.id] !== true && prerequisitesComplete(stage, progress));
+    return recommended;
   }
 
   function getNextEligibleStage(stageId, progress, stages = STAGES) {
@@ -241,11 +246,11 @@
     if (!current) return undefined;
     return [...stages]
       .sort((first, second) => first.order - second.order)
-      .find(stage => stage.order > current.order && stage.implemented && progress?.completed?.[stage.id] !== true && prerequisitesComplete(stage, progress));
+      .find(stage => stage.order > current.order && isPlayableStage(stage) && progress?.completed?.[stage.id] !== true && prerequisitesComplete(stage, progress));
   }
 
   function getStageState(stage, progress, recommendedStage = getRecommendedStage(progress)) {
-    if (!stage?.implemented) return "planned";
+    if (!isPlayableStage(stage)) return "planned";
     if (progress?.completed?.[stage.id] === true) return "completed";
     if (!prerequisitesComplete(stage, progress)) return "locked";
     return stage.id === recommendedStage?.id ? "current" : "unlocked";
@@ -253,12 +258,17 @@
 
   function getGroupProgress(groupId, progress, stages = STAGES, groups = GROUPS) {
     const groupStages = stagesForGroup(groupId, stages, groups);
-    const playable = groupStages.filter(stage => stage.implemented);
+    const playable = groupStages.filter(isPlayableStage);
     return {
       completed: playable.filter(stage => progress?.completed?.[stage.id] === true).length,
       playable: playable.length,
       planned: groupStages.length - playable.length
     };
+  }
+
+  function isLearningPathComplete(progress, stages = STAGES) {
+    const playable = stages.filter(isPlayableStage);
+    return playable.length > 0 && playable.every(stage => progress?.completed?.[stage.id] === true);
   }
 
   function findPrerequisiteCycle(stages) {
@@ -310,6 +320,8 @@
       if (!Array.isArray(stage.prerequisiteStageIds) || stage.prerequisiteStageIds.some(prerequisiteId => !stageIds.includes(prerequisiteId))) problems.push(`${stage.id}: bilinmeyen ön koşul.`);
       if (!Number.isInteger(stage.sessionLength) || stage.sessionLength < 1) problems.push(`${stage.id}: geçersiz oturum uzunluğu.`);
       if (stage.implemented) {
+        const blockedPrerequisite = stage.prerequisiteStageIds.map(stageId => stageById(stageId, stages)).find(prerequisite => !isPlayableStage(prerequisite));
+        if (blockedPrerequisite) problems.push(`${stage.id}: oynanamaz ?n ko?ula ba?l? (${blockedPrerequisite.id}).`);
         if (!PLAYABLE_LEARNING_TYPES.has(stage.learningType)) problems.push(`${stage.id}: oynanabilir işaretli ancak öğrenme türü desteklenmiyor.`);
         const isCustomNumberStage = [
           LEARNING_TYPES.QUANTITY_COUNTING,
@@ -322,6 +334,7 @@
           LEARNING_TYPES.VISUAL_ADDITION,
           LEARNING_TYPES.SUBTRACTION_PREPARATION,
           LEARNING_TYPES.NUMERIC_SUBTRACTION,
+          LEARNING_TYPES.MIXED_OPERATIONS,
           LEARNING_TYPES.VISUAL_SUBTRACTION
         ].includes(stage.learningType);
         const isCustomLogicStage = [
@@ -385,7 +398,7 @@
     getRecommendedStage,
     getNextEligibleStage,
     getStageState,
-    getGroupProgress,
+    getGroupProgress, isPlayableStage, isLearningPathComplete,
     findPrerequisiteCycle,
     validateRoadmap
   };

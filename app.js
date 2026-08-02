@@ -424,9 +424,9 @@ function moveLearningPathGroup(direction) {
 function renderLearningPath({ focusStageId } = {}) {
   const progress = loadLearningPathProgress();
   const recommendedStage = getRecommendedLearningPathStage(progress);
-  const implementedStages = LEARNING_PATH_STAGES.filter(stage => stage.implemented);
-  const completedCount = implementedStages.filter(stage => progress.completed[stage.id]).length;
-  const allStagesCompleted = completedCount === implementedStages.length;
+  const playableStages = LEARNING_PATH_STAGES.filter(learningPathModel.isPlayableStage);
+  const completedCount = playableStages.filter(stage => progress.completed[stage.id]).length;
+  const allStagesCompleted = learningPathModel.isLearningPathComplete(progress);
   if (!learningPathModel.groupById(activeLearningPathGroupId)) activeLearningPathGroupId = recommendedStage?.groupId ?? learningPathModel.GROUPS[0].id;
   const activeGroup = learningPathModel.groupById(activeLearningPathGroupId);
   const activeGroupIndex = learningPathModel.GROUPS.findIndex(group => group.id === activeGroup.id);
@@ -2956,8 +2956,17 @@ function createEmptyNumberLearningState() {
     counting: false,
     removal: undefined,
     removalConfirmed: false,
-    recentEquations: []
+    recentEquations: [],
+    operationPlan: []
   };
+}
+
+function isAdditionNumberRound(round = numberLearningState?.round) {
+  return round?.operation === "addition" || ["addition-preparation", "numeric-addition", "visual-addition"].includes(round?.type);
+}
+
+function isSubtractionNumberRound(round = numberLearningState?.round) {
+  return round?.operation === "subtraction" || ["subtraction-preparation", "numeric-subtraction", "visual-subtraction"].includes(round?.type);
 }
 
 function clearNumberLearningTimer() {
@@ -3321,7 +3330,7 @@ function showArithmeticVisualHelp() {
 
 async function combineAdditionGroups() {
   if (!isNumberLearningActive || isPaused || numberLearningState.inputLocked || numberLearningState.speaking) return;
-  if (numberLearning.SUBTRACTION_STAGE_IDS.includes(numberLearningState.stageId)) {
+  if (isSubtractionNumberRound()) {
     if (!numberLearningState.round.manualRemoval || numberLearningState.removalConfirmed) return;
     numberLearningState.removal.selectedIndices = Array.from({ length: numberLearningState.round.removed }, (_, index) => numberLearningState.round.first - index - 1);
     renderNumberLearningRound();
@@ -3358,7 +3367,7 @@ async function toggleAdditionCounting() {
   numberLearningState.speaking = true;
   renderAdditionSupport(numberLearningState.round);
   setNumberLearningInputEnabled(false);
-  const isSubtractionRound = numberLearning.SUBTRACTION_STAGE_IDS.includes(numberLearningState.stageId);
+  const isSubtractionRound = isSubtractionNumberRound();
   const subtractionVisual = ui.numberLearningVisual.querySelector(".subtraction-visual-equation:last-child");
   const explicitRemaining = subtractionVisual ? [...subtractionVisual.querySelectorAll(".remaining-group .subtraction-object.remaining")] : [];
   const objects = isSubtractionRound
@@ -3392,6 +3401,7 @@ function renderNumberLearningRound() {
   ui.numberLearningScore.textContent = `⭐ ${stars}`;
   ui.numberLearningPrompt.textContent = round.prompt;
   ui.numberLearningVisual.textContent = "";
+  ui.numberLearningVisual.classList.toggle("operation-help", numberLearningState.stageId === numberLearning.MIXED_OPERATIONS_STAGE_ID && numberLearningState.attempts >= 2);
   ui.numberLearningAnswers.textContent = "";
   ui.numberLearningAnswers.setAttribute("aria-label", "Cevap seçenekleri");
   ui.numberLearningAnswers.classList.toggle("visual-total-answers", Boolean(round.usesVisualChoices));
@@ -3482,18 +3492,18 @@ function beginNumberLearningRound() {
     numberLearningState.roundNumber,
     numberLearningState.totalRounds,
     Math.random,
-    { recentEquations: numberLearningState.recentEquations }
+    { recentEquations: numberLearningState.recentEquations, operationPlan: numberLearningState.operationPlan }
   );
   if (!numberLearning.validateRound(numberLearningState.round)) {
     console.warn(`[Sayı Öğrenme] ${numberLearningState.stageId} için tur üretilemedi.`);
     openLearningPath({ focusStageId: numberLearningState.stageId });
     return;
   }
-  if (numberLearning.ADDITION_STAGE_IDS.includes(numberLearningState.stageId)) {
+  if (isAdditionNumberRound()) {
     const equationKey = `${numberLearningState.round.first}+${numberLearningState.round.second}`;
     numberLearningState.recentEquations = [equationKey, ...numberLearningState.recentEquations].slice(0, 10);
   }
-  if (numberLearning.SUBTRACTION_STAGE_IDS.includes(numberLearningState.stageId)) {
+  if (isSubtractionNumberRound()) {
     const equationKey = `${numberLearningState.round.first}-${numberLearningState.round.removed}`;
     numberLearningState.recentEquations = [equationKey, ...numberLearningState.recentEquations].slice(0, 10);
     numberLearningState.removal = numberLearning.createRemovalState(numberLearningState.round);
@@ -3528,12 +3538,14 @@ function recordNumberLearningInteraction(wasCorrect, answerValue) {
 async function answerNumberLearning(button, value) {
   if (!isNumberLearningActive || isPaused || numberLearningState.inputLocked || numberLearningState.speaking) return;
   const isCorrect = value === numberLearningState.round.correct;
-  const isAdditionRound = numberLearning.ADDITION_STAGE_IDS.includes(numberLearningState.stageId);
-  const isSubtractionRound = numberLearning.SUBTRACTION_STAGE_IDS.includes(numberLearningState.stageId);
+  const isAdditionRound = isAdditionNumberRound();
+  const isSubtractionRound = isSubtractionNumberRound();
   const isArithmeticRound = isAdditionRound || isSubtractionRound;
+  const isMixedOperationsRound = numberLearningState.stageId === numberLearning.MIXED_OPERATIONS_STAGE_ID;
   if (!isCorrect && isArithmeticRound) numberLearningState.attempts += 1;
   numberLearningState.inputLocked = true;
-  numberLearningState.pendingResult = isCorrect ? "correct" : isArithmeticRound && numberLearningState.attempts >= 3 ? "advance" : "wrong";
+  const shouldAdvanceAfterHelp = isArithmeticRound && numberLearningState.attempts >= 3 && !isMixedOperationsRound;
+  numberLearningState.pendingResult = isCorrect ? "correct" : shouldAdvanceAfterHelp ? "advance" : "wrong";
   clearSpeech();
   numberLearningSupportRun += 1;
   numberLearningState.counting = false;
@@ -3547,8 +3559,10 @@ async function answerNumberLearning(button, value) {
   matchingButton?.classList.add(isCorrect ? "correct" : "try-again-choice");
   const correctMessage = isAdditionRound ? "Toplamı buldun!" : isSubtractionRound ? "Kalanları buldun!" : "Harika!";
   const retryMessage = isArithmeticRound
-    ? numberLearningState.attempts >= 3
-      ? isSubtractionRound ? "Birlikte bulduk. Doğru kalanı görelim." : "Birlikte bulduk. Doğru toplamı görelim."
+    ? isMixedOperationsRound && numberLearningState.attempts >= 2
+      ? "İşarete tekrar bakalım. Nesnelerden yardım alabilirsin."
+      : numberLearningState.attempts >= 3
+        ? isSubtractionRound ? "Birlikte bulduk. Doğru kalanı görelim." : "Birlikte bulduk. Doğru toplamı görelim."
       : numberLearningState.attempts === 2
         ? isSubtractionRound ? "Kalan nesnelerden yardım alabilirsin." : "Nesnelerden yardım alabilirsin."
         : "Bir daha sayalım."
@@ -3561,7 +3575,7 @@ async function answerNumberLearning(button, value) {
     await advanceNumberLearningAfterFeedback(correctMessage);
   } else {
     const sessionId = numberLearningSessionId;
-    if (isArithmeticRound && numberLearningState.attempts >= 3) {
+    if (shouldAdvanceAfterHelp) {
       const correctButton = ui.numberLearningAnswers.querySelector(`[data-number-value="${numberLearningState.round.correct}"]`);
       correctButton?.classList.add("correct-answer-reveal");
       await advanceNumberLearningAfterFeedback("Birlikte bulduk. Şimdi devam edelim.");
@@ -3695,10 +3709,15 @@ function startNumberLearningStage(stage) {
   numberLearningState.stageId = stage.id;
   numberLearningState.roundNumber = 1;
   numberLearningState.totalRounds = stage.sessionLength;
+  numberLearningState.operationPlan = stage.id === numberLearning.MIXED_OPERATIONS_STAGE_ID
+    ? numberLearning.createMixedOperationPlan(stage.sessionLength)
+    : [];
   recordLearningSessionStarted(
     [`LearningPath:${stage.id}`],
-    numberLearning.ADDITION_STAGE_IDS.includes(stage.id)
-      ? "learning-path-addition"
+    stage.id === numberLearning.MIXED_OPERATIONS_STAGE_ID
+      ? "learning-path-mixed-operations"
+      : numberLearning.ADDITION_STAGE_IDS.includes(stage.id)
+        ? "learning-path-addition"
       : numberLearning.SUBTRACTION_STAGE_IDS.includes(stage.id)
         ? "learning-path-subtraction"
         : "learning-path-number"
@@ -4425,7 +4444,7 @@ function pauseGame() {
     numberLearningSupportRun += 1;
     numberLearningState.counting = false;
     numberLearningState.speaking = false;
-    ui.numberLearningVisual.querySelectorAll(".addition-object").forEach(object => object.classList.remove("counting-active"));
+    ui.numberLearningVisual.querySelectorAll(".addition-object, .subtraction-object").forEach(object => object.classList.remove("counting-active"));
     setNumberLearningInputEnabled(false);
   }
   if (isLogicAttentionActive) {
