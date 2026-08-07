@@ -526,4 +526,177 @@ button.subtraction-object:focus-visible{outline:4px solid #5539a6;outline-offset
   .world-decoration{animation:none!important}
 }
 
+/* Sprint 9 – Polish & Delight */
+:root{
+  --motion-fast:140ms;
+  --motion-normal:220ms;
+  --motion-slow:360ms;
+  --ease-playful:cubic-bezier(.34,1.3,.64,1);
+  --ease-soft:cubic-bezier(.22,.61,.36,1);
+  --radius-control:18px;
+  --radius-card:24px;
+  --layer-world:0;
+  --layer-screen:1;
+  --layer-mascot:5;
+  --layer-global:20;
+  --layer-menu:30;
+  --layer-celebration:40;
+  --layer-modal:50;
+  --layer-pause:60;
+}
+
+.world-decorations,.cloud,.game-shell::after{z-index:var(--layer-world);pointer-events:none}
+.screen{z-index:var(--layer-screen)}
+.game-mascot{z-index:var(--layer-mascot)}
+.menu-button,.top-right-controls{z-index:var(--layer-global)}
+.game-menu{z-index:var(--layer-menu);transform-origin:top left}
+.reward-popup,.daily-goal-popup,.achievement-popup{z-index:var(--layer-celebration)}
+.parent-dashboard,.achievements-modal,.world-theme-modal{z-index:var(--layer-modal)}
+.pause-overlay{z-index:var(--layer-pause)}
+
+html:not(.app-ready) .screen,html:not(.app-ready) .game-shell,html:not(.app-ready) .game-shell::after{animation:none!important;transition:none!important}
+.game-shell{overflow:clip}
+.screen:not(.hidden){animation:milaScreenEnter var(--motion-normal) var(--ease-soft) both}
+.game-shell:has(.quiz-screen:not(.hidden),.matching-screen:not(.hidden),.listening-screen:not(.hidden),.number-match-screen:not(.hidden),.color-match-screen:not(.hidden),.sorting-screen:not(.hidden),.new-mini-game-screen:not(.hidden),.number-learning-screen:not(.hidden),.logic-attention-screen:not(.hidden)){place-items:start center}
+@keyframes milaScreenEnter{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+.primary-button,.sound-button,.global-control-button,.compact-action-button,.game-destination-button,.icon-button,.replay-button,.mode-button,.home-navigation-card,.answer-button,.matching-card,.listening-card,.number-match-card,.color-match-card,.sorting-item,.sorting-destination,.new-mini-game-choice,.logic-choice,.learning-path-stage,.learning-path-group-tab,.world-theme-option,.bonus-choice{
+  transition:transform var(--motion-fast) var(--ease-playful),box-shadow var(--motion-fast) ease,background-color var(--motion-normal) ease,border-color var(--motion-normal) ease,opacity var(--motion-fast) ease;
+  -webkit-tap-highlight-color:transparent;
+}
+button:disabled{opacity:.58;filter:saturate(.72);cursor:default}
+button:not(:disabled):active{transform:translateY(2px) scale(.98)}
+@media(hover:hover) and (pointer:fine){
+  .home-navigation-card:hover,.mode-button:hover,.learning-path-stage:hover:not(:disabled),.world-theme-option:hover,.new-mini-game-choice:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 7px 0 #9c8aca}
+  .primary-button:hover:not(:disabled),.sound-button:hover:not(:disabled),.replay-button:hover:not(:disabled){filter:brightness(1.03)}
+}
+
+.welcome-screen .mascot{pointer-events:none;transform-origin:center bottom;animation:mascotIdle 8s ease-in-out infinite}
+.welcome-screen .eye{transform-origin:center;animation:mascotBlink 7s ease-in-out infinite}
+.welcome-screen .eye:nth-child(2){animation-delay:35ms}
+@keyframes mascotIdle{0%,88%,100%{transform:translateY(0) rotate(0)}92%{transform:translateY(-2px) rotate(-1deg)}96%{transform:translateY(0) rotate(1deg)}}
+@keyframes mascotBlink{0%,45%,48%,100%{transform:scaleY(1)}46%,47%{transform:scaleY(.12)}}
+.selected-player-card{transition:border-color var(--motion-normal),box-shadow var(--motion-normal)}
+.home-navigation-card{position:relative;overflow:hidden}
+.home-navigation-card::after{content:"";position:absolute;inset:auto 12px 8px;height:3px;border-radius:5px;background:currentColor;opacity:.1;pointer-events:none}
+
+.answer-button,.listening-card,.number-match-card,.color-match-card,.new-mini-game-choice,.logic-choice{position:relative;overflow:hidden}
+.answer-button.correct::after,.listening-card.correct::after,.number-match-card.correct::after,.color-match-card.correct::after,.new-mini-game-choice.correct::after,.logic-choice.correct-answer-reveal::after{
+  content:"✓";position:absolute;top:7px;right:9px;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#176b3d;color:#fff;font-size:1rem;box-shadow:0 2px 0 #0e4e2a;
+}
+.answer-button.try-again-choice,.listening-card.try-again-choice,.number-match-card.try-again-choice,.new-mini-game-choice.try-again-choice,.logic-choice.try-again-choice{animation:gentleNudge var(--motion-slow) ease}
+@keyframes gentleNudge{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+.feedback,.matching-feedback,.bonus-feedback,.new-mini-game-feedback{min-height:34px;contain:layout}
+.feedback.success,.feedback.try-again,.matching-feedback.success,.matching-feedback.try-again{animation:feedbackIn var(--motion-normal) var(--ease-soft)}
+@keyframes feedbackIn{from{opacity:.35;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+.streak{display:inline-block;min-width:94px;padding:4px 9px;border-radius:14px;transition:background var(--motion-normal),color var(--motion-normal)}
+.streak.milestone{background:#fff1a8;color:#7a3d17;animation:streakMilestone 700ms var(--ease-playful)}
+@keyframes streakMilestone{40%{transform:scale(1.12);box-shadow:0 0 0 5px #ffd75a55}100%{transform:scale(1);box-shadow:none}}
+
+.celebration{z-index:2;pointer-events:none}
+.celebration.burst span{pointer-events:none}
+.reward-popup,.daily-goal-popup,.achievement-popup{max-width:calc(100vw - 28px);isolation:isolate}
+.reward-popup{top:max(82px,calc(env(safe-area-inset-top) + 70px));min-width:190px;justify-content:center;padding:14px 20px}
+.reward-popup p::after{content:" Harika gidiyorsun!";display:block;margin-top:2px;font-size:.72rem;color:#74669b}
+.reward-sticker{animation:none}
+.reward-reveal{animation:rewardReveal var(--motion-slow) var(--ease-playful) both}
+.reward-reveal .reward-sticker,.reward-reveal .achievement-popup-icon{animation:stickerPop var(--motion-slow) var(--ease-playful) both}
+@keyframes rewardReveal{from{opacity:0;transform:translate(-50%,-8px) scale(.96)}to{opacity:1;transform:translate(-50%,0) scale(1)}}
+@keyframes stickerPop{from{transform:scale(.8)}to{transform:scale(1)}}
+.achievement-popup.reward-reveal{animation-name:achievementRewardReveal}
+@keyframes achievementRewardReveal{from{opacity:0;transform:translate(-50%,-47%) scale(.9)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+.daily-goal-popup.reward-reveal{animation-name:dailyRewardReveal}
+@keyframes dailyRewardReveal{from{opacity:0;transform:translate(-50%,-8px)}to{opacity:1;transform:translate(-50%,0)}}
+
+.learning-path-recommendation{display:inline-block;padding:8px 13px;border:2px solid #e4c144;border-radius:16px;background:#fff9df;color:#604a14;font-weight:900}
+.learning-path-screen .learning-path-stage.current{position:relative;box-shadow:0 5px 0 #c59e27,0 0 0 3px #fff1a8}
+.learning-path-screen .learning-path-stage.locked,.learning-path-screen .learning-path-stage.planned{transform:none!important}
+.learning-path-unlock{margin:12px 0 0;padding:10px 12px;border:2px solid #8fc56d;border-radius:15px;background:#edf9d7;color:#376b2b;font-weight:900}
+.learning-path-unlock.unlock-reveal{animation:unlockReveal 700ms var(--ease-playful)}
+@keyframes unlockReveal{from{opacity:0;transform:translateY(5px) scale(.97)}to{opacity:1;transform:none}}
+
+.mini-games-grid .mode-button{display:flex;flex-direction:column;justify-content:center;min-height:104px;border-radius:var(--radius-card)}
+.mini-games-grid .mode-button strong{min-height:1.05em}
+.mini-games-grid .mode-button span{min-height:2.2em}
+.matching-card{backface-visibility:hidden;transform-style:preserve-3d}
+.matching-card.revealed{animation:cardReveal var(--motion-normal) var(--ease-playful)}
+@keyframes cardReveal{from{transform:rotateY(12deg) scale(.96)}to{transform:rotateY(0) scale(1)}}
+.matching-card.completed{outline:3px solid #67b36f;outline-offset:-5px}
+.sorting-item.selected,.new-mini-game-choice.selected,.new-mini-game-choice.active{box-shadow:0 0 0 5px #ffd75a66,0 5px 0 #7356bd}
+.sorting-destination.can-drop{box-shadow:0 0 0 5px #67d7b555,0 5px 0 #5a9e7f}
+
+.replay-button.is-speaking,#welcome-sound-button.is-speaking,#color-match-word-listen-button.is-speaking,#turkish-voice-preview.is-speaking,#english-voice-preview.is-speaking{
+  border-color:#7259bd;background:#eee7ff;box-shadow:0 4px 0 #7356bd,0 0 0 4px #ffd75a55;color:#493a85;
+}
+.is-speaking span[aria-hidden="true"]{animation:speakerPulse 900ms ease-in-out infinite}
+@keyframes speakerPulse{50%{transform:scale(1.13)}}
+
+.game-menu:not(.hidden){animation:menuEnter var(--motion-normal) var(--ease-soft) both}
+@keyframes menuEnter{from{opacity:0;transform:translateY(-4px) scale(.98)}to{opacity:1;transform:none}}
+.game-menu button{transition:background var(--motion-fast),transform var(--motion-fast)}
+.game-menu button:active{transform:scale(.98)}
+.parent-dashboard-card,.achievements-modal-card,.world-theme-panel,.pause-card{border-radius:30px}
+.parent-dashboard:not(.hidden) .parent-dashboard-card,.achievements-modal:not(.hidden) .achievements-modal-card,.world-theme-modal:not(.hidden) .world-theme-panel,.pause-overlay:not(.hidden) .pause-card{animation:dialogEnter var(--motion-normal) var(--ease-soft) both}
+@keyframes dialogEnter{from{opacity:0;transform:translateY(5px) scale(.98)}to{opacity:1;transform:none}}
+body:has(.parent-dashboard:not(.hidden),.achievements-modal:not(.hidden),.world-theme-modal:not(.hidden),.pause-overlay:not(.hidden)){overflow:hidden}
+.pause-card p{margin:-12px 0 22px;color:#6b5b99;font-weight:900}
+.reward-empty-state{margin:0 0 12px;padding:11px;border-radius:14px;background:#fff9df;color:#65588e;font-size:.86rem;font-weight:900}
+
+.global-control-button{min-height:48px;border-radius:16px;white-space:nowrap}
+[tabindex="-1"]:focus{outline:none}
+.world-theme-option[aria-pressed="true"]{box-shadow:0 4px 0 var(--world-accent),0 0 0 3px #fff1a8}
+.game-shell,.game-shell::after,.cloud{transition-duration:var(--motion-slow);transition-timing-function:var(--ease-soft)}
+.game-shell:has(.screen:not(.welcome-screen):not(.hidden)) .world-decoration{opacity:.34;animation-duration:11s}
+.daily-mission-row{transition:background var(--motion-normal),border-color var(--motion-normal),transform var(--motion-fast)}
+.daily-mission-row.completed .daily-mission-marker{animation:missionCheck var(--motion-slow) var(--ease-playful)}
+@keyframes missionCheck{from{transform:scale(.75)}to{transform:scale(1)}}
+.daily-goal-card.completed{animation:dailyComplete var(--motion-slow) var(--ease-soft)}
+@keyframes dailyComplete{from{box-shadow:0 0 0 #7fac5700}to{box-shadow:0 4px 0 #7fac57}}
+.balloon-bonus .eyebrow{display:inline-block;padding:5px 10px;border-radius:12px;background:#ffffff99}
+.bonus-choice.collected,.bonus-choice.matched{position:relative}
+.bonus-choice.collected::after,.bonus-choice.matched::after{content:"✓";position:absolute;top:7px;right:8px;font-size:.9rem}
+
+@media(max-width:390px){
+  .game-shell{padding-inline:10px}
+  .welcome-screen h1{font-size:clamp(2.45rem,13vw,3.1rem)}
+  .home-navigation-grid{gap:8px}
+  .home-navigation-card{min-height:80px;padding:9px 7px}
+  .home-navigation-card strong{font-size:1.02rem}
+  .daily-goal-card{padding:9px 10px}
+  .replay-button{max-width:100%;min-height:58px;padding:9px 17px}
+  .answers{gap:10px}
+  .answer-button{min-height:76px}
+  .reward-popup,.daily-goal-popup{width:calc(100vw - 24px)}
+  .learning-path-screen h2{font-size:2.2rem}
+  .learning-path-group-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible;scroll-snap-type:none}
+  .learning-path-group-tab{min-width:0;min-height:54px;padding:5px 3px;font-size:.63rem}
+}
+
+@media(min-width:760px) and (max-height:820px){
+  .game-shell{padding-top:72px;padding-bottom:14px}
+  .welcome-screen .mascot{width:82px;height:74px}
+  .welcome-screen h1{font-size:3.45rem}
+  .welcome-screen .welcome-copy{margin:8px auto 10px}
+  .selected-player-card{margin-top:9px}
+  .home-navigation-grid{grid-template-columns:repeat(4,minmax(0,1fr));max-width:850px;margin-top:10px}
+  .home-navigation-card{min-height:82px}
+  .daily-goal-card{max-width:700px;margin:10px auto}
+  .daily-mission-list{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .daily-mission-row{grid-template-columns:28px minmax(0,1fr);align-content:center}
+  .daily-mission-row>strong{grid-column:2}
+  .home-about{display:none}
+  .mini-games-section{max-width:900px}
+  .mini-games-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .mini-games-grid .mode-button{min-height:88px}
+  .question-card{padding-block:14px}.question-visual{height:130px;font-size:6rem}.answers{margin-top:18px}.answer-button{min-height:78px}
+  .matching-header{margin-bottom:8px}.matching-feedback{margin-bottom:10px}.matching-board-wrap{max-width:440px}.matching-cards{gap:8px}
+  .balloon-bonus{min-height:0}.bonus-activity{gap:12px}.bonus-choice{min-height:78px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .screen:not(.hidden),.welcome-screen .mascot,.welcome-screen .eye,.streak.milestone,.reward-reveal,.reward-reveal .reward-sticker,.reward-reveal .achievement-popup-icon,.learning-path-unlock.unlock-reveal,.matching-card.revealed,.is-speaking span[aria-hidden="true"],.game-menu:not(.hidden),.parent-dashboard-card,.achievements-modal-card,.world-theme-panel,.pause-card,.daily-mission-row.completed .daily-mission-marker,.daily-goal-card.completed{animation:none!important;transform:none!important}
+  button:not(:disabled):active,.home-navigation-card:hover,.mode-button:hover,.learning-path-stage:hover:not(:disabled),.world-theme-option:hover,.new-mini-game-choice:hover:not(:disabled){transform:none}
+  .celebration.burst span{animation:none!important}
+}
+
 .number-learning-visual.operation-help .addition-symbol,.number-learning-visual.operation-help .numeric-addition-equation{color:#5b3bb4;outline:4px solid #f2c94c;outline-offset:4px;border-radius:16px}

@@ -45,6 +45,7 @@ class SpeechService {
     this.voiceSignature = "";
     this.voiceListeners = new Set();
     this.settingsListeners = new Set();
+    this.stateListeners = new Set();
     this.settings = this.loadSettings();
     this.handleVoicesChanged = this.handleVoicesChanged.bind(this);
     this.listenForVoices();
@@ -113,6 +114,29 @@ class SpeechService {
     if (typeof listener !== "function") return () => {};
     this.settingsListeners.add(listener);
     return () => this.settingsListeners.delete(listener);
+  }
+
+  getSpeechState() {
+    return {
+      speaking: Boolean(this.activeRequest),
+      request: this.activeRequest ? {
+        id: this.activeRequest.id,
+        text: this.activeRequest.text,
+        language: this.activeRequest.language,
+        channel: this.activeRequest.channel
+      } : undefined
+    };
+  }
+
+  notifySpeechState() {
+    const state = this.getSpeechState();
+    this.stateListeners.forEach(listener => listener(state));
+  }
+
+  onStateChanged(listener) {
+    if (typeof listener !== "function") return () => {};
+    this.stateListeners.add(listener);
+    return () => this.stateListeners.delete(listener);
   }
 
   static getVoiceIdentifier(voice) {
@@ -249,6 +273,7 @@ class SpeechService {
     this.activeResolver = undefined;
     this.activeRequest = undefined;
     resolve?.(completed);
+    this.notifySpeechState();
   }
 
   speakUtterance(request) {
@@ -263,6 +288,7 @@ class SpeechService {
         if (this.activeRequest?.id === request.id) {
           this.activeRequest = undefined;
           this.activeResolver = undefined;
+          this.notifySpeechState();
         }
         resolve(Boolean(completed && request.generation === this.generation));
       };
@@ -278,6 +304,7 @@ class SpeechService {
       utterance.onerror = () => finish(false);
       this.activeRequest = request;
       this.activeResolver = finish;
+      this.notifySpeechState();
       try {
         this.synthesis.speak(utterance);
       } catch {

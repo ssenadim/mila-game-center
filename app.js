@@ -22,7 +22,7 @@ const COMPLETION_MESSAGES = [
 ];
 const STICKERS = ["⭐", "🌈", "🦋", "🦄", "🚀", "🐱", "🐶"];
 const STICKER_STORAGE_KEY = "mila-learning-stickers";
-const REWARD_POPUP_DURATION = 3000;
+const REWARD_POPUP_DURATION = 2200;
 const PARENT_DATA_STORAGE_KEY = "mila-learning-parent-data";
 const PARENT_HOLD_DURATION = 5000;
 const SESSION_CELEBRATION_DURATION = 3500;
@@ -141,7 +141,7 @@ const ui = {
   customCategoryBrowser: document.querySelector("#custom-category-browser"), categoryGroupTabs: document.querySelector("#category-group-tabs"), customCategoryCount: document.querySelector("#custom-category-count"), customCategoryReset: document.querySelector("#custom-category-reset-button"),
   category: document.querySelector("#category-pill"), visual: document.querySelector("#question-visual"), celebration: document.querySelector("#celebration"), mascot: document.querySelector("#game-mascot"), prompt: document.querySelector("#question-prompt"),
   answers: document.querySelector("#answers"), feedback: document.querySelector("#feedback"), next: document.querySelector("#next-button"), count: document.querySelector("#question-count"), score: document.querySelector("#score"), streak: document.querySelector("#streak"), progress: document.querySelector("#progress-fill"),
-  playAgain: document.querySelector("#play-again-button"), summaryHome: document.querySelector("#summary-home-button"), summaryStats: document.querySelector("#summary-stats"), summaryStars: document.querySelector("#summary-stars"), summaryCorrect: document.querySelector("#summary-correct"), summaryStreak: document.querySelector("#summary-streak"), summaryCategory: document.querySelector("#summary-category"), summaryTitle: document.querySelector("#summary-title"), summaryCopy: document.querySelector(".summary-copy"), rewardPopup: document.querySelector("#reward-popup"), rewardSticker: document.querySelector("#reward-sticker"), achievementPopup: document.querySelector("#achievement-popup"), achievementPopupIcon: document.querySelector("#achievement-popup-icon"), achievementPopupTitle: document.querySelector("#achievement-popup-title"), dailyGoalCard: document.querySelector("#daily-goal-card"), dailyGoalTitle: document.querySelector("#daily-goal-title"), dailyGoalProgress: document.querySelector("#daily-goal-progress"), dailyMissionList: document.querySelector("#daily-mission-list"), dailyGoalPopup: document.querySelector("#daily-goal-popup"), dailyGoalPopupTitle: document.querySelector("#daily-goal-popup-title"), achievementsModal: document.querySelector("#achievements-modal"), achievementsModalClose: document.querySelector("#achievements-modal-close"), achievementsList: document.querySelector("#achievements-list"), rewardsStarCount: document.querySelector("#rewards-star-count"), stickersList: document.querySelector("#stickers-list"), bonus: document.querySelector("#balloon-bonus"), bonusTitle: document.querySelector("#balloon-title"), balloonHome: document.querySelector("#bonus-home-button"), balloonTarget: document.querySelector("#balloon-target"), balloons: document.querySelector("#balloons"), bonusEyebrow: document.querySelector("#bonus-eyebrow"), bonusFeedback: document.querySelector("#bonus-feedback"), bonusContinue: document.querySelector("#bonus-continue-button"), pause: document.querySelector("#pause-button"), bonusPause: document.querySelector("#bonus-pause-button"), pauseOverlay: document.querySelector("#pause-overlay"), resume: document.querySelector("#resume-button"), parentLogo: document.querySelector("#welcome-title"), parentDashboard: document.querySelector("#parent-dashboard"), parentDashboardClose: document.querySelector("#parent-dashboard-close"), parentDashboardTitle: document.querySelector("#parent-dashboard-title"), parentPlayTime: document.querySelector("#parent-play-time"), parentQuestions: document.querySelector("#parent-questions"), parentCorrect: document.querySelector("#parent-correct"), parentCategory: document.querySelector("#parent-category"), parentStreak: document.querySelector("#parent-streak"), parentDifficultWords: document.querySelector("#parent-difficult-words"), speechEnabled: document.querySelector("#speech-enabled-setting"), speechRate: document.querySelector("#speech-rate-setting"), turkishVoice: document.querySelector("#turkish-voice-setting"), englishVoice: document.querySelector("#english-voice-setting"), turkishVoiceRow: document.querySelector("#turkish-voice-row"), englishVoiceRow: document.querySelector("#english-voice-row"), turkishVoicePreview: document.querySelector("#turkish-voice-preview"), englishVoicePreview: document.querySelector("#english-voice-preview"), soundEffectsEnabled: document.querySelector("#sound-effects-setting"), audioVolume: document.querySelector("#audio-volume-setting"), speechUnsupported: document.querySelector("#speech-unsupported-message")
+  playAgain: document.querySelector("#play-again-button"), summaryHome: document.querySelector("#summary-home-button"), summaryStats: document.querySelector("#summary-stats"), summaryStars: document.querySelector("#summary-stars"), summaryCorrect: document.querySelector("#summary-correct"), summaryStreak: document.querySelector("#summary-streak"), summaryCategory: document.querySelector("#summary-category"), summaryTitle: document.querySelector("#summary-title"), summaryCopy: document.querySelector(".summary-copy"), learningPathUnlock: document.querySelector("#learning-path-unlock"), rewardPopup: document.querySelector("#reward-popup"), rewardSticker: document.querySelector("#reward-sticker"), achievementPopup: document.querySelector("#achievement-popup"), achievementPopupIcon: document.querySelector("#achievement-popup-icon"), achievementPopupTitle: document.querySelector("#achievement-popup-title"), dailyGoalCard: document.querySelector("#daily-goal-card"), dailyGoalTitle: document.querySelector("#daily-goal-title"), dailyGoalProgress: document.querySelector("#daily-goal-progress"), dailyMissionList: document.querySelector("#daily-mission-list"), dailyGoalPopup: document.querySelector("#daily-goal-popup"), dailyGoalPopupTitle: document.querySelector("#daily-goal-popup-title"), achievementsModal: document.querySelector("#achievements-modal"), achievementsModalClose: document.querySelector("#achievements-modal-close"), achievementsList: document.querySelector("#achievements-list"), rewardsStarCount: document.querySelector("#rewards-star-count"), stickersList: document.querySelector("#stickers-list"), stickerAlbumGuidance: document.querySelector("#sticker-album-guidance"), bonus: document.querySelector("#balloon-bonus"), bonusTitle: document.querySelector("#balloon-title"), balloonHome: document.querySelector("#bonus-home-button"), balloonTarget: document.querySelector("#balloon-target"), balloons: document.querySelector("#balloons"), bonusEyebrow: document.querySelector("#bonus-eyebrow"), bonusFeedback: document.querySelector("#bonus-feedback"), bonusContinue: document.querySelector("#bonus-continue-button"), pause: document.querySelector("#pause-button"), bonusPause: document.querySelector("#bonus-pause-button"), pauseOverlay: document.querySelector("#pause-overlay"), resume: document.querySelector("#resume-button"), parentLogo: document.querySelector("#welcome-title"), parentDashboard: document.querySelector("#parent-dashboard"), parentDashboardClose: document.querySelector("#parent-dashboard-close"), parentDashboardTitle: document.querySelector("#parent-dashboard-title"), parentPlayTime: document.querySelector("#parent-play-time"), parentQuestions: document.querySelector("#parent-questions"), parentCorrect: document.querySelector("#parent-correct"), parentCategory: document.querySelector("#parent-category"), parentStreak: document.querySelector("#parent-streak"), parentDifficultWords: document.querySelector("#parent-difficult-words"), speechEnabled: document.querySelector("#speech-enabled-setting"), speechRate: document.querySelector("#speech-rate-setting"), turkishVoice: document.querySelector("#turkish-voice-setting"), englishVoice: document.querySelector("#english-voice-setting"), turkishVoiceRow: document.querySelector("#turkish-voice-row"), englishVoiceRow: document.querySelector("#english-voice-row"), turkishVoicePreview: document.querySelector("#turkish-voice-preview"), englishVoicePreview: document.querySelector("#english-voice-preview"), soundEffectsEnabled: document.querySelector("#sound-effects-setting"), audioVolume: document.querySelector("#audio-volume-setting"), speechUnsupported: document.querySelector("#speech-unsupported-message")
 };
 
 const appUtils = window.MilaUtils;
@@ -162,6 +162,7 @@ numberLearning.validateContent();
 const speech = new window.MilaSpeechService();
 const audio = new window.MilaAudioHelper(() => speech.getSettings());
 const animations = new window.MilaAnimationHelper(ui.visual, ui.celebration);
+const celebrationCoordinator = new window.MilaCelebrationCoordinator({ canStart: () => !pendingCorrectTransition });
 const gameReady = loadQuestionEngine();
 
 let engine;
@@ -174,7 +175,6 @@ let questionNumber = 0;
 let isSpeaking = false;
 let isStartingGame = false;
 let audioRun = 0;
-let rewardPopupTimer;
 let balloonBonusTimer;
 let isBalloonBonusActive = false;
 let selectedPlayer = getSavedPlayer();
@@ -238,12 +238,10 @@ let wakeLock;
 let wakeLockRequest;
 let shouldKeepWakeLock = false;
 let achievementQueue = [];
-let achievementPopupTimer;
 let isAchievementShowing = false;
-let dailyGoalPopupTimer;
 let isDailyGoalShowing = false;
-let pendingDailyGoalPopup = false;
 let mascotReactionTimer;
+let streakMilestoneTimer;
 let correctAnswersSinceVoice = 2;
 let wrongAttemptsForQuestion = 0;
 let encouragementHistory = {};
@@ -316,6 +314,7 @@ let isLogicAttentionActive = false;
 let logicAttentionSessionId = 0;
 let logicAttentionState;
 let activeLearningPathStage;
+let pendingLearningPathUnlock;
 let activeLearningPathGroupId = learningPathModel.GROUPS[0].id;
 let learningPathQuestionPlan = [];
 let isLearningPathSessionCompleted = false;
@@ -326,6 +325,17 @@ let isLearningPathRecoveryQuestion = false;
 let learningPathQuestionPhase = "variety";
 let activePrimaryView = "home";
 let rewardsReturnFocus;
+let settingsReturnFocus;
+let pauseReturnFocus;
+let celebrationEventSequence = 0;
+let pendingSpeechControl;
+const SPEECH_CONTROL_SELECTOR = [
+  ".replay-button",
+  "#welcome-sound-button",
+  "#color-match-word-listen-button",
+  "#turkish-voice-preview",
+  "#english-voice-preview"
+].join(",");
 
 function getValidPlayerName(name) {
   const playerName = typeof name === "string" ? name.trim() : "";
@@ -381,6 +391,8 @@ function completeLearningPathStage() {
   if (progress.completed[activeLearningPathStage.id]) return false;
   progress.completed[activeLearningPathStage.id] = true;
   saveLearningPathProgress(progress);
+  const unlockedStage = learningPathModel.getNextEligibleStage(activeLearningPathStage.id, progress);
+  pendingLearningPathUnlock = unlockedStage ? { id: unlockedStage.id, icon: unlockedStage.icon, title: unlockedStage.title } : undefined;
   return true;
 }
 
@@ -456,7 +468,7 @@ function renderLearningPath({ focusStageId } = {}) {
       : "Bir bölüm seç ve öğrenmeye başla!";
   ui.learningPathRecommendation.textContent = allStagesCompleted
     ? `${selectedPlayer ? `${selectedPlayer}, ` : ""}tüm hazır bölümleri tamamladın!`
-    : `${selectedPlayer ? `${selectedPlayer}, ` : ""}sıradaki bölümün: ${recommendedStage.icon} ${recommendedStage.title}`;
+    : `✨ Buradan devam et: ${recommendedStage.icon} ${recommendedStage.title}`;
   renderLearningPathGroupTabs();
   ui.learningPathGroupTitle.textContent = activeGroup.title;
   ui.learningPathGroupIcon.textContent = activeGroup.icon;
@@ -518,11 +530,12 @@ function renderLearningPathCompletion(completionMessage) {
   ui.learningPathCompletion.classList.toggle("hidden", !isLearningPathCompletion);
   ui.summaryStats.classList.toggle("hidden", isLearningPathCompletion);
   ui.learningPathReturn.classList.toggle("hidden", !isLearningPathCompletion);
-  ui.playAgain.innerHTML = isLearningPathCompletion ? 'Tekrar Oyna <span aria-hidden="true">↻</span>' : 'Yeniden oyna <span aria-hidden="true">↻</span>';
-  ui.playAgain.setAttribute("aria-label", isLearningPathCompletion ? `${activeLearningPathStage.title} bölümünü tekrar oyna` : "Yeniden oyna");
+  ui.playAgain.innerHTML = 'Tekrar Oyna <span aria-hidden="true">↻</span>';
+  ui.playAgain.setAttribute("aria-label", isLearningPathCompletion ? `${activeLearningPathStage.title} bölümünü tekrar oyna` : "Tekrar Oyna");
   if (!isLearningPathCompletion) {
     ui.learningPathNext.classList.add("hidden");
     ui.learningPathNext.removeAttribute("data-learning-path-stage");
+    ui.learningPathUnlock.classList.add("hidden");
     return;
   }
   const progress = loadLearningPathProgress();
@@ -533,7 +546,11 @@ function renderLearningPathCompletion(completionMessage) {
   ui.learningPathCompletionStage.textContent = `${activeLearningPathStage.title} bölümünü bitirdin!`;
   ui.learningPathCompletionParticipation.textContent = `${questionNumber} soruyu tamamladın`;
   ui.learningPathCompletionCorrect.textContent = `${correctAnswers} doğru cevap`;
-  ui.learningPathCompletion.setAttribute("aria-label", `${activeLearningPathStage.title} bölümü tamamlandı. ${questionNumber} soru tamamlandı. ${correctAnswers} doğru cevap.`);
+  const unlockMessage = pendingLearningPathUnlock ? `🔓 Yeni bölüm açıldı: ${pendingLearningPathUnlock.icon} ${pendingLearningPathUnlock.title}` : "";
+  ui.learningPathUnlock.textContent = unlockMessage;
+  ui.learningPathUnlock.classList.toggle("hidden", !unlockMessage);
+  if (unlockMessage) animations.playUnlockAnimation(ui.learningPathUnlock);
+  ui.learningPathCompletion.setAttribute("aria-label", `${activeLearningPathStage.title} bölümü tamamlandı. ${questionNumber} soru tamamlandı. ${correctAnswers} doğru cevap.${unlockMessage ? ` ${unlockMessage}` : ""}`);
   ui.learningPathNext.classList.toggle("hidden", !nextStage);
   ui.learningPathNext.disabled = false;
   if (nextStage) {
@@ -673,56 +690,67 @@ function flushDailyMissionCompletions() {
     : "Harika! Günün görevlerinden birini tamamladın.";
   ui.dailyGoalPopupTitle.textContent = completionMessage;
   showDailyGoalPopup();
-  audio.playSuccess();
-  speech.speakTurkish(completionMessage, { channel: "feedback" });
 }
 
 function resetDailyGoalPopup() {
-  pendingDailyGoalPopup = false;
   pendingDailyMissionCompletions = [];
   isDailyGoalShowing = false;
-  window.clearTimeout(dailyGoalPopupTimer);
+  celebrationCoordinator.cancelGroup("daily-mission");
   ui.dailyGoalPopup.classList.add("hidden");
 }
 
 function showDailyGoalPopup() {
-  if (isAchievementShowing) {
-    pendingDailyGoalPopup = true;
-    return;
-  }
-  if (isDailyGoalShowing) return;
-  pendingDailyGoalPopup = false;
-  isDailyGoalShowing = true;
-  ui.dailyGoalPopup.classList.remove("hidden");
-  animations.celebrate();
-  window.clearTimeout(dailyGoalPopupTimer);
-  dailyGoalPopupTimer = window.setTimeout(() => {
-    ui.dailyGoalPopup.classList.add("hidden");
-    isDailyGoalShowing = false;
-  }, 1800);
+  if (isDailyGoalShowing || celebrationCoordinator.hasGroup("daily-mission")) return;
+  const completionMessage = ui.dailyGoalPopupTitle.textContent;
+  celebrationCoordinator.enqueue({
+    id: `daily-mission-${++celebrationEventSequence}`,
+    group: "daily-mission",
+    priority: 60,
+    duration: 1800,
+    show: () => {
+      isDailyGoalShowing = true;
+      ui.dailyGoalPopup.classList.remove("hidden");
+      animations.playRewardReveal(ui.dailyGoalPopup);
+      audio.playSuccess();
+      speech.speakTurkish(completionMessage, { channel: "feedback" });
+    },
+    hide: () => {
+      ui.dailyGoalPopup.classList.add("hidden");
+      isDailyGoalShowing = false;
+    }
+  });
 }
 
 function resetAchievementPopup() {
   achievementQueue = [];
   isAchievementShowing = false;
-  window.clearTimeout(achievementPopupTimer);
+  celebrationCoordinator.cancelGroup("achievement");
   ui.achievementPopup.classList.add("hidden");
 }
 
 function showNextAchievement() {
-  if (isAchievementShowing || !achievementQueue.length) return;
+  if (isAchievementShowing || celebrationCoordinator.hasGroup("achievement") || !achievementQueue.length) return;
   const achievement = achievementQueue.shift();
-  isAchievementShowing = true;
-  ui.achievementPopupIcon.textContent = achievement.icon;
-  ui.achievementPopupTitle.textContent = achievement.title;
-  ui.achievementPopup.classList.remove("hidden");
-  animations.celebrate();
-  achievementPopupTimer = window.setTimeout(() => {
-    ui.achievementPopup.classList.add("hidden");
-    isAchievementShowing = false;
-    showNextAchievement();
-    if (!isAchievementShowing && pendingDailyGoalPopup) showDailyGoalPopup();
-  }, 1800);
+  celebrationCoordinator.enqueue({
+    id: `achievement-${achievement.id}`,
+    group: "achievement",
+    priority: 80,
+    duration: 1800,
+    show: () => {
+      isAchievementShowing = true;
+      ui.achievementPopupIcon.textContent = achievement.icon;
+      ui.achievementPopupTitle.textContent = achievement.title;
+      ui.achievementPopup.classList.remove("hidden");
+      animations.playRewardReveal(ui.achievementPopup);
+    },
+    hide: () => {
+      ui.achievementPopup.classList.add("hidden");
+      isAchievementShowing = false;
+    },
+    complete: () => {
+      showNextAchievement();
+    }
+  });
 }
 
 function unlockAchievement(achievementId) {
@@ -776,6 +804,7 @@ function renderRewardsRoom() {
   renderAchievements();
   ui.rewardsStarCount.textContent = parentData.correctAnswers + (Number(parentData.rewardStars) || 0);
   const unlockedStickers = getSavedStickers();
+  ui.stickerAlbumGuidance.classList.toggle("hidden", unlockedStickers.length > 0);
   ui.stickersList.textContent = "";
   STICKERS.forEach(sticker => {
     const item = document.createElement("span");
@@ -789,10 +818,11 @@ function openAchievements() {
   renderRewardsRoom();
   rewardsReturnFocus = document.activeElement;
   ui.achievementsModal.classList.remove("hidden");
-  ui.achievementsModalClose.focus();
+  ui.achievementsModalClose.focus({ preventScroll: true });
 }
 
 function closeAchievements() {
+  if (ui.achievementsModal.classList.contains("hidden")) return;
   ui.achievementsModal.classList.add("hidden");
   const returnTarget = rewardsReturnFocus && !rewardsReturnFocus.closest(".hidden") ? rewardsReturnFocus : getPrimaryViewHeading(activePrimaryView);
   returnTarget?.focus({ preventScroll: true });
@@ -841,8 +871,12 @@ function closeWorldThemePanel() {
 }
 
 function keepWorldThemeFocusInside(event) {
-  if (event.key !== "Tab" || ui.worldThemePanel.classList.contains("hidden")) return;
-  const focusable = [...ui.worldThemePanel.querySelectorAll("button:not(:disabled)")];
+  keepFocusInside(ui.worldThemePanel, event);
+}
+
+function keepFocusInside(modal, event) {
+  if (event.key !== "Tab" || modal.classList.contains("hidden")) return;
+  const focusable = [...modal.querySelectorAll("button:not(:disabled), select:not(:disabled), input:not(:disabled)")];
   const first = focusable[0];
   const last = focusable[focusable.length - 1];
   if (event.shiftKey && document.activeElement === first) {
@@ -1291,6 +1325,7 @@ function launchMiniGame(mode) {
 
 function recordMiniGameMissionCompletion(gameId, instanceId = activeMiniGameInstanceId) {
   const eventId = instanceId || `mini:${gameId}:${++gameplayEventSequence}`;
+  celebrationCoordinator.hold(`mini-game-completion-${eventId}`, 850);
   recordDailyMissionEvent("miniGameCompleted", { eventId, gameId });
   bonusManager.recordEligibleEvent(`mini-game:${eventId}`);
   flushDailyMissionCompletions();
@@ -1553,7 +1588,7 @@ function completeMatchingGame() {
   ui.matchingCompletionTime.textContent = `Tamamlama süren: ${formatMatchingTime(matchingElapsedMs)}`;
   ui.matchingCompletionActions.classList.remove("hidden");
   renderMatchingCards();
-  animations.celebrate();
+  animations.playStageCelebration();
   ui.matchingCelebration.innerHTML = ui.celebration.innerHTML;
   ui.matchingCelebration.classList.remove("burst");
   void ui.matchingCelebration.offsetWidth;
@@ -1733,7 +1768,7 @@ function finishListeningGame() {
   isListeningTransitioning = true;
   ui.listeningFeedback.textContent = getCompletionMessage();
   renderListeningCards();
-  animations.celebrate();
+  animations.playStageCelebration();
   ui.listeningCelebration.innerHTML = ui.celebration.innerHTML;
   ui.listeningCelebration.classList.remove("burst");
   void ui.listeningCelebration.offsetWidth;
@@ -1799,7 +1834,7 @@ async function handleListeningCorrectAnswer() {
   isListeningTransitioning = true;
   ui.listeningFeedback.textContent = getCorrectFeedbackMessage(listeningRound, LISTENING_SESSION_ROUNDS);
   renderListeningCards();
-  animations.celebrate();
+  animations.playCorrectFeedback();
   ui.listeningCelebration.innerHTML = ui.celebration.innerHTML;
   ui.listeningCelebration.classList.remove("burst");
   void ui.listeningCelebration.offsetWidth;
@@ -1875,7 +1910,7 @@ function finishNumberMatchGame() {
   isNumberMatchTransitioning = true;
   ui.numberMatchFeedback.textContent = getCompletionMessage();
   renderNumberMatchCards();
-  animations.celebrate();
+  animations.playStageCelebration();
   ui.numberMatchCelebration.innerHTML = ui.celebration.innerHTML;
   ui.numberMatchCelebration.classList.remove("burst");
   void ui.numberMatchCelebration.offsetWidth;
@@ -1942,7 +1977,7 @@ async function handleNumberMatchCorrectAnswer() {
   isNumberMatchTransitioning = true;
   ui.numberMatchFeedback.textContent = getCorrectFeedbackMessage(numberMatchRound, NUMBER_MATCH_SESSION_ROUNDS);
   renderNumberMatchCards();
-  animations.celebrate();
+  animations.playCorrectFeedback();
   ui.numberMatchCelebration.innerHTML = ui.celebration.innerHTML;
   ui.numberMatchCelebration.classList.remove("burst");
   void ui.numberMatchCelebration.offsetWidth;
@@ -2020,7 +2055,7 @@ function finishColorMatchGame() {
   isColorMatchTransitioning = true;
   ui.colorMatchFeedback.textContent = getCompletionMessage();
   renderColorMatchCards();
-  animations.celebrate();
+  animations.playStageCelebration();
   ui.colorMatchCelebration.innerHTML = ui.celebration.innerHTML;
   ui.colorMatchCelebration.classList.remove("burst");
   void ui.colorMatchCelebration.offsetWidth;
@@ -2089,7 +2124,7 @@ async function handleColorMatchCorrectAnswer() {
   isColorMatchTransitioning = true;
   ui.colorMatchFeedback.textContent = getCorrectFeedbackMessage(colorMatchRound, COLOR_MATCH_SESSION_ROUNDS);
   renderColorMatchCards();
-  animations.celebrate();
+  animations.playCorrectFeedback();
   ui.colorMatchCelebration.innerHTML = ui.celebration.innerHTML;
   ui.colorMatchCelebration.classList.remove("burst");
   void ui.colorMatchCelebration.offsetWidth;
@@ -2233,7 +2268,7 @@ function finishSortingGame() {
   isSortingCompleted = true;
   clearSortingInteraction();
   ui.sortingFeedback.textContent = getCompletionMessage();
-  animations.celebrate();
+  animations.playStageCelebration();
   ui.sortingCelebration.innerHTML = ui.celebration.innerHTML;
   ui.sortingCelebration.classList.remove("burst");
   void ui.sortingCelebration.offsetWidth;
@@ -2429,7 +2464,7 @@ function recordNewMiniGameCompleted() {
 }
 
 function celebrateNewMiniGame() {
-  animations.celebrate();
+  animations.playStageCelebration();
   audio.playCelebration();
 }
 
@@ -2989,14 +3024,19 @@ function openParentDashboard() {
   clearSpeech();
   renderParentDashboard();
   renderAudioSettings();
+  settingsReturnFocus = document.activeElement;
   ui.parentDashboard.classList.remove("hidden");
-  ui.parentDashboardClose.focus();
+  ui.parentDashboardClose.focus({ preventScroll: true });
 }
 
 function closeParentDashboard() {
+  if (ui.parentDashboard.classList.contains("hidden")) return;
   window.clearTimeout(parentHoldTimer);
   clearSpeech();
   ui.parentDashboard.classList.add("hidden");
+  const returnTarget = settingsReturnFocus?.isConnected ? settingsReturnFocus : ui.settings;
+  returnTarget.focus({ preventScroll: true });
+  settingsReturnFocus = undefined;
 }
 
 async function loadJson(url) {
@@ -3652,7 +3692,7 @@ async function answerNumberLearning(button, value) {
   ui.numberLearningFeedback.textContent = isCorrect ? correctMessage : retryMessage;
   ui.numberLearningFeedback.className = `matching-feedback ${isCorrect ? "success" : "try-again"}`;
   if (isCorrect) {
-    animations.celebrate();
+    animations.playCorrectFeedback();
     audio.playSuccess();
     await advanceNumberLearningAfterFeedback(correctMessage);
   } else {
@@ -3722,7 +3762,7 @@ async function checkNumberLearningOrdering() {
   ui.numberLearningFeedback.textContent = isCorrect ? "Sıralama tamam!" : "Sıraya bir daha bakalım.";
   ui.numberLearningFeedback.className = `matching-feedback ${isCorrect ? "success" : "try-again"}`;
   if (isCorrect) {
-    animations.celebrate();
+    animations.playCorrectFeedback();
     audio.playSuccess();
     await advanceNumberLearningAfterFeedback("Sıralama tamam!");
   } else {
@@ -3772,9 +3812,11 @@ async function finishNumberLearningStage() {
   isNumberLearningActive = false;
   ui.numberLearning.classList.add("hidden");
   ui.summary.classList.remove("hidden");
-  animations.celebrate();
+  celebrationCoordinator.hold(`number-stage-completion-${activeLearningPathStage.id}-${++celebrationEventSequence}`, 900);
+  animations.playStageCelebration();
   audio.playCelebration();
   flushDailyMissionCompletions();
+  celebrationCoordinator.flush();
   await speech.speakCelebration(celebrationMessage);
 }
 
@@ -4301,7 +4343,7 @@ async function completeLogicAttentionRound(message) {
   ui.logicAttentionFeedback.textContent = message;
   ui.logicAttentionFeedback.className = "matching-feedback success";
   setLogicAttentionInputEnabled(false);
-  animations.celebrate();
+  animations.playCorrectFeedback();
   audio.playSuccess();
   clearSpeech();
   await speech.speakFeedback(message);
@@ -4435,9 +4477,11 @@ async function finishLogicAttentionStage() {
   isLogicAttentionActive = false;
   ui.logicAttention.classList.add("hidden");
   ui.summary.classList.remove("hidden");
-  animations.celebrate();
+  celebrationCoordinator.hold(`logic-stage-completion-${activeLearningPathStage.id}-${++celebrationEventSequence}`, 900);
+  animations.playStageCelebration();
   audio.playCelebration();
   flushDailyMissionCompletions();
+  celebrationCoordinator.flush();
   await speech.speakCelebration(celebrationMessage);
 }
 
@@ -4476,6 +4520,21 @@ function clearSpeech() {
   audio.stopAll();
 }
 
+function updateSpeakingControl({ speaking }) {
+  document.querySelectorAll(SPEECH_CONTROL_SELECTOR).forEach(button => {
+    button.classList.remove("is-speaking");
+    button.removeAttribute("aria-busy");
+  });
+  if (speaking && pendingSpeechControl?.isConnected && !pendingSpeechControl.closest(".hidden")) {
+    pendingSpeechControl.classList.add("is-speaking");
+    pendingSpeechControl.setAttribute("aria-busy", "true");
+    return;
+  }
+  if (!speaking) Promise.resolve().then(() => {
+    if (!speech.getSpeechState().speaking) pendingSpeechControl = undefined;
+  });
+}
+
 function isActiveAudio(run) {
   return !isPaused && run === audioRun;
 }
@@ -4503,6 +4562,7 @@ function setGameActionsEnabled(enabled) {
 
 function pauseGame() {
   if (isPaused || (ui.quiz.classList.contains("hidden") && !isBalloonBonusActive && !isMatchingGameActive && !isListeningGameActive && !isNumberMatchGameActive && !isColorMatchGameActive && !isSortingGameActive && !isNewMiniGameActive && !isNumberLearningActive && !isLogicAttentionActive)) return;
+  pauseReturnFocus = document.activeElement;
   isPaused = true;
   clearSpeech();
   stopPlayTime();
@@ -4546,7 +4606,7 @@ function pauseGame() {
     setLogicAttentionInputEnabled(false);
   }
   ui.pauseOverlay.classList.remove("hidden");
-  ui.resume.focus();
+  ui.resume.focus({ preventScroll: true });
 }
 
 function resumeGame() {
@@ -4555,6 +4615,9 @@ function resumeGame() {
   ui.pauseOverlay.classList.add("hidden");
   setGameActionsEnabled(true);
   startPlayTime();
+  const returnTarget = pauseReturnFocus?.isConnected && !pauseReturnFocus.closest(".hidden") ? pauseReturnFocus : document.querySelector(".screen:not(.hidden) button:not(:disabled)");
+  returnTarget?.focus({ preventScroll: true });
+  pauseReturnFocus = undefined;
   if (isBalloonBonusActive) {
     bonusManager.resume();
     ui.bonus.classList.remove("bonus-paused");
@@ -4703,6 +4766,10 @@ function updateScoreboard() {
   ui.count.textContent = `Soru ${questionNumber}/${sessionQuestionCount}`;
   ui.score.textContent = `⭐ ${stars}`;
   ui.streak.textContent = `🔥 Seri: ${streak}`;
+  const isMilestone = [3, 5, 10].includes(streak);
+  ui.streak.classList.toggle("milestone", isMilestone);
+  window.clearTimeout(streakMilestoneTimer);
+  if (isMilestone) streakMilestoneTimer = window.setTimeout(() => ui.streak.classList.remove("milestone"), 720);
   ui.progress.parentElement?.setAttribute("aria-label", `${sessionQuestionCount} soruluk tur ilerlemesi`);
   ui.progress.style.width = `${Math.min(100, (questionNumber / sessionQuestionCount) * 100)}%`;
 }
@@ -4722,10 +4789,18 @@ function saveSticker(sticker) {
 function awardSticker() {
   const sticker = appUtils.randomItem(STICKERS);
   saveSticker(sticker);
-  ui.rewardSticker.textContent = sticker;
-  ui.rewardPopup.classList.remove("hidden");
-  window.clearTimeout(rewardPopupTimer);
-  rewardPopupTimer = window.setTimeout(() => ui.rewardPopup.classList.add("hidden"), REWARD_POPUP_DURATION);
+  celebrationCoordinator.enqueue({
+    id: `sticker-${++celebrationEventSequence}`,
+    group: "reward",
+    priority: 40,
+    duration: REWARD_POPUP_DURATION,
+    show: () => {
+      ui.rewardSticker.textContent = sticker;
+      ui.rewardPopup.classList.remove("hidden");
+      animations.playRewardReveal(ui.rewardPopup);
+    },
+    hide: () => ui.rewardPopup.classList.add("hidden")
+  });
 }
 
 function createBonusButton(className, label, text, onClick) {
@@ -4856,6 +4931,7 @@ async function startManagedBonus(instance) {
   ui.shell.classList.add("bonus-open");
   ui.quiz.classList.add("hidden");
   ui.bonus.classList.remove("hidden");
+  ui.shell.scrollTop = 0;
   ui.bonusTitle.textContent = instance.title;
   ui.bonusEyebrow.textContent = `${instance.icon} KISA BONUS`;
   ui.bonusFeedback.textContent = "";
@@ -4975,6 +5051,8 @@ function completeManagedBonus() {
     parentData.rewardStars = (Number(parentData.rewardStars) || 0) + (result.reward?.stars ?? 0);
     saveParentData();
   }
+  celebrationCoordinator.hold(`bonus-completion-${activeBonusState.id}`, 850);
+  animations.playStageCelebration();
   unlockAchievement("first-bonus");
   audio.playSuccess();
   ui.bonusFeedback.textContent = `Harika! Bonusu tamamladın! +${result.reward?.stars ?? 0} yıldız`;
@@ -5003,6 +5081,7 @@ function finishManagedBonus(requireCompletion = true) {
   ui.bonusContinue.classList.add("hidden");
   ui.bonus.classList.add("hidden");
   ui.quiz.classList.remove("hidden");
+  ui.shell.scrollTop = 0;
   if (questionNumber >= getSessionQuestionCount()) showSessionSummary();
   else {
     ui.quiz.focus({ preventScroll: true });
@@ -5165,9 +5244,11 @@ async function showSessionSummary() {
   renderLearningPathCompletion(celebrationMessage);
   ui.quiz.classList.add("hidden");
   ui.summary.classList.remove("hidden");
-  animations.celebrate();
+  celebrationCoordinator.hold(`session-completion-${++celebrationEventSequence}`, 900);
+  animations.playStageCelebration();
   audio.playCelebration();
   flushDailyMissionCompletions();
+  celebrationCoordinator.flush();
   await appUtils.wait(450);
   if (!isActiveAudio(run)) return;
   await speech.speakCelebration(celebrationMessage);
@@ -5239,7 +5320,7 @@ async function handleCorrectAnswer(button) {
   ui.feedback.className = "feedback success";
   updateScoreboard();
   ui.next.classList.add("hidden");
-  animations.celebrate();
+  animations.playCorrectFeedback(streak);
   audio.playSuccess();
   await appUtils.wait(300);
   if (!isActiveAudio(run)) return;
@@ -5268,6 +5349,7 @@ function finishCorrectAnswer(run) {
   if (pendingBonus) startManagedBonus(pendingBonus);
   else if (questionNumber >= getSessionQuestionCount()) showSessionSummary();
   else showQuestion();
+  celebrationCoordinator.flush();
 }
 
 function answerQuestion(button, answer) {
@@ -5291,6 +5373,7 @@ function resetSession() {
   pendingCorrectTransition = false;
   wrongAttemptsForQuestion = 0;
   isRevealingCorrectAnswer = false;
+  pendingLearningPathUnlock = undefined;
   clearSavedProgress();
   engine.resetSession();
   isLearningPathSessionCompleted = false;
@@ -5414,6 +5497,7 @@ async function startGame({ skipWelcome = false, miniGameMode } = {}) {
     recordLearningSessionStarted(activeLearningPathStage ? activeLearningPathStage.categories : getPackCategories(), activeLearningPathStage ? "learning-path" : gameMode);
     hideAllScreens();
     ui.quiz.classList.remove("hidden");
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     if (activeLearningPathStage) ui.quiz.focus({ preventScroll: true });
     resetSession();
     startPlayTime();
@@ -5478,9 +5562,17 @@ function goHome(shouldSpeak = true, destination = "home") {
   window.clearTimeout(numberMatchCompletionTimer);
   window.clearTimeout(colorMatchCompletionTimer);
   window.clearTimeout(mascotReactionTimer);
+  window.clearTimeout(streakMilestoneTimer);
   mascotReactionTimer = undefined;
+  streakMilestoneTimer = undefined;
+  ui.streak.classList.remove("milestone");
   ui.mascot.classList.remove("mascot-celebrate", "mascot-encourage");
   animations.clear();
+  celebrationCoordinator.clear();
+  achievementQueue = [];
+  isAchievementShowing = false;
+  isDailyGoalShowing = false;
+  [ui.rewardPopup, ui.achievementPopup, ui.dailyGoalPopup].forEach(popup => popup.classList.add("hidden"));
   [ui.matchingCelebration, ui.listeningCelebration, ui.numberMatchCelebration, ui.colorMatchCelebration, ui.sortingCelebration].forEach(celebration => {
     celebration.classList.remove("burst");
     celebration.textContent = "";
@@ -5577,8 +5669,8 @@ function goHome(shouldSpeak = true, destination = "home") {
   ui.summaryStats.classList.remove("hidden");
   ui.matchingCompletionActions.classList.add("hidden");
   ui.colorMatchWrittenPrompt.classList.add("hidden");
-  ui.playAgain.innerHTML = 'Yeniden oyna <span aria-hidden="true">↻</span>';
-  ui.playAgain.setAttribute("aria-label", "Yeniden oyna");
+  ui.playAgain.innerHTML = 'Tekrar Oyna <span aria-hidden="true">↻</span>';
+  ui.playAgain.setAttribute("aria-label", "Tekrar Oyna");
   setMiniGameLaunchBusy(false);
   showPrimaryView(destination);
   if (shouldSpeak && destination === "home") speakWelcome();
@@ -5610,6 +5702,7 @@ function getPrimaryViewHeading(viewName) {
 
 function hideAllScreens() {
   document.querySelectorAll(".screen").forEach(screen => screen.classList.add("hidden"));
+  ui.shell.scrollTop = 0;
 }
 
 function showPrimaryView(viewName, { focus = true } = {}) {
@@ -5679,6 +5772,12 @@ function handleMenuNavigation(target) {
   navigateToPrimaryView(target);
 }
 
+document.addEventListener("click", event => {
+  const control = event.target.closest?.(SPEECH_CONTROL_SELECTOR);
+  if (control) pendingSpeechControl = control;
+}, true);
+speech.onStateChanged(updateSpeakingControl);
+
 ui.start.addEventListener("click", () => startGame());
 ui.learningPathEntry.addEventListener("click", () => openLearningPath());
 ui.learningPathHome.addEventListener("click", () => goHome(false));
@@ -5691,6 +5790,8 @@ ui.worldThemeButton.addEventListener("click", openWorldThemePanel);
 ui.worldThemeClose.addEventListener("click", closeWorldThemePanel);
 ui.worldThemeConfirm.addEventListener("click", closeWorldThemePanel);
 ui.worldThemePanel.addEventListener("keydown", keepWorldThemeFocusInside);
+ui.parentDashboard.addEventListener("keydown", event => keepFocusInside(ui.parentDashboard, event));
+ui.achievementsModal.addEventListener("keydown", event => keepFocusInside(ui.achievementsModal, event));
 ui.settings.addEventListener("click", openParentDashboard);
 ui.menuButton.addEventListener("click", toggleGameMenu);
 ui.menuItems.forEach(button => button.addEventListener("click", () => handleMenuNavigation(button.dataset.menuTarget)));
@@ -5840,10 +5941,20 @@ document.addEventListener("pointerdown", event => {
 });
 document.addEventListener("keydown", event => {
   if (event.key === "Escape") {
-    closeWorldThemePanel();
-    closeGameMenu();
+    if (!ui.worldThemePanel.classList.contains("hidden")) closeWorldThemePanel();
+    else if (!ui.parentDashboard.classList.contains("hidden")) closeParentDashboard();
+    else if (!ui.achievementsModal.classList.contains("hidden")) closeAchievements();
+    else if (!ui.gameMenu.classList.contains("hidden")) {
+      closeGameMenu();
+      ui.menuButton.focus({ preventScroll: true });
+    }
   }
 });
+renderPlayerSelection();
+ensureDailyGoal();
+renderDailyGoal();
+showPrimaryView(selectedPlayer ? "home" : "players", { focus: false });
+document.documentElement.classList.add("app-ready");
 window.addEventListener("load", async () => {
   [engine] = await Promise.all([gameReady, speech.ready]);
   worldThemeManager.restore(selectedPlayer);

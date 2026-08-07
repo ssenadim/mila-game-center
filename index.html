@@ -27,7 +27,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=8.5.4" />
+    <link rel="stylesheet" href="styles.css?v=9.0" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -49,6 +49,16 @@
   </head>
   <body>
     <main class="game-shell" data-world-theme="sunny">
+      <script>
+        try {
+          const player = localStorage.getItem("mila-learning-player");
+          const themeKey = player ? `mila-learning-world-theme-${encodeURIComponent(player)}` : "mila-learning-world-theme";
+          const theme = localStorage.getItem(themeKey) || localStorage.getItem("mila-learning-world-theme");
+          if (["sunny", "spring", "summer", "autumn", "winter", "night", "unicorn", "space", "dinosaur", "forest"].includes(theme)) document.currentScript.parentElement.dataset.worldTheme = theme;
+        } catch {
+          // The default world remains available when storage is restricted.
+        }
+      </script>
       <div class="cloud cloud-one" aria-hidden="true"></div><div class="cloud cloud-two" aria-hidden="true"></div>
       <div class="world-decorations" aria-hidden="true">
         <span class="world-decoration world-decoration-one"></span>
@@ -59,9 +69,9 @@
       </div>
       <button id="menu-button" class="menu-button global-control-button" type="button" aria-label="Oyun menüsünü aç" aria-expanded="false" aria-controls="game-menu">☰</button>
       <div class="top-right-controls" aria-label="Uygulama kontrolleri">
-        <button id="fullscreen-button" class="global-control-button" type="button"><span aria-hidden="true">⛶</span> <span class="control-label">Tam Ekran</span></button>
+        <button id="fullscreen-button" class="global-control-button" type="button" aria-label="Tam Ekran"><span aria-hidden="true">⛶</span> <span class="control-label">Tam Ekran</span></button>
         <button id="world-theme-button" class="global-control-button world-theme-button" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="world-theme-panel" aria-label="Oyun Dünyasını seç"><span aria-hidden="true">🎨</span> <span class="control-label">Dünya</span></button>
-        <button id="settings-button" class="global-control-button" type="button"><span aria-hidden="true">⚙️</span> <span class="control-label">Ayarlar</span></button>
+        <button id="settings-button" class="global-control-button" type="button" aria-label="Ayarlar"><span aria-hidden="true">⚙️</span> <span class="control-label">Ayarlar</span></button>
       </div>
       <nav id="game-menu" class="game-menu hidden" aria-label="Oyun menüsü">
         <button type="button" data-menu-target="home">Ana Sayfa</button>
@@ -80,16 +90,16 @@
           <strong id="selected-player-summary" role="status">Henüz bir oyuncu seçilmedi</strong>
           <button id="home-player-change-button" class="compact-action-button" type="button">Oyuncu Değiştir</button>
         </section>
-        <section id="daily-goal-card" class="daily-goal-card hidden" aria-labelledby="daily-goal-title">
-          <div class="daily-mission-heading"><strong id="daily-goal-title">☀️ Günün Görevleri</strong><span id="daily-goal-progress">0 / 3 tamamlandı</span></div>
-          <div id="daily-mission-list" class="daily-mission-list"></div>
-        </section>
         <div class="home-navigation-grid" aria-label="Oyun Merkezi bölümleri">
           <button class="home-navigation-card learn-card" type="button" data-home-target="learning"><strong>🧭 Öğren</strong><span>Yeni şeyler keşfet</span></button>
           <button class="home-navigation-card games-card" type="button" data-home-target="mini-games"><strong>🎮 Mini Oyunlar</strong><span>Eğlenceli oyunlar oyna</span></button>
           <button class="home-navigation-card path-card" type="button" data-home-target="learning-path"><strong>🗺️ Öğrenme Yolu</strong><span>Adım adım ilerle</span></button>
           <button class="home-navigation-card rewards-card" type="button" data-home-target="rewards"><strong>🏆 Kazandıklarım</strong><span>Ödüllerine bak</span></button>
         </div>
+        <section id="daily-goal-card" class="daily-goal-card hidden" aria-labelledby="daily-goal-title">
+          <div class="daily-mission-heading"><strong id="daily-goal-title">☀️ Günün Görevleri</strong><span id="daily-goal-progress">0 / 3 tamamlandı</span></div>
+          <div id="daily-mission-list" class="daily-mission-list"></div>
+        </section>
         <section class="home-about" aria-labelledby="home-about-title">
           <h2 id="home-about-title">Mila Oyun Merkezi Nedir?</h2>
           <p>Mila Oyun Merkezi; çocukların sayıları, renkleri, şekilleri, İngilizce kelimeleri, dikkat ve mantık becerilerini eğlenceli oyunlarla geliştirmesine yardımcı olan bir öğrenme alanıdır.</p>
@@ -386,6 +396,7 @@
           <strong id="learning-path-completion-stage">Renkler bölümünü tamamladın!</strong>
           <p id="learning-path-completion-participation">20 soruyu tamamladın</p>
           <small id="learning-path-completion-correct">0 doğru cevap</small>
+          <p id="learning-path-unlock" class="learning-path-unlock hidden" role="status">🔓 Yeni bölüm açıldı!</p>
         </div>
         <div id="summary-stats" class="summary-stats">
           <div class="summary-stat"><span aria-hidden="true">⭐</span><strong id="summary-stars">0</strong><small>Yıldız</small></div>
@@ -395,7 +406,7 @@
         </div>
         <div class="summary-actions">
           <button id="learning-path-return-button" class="primary-button learning-path-return-button hidden" type="button">Öğrenme Yoluna Dön</button>
-          <button id="play-again-button" class="primary-button" type="button">Yeniden oyna <span aria-hidden="true">↻</span></button>
+          <button id="play-again-button" class="primary-button" type="button">Tekrar Oyna <span aria-hidden="true">↻</span></button>
           <button id="learning-path-next-button" class="primary-button learning-path-next-button hidden" type="button"><strong>Sıradaki Bölüm</strong><span id="learning-path-next-label"></span></button>
         </div>
       </section>
@@ -438,6 +449,7 @@
         <div class="pause-card">
           <span aria-hidden="true">⏸</span>
           <h2 id="pause-title">Oyun duraklatıldı</h2>
+          <p>Biraz dinlenelim. 🌟</p>
           <button id="resume-button" class="primary-button resume-button" type="button" aria-label="Oyuna devam et">Devam Et</button>
         </div>
       </section>
@@ -456,7 +468,7 @@
           <div class="parent-difficult"><span>Birlikte tekrar edilebilecek kelimeler</span><strong id="parent-difficult-words">Henüz yok</strong></div>
           <section class="audio-settings" aria-labelledby="audio-settings-title">
             <h3 id="audio-settings-title">🔊 Ses</h3>
-            <p id="speech-unsupported-message" class="audio-support-message hidden">Bu tarayıcı sesli yönergeleri desteklemiyor. Oyun görsel olarak kullanılabilir.</p>
+            <p id="speech-unsupported-message" class="audio-support-message hidden">Ses şu anda kullanılamıyor. Oyuna devam edebilirsin.</p>
             <div class="audio-setting-grid">
               <label class="audio-setting-row" for="speech-enabled-setting"><span>Sesli Yönergeler</span><select id="speech-enabled-setting"><option value="true">Açık</option><option value="false">Kapalı</option></select></label>
               <label class="audio-setting-row" for="speech-rate-setting"><span>Konuşma Hızı</span><select id="speech-rate-setting"><option value="slow">Yavaş</option><option value="normal">Normal</option><option value="fast">Hızlı</option></select></label>
@@ -487,15 +499,16 @@
           </section>
           <section class="rewards-section" aria-labelledby="stickers-section-title">
             <h3 id="stickers-section-title">🎁 Sticker Albümü</h3>
+            <p id="sticker-album-guidance" class="reward-empty-state">Henüz sticker kazanmadın. Oynadıkça burada görünecek! ⭐</p>
             <div id="stickers-list" class="stickers-list"></div>
           </section>
         </div>
       </section>
     </main>
     <script src="js/utils/random.js"></script>
-    <script src="js/services/SpeechService.js?v=8.4"></script>
+    <script src="js/services/SpeechService.js?v=9.0"></script>
     <script src="js/services/AudioHelper.js?v=8.4"></script>
-    <script src="js/services/AnimationHelper.js?v=6.6"></script>
+    <script src="js/services/AnimationHelper.js?v=9.0"></script>
     <script src="js/QuestionEngine.js?v=6.4"></script>
     <script src="js/NewMiniGames.js?v=8.1"></script>
     <script src="js/LearningCategories.js?v=8.2"></script>
@@ -507,6 +520,6 @@
     <script src="js/DailyMissions.js?v=8.5.1"></script>
     <script src="js/BonusManager.js?v=8.5.3"></script>
     <script src="data/offline-data.js"></script>
-    <script src="app.js?v=8.5.3"></script>
+    <script src="app.js?v=9.0"></script>
   </body>
 </html>
