@@ -192,3 +192,20 @@ test("Learning Path UI wires focused groups, safe stage launches and summary nav
   assert.match(app, /if \(activeLearningPathStage\) ui\.quiz\.focus\(\{ preventScroll: true \}\)/);
   assert.doesNotMatch(app, /alert\(/);
 });
+
+test("Sprint 8.3 sessions stay within the preschool balance range", () => {
+  assert.ok(roadmap.STAGES.every(stage => stage.sessionLength >= 5 && stage.sessionLength <= 10));
+  assert.ok(roadmap.STAGES.filter(stage => stage.order <= 10).every(stage => stage.sessionLength === 8));
+  assert.deepEqual(roadmap.GROUPS.map(group => roadmap.getGroupProgress(group.id, { completed: {} }).playable), [4, 6, 6, 7, 7, 8]);
+});
+
+test("balance validation rejects overly short or long sessions and full completion has no recommendation", () => {
+  const tooShort = roadmap.STAGES.map(stage => stage.id === "recognize-colors" ? { ...stage, sessionLength: 4 } : stage);
+  const tooLong = roadmap.STAGES.map(stage => stage.id === "recognize-colors" ? { ...stage, sessionLength: 11 } : stage);
+  assert.equal(roadmap.validateRoadmap({ stages: tooShort, categories: categories.CATEGORIES, warn: () => {} }).valid, false);
+  assert.equal(roadmap.validateRoadmap({ stages: tooLong, categories: categories.CATEGORIES, warn: () => {} }).valid, false);
+  const complete = completedThrough(38);
+  assert.equal(roadmap.isLearningPathComplete(complete), true);
+  assert.equal(roadmap.getRecommendedStage(complete), undefined);
+  assert.equal(roadmap.getNextEligibleStage("money-preparation", complete), undefined);
+});

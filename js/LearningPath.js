@@ -117,17 +117,17 @@
   ];
 
   const STAGES = [
-    { id: "recognize-colors", title: "Renkleri Tanı", icon: "🎨", description: "Renkleri gör ve İngilizce adını bul.", groupId: "first-discoveries", order: 1, learningType: LEARNING_TYPES.COLOR_RECOGNITION, categoryIds: ["Colors"], prerequisiteStageIds: [], sessionLength: 20, implemented: true },
-    { id: "recognize-shapes", title: "Şekilleri Tanı", icon: "🔷", description: "Şekilleri gör ve doğru adı seç.", groupId: "first-discoveries", order: 2, learningType: LEARNING_TYPES.SHAPE_RECOGNITION, categoryIds: ["Shapes"], prerequisiteStageIds: ["recognize-colors"], sessionLength: 20, implemented: true },
-    { id: "recognize-numbers", title: "Sayıları Tanı", icon: "🔢", description: "0'dan 20'ye sayıları tanı.", groupId: "first-discoveries", order: 3, learningType: LEARNING_TYPES.NUMBER_RECOGNITION, categoryIds: ["Numbers"], prerequisiteStageIds: ["recognize-shapes"], sessionLength: 20, implemented: true },
-    { id: "recognize-letters", title: "Harfleri Tanı", icon: "🔤", description: "İngilizce büyük harfleri tanı.", groupId: "first-discoveries", order: 4, learningType: LEARNING_TYPES.LETTER_RECOGNITION, categoryIds: ["Letters"], prerequisiteStageIds: ["recognize-numbers"], sessionLength: 20, implemented: true },
+    { id: "recognize-colors", title: "Renkleri Tanı", icon: "🎨", description: "Renkleri gör ve İngilizce adını bul.", groupId: "first-discoveries", order: 1, learningType: LEARNING_TYPES.COLOR_RECOGNITION, categoryIds: ["Colors"], prerequisiteStageIds: [], sessionLength: 8, implemented: true },
+    { id: "recognize-shapes", title: "Şekilleri Tanı", icon: "🔷", description: "Şekilleri gör ve doğru adı seç.", groupId: "first-discoveries", order: 2, learningType: LEARNING_TYPES.SHAPE_RECOGNITION, categoryIds: ["Shapes"], prerequisiteStageIds: ["recognize-colors"], sessionLength: 8, implemented: true },
+    { id: "recognize-numbers", title: "Sayıları Tanı", icon: "🔢", description: "0'dan 20'ye sayıları tanı.", groupId: "first-discoveries", order: 3, learningType: LEARNING_TYPES.NUMBER_RECOGNITION, categoryIds: ["Numbers"], prerequisiteStageIds: ["recognize-shapes"], sessionLength: 8, implemented: true },
+    { id: "recognize-letters", title: "Harfleri Tanı", icon: "🔤", description: "İngilizce büyük harfleri tanı.", groupId: "first-discoveries", order: 4, learningType: LEARNING_TYPES.LETTER_RECOGNITION, categoryIds: ["Letters"], prerequisiteStageIds: ["recognize-numbers"], sessionLength: 8, implemented: true },
 
-    { id: "animals", title: "Hayvanlar", icon: "🐾", description: "Hayvanların İngilizce adlarını öğren.", groupId: "word-world", order: 5, learningType: LEARNING_TYPES.VOCABULARY_RECOGNITION, categoryIds: ["Animals"], prerequisiteStageIds: ["recognize-letters"], sessionLength: 20, implemented: true },
-    { id: "fruits-vegetables", title: "Meyveler ve Sebzeler", icon: "🍎", description: "Meyve ve sebzeleri birlikte keşfet.", groupId: "word-world", order: 6, learningType: LEARNING_TYPES.VOCABULARY_RECOGNITION, categoryIds: ["Fruits", "Vegetables"], prerequisiteStageIds: ["animals"], sessionLength: 20, implemented: true },
-    { id: "vehicles", title: "Taşıtlar", icon: "🚗", description: "Karada, havada ve suda giden taşıtları tanı.", groupId: "word-world", order: 7, learningType: LEARNING_TYPES.VOCABULARY_RECOGNITION, categoryIds: ["Vehicles"], prerequisiteStageIds: ["fruits-vegetables"], sessionLength: 20, implemented: true },
-    { id: "body", title: "Vücudumuz", icon: "🧍", description: "Vücudumuzun bölümlerini öğren.", groupId: "word-world", order: 8, learningType: LEARNING_TYPES.VOCABULARY_RECOGNITION, categoryIds: ["Body"], prerequisiteStageIds: ["vehicles"], sessionLength: 20, implemented: true },
-    { id: "objects", title: "Eşyalar", icon: "🪑", description: "Evde ve okulda kullandığımız eşyaları tanı.", groupId: "word-world", order: 9, learningType: LEARNING_TYPES.VOCABULARY_RECOGNITION, categoryIds: ["HomeItems", "KitchenItems", "BathroomItems", "SchoolItems"], prerequisiteStageIds: ["body"], sessionLength: 20, implemented: true },
-    { id: "nature-space", title: "Doğa ve Uzay", icon: "🌍", description: "Doğayı ve gökyüzünü keşfet.", groupId: "word-world", order: 10, learningType: LEARNING_TYPES.VOCABULARY_RECOGNITION, categoryIds: ["Nature", "Space"], prerequisiteStageIds: ["objects"], sessionLength: 20, implemented: true },
+    { id: "animals", title: "Hayvanlar", icon: "🐾", description: "Hayvanların İngilizce adlarını öğren.", groupId: "word-world", order: 5, learningType: LEARNING_TYPES.VOCABULARY_RECOGNITION, categoryIds: ["Animals"], prerequisiteStageIds: ["recognize-letters"], sessionLength: 8, implemented: true },
+    { id: "fruits-vegetables", title: "Meyveler ve Sebzeler", icon: "🍎", description: "Meyve ve sebzeleri birlikte keşfet.", groupId: "word-world", order: 6, learningType: LEARNING_TYPES.VOCABULARY_RECOGNITION, categoryIds: ["Fruits", "Vegetables"], prerequisiteStageIds: ["animals"], sessionLength: 8, implemented: true },
+    { id: "vehicles", title: "Taşıtlar", icon: "🚗", description: "Karada, havada ve suda giden taşıtları tanı.", groupId: "word-world", order: 7, learningType: LEARNING_TYPES.VOCABULARY_RECOGNITION, categoryIds: ["Vehicles"], prerequisiteStageIds: ["fruits-vegetables"], sessionLength: 8, implemented: true },
+    { id: "body", title: "Vücudumuz", icon: "🧍", description: "Vücudumuzun bölümlerini öğren.", groupId: "word-world", order: 8, learningType: LEARNING_TYPES.VOCABULARY_RECOGNITION, categoryIds: ["Body"], prerequisiteStageIds: ["vehicles"], sessionLength: 8, implemented: true },
+    { id: "objects", title: "Eşyalar", icon: "🪑", description: "Evde ve okulda kullandığımız eşyaları tanı.", groupId: "word-world", order: 9, learningType: LEARNING_TYPES.VOCABULARY_RECOGNITION, categoryIds: ["HomeItems", "KitchenItems", "BathroomItems", "SchoolItems"], prerequisiteStageIds: ["body"], sessionLength: 8, implemented: true },
+    { id: "nature-space", title: "Doğa ve Uzay", icon: "🌍", description: "Doğayı ve gökyüzünü keşfet.", groupId: "word-world", order: 10, learningType: LEARNING_TYPES.VOCABULARY_RECOGNITION, categoryIds: ["Nature", "Space"], prerequisiteStageIds: ["objects"], sessionLength: 8, implemented: true },
 
     { id: "count-objects", title: "Nesneleri Say", icon: "🧸", description: "Nesneleri tek tek say.", groupId: "number-world", order: 11, learningType: LEARNING_TYPES.QUANTITY_COUNTING, categoryIds: [], prerequisiteStageIds: ["nature-space"], sessionLength: 10, implemented: true },
     { id: "order-numbers", title: "Sayıları Sırala", icon: "🔢", description: "Sayıları doğru sıraya yerleştir.", groupId: "number-world", order: 12, learningType: LEARNING_TYPES.NUMBER_ORDERING, categoryIds: [], prerequisiteStageIds: ["count-objects"], sessionLength: 10, implemented: true },
@@ -291,7 +291,7 @@
   function validateRoadmap({
     groups = GROUPS,
     stages = STAGES,
-    categories = root.MilaLearningCategories?.CATEGORIES ?? [],
+    categories = root.MilaLearningCategories?.CATEGORIES,
     requireCompleteness = true,
     warn = console.warn
   } = {}) {
@@ -300,7 +300,8 @@
     const stageIds = stages.map(stage => stage.id);
     const orders = stages.map(stage => stage.order);
     const learningTypes = new Set(Object.values(LEARNING_TYPES));
-    const categoryById = new Map(categories.map(category => [category.id, category]));
+    const hasCategoryCatalog = Array.isArray(categories);
+    const categoryById = new Map((categories ?? []).map(category => [category.id, category]));
     if (new Set(groupIds).size !== groupIds.length) problems.push("Tekrarlanan Öğrenme Yolu grup kimliği var.");
     if (new Set(stageIds).size !== stageIds.length) problems.push("Tekrarlanan Öğrenme Yolu aşama kimliği var.");
     if (new Set(orders).size !== orders.length || orders.some(order => !Number.isInteger(order) || order < 1)) problems.push("Aşama sıraları benzersiz pozitif tam sayılar olmalı.");
@@ -318,10 +319,10 @@
       if (!learningTypes.has(stage.learningType)) problems.push(`${stage.id}: geçersiz öğrenme türü.`);
       if (typeof stage.implemented !== "boolean") problems.push(`${stage.id}: implemented değeri boolean olmalı.`);
       if (!Array.isArray(stage.prerequisiteStageIds) || stage.prerequisiteStageIds.some(prerequisiteId => !stageIds.includes(prerequisiteId))) problems.push(`${stage.id}: bilinmeyen ön koşul.`);
-      if (!Number.isInteger(stage.sessionLength) || stage.sessionLength < 1) problems.push(`${stage.id}: geçersiz oturum uzunluğu.`);
+      if (!Number.isInteger(stage.sessionLength) || stage.sessionLength < 5 || stage.sessionLength > 10) problems.push(`${stage.id}: geçersiz oturum uzunluğu.`);
       if (stage.implemented) {
         const blockedPrerequisite = stage.prerequisiteStageIds.map(stageId => stageById(stageId, stages)).find(prerequisite => !isPlayableStage(prerequisite));
-        if (blockedPrerequisite) problems.push(`${stage.id}: oynanamaz ?n ko?ula ba?l? (${blockedPrerequisite.id}).`);
+        if (blockedPrerequisite) problems.push(`${stage.id}: oynanamaz ön koşula bağlı (${blockedPrerequisite.id}).`);
         if (!PLAYABLE_LEARNING_TYPES.has(stage.learningType)) problems.push(`${stage.id}: oynanabilir işaretli ancak öğrenme türü desteklenmiyor.`);
         const isCustomNumberStage = [
           LEARNING_TYPES.QUANTITY_COUNTING,
@@ -349,7 +350,7 @@
         const isCustomDailyStage = [LEARNING_TYPES.TIME_PREPARATION, LEARNING_TYPES.MONEY_PREPARATION].includes(stage.learningType);
         if (!stage.categoryIds.length && !isCustomNumberStage && !isCustomLogicStage && !isCustomDailyStage) problems.push(`${stage.id}: oynanabilir aşamada kategori yok.`);
         const allowedStrategies = STRATEGIES_BY_LEARNING_TYPE[stage.learningType] ?? [];
-        stage.categoryIds.forEach(categoryId => {
+        if (hasCategoryCatalog) stage.categoryIds.forEach(categoryId => {
           const category = categoryById.get(categoryId);
           if (!category) problems.push(`${stage.id}: kategori bulunamadı (${categoryId}).`);
           else if (!allowedStrategies.includes(category.strategy)) problems.push(`${stage.id}: ${categoryId} stratejisi öğrenme türüyle uyumlu değil.`);
