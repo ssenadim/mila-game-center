@@ -31,7 +31,6 @@ const BONUS_WRONG_ANIMATION_DURATION = 450;
 const GAME_PROGRESS_STORAGE_KEY = "mila-learning-progress";
 const LEARNING_STATS_STORAGE_KEY = "mila-learning-learning-stats";
 const BONUS_DURATION = 20000;
-const BONUS_CORRECT_ANSWER_INTERVAL = 5;
 const LEARNING_MODE = "learning";
 const QUICK_MODE = "quick";
 const MATCHING_MODE = "matching";
@@ -132,13 +131,6 @@ const ACHIEVEMENTS = [
   { id: "first-bonus", icon: "🎁", title: "İlk Bonus", description: "İlk bonus oyununu tamamladın." },
   { id: "fruit-explorer", icon: "🍎", title: "Meyve Kaşifi", description: "Tüm meyveleri doğru bildin." }
 ];
-const DAILY_GOALS = [
-  { id: "ten-correct", icon: "⭐", title: "10 doğru cevap ver", target: 10 },
-  { id: "streak-three", icon: "🎯", title: "3 doğru seri yap", target: 3 },
-  { id: "complete-bonus", icon: "🎁", title: "Bir Bonus Modu tamamla", target: 1 },
-  { id: "five-different", icon: "🍎", title: "5 farklı soruyu doğru bil", target: 5 }
-];
-
 const ui = {
   shell: document.querySelector(".game-shell"), welcome: document.querySelector("#welcome-screen"), learningCenter: document.querySelector("#learning-center-screen"), miniGames: document.querySelector("#mini-games-screen"), playerSelectionScreen: document.querySelector("#player-selection-screen"), playerSelection: document.querySelector(".player-selection"), playerGuidance: document.querySelector("#player-selection-guidance"), selectedPlayerSummary: document.querySelector("#selected-player-summary"), homePlayerChange: document.querySelector("#home-player-change-button"), homeNavigationCards: document.querySelectorAll("[data-home-target]"), learningCenterHome: document.querySelector("#learning-center-home-button"), miniGamesHome: document.querySelector("#mini-games-home-button"), playerSelectionHome: document.querySelector("#player-selection-home-button"), customPlayerConfirm: document.querySelector("#custom-player-confirm-button"), miniGamesSection: document.querySelector(".mini-games-section"), miniGameButtons: document.querySelectorAll(".mini-games-grid .mode-button"), learningPath: document.querySelector("#learning-path-screen"), learningPathStages: document.querySelector("#learning-path-stages"), learningPathGuidance: document.querySelector("#learning-path-guidance"), learningPathRecommendation: document.querySelector("#learning-path-recommendation"), learningPathGroupTabs: document.querySelector("#learning-path-group-tabs"), learningPathGroupTitle: document.querySelector("#learning-path-group-title"), learningPathGroupIcon: document.querySelector("#learning-path-group-icon"), learningPathGroupDescription: document.querySelector("#learning-path-group-description"), learningPathGroupProgress: document.querySelector("#learning-path-group-progress"), learningPathPreviousGroup: document.querySelector("#learning-path-previous-group"), learningPathNextGroup: document.querySelector("#learning-path-next-group"), learningPathEntry: document.querySelector("#learning-path-button"), learningPathHome: document.querySelector("#learning-path-home-button"), learningPathReturn: document.querySelector("#learning-path-return-button"), learningPathNext: document.querySelector("#learning-path-next-button"), learningPathNextLabel: document.querySelector("#learning-path-next-label"), learningPathCompletion: document.querySelector("#learning-path-completion"), learningPathCompletionIcon: document.querySelector("#learning-path-completion-icon"), learningPathCompletionStage: document.querySelector("#learning-path-completion-stage"), learningPathCompletionParticipation: document.querySelector("#learning-path-completion-participation"), learningPathCompletionCorrect: document.querySelector("#learning-path-completion-correct"), quiz: document.querySelector("#quiz-screen"), summary: document.querySelector("#summary-screen"),
   menuButton: document.querySelector("#menu-button"), gameMenu: document.querySelector("#game-menu"), menuItems: document.querySelectorAll("[data-menu-target]"), settings: document.querySelector("#settings-button"), worldThemeButton: document.querySelector("#world-theme-button"), worldThemePanel: document.querySelector("#world-theme-panel"), worldThemeClose: document.querySelector("#world-theme-close"), worldThemeOptions: document.querySelector("#world-theme-options"), worldThemeStatus: document.querySelector("#world-theme-status"), worldThemeConfirm: document.querySelector("#world-theme-confirm"),
@@ -149,13 +141,15 @@ const ui = {
   customCategoryBrowser: document.querySelector("#custom-category-browser"), categoryGroupTabs: document.querySelector("#category-group-tabs"), customCategoryCount: document.querySelector("#custom-category-count"), customCategoryReset: document.querySelector("#custom-category-reset-button"),
   category: document.querySelector("#category-pill"), visual: document.querySelector("#question-visual"), celebration: document.querySelector("#celebration"), mascot: document.querySelector("#game-mascot"), prompt: document.querySelector("#question-prompt"),
   answers: document.querySelector("#answers"), feedback: document.querySelector("#feedback"), next: document.querySelector("#next-button"), count: document.querySelector("#question-count"), score: document.querySelector("#score"), streak: document.querySelector("#streak"), progress: document.querySelector("#progress-fill"),
-  playAgain: document.querySelector("#play-again-button"), summaryHome: document.querySelector("#summary-home-button"), summaryStats: document.querySelector("#summary-stats"), summaryStars: document.querySelector("#summary-stars"), summaryCorrect: document.querySelector("#summary-correct"), summaryStreak: document.querySelector("#summary-streak"), summaryCategory: document.querySelector("#summary-category"), summaryTitle: document.querySelector("#summary-title"), summaryCopy: document.querySelector(".summary-copy"), rewardPopup: document.querySelector("#reward-popup"), rewardSticker: document.querySelector("#reward-sticker"), achievementPopup: document.querySelector("#achievement-popup"), achievementPopupIcon: document.querySelector("#achievement-popup-icon"), achievementPopupTitle: document.querySelector("#achievement-popup-title"), dailyGoalCard: document.querySelector("#daily-goal-card"), dailyGoalTitle: document.querySelector("#daily-goal-title"), dailyGoalProgress: document.querySelector("#daily-goal-progress"), dailyGoalPopup: document.querySelector("#daily-goal-popup"), achievementsModal: document.querySelector("#achievements-modal"), achievementsModalClose: document.querySelector("#achievements-modal-close"), achievementsList: document.querySelector("#achievements-list"), rewardsStarCount: document.querySelector("#rewards-star-count"), stickersList: document.querySelector("#stickers-list"), bonus: document.querySelector("#balloon-bonus"), balloonHome: document.querySelector("#bonus-home-button"), balloonTarget: document.querySelector("#balloon-target"), balloons: document.querySelector("#balloons"), pause: document.querySelector("#pause-button"), bonusPause: document.querySelector("#bonus-pause-button"), pauseOverlay: document.querySelector("#pause-overlay"), resume: document.querySelector("#resume-button"), parentLogo: document.querySelector("#welcome-title"), parentDashboard: document.querySelector("#parent-dashboard"), parentDashboardClose: document.querySelector("#parent-dashboard-close"), parentDashboardTitle: document.querySelector("#parent-dashboard-title"), parentPlayTime: document.querySelector("#parent-play-time"), parentQuestions: document.querySelector("#parent-questions"), parentCorrect: document.querySelector("#parent-correct"), parentCategory: document.querySelector("#parent-category"), parentStreak: document.querySelector("#parent-streak"), parentDifficultWords: document.querySelector("#parent-difficult-words"), speechEnabled: document.querySelector("#speech-enabled-setting"), speechRate: document.querySelector("#speech-rate-setting"), turkishVoice: document.querySelector("#turkish-voice-setting"), englishVoice: document.querySelector("#english-voice-setting"), turkishVoiceRow: document.querySelector("#turkish-voice-row"), englishVoiceRow: document.querySelector("#english-voice-row"), turkishVoicePreview: document.querySelector("#turkish-voice-preview"), englishVoicePreview: document.querySelector("#english-voice-preview"), soundEffectsEnabled: document.querySelector("#sound-effects-setting"), audioVolume: document.querySelector("#audio-volume-setting"), speechUnsupported: document.querySelector("#speech-unsupported-message")
+  playAgain: document.querySelector("#play-again-button"), summaryHome: document.querySelector("#summary-home-button"), summaryStats: document.querySelector("#summary-stats"), summaryStars: document.querySelector("#summary-stars"), summaryCorrect: document.querySelector("#summary-correct"), summaryStreak: document.querySelector("#summary-streak"), summaryCategory: document.querySelector("#summary-category"), summaryTitle: document.querySelector("#summary-title"), summaryCopy: document.querySelector(".summary-copy"), rewardPopup: document.querySelector("#reward-popup"), rewardSticker: document.querySelector("#reward-sticker"), achievementPopup: document.querySelector("#achievement-popup"), achievementPopupIcon: document.querySelector("#achievement-popup-icon"), achievementPopupTitle: document.querySelector("#achievement-popup-title"), dailyGoalCard: document.querySelector("#daily-goal-card"), dailyGoalTitle: document.querySelector("#daily-goal-title"), dailyGoalProgress: document.querySelector("#daily-goal-progress"), dailyMissionList: document.querySelector("#daily-mission-list"), dailyGoalPopup: document.querySelector("#daily-goal-popup"), dailyGoalPopupTitle: document.querySelector("#daily-goal-popup-title"), achievementsModal: document.querySelector("#achievements-modal"), achievementsModalClose: document.querySelector("#achievements-modal-close"), achievementsList: document.querySelector("#achievements-list"), rewardsStarCount: document.querySelector("#rewards-star-count"), stickersList: document.querySelector("#stickers-list"), bonus: document.querySelector("#balloon-bonus"), bonusTitle: document.querySelector("#balloon-title"), balloonHome: document.querySelector("#bonus-home-button"), balloonTarget: document.querySelector("#balloon-target"), balloons: document.querySelector("#balloons"), bonusEyebrow: document.querySelector("#bonus-eyebrow"), bonusFeedback: document.querySelector("#bonus-feedback"), bonusContinue: document.querySelector("#bonus-continue-button"), pause: document.querySelector("#pause-button"), bonusPause: document.querySelector("#bonus-pause-button"), pauseOverlay: document.querySelector("#pause-overlay"), resume: document.querySelector("#resume-button"), parentLogo: document.querySelector("#welcome-title"), parentDashboard: document.querySelector("#parent-dashboard"), parentDashboardClose: document.querySelector("#parent-dashboard-close"), parentDashboardTitle: document.querySelector("#parent-dashboard-title"), parentPlayTime: document.querySelector("#parent-play-time"), parentQuestions: document.querySelector("#parent-questions"), parentCorrect: document.querySelector("#parent-correct"), parentCategory: document.querySelector("#parent-category"), parentStreak: document.querySelector("#parent-streak"), parentDifficultWords: document.querySelector("#parent-difficult-words"), speechEnabled: document.querySelector("#speech-enabled-setting"), speechRate: document.querySelector("#speech-rate-setting"), turkishVoice: document.querySelector("#turkish-voice-setting"), englishVoice: document.querySelector("#english-voice-setting"), turkishVoiceRow: document.querySelector("#turkish-voice-row"), englishVoiceRow: document.querySelector("#english-voice-row"), turkishVoicePreview: document.querySelector("#turkish-voice-preview"), englishVoicePreview: document.querySelector("#english-voice-preview"), soundEffectsEnabled: document.querySelector("#sound-effects-setting"), audioVolume: document.querySelector("#audio-volume-setting"), speechUnsupported: document.querySelector("#speech-unsupported-message")
 };
 
 const appUtils = window.MilaUtils;
 const newMiniGames = window.MilaNewMiniGames;
 const logicAttention = window.MilaLogicAttention;
 const dailyConcepts = window.MilaDailyConcepts;
+const dailyMissions = window.MilaDailyMissions;
+const bonusSystem = window.MilaBonusManager;
 const numberLearning = window.MilaNumberLearning;
 const worldThemes = window.MilaWorldThemes;
 const learningCategories = window.MilaLearningCategories;
@@ -200,7 +194,28 @@ let worldThemeReturnFocus;
 migratePlayerProgress();
 let parentData = loadParentData();
 let achievementData = loadAchievementData();
-let dailyGoalData = loadDailyGoalData();
+let missionStorage;
+try {
+  missionStorage = window.localStorage;
+} catch {
+  missionStorage = undefined;
+}
+const dailyMissionManager = new dailyMissions.DailyMissionManager({
+  storage: missionStorage,
+  storageKey: DAILY_GOAL_STORAGE_KEY,
+  playerId: selectedPlayer,
+  contextProvider: getDailyMissionContext,
+  onReward: grantDailyMissionReward,
+  onComplete: queueDailyMissionCompletion,
+  warn: message => console.warn(`[Günlük Görevler] ${message}`)
+});
+const bonusManager = new bonusSystem.BonusManager({ warn: message => console.warn(`[Bonus] ${message}`) });
+let pendingDailyMissionCompletions = [];
+let activeBonusState;
+let gameplayEventSequence = 0;
+let currentQuestionInstanceId;
+let activeMiniGameInstanceId;
+let activeLearningPathMissionSessionId;
 let playStartedAt = 0;
 let parentHoldTimer;
 let sessionCelebrationTimer;
@@ -359,6 +374,9 @@ function saveLearningPathProgress(progress) {
 function completeLearningPathStage() {
   if (!activeLearningPathStage || isLearningPathSessionCompleted) return false;
   isLearningPathSessionCompleted = true;
+  const eventId = activeLearningPathMissionSessionId || `path-${activeLearningPathStage.id}-${++gameplayEventSequence}`;
+  recordDailyMissionEvent("learningPathStageCompleted", { eventId, stageId: activeLearningPathStage.id, groupId: activeLearningPathStage.groupId });
+  bonusManager.recordEligibleEvent(`learning-path:${eventId}`);
   const progress = loadLearningPathProgress();
   if (progress.completed[activeLearningPathStage.id]) return false;
   progress.completed[activeLearningPathStage.id] = true;
@@ -566,64 +584,102 @@ function getAvailableAchievements() {
   return ACHIEVEMENTS.filter(achievement => achievement.id !== "fruit-explorer" || hasFruits);
 }
 
-function getTodayDate() {
-  const today = new Date();
-  return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-}
-
-function getDailyGoal(goalId) {
-  return DAILY_GOALS.find(goal => goal.id === goalId);
-}
-
-function getNextDailyGoal(previousGoalId) {
-  const availableGoals = DAILY_GOALS.filter(goal => goal.id !== previousGoalId);
-  return appUtils.randomItem(availableGoals.length ? availableGoals : DAILY_GOALS);
-}
-
-function loadDailyGoalData() {
-  try {
-    const storageKey = getPlayerStorageKey(DAILY_GOAL_STORAGE_KEY);
-    const savedData = storageKey ? JSON.parse(window.localStorage.getItem(storageKey)) : undefined;
-    return savedData && typeof savedData === "object" && !Array.isArray(savedData) ? savedData : {};
-  } catch {
-    return {};
-  }
-}
-
-function saveDailyGoalData() {
-  try {
-    const storageKey = getPlayerStorageKey(DAILY_GOAL_STORAGE_KEY);
-    if (storageKey) window.localStorage.setItem(storageKey, JSON.stringify(dailyGoalData));
-  } catch {
-    // The game continues when local storage is unavailable.
-  }
+function getDailyMissionContext() {
+  const progress = loadLearningPathProgress();
+  const eligibleStages = LEARNING_PATH_STAGES.filter(stage => stage.implemented
+    && learningPathModel.PLAYABLE_LEARNING_TYPES.has(stage.learningType)
+    && learningPathModel.canLaunchStage(stage.id, progress));
+  const categoryMap = new Map();
+  (engine?.questions ?? []).forEach(question => {
+    if (question.category && !categoryMap.has(question.category)) categoryMap.set(question.category, { id: question.category, label: question.label || question.category });
+  });
+  const miniGames = [
+    [MATCHING_MODE, "Eşini Bul"], [LISTENING_MODE, "Dinle ve Seç"], [NUMBER_MATCH_MODE, "Sayıyı Bul"],
+    [COLOR_MATCH_MODE, "Rengi Bul"], [SORTING_MODE, "Grupla"], [MISSING_ITEM_MODE, "Hangisi Eksik"],
+    [SHADOW_MODE, "Gölgesini Bul"], [INITIAL_LETTER_MODE, "İlk Harfi Bul"], [SOUND_MEMORY_MODE, "Ses Hafızası"], [PUZZLE_MODE, "Yapboz"]
+  ].map(([id, label]) => ({ id, label }));
+  const mathStageIds = eligibleStages.filter(stage => ["number-world", "first-operations"].includes(stage.groupId)).map(stage => stage.id);
+  const logicStageIds = eligibleStages.filter(stage => stage.groupId === "think-find").map(stage => stage.id);
+  return {
+    categories: [...categoryMap.values()],
+    miniGames,
+    eligibleStages,
+    learningPathGroups: learningPathModel.GROUPS.map(group => ({ id: group.id, title: group.title })),
+    mathStageIds,
+    logicStageIds,
+    speechAvailable: speech.getCapabilities().speechSynthesis
+  };
 }
 
 function ensureDailyGoal() {
   if (!selectedPlayer) return false;
-  const today = getTodayDate();
-  const currentGoal = getDailyGoal(dailyGoalData.goalId);
-  if (dailyGoalData.date !== today || !currentGoal) {
-    const nextGoal = getNextDailyGoal(currentGoal?.id ?? dailyGoalData.lastGoalId);
-    dailyGoalData = { date: today, goalId: nextGoal.id, lastGoalId: currentGoal?.id ?? dailyGoalData.lastGoalId, progress: 0, completed: false, answeredQuestionKeys: [] };
-    saveDailyGoalData();
-  }
-  return true;
+  if (dailyMissionManager.playerId !== selectedPlayer) dailyMissionManager.setPlayer(selectedPlayer);
+  else dailyMissionManager.ensureToday();
+  return Boolean(dailyMissionManager.getState());
 }
 
 function renderDailyGoal() {
-  const goal = getDailyGoal(dailyGoalData.goalId);
-  const hasGoal = Boolean(selectedPlayer && goal);
-  ui.dailyGoalCard.classList.toggle("hidden", !hasGoal);
-  if (!hasGoal) return;
-  const progress = Math.min(Number(dailyGoalData.progress) || 0, goal.target);
-  ui.dailyGoalTitle.textContent = `${goal.icon} ${goal.title}`;
-  ui.dailyGoalProgress.textContent = dailyGoalData.completed ? "Tamamlandı!" : `${progress}/${goal.target}`;
-  ui.dailyGoalCard.classList.toggle("completed", Boolean(dailyGoalData.completed));
+  const state = selectedPlayer ? dailyMissionManager.ensureToday() : undefined;
+  const missions = state?.missions ?? [];
+  ui.dailyGoalCard.classList.toggle("hidden", missions.length !== 3);
+  ui.dailyMissionList.textContent = "";
+  if (missions.length !== 3) return;
+  const completedCount = missions.filter(mission => mission.completed).length;
+  ui.dailyGoalTitle.textContent = completedCount === 3 ? "🌟 Bugünün görevleri tamamlandı!" : "☀️ Günün Görevleri";
+  ui.dailyGoalProgress.textContent = `${completedCount} / 3 tamamlandı`;
+  ui.dailyGoalCard.classList.toggle("completed", completedCount === 3);
+  missions.forEach(mission => {
+    const row = document.createElement("div");
+    row.className = `daily-mission-row${mission.completed ? " completed" : ""}`;
+    row.setAttribute("aria-label", `${mission.label}. ${mission.completed ? "Tamamlandı" : `${mission.progress} / ${mission.target}`}`);
+    const marker = document.createElement("span");
+    marker.className = "daily-mission-marker";
+    marker.setAttribute("aria-hidden", "true");
+    marker.textContent = mission.completed ? "✓" : mission.icon;
+    const label = document.createElement("span");
+    label.className = "daily-mission-label";
+    label.textContent = mission.label;
+    const progress = document.createElement("strong");
+    progress.textContent = mission.completed ? "Tamamlandı" : `${mission.progress}/${mission.target}`;
+    row.append(marker, label, progress);
+    ui.dailyMissionList.append(row);
+  });
+}
+
+function grantDailyMissionReward({ kind, reward }) {
+  parentData.rewardStars = Math.max(0, Number(parentData.rewardStars) || 0) + Math.max(0, Number(reward?.stars) || 0);
+  if (kind === "all-complete" && reward?.sticker) saveSticker(appUtils.randomItem(STICKERS));
+  saveParentData();
+}
+
+function queueDailyMissionCompletion(result) {
+  pendingDailyMissionCompletions.push(result);
+  renderDailyGoal();
+}
+
+function recordDailyMissionEvent(type, payload) {
+  if (!selectedPlayer) return { changed: false, completed: [], allCompleted: false };
+  const result = dailyMissionManager.recordEvent(type, payload);
+  if (result.changed || result.completed.length) renderDailyGoal();
+  return result;
+}
+
+function flushDailyMissionCompletions() {
+  if (!pendingDailyMissionCompletions.length) return;
+  const allCompleted = pendingDailyMissionCompletions.some(item => item.allCompleted);
+  pendingDailyMissionCompletions = [];
+  const completionMessage = allCompleted
+    ? selectedPlayer ? `Harika ${selectedPlayer}! Bugünün görevlerini tamamladın.` : "Harika! Bugünün görevlerini tamamladın."
+    : "Harika! Günün görevlerinden birini tamamladın.";
+  ui.dailyGoalPopupTitle.textContent = completionMessage;
+  showDailyGoalPopup();
+  audio.playSuccess();
+  speech.speakTurkish(completionMessage, { channel: "feedback" });
 }
 
 function resetDailyGoalPopup() {
   pendingDailyGoalPopup = false;
+  pendingDailyMissionCompletions = [];
   isDailyGoalShowing = false;
   window.clearTimeout(dailyGoalPopupTimer);
   ui.dailyGoalPopup.classList.add("hidden");
@@ -644,40 +700,6 @@ function showDailyGoalPopup() {
     ui.dailyGoalPopup.classList.add("hidden");
     isDailyGoalShowing = false;
   }, 1800);
-}
-
-function completeDailyGoal() {
-  if (dailyGoalData.completed) return;
-  dailyGoalData.completed = true;
-  saveDailyGoalData();
-  renderDailyGoal();
-  showDailyGoalPopup();
-}
-
-function updateDailyGoalOnCorrectAnswer() {
-  if (!ensureDailyGoal() || dailyGoalData.completed) return;
-  const goal = getDailyGoal(dailyGoalData.goalId);
-  if (!goal) return;
-  if (goal.id === "ten-correct") dailyGoalData.progress = Math.min(goal.target, (Number(dailyGoalData.progress) || 0) + 1);
-  if (goal.id === "streak-three") dailyGoalData.progress = Math.max(Number(dailyGoalData.progress) || 0, Math.min(streak, goal.target));
-  if (goal.id === "five-different") {
-    const questionKey = `${currentQuestion.category}|${currentQuestion.correct}`;
-    const answeredQuestionKeys = Array.isArray(dailyGoalData.answeredQuestionKeys) ? dailyGoalData.answeredQuestionKeys : [];
-    if (!answeredQuestionKeys.includes(questionKey)) answeredQuestionKeys.push(questionKey);
-    dailyGoalData.answeredQuestionKeys = answeredQuestionKeys;
-    dailyGoalData.progress = Math.min(goal.target, answeredQuestionKeys.length);
-  }
-  if ((Number(dailyGoalData.progress) || 0) >= goal.target) completeDailyGoal();
-  else {
-    saveDailyGoalData();
-    renderDailyGoal();
-  }
-}
-
-function updateDailyGoalOnBonusComplete() {
-  if (!ensureDailyGoal() || dailyGoalData.completed || dailyGoalData.goalId !== "complete-bonus") return;
-  dailyGoalData.progress = 1;
-  completeDailyGoal();
 }
 
 function resetAchievementPopup() {
@@ -752,7 +774,7 @@ function getSavedStickers() {
 
 function renderRewardsRoom() {
   renderAchievements();
-  ui.rewardsStarCount.textContent = parentData.correctAnswers;
+  ui.rewardsStarCount.textContent = parentData.correctAnswers + (Number(parentData.rewardStars) || 0);
   const unlockedStickers = getSavedStickers();
   ui.stickersList.textContent = "";
   STICKERS.forEach(sticker => {
@@ -1152,7 +1174,7 @@ function selectPlayer(name) {
   saveSelectedPlayer();
   parentData = loadParentData();
   achievementData = loadAchievementData();
-  dailyGoalData = loadDailyGoalData();
+  dailyMissionManager.setPlayer(selectedPlayer);
   resetAchievementPopup();
   resetDailyGoalPopup();
   ensureDailyGoal();
@@ -1173,7 +1195,7 @@ function selectCustomPlayer() {
   worldThemeManager.restore();
   clearPlayerSelectionGuidance();
   resetEncouragementState();
-  dailyGoalData = {};
+  dailyMissionManager.setPlayer(undefined);
   resetDailyGoalPopup();
   renderDailyGoal();
   ui.playerButtons.forEach(button => button.setAttribute("aria-pressed", "false"));
@@ -1200,7 +1222,7 @@ function updateCustomPlayer() {
     saveSelectedPlayer();
     parentData = loadParentData();
     achievementData = loadAchievementData();
-    dailyGoalData = loadDailyGoalData();
+    dailyMissionManager.setPlayer(selectedPlayer);
     resetAchievementPopup();
     resetDailyGoalPopup();
     ensureDailyGoal();
@@ -1215,7 +1237,7 @@ function updateCustomPlayer() {
     }
   } else {
     worldThemeManager.restore();
-    dailyGoalData = {};
+    dailyMissionManager.setPlayer(undefined);
     resetDailyGoalPopup();
     renderDailyGoal();
   }
@@ -1263,7 +1285,15 @@ function launchMiniGame(mode) {
     return;
   }
   clearPlayerSelectionGuidance();
+  activeMiniGameInstanceId = `mini:${mode}:${++gameplayEventSequence}`;
   startGame({ miniGameMode: mode });
+}
+
+function recordMiniGameMissionCompletion(gameId, instanceId = activeMiniGameInstanceId) {
+  const eventId = instanceId || `mini:${gameId}:${++gameplayEventSequence}`;
+  recordDailyMissionEvent("miniGameCompleted", { eventId, gameId });
+  bonusManager.recordEligibleEvent(`mini-game:${eventId}`);
+  flushDailyMissionCompletions();
 }
 
 function getSavedProgress() {
@@ -1367,6 +1397,7 @@ function loadParentData() {
         playTime: Number.isFinite(savedData.playTime) ? savedData.playTime : 0,
         questionsAnswered: Number.isFinite(savedData.questionsAnswered) ? savedData.questionsAnswered : 0,
         correctAnswers: Number.isFinite(savedData.correctAnswers) ? savedData.correctAnswers : 0,
+        rewardStars: Number.isFinite(savedData.rewardStars) ? Math.max(0, savedData.rewardStars) : 0,
         categoryCounts: savedData.categoryCounts && typeof savedData.categoryCounts === "object" && !Array.isArray(savedData.categoryCounts) ? savedData.categoryCounts : {},
         difficultWords: savedData.difficultWords && typeof savedData.difficultWords === "object" && !Array.isArray(savedData.difficultWords) ? savedData.difficultWords : {},
         bestStreak: Number.isFinite(savedData.bestStreak) ? savedData.bestStreak : 0,
@@ -1376,9 +1407,9 @@ function loadParentData() {
         categoryProgress: savedData.categoryProgress && typeof savedData.categoryProgress === "object" && !Array.isArray(savedData.categoryProgress) ? savedData.categoryProgress : {}
       };
     }
-    return { playTime: 0, questionsAnswered: 0, correctAnswers: 0, categoryCounts: {}, difficultWords: {}, bestStreak: 0, matchingPairsCompleted: 0, miniGamesStarted: {}, miniGamesCompleted: {}, categoryProgress: {} };
+    return { playTime: 0, questionsAnswered: 0, correctAnswers: 0, rewardStars: 0, categoryCounts: {}, difficultWords: {}, bestStreak: 0, matchingPairsCompleted: 0, miniGamesStarted: {}, miniGamesCompleted: {}, categoryProgress: {} };
   } catch {
-    return { playTime: 0, questionsAnswered: 0, correctAnswers: 0, categoryCounts: {}, difficultWords: {}, bestStreak: 0, matchingPairsCompleted: 0, miniGamesStarted: {}, miniGamesCompleted: {}, categoryProgress: {} };
+    return { playTime: 0, questionsAnswered: 0, correctAnswers: 0, rewardStars: 0, categoryCounts: {}, difficultWords: {}, bestStreak: 0, matchingPairsCompleted: 0, miniGamesStarted: {}, miniGamesCompleted: {}, categoryProgress: {} };
   }
 }
 
@@ -1528,6 +1559,7 @@ function completeMatchingGame() {
   void ui.matchingCelebration.offsetWidth;
   ui.matchingCelebration.classList.add("burst");
   audio.playCelebration();
+  recordMiniGameMissionCompletion(MATCHING_MODE);
 }
 
 function openMatchingCard(index) {
@@ -1626,6 +1658,7 @@ function startMatchingSession(categoryId = matchingSelectedCategory) {
 function replayMatchingWithNewCategory() {
   const otherCategories = MATCHING_CATEGORIES.filter(category => category.id !== matchingSelectedCategory);
   const nextCategory = appUtils.randomItem(otherCategories);
+  activeMiniGameInstanceId = `mini:${MATCHING_MODE}:${++gameplayEventSequence}`;
   startMatchingSession(nextCategory?.id ?? matchingSelectedCategory);
 }
 
@@ -1685,10 +1718,11 @@ async function speakListeningWord(explicit = false) {
   const run = audioRun;
   isListeningSpeaking = true;
   renderListeningCards();
-  await (explicit
+  const spoken = await (explicit
     ? speech.replay(currentListeningQuestion.correct, ENGLISH_LANGUAGE)
     : speech.speakPrompt(currentListeningQuestion.correct, ENGLISH_LANGUAGE));
   if (!isListeningGameActive || !isActiveAudio(run)) return;
+  if (spoken) recordDailyMissionEvent("englishTargetHeard", { eventId: `listening:${listeningRound}:${currentListeningQuestion.correct}`, targetId: `word:${currentListeningQuestion.correct}` });
   isListeningSpeaking = false;
   renderListeningCards();
 }
@@ -1705,6 +1739,7 @@ function finishListeningGame() {
   void ui.listeningCelebration.offsetWidth;
   ui.listeningCelebration.classList.add("burst");
   audio.playCelebration();
+  recordMiniGameMissionCompletion(LISTENING_MODE);
   window.clearTimeout(listeningCompletionTimer);
   listeningCompletionTimer = window.setTimeout(goHome, 1400);
 }
@@ -1825,10 +1860,11 @@ async function speakNumberMatchNumber(explicit = false) {
   const run = audioRun;
   isNumberMatchSpeaking = true;
   renderNumberMatchCards();
-  await (explicit
+  const spoken = await (explicit
     ? speech.replay(NUMBER_WORDS[currentNumberMatchQuestion - 1], ENGLISH_LANGUAGE)
     : speech.speakPrompt(NUMBER_WORDS[currentNumberMatchQuestion - 1], ENGLISH_LANGUAGE));
   if (!isNumberMatchGameActive || !isActiveAudio(run)) return;
+  if (spoken) recordDailyMissionEvent("englishTargetHeard", { eventId: `number-match:${numberMatchRound}:${currentNumberMatchQuestion}`, targetId: `number:${currentNumberMatchQuestion}` });
   isNumberMatchSpeaking = false;
   renderNumberMatchCards();
 }
@@ -1845,6 +1881,7 @@ function finishNumberMatchGame() {
   void ui.numberMatchCelebration.offsetWidth;
   ui.numberMatchCelebration.classList.add("burst");
   audio.playCelebration();
+  recordMiniGameMissionCompletion(NUMBER_MATCH_MODE);
   window.clearTimeout(numberMatchCompletionTimer);
   numberMatchCompletionTimer = window.setTimeout(goHome, 1400);
 }
@@ -1967,10 +2004,11 @@ async function speakColorMatchColor(explicit = false) {
   const run = audioRun;
   isColorMatchSpeaking = true;
   renderColorMatchCards();
-  await (explicit
+  const spoken = await (explicit
     ? speech.replay(currentColorMatchQuestion.name, ENGLISH_LANGUAGE)
     : speech.speakPrompt(currentColorMatchQuestion.name, ENGLISH_LANGUAGE));
   if (!isColorMatchGameActive || !isActiveAudio(run)) return;
+  if (spoken) recordDailyMissionEvent("englishTargetHeard", { eventId: `color-match:${colorMatchRound}:${currentColorMatchQuestion.name}`, targetId: `color:${currentColorMatchQuestion.name}` });
   isColorMatchSpeaking = false;
   renderColorMatchCards();
 }
@@ -1988,6 +2026,7 @@ function finishColorMatchGame() {
   void ui.colorMatchCelebration.offsetWidth;
   ui.colorMatchCelebration.classList.add("burst");
   audio.playCelebration();
+  recordMiniGameMissionCompletion(COLOR_MATCH_MODE);
   window.clearTimeout(colorMatchCompletionTimer);
   colorMatchCompletionTimer = window.setTimeout(goHome, 1400);
 }
@@ -2200,6 +2239,7 @@ function finishSortingGame() {
   void ui.sortingCelebration.offsetWidth;
   ui.sortingCelebration.classList.add("burst");
   audio.playCelebration();
+  recordMiniGameMissionCompletion(SORTING_MODE);
   renderSortingGame();
 }
 
@@ -2229,7 +2269,7 @@ const NEW_MINI_GAME_CONFIG = {
 
 function createEmptyNewMiniGameState(mode) {
   return {
-    mode, sessionId: ++newMiniGameSessionId, round: 0, correct: 0, streak: 0,
+    mode, sessionId: ++newMiniGameSessionId, round: 0, correct: 0, streak: 0, missionWrongRounds: [],
     inputLocked: false, speaking: false, completed: false, pendingDelay: undefined,
     challenge: undefined, board: [], firstCard: undefined, attempts: 0,
     elapsedMs: 0, timerStartedAt: 0, soundDifficulty: "standard",
@@ -2355,26 +2395,6 @@ function recordNewMiniGameStarted(mode) {
   saveParentData();
 }
 
-function updateDailyGoalForMiniGame(key) {
-  if (!ensureDailyGoal() || dailyGoalData.completed) return;
-  const goal = getDailyGoal(dailyGoalData.goalId);
-  if (!goal) return;
-  if (goal.id === "ten-correct") dailyGoalData.progress = Math.min(goal.target, (Number(dailyGoalData.progress) || 0) + 1);
-  if (goal.id === "streak-three") dailyGoalData.progress = Math.max(Number(dailyGoalData.progress) || 0, Math.min(newMiniGameState.streak, goal.target));
-  if (goal.id === "five-different") {
-    const answered = Array.isArray(dailyGoalData.answeredQuestionKeys) ? dailyGoalData.answeredQuestionKeys : [];
-    const questionKey = `mini-game|${newMiniGameState.mode}|${key}`;
-    if (!answered.includes(questionKey)) answered.push(questionKey);
-    dailyGoalData.answeredQuestionKeys = answered;
-    dailyGoalData.progress = Math.min(goal.target, answered.length);
-  }
-  if ((Number(dailyGoalData.progress) || 0) >= goal.target) completeDailyGoal();
-  else {
-    saveDailyGoalData();
-    renderDailyGoal();
-  }
-}
-
 function recordNewMiniGameCorrect(key) {
   newMiniGameState.correct += 1;
   newMiniGameState.streak += 1;
@@ -2384,14 +2404,20 @@ function recordNewMiniGameCorrect(key) {
   const label = NEW_MINI_GAME_CONFIG[newMiniGameState.mode].eyebrow;
   parentData.categoryCounts[label] = (parentData.categoryCounts[label] ?? 0) + 1;
   saveParentData();
-  updateDailyGoalForMiniGame(key);
+  const eventId = `new-mini:${newMiniGameState.sessionId}:${newMiniGameState.round}`;
+  recordDailyMissionEvent("questionAnswered", { eventId, correct: true });
+  recordDailyMissionEvent("correctAnswer", { eventId, firstAttempt: !newMiniGameState.missionWrongRounds.includes(newMiniGameState.round) });
+  recordDailyMissionEvent("categoryQuestionAnswered", { eventId, categoryId: newMiniGameState.mode });
+  if ([INITIAL_LETTER_MODE, SOUND_MEMORY_MODE].includes(newMiniGameState.mode)) recordDailyMissionEvent("englishQuestionAnswered", { eventId });
   checkAchievements();
 }
 
 function recordNewMiniGameWrong() {
   newMiniGameState.streak = 0;
+  if (!newMiniGameState.missionWrongRounds.includes(newMiniGameState.round)) newMiniGameState.missionWrongRounds.push(newMiniGameState.round);
   parentData.questionsAnswered += 1;
   saveParentData();
+  recordDailyMissionEvent("questionAnswered", { eventId: `new-mini:${newMiniGameState.sessionId}:${newMiniGameState.round}`, correct: false });
 }
 
 function recordNewMiniGameCompleted() {
@@ -2425,6 +2451,7 @@ function finishNewMiniGame(copy) {
   ui.newMiniGameChange.classList.toggle("hidden", ![SOUND_MEMORY_MODE, PUZZLE_MODE].includes(newMiniGameState.mode));
   ui.newMiniGameChange.textContent = newMiniGameState.mode === SOUND_MEMORY_MODE ? "Zorluk Seç" : "Başka Yapboz Seç";
   recordNewMiniGameCompleted();
+  recordMiniGameMissionCompletion(newMiniGameState.mode, `new-mini-game:${newMiniGameState.sessionId}`);
   celebrateNewMiniGame();
   ui.newMiniGameReplay.focus();
 }
@@ -3569,6 +3596,12 @@ function recordNumberLearningInteraction(wasCorrect, answerValue) {
     category: `LearningPath:${activeLearningPathStage.id}`,
     correct: String(numberLearningState.round.correct ?? numberLearningState.round.target?.join("-") ?? answerValue)
   };
+  const eventId = `number:${numberLearningSessionId}:${numberLearningState.roundNumber}`;
+  const operation = isAdditionNumberRound() ? "addition" : isSubtractionNumberRound() ? "subtraction" : numberLearningState.round.operation;
+  const payload = { eventId, categoryId: currentQuestion.category, stageId: activeLearningPathStage.id, operation, correct: wasCorrect };
+  recordDailyMissionEvent("questionAnswered", payload);
+  recordDailyMissionEvent("categoryQuestionAnswered", payload);
+  recordDailyMissionEvent("mathQuestionCompleted", payload);
   if (!wasCorrect) {
     streak = 0;
     updateParentData(false);
@@ -3581,7 +3614,7 @@ function recordNumberLearningInteraction(wasCorrect, answerValue) {
   correctAnswers += 1;
   updateParentData(true);
   checkAchievements();
-  updateDailyGoalOnCorrectAnswer();
+  recordDailyMissionEvent("correctAnswer", { ...payload, firstAttempt: numberLearningState.attempts === 0 });
 }
 
 async function answerNumberLearning(button, value) {
@@ -3741,6 +3774,7 @@ async function finishNumberLearningStage() {
   ui.summary.classList.remove("hidden");
   animations.celebrate();
   audio.playCelebration();
+  flushDailyMissionCompletions();
   await speech.speakCelebration(celebrationMessage);
 }
 
@@ -4210,6 +4244,11 @@ function recordLogicAttentionInteraction(wasCorrect, answerValue) {
     category: `LearningPath:${activeLearningPathStage.id}`,
     correct: String(logicAttentionState.round.correctId ?? logicAttentionState.round.target?.join("-") ?? logicAttentionState.round.goal)
   };
+  const eventId = `logic:${logicAttentionSessionId}:${logicAttentionState.roundNumber}`;
+  const payload = { eventId, categoryId: currentQuestion.category, stageId: activeLearningPathStage.id, correct: wasCorrect };
+  recordDailyMissionEvent("questionAnswered", payload);
+  recordDailyMissionEvent("categoryQuestionAnswered", payload);
+  recordDailyMissionEvent("logicChallengeCompleted", payload);
   if (!wasCorrect) {
     streak = 0;
     updateParentData(false);
@@ -4221,7 +4260,7 @@ function recordLogicAttentionInteraction(wasCorrect, answerValue) {
   correctAnswers += 1;
   updateParentData(true);
   checkAchievements();
-  updateDailyGoalOnCorrectAnswer();
+  recordDailyMissionEvent("correctAnswer", { ...payload, firstAttempt: logicAttentionState.attempts === 0 });
 }
 
 async function giveLogicRetry(button, message = "Bir daha bakalım.") {
@@ -4398,6 +4437,7 @@ async function finishLogicAttentionStage() {
   ui.summary.classList.remove("hidden");
   animations.celebrate();
   audio.playCelebration();
+  flushDailyMissionCompletions();
   await speech.speakCelebration(celebrationMessage);
 }
 
@@ -4469,11 +4509,13 @@ function pauseGame() {
   setInputEnabled(false);
   setGameActionsEnabled(false);
   if (isBalloonBonusActive) {
-    pausedBonusRemaining = Math.max(0, bonusEndsAt - Date.now());
+    bonusManager.pause();
+    if (activeBonusState?.bonusId === "balloon") pausedBonusRemaining = Math.max(0, bonusEndsAt - Date.now());
     window.clearTimeout(balloonBonusTimer);
     window.clearTimeout(balloonPopTimer);
     clearBalloonAnimationTimers();
-    ui.balloons.querySelectorAll("button").forEach(balloon => { balloon.disabled = true; });
+    ui.bonus.classList.add("bonus-paused");
+    ui.balloons.querySelectorAll("button").forEach(button => { button.disabled = true; });
   }
   if (isMatchingGameActive) {
     stopMatchingTimer();
@@ -4514,16 +4556,21 @@ function resumeGame() {
   setGameActionsEnabled(true);
   startPlayTime();
   if (isBalloonBonusActive) {
-    if (pausedBonusRemaining <= 0) {
-      endBalloonBonus();
+    bonusManager.resume();
+    ui.bonus.classList.remove("bonus-paused");
+    if (activeBonusState?.completed) {
+      ui.balloons.querySelectorAll("button").forEach(button => { button.disabled = true; });
+      ui.bonusContinue.focus();
       return;
     }
-    startBonusTimer(pausedBonusRemaining);
-    if (pendingBonusEnd) {
-      balloonPopTimer = window.setTimeout(endBalloonBonus, 200);
-      return;
+    if (activeBonusState?.bonusId === "balloon") {
+      if (pausedBonusRemaining <= 0) {
+        finishManagedBonus(false);
+        return;
+      }
+      startBonusTimer(pausedBonusRemaining);
     }
-    ui.balloons.querySelectorAll("button").forEach(balloon => { balloon.disabled = false; });
+    renderManagedBonus();
     return;
   }
   if (isMatchingGameActive) {
@@ -4681,16 +4728,61 @@ function awardSticker() {
   rewardPopupTimer = window.setTimeout(() => ui.rewardPopup.classList.add("hidden"), REWARD_POPUP_DURATION);
 }
 
-function renderBalloons() {
+function createBonusButton(className, label, text, onClick) {
+  const button = document.createElement("button");
+  button.className = `bonus-choice ${className}`;
+  button.type = "button";
+  button.setAttribute("aria-label", label);
+  button.textContent = text;
+  button.addEventListener("click", onClick);
+  return button;
+}
+
+function renderManagedBonus() {
+  if (!activeBonusState) return;
   ui.balloons.innerHTML = "";
-  engine.getAnswers(currentQuestion).forEach(answer => {
-    const balloon = document.createElement("button");
-    balloon.className = "balloon";
-    balloon.type = "button";
-    balloon.textContent = answer;
-    balloon.disabled = true;
-    balloon.addEventListener("click", () => popBalloon(balloon, answer));
-    ui.balloons.append(balloon);
+  ui.balloons.dataset.bonus = activeBonusState.bonusId;
+  const { bonusId } = activeBonusState;
+
+  if (bonusId === "balloon") {
+    activeBonusState.answers.forEach(answer => {
+      const balloon = createBonusButton("balloon", `${answer} balonu`, answer, event => popBalloon(event.currentTarget, answer));
+      ui.balloons.append(balloon);
+    });
+    return;
+  }
+
+  if (bonusId === "star-rain") {
+    activeBonusState.stars.forEach((collected, index) => {
+      const star = createBonusButton(`star-rain-choice${collected ? " collected" : ""}`, `${index + 1}. yıldız`, collected ? "✓" : "⭐", () => collectBonusStar(index));
+      star.disabled = collected;
+      ui.balloons.append(star);
+    });
+    return;
+  }
+
+  if (bonusId === "treasure") {
+    ["🎁", "🎀", "✨"].forEach((icon, index) => {
+      ui.balloons.append(createBonusButton("treasure-choice", `${index + 1}. hazine kutusu`, icon, () => chooseTreasure(index)));
+    });
+    return;
+  }
+
+  if (bonusId === "quick-match") {
+    activeBonusState.cards.forEach(card => {
+      const visible = card.matched || activeBonusState.openCardIds.includes(card.id);
+      const choice = createBonusButton(`quick-match-choice${card.matched ? " matched" : ""}`, visible ? `${card.value} kartı` : "Kapalı eşleştirme kartı", visible ? card.value : "?", () => chooseQuickMatchCard(card.id));
+      choice.disabled = card.matched || activeBonusState.locked;
+      ui.balloons.append(choice);
+    });
+    return;
+  }
+
+  activeBonusState.items.forEach(item => {
+    const collected = activeBonusState.collectedIds.includes(item.id);
+    const choice = createBonusButton(`color-pop-choice ${item.className}${collected ? " collected" : ""}`, `${item.colorLabel} ${item.shapeLabel}`, collected ? "✓" : item.icon, event => chooseColorPop(event.currentTarget, item));
+    choice.disabled = collected;
+    ui.balloons.append(choice);
   });
 }
 
@@ -4698,7 +4790,7 @@ function startBonusTimer(duration) {
   window.clearTimeout(balloonBonusTimer);
   pausedBonusRemaining = duration;
   bonusEndsAt = Date.now() + duration;
-  balloonBonusTimer = window.setTimeout(endBalloonBonus, duration);
+  balloonBonusTimer = window.setTimeout(() => finishManagedBonus(false), duration);
 }
 
 function clearBalloonAnimationTimers() {
@@ -4721,29 +4813,74 @@ function clearQuestionFeedbackForBonus() {
 
 async function playBalloonPrompt() {
   const run = audioRun;
-  ui.balloons.querySelectorAll("button").forEach(balloon => { balloon.disabled = true; });
+  ui.balloons.querySelectorAll("button").forEach(button => { button.disabled = true; });
   await speech.speakPrompt(ui.balloonTarget.textContent, ENGLISH_LANGUAGE);
   if (isBalloonBonusActive && isActiveAudio(run)) {
-    ui.balloons.querySelectorAll("button").forEach(balloon => { balloon.disabled = false; });
+    renderManagedBonus();
   }
 }
 
-async function startBalloonBonus() {
-  if (isPaused || isBalloonBonusActive) return;
+function buildBonusState(instance) {
+  if (instance.bonusId === "balloon") {
+    return { ...instance, answers: engine.getAnswers(currentQuestion), correct: currentQuestion.correct };
+  }
+  if (instance.bonusId === "star-rain") return { ...instance, stars: Array(6).fill(false) };
+  if (instance.bonusId === "treasure") return { ...instance, selected: undefined };
+  if (instance.bonusId === "quick-match") {
+    const values = appUtils.shuffle(["🐶", "🍎"]);
+    const cards = appUtils.shuffle(values.flatMap((value, pairIndex) => [0, 1].map(copy => ({ id: `${pairIndex}-${copy}`, value, matched: false }))));
+    return { ...instance, cards, openCardIds: [], locked: false };
+  }
+  const items = appUtils.shuffle([
+    { id: "purple-circle-1", className: "purple", colorLabel: "Mor", shapeLabel: "daire", icon: "●", target: true },
+    { id: "purple-star", className: "purple", colorLabel: "Mor", shapeLabel: "yıldız", icon: "★", target: true },
+    { id: "purple-square", className: "purple", colorLabel: "Mor", shapeLabel: "kare", icon: "■", target: true },
+    { id: "yellow-circle", className: "yellow", colorLabel: "Sarı", shapeLabel: "daire", icon: "●", target: false },
+    { id: "blue-star", className: "blue", colorLabel: "Mavi", shapeLabel: "yıldız", icon: "★", target: false },
+    { id: "green-square", className: "green", colorLabel: "Yeşil", shapeLabel: "kare", icon: "■", target: false }
+  ]);
+  return { ...instance, items, collectedIds: [] };
+}
+
+async function startManagedBonus(instance) {
+  if (isPaused || isBalloonBonusActive || !instance) return;
   clearSpeech();
+  const run = audioRun;
   clearQuestionFeedbackForBonus();
   window.clearTimeout(balloonBonusTimer);
   window.clearTimeout(balloonPopTimer);
   clearBalloonAnimationTimers();
   isBalloonBonusActive = true;
   pendingBonusEnd = false;
+  activeBonusState = buildBonusState(instance);
+  ui.shell.classList.add("bonus-open");
   ui.quiz.classList.add("hidden");
   ui.bonus.classList.remove("hidden");
-  ui.balloonTarget.textContent = `Pop ${currentQuestion.correct}.`;
-  renderBalloons();
-  startBonusTimer(BONUS_DURATION);
+  ui.bonusTitle.textContent = instance.title;
+  ui.bonusEyebrow.textContent = `${instance.icon} KISA BONUS`;
+  ui.bonusFeedback.textContent = "";
+  ui.bonusContinue.classList.add("hidden");
+  const prompts = {
+    balloon: `Pop ${currentQuestion.correct}.`,
+    "star-rain": "Bütün yıldızları topla!",
+    treasure: "Bir hazine kutusu seç!",
+    "quick-match": "Aynı kartları eşleştir!",
+    "color-pop": "Mor şekilleri bul!"
+  };
+  ui.balloonTarget.textContent = prompts[instance.bonusId];
+  renderManagedBonus();
+  ui.balloons.querySelectorAll("button").forEach(button => { button.disabled = true; });
+  if (instance.bonusId === "balloon") startBonusTimer(BONUS_DURATION);
+  else pausedBonusRemaining = 0;
+  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  ui.bonusTitle.focus({ preventScroll: true });
   await speech.speakTurkish(getPersonalizedBonusMessage(), { channel: "instruction" });
-  await playBalloonPrompt();
+  if (!isActiveAudio(run) || !isBalloonBonusActive || !activeBonusState || activeBonusState.id !== instance.id) return;
+  if (instance.bonusId === "balloon") await playBalloonPrompt();
+  else {
+    await speech.speakTurkish(ui.balloonTarget.textContent, { channel: "instruction" });
+    if (isActiveAudio(run) && isBalloonBonusActive && activeBonusState?.id === instance.id) renderManagedBonus();
+  }
 }
 
 function popBalloon(balloon, answer) {
@@ -4752,7 +4889,7 @@ function popBalloon(balloon, answer) {
     balloon.classList.add("balloon-pop");
     audio.playSuccess();
     pendingBonusEnd = true;
-    balloonPopTimer = window.setTimeout(endBalloonBonus, BONUS_POP_TRANSITION_DELAY);
+    balloonPopTimer = window.setTimeout(completeManagedBonus, BONUS_POP_TRANSITION_DELAY);
   } else {
     balloon.classList.add("balloon-wiggle");
     const animationTimer = window.setTimeout(() => {
@@ -4763,21 +4900,132 @@ function popBalloon(balloon, answer) {
   }
 }
 
-function endBalloonBonus() {
-  if (isPaused || !isBalloonBonusActive) return;
-  const completedBonus = pendingBonusEnd;
+function collectBonusStar(index) {
+  if (isPaused || !activeBonusState || activeBonusState.stars[index]) return;
+  activeBonusState.stars[index] = true;
+  renderManagedBonus();
+  if (activeBonusState.stars.every(Boolean)) completeManagedBonus();
+}
+
+function chooseTreasure(index) {
+  if (isPaused || !activeBonusState || activeBonusState.selected !== undefined) return;
+  activeBonusState.selected = index;
+  completeManagedBonus();
+}
+
+function chooseQuickMatchCard(cardId) {
+  if (isPaused || !activeBonusState || activeBonusState.locked) return;
+  const card = activeBonusState.cards.find(item => item.id === cardId);
+  if (!card || card.matched || activeBonusState.openCardIds.includes(cardId)) return;
+  activeBonusState.openCardIds.push(cardId);
+  renderManagedBonus();
+  if (activeBonusState.openCardIds.length < 2) return;
+  const [first, second] = activeBonusState.openCardIds.map(id => activeBonusState.cards.find(item => item.id === id));
+  if (first.value === second.value) {
+    first.matched = true;
+    second.matched = true;
+    activeBonusState.openCardIds = [];
+    audio.playSuccess();
+    renderManagedBonus();
+    if (activeBonusState.cards.every(item => item.matched)) completeManagedBonus();
+    return;
+  }
+  activeBonusState.locked = true;
+  ui.bonusFeedback.textContent = "Bir daha dene!";
+  const timer = window.setTimeout(() => {
+    balloonAnimationTimers.delete(timer);
+    if (!activeBonusState || activeBonusState.bonusId !== "quick-match") return;
+    activeBonusState.openCardIds = [];
+    activeBonusState.locked = false;
+    ui.bonusFeedback.textContent = "";
+    renderManagedBonus();
+  }, 700);
+  balloonAnimationTimers.add(timer);
+}
+
+function chooseColorPop(button, item) {
+  if (isPaused || !activeBonusState || activeBonusState.collectedIds.includes(item.id)) return;
+  if (item.target) {
+    activeBonusState.collectedIds.push(item.id);
+    audio.playSuccess();
+    renderManagedBonus();
+    if (activeBonusState.items.filter(entry => entry.target).every(entry => activeBonusState.collectedIds.includes(entry.id))) completeManagedBonus();
+    return;
+  }
+  button.classList.add("balloon-wiggle");
+  ui.bonusFeedback.textContent = "Mor olanı bulabilirsin!";
+  const timer = window.setTimeout(() => {
+    balloonAnimationTimers.delete(timer);
+    button.classList.remove("balloon-wiggle");
+  }, BONUS_WRONG_ANIMATION_DURATION);
+  balloonAnimationTimers.add(timer);
+}
+
+function completeManagedBonus() {
+  if (isPaused || !isBalloonBonusActive || !activeBonusState || activeBonusState.completed) return;
+  const result = bonusManager.complete(activeBonusState.id);
+  if (!result.completed) return;
+  activeBonusState.completed = true;
+  pendingBonusEnd = true;
+  window.clearTimeout(balloonBonusTimer);
+  window.clearTimeout(balloonPopTimer);
+  clearBalloonAnimationTimers();
+  ui.balloons.querySelectorAll("button").forEach(button => { button.disabled = true; });
+  if (result.rewardGranted) {
+    parentData.rewardStars = (Number(parentData.rewardStars) || 0) + (result.reward?.stars ?? 0);
+    saveParentData();
+  }
+  unlockAchievement("first-bonus");
+  audio.playSuccess();
+  ui.bonusFeedback.textContent = `Harika! Bonusu tamamladın! +${result.reward?.stars ?? 0} yıldız`;
+  ui.bonusContinue.classList.remove("hidden");
+  ui.bonusContinue.focus();
+}
+
+function finishManagedBonus(requireCompletion = true) {
+  if (isPaused || !isBalloonBonusActive || !activeBonusState) return;
+  if (requireCompletion && !activeBonusState.completed) return;
+  const instanceId = activeBonusState.id;
+  clearSpeech();
+  audio.stopAll();
   isBalloonBonusActive = false;
   window.clearTimeout(balloonBonusTimer);
   window.clearTimeout(balloonPopTimer);
   clearBalloonAnimationTimers();
   pausedBonusRemaining = 0;
   pendingBonusEnd = false;
+  bonusManager.finish(instanceId);
+  activeBonusState = undefined;
+  ui.shell.classList.remove("bonus-open");
+  ui.balloons.innerHTML = "";
+  ui.balloons.removeAttribute("data-bonus");
+  ui.bonusFeedback.textContent = "";
+  ui.bonusContinue.classList.add("hidden");
   ui.bonus.classList.add("hidden");
   ui.quiz.classList.remove("hidden");
-  unlockAchievement("first-bonus");
-  if (completedBonus) updateDailyGoalOnBonusComplete();
   if (questionNumber >= getSessionQuestionCount()) showSessionSummary();
-  else showQuestion();
+  else {
+    ui.quiz.focus({ preventScroll: true });
+    showQuestion();
+  }
+}
+
+function cancelManagedBonus() {
+  clearSpeech();
+  audio.stopAll();
+  isBalloonBonusActive = false;
+  window.clearTimeout(balloonBonusTimer);
+  window.clearTimeout(balloonPopTimer);
+  clearBalloonAnimationTimers();
+  pausedBonusRemaining = 0;
+  pendingBonusEnd = false;
+  activeBonusState = undefined;
+  ui.shell.classList.remove("bonus-open");
+  bonusManager.cancel();
+  ui.balloons.innerHTML = "";
+  ui.bonusFeedback.textContent = "";
+  ui.bonusContinue.classList.add("hidden");
+  ui.bonus.classList.add("hidden");
 }
 
 function renderAnswers() {
@@ -4832,7 +5080,8 @@ async function playQuestionSequence(keepInputDisabled = false) {
     if (!isActiveAudio(run)) return false;
     const button = answerButtons[index];
     button.classList.add("speaking-choice");
-    await speech.speakAnswerChoice(button.textContent, ENGLISH_LANGUAGE);
+    const spoken = await speech.speakAnswerChoice(button.textContent, ENGLISH_LANGUAGE);
+    if (spoken) recordDailyMissionEvent("englishTargetHeard", { eventId: `${currentQuestionInstanceId}:choice:${button.textContent}`, targetId: `${currentQuestion.category}:${button.textContent}` });
     button.classList.remove("speaking-choice");
     if (index < answerButtons.length - 1) await appUtils.wait(CHOICE_DELAY);
   }
@@ -4882,6 +5131,7 @@ function showQuestion() {
     return;
   }
   currentAnswers = engine.getAnswers(currentQuestion, activeLearningPathStage ? { phase: learningPathQuestionPhase, simplify: isLearningPathRecoveryQuestion } : undefined);
+  currentQuestionInstanceId = `question-${++gameplayEventSequence}`;
   questionNumber += 1;
   ui.category.textContent = currentQuestion.label;
   renderQuestionVisual(currentQuestion);
@@ -4917,6 +5167,7 @@ async function showSessionSummary() {
   ui.summary.classList.remove("hidden");
   animations.celebrate();
   audio.playCelebration();
+  flushDailyMissionCompletions();
   await appUtils.wait(450);
   if (!isActiveAudio(run)) return;
   await speech.speakCelebration(celebrationMessage);
@@ -4977,7 +5228,7 @@ async function handleCorrectAnswer(button) {
   engine.recordResult(currentQuestion, true);
   updateParentData(true);
   checkAchievements();
-  updateDailyGoalOnCorrectAnswer();
+  recordDailyMissionEvent("correctAnswer", { eventId: currentQuestionInstanceId, firstAttempt: wrongAttemptsForQuestion === 0 });
   saveLearningStats();
   saveGameProgress(true);
   triggerMascotReaction("mascot-celebrate");
@@ -5003,14 +5254,30 @@ async function handleCorrectAnswer(button) {
 function finishCorrectAnswer(run) {
   if (!isActiveAudio(run) || !pendingCorrectTransition) return;
   pendingCorrectTransition = false;
-  if (correctAnswers % BONUS_CORRECT_ANSWER_INTERVAL === 0) startBalloonBonus();
+  bonusManager.recordEligibleEvent(`question:${currentQuestionInstanceId}`);
+  const hasMissionConfirmation = pendingDailyMissionCompletions.length > 0;
+  flushDailyMissionCompletions();
+  const bonusBoundarySafe = !hasMissionConfirmation
+    && !isAchievementShowing
+    && ui.parentDashboard.classList.contains("hidden")
+    && ui.achievementsModal.classList.contains("hidden")
+    && ui.worldThemePanel.classList.contains("hidden")
+    && ui.pauseOverlay.classList.contains("hidden")
+    && !ui.quiz.classList.contains("hidden");
+  const pendingBonus = bonusManager.takePending({ safe: bonusBoundarySafe });
+  if (pendingBonus) startManagedBonus(pendingBonus);
   else if (questionNumber >= getSessionQuestionCount()) showSessionSummary();
   else showQuestion();
 }
 
 function answerQuestion(button, answer) {
   if (isPaused || isSpeaking || button.disabled || pendingCorrectTransition || isRevealingCorrectAnswer) return;
-  if (answer === currentQuestion.correct) handleCorrectAnswer(button);
+  const isCorrect = answer === currentQuestion.correct;
+  const eventPayload = { eventId: currentQuestionInstanceId, categoryId: currentQuestion.category, correct: isCorrect };
+  recordDailyMissionEvent("questionAnswered", eventPayload);
+  recordDailyMissionEvent("categoryQuestionAnswered", eventPayload);
+  if ((currentQuestion.promptLanguage ?? ENGLISH_LANGUAGE).toLowerCase().startsWith("en")) recordDailyMissionEvent("englishQuestionAnswered", eventPayload);
+  if (isCorrect) handleCorrectAnswer(button);
   else handleWrongAnswer(button);
 }
 
@@ -5061,6 +5328,7 @@ function startLearningPathStage(stageId) {
   const stage = learningPathModel.stageById(stageId);
   const progress = loadLearningPathProgress();
   if (!engine || !stage || !learningPathModel.canLaunchStage(stage.id, progress)) return;
+  activeLearningPathMissionSessionId = `path-${stage.id}-${++gameplayEventSequence}`;
   if (numberLearning.PLAYABLE_STAGE_IDS.includes(stage.id)) {
     startNumberLearningStage(stage);
     return;
@@ -5183,8 +5451,11 @@ async function replayCurrentQuestion() {
   if (isPaused || !currentQuestion || pendingCorrectTransition || isRevealingCorrectAnswer) return;
   clearSpeech();
   const run = audioRun;
-  await speech.replay(currentQuestion.questionPrompt ?? currentQuestion.prompt, currentQuestion.promptLanguage ?? ENGLISH_LANGUAGE);
-  if (isActiveAudio(run)) setInputEnabled(true);
+  const replayed = await speech.replay(currentQuestion.questionPrompt ?? currentQuestion.prompt, currentQuestion.promptLanguage ?? ENGLISH_LANGUAGE);
+  if (isActiveAudio(run)) {
+    if (replayed) recordDailyMissionEvent("replayUsed", { eventId: currentQuestionInstanceId, targetId: currentQuestionInstanceId });
+    setInputEnabled(true);
+  }
 }
 
 function goHome(shouldSpeak = true, destination = "home") {
@@ -5216,11 +5487,7 @@ function goHome(shouldSpeak = true, destination = "home") {
   });
   stopPlayTime();
   clearSavedProgress();
-  isBalloonBonusActive = false;
-  window.clearTimeout(balloonBonusTimer);
-  window.clearTimeout(balloonPopTimer);
-  clearBalloonAnimationTimers();
-  pendingBonusEnd = false;
+  cancelManagedBonus();
   isWelcomeSequenceActive = false;
   isRevealingCorrectAnswer = false;
   pendingCorrectTransition = false;
@@ -5355,6 +5622,10 @@ function showPrimaryView(viewName, { focus = true } = {}) {
   ui.shell.classList.toggle("learning-path-open", resolvedViewName === "learning-path");
   view.classList.remove("hidden");
   activePrimaryView = resolvedViewName;
+  if (resolvedViewName === "home") {
+    ensureDailyGoal();
+    renderDailyGoal();
+  }
   window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   if (focus) getPrimaryViewHeading(resolvedViewName)?.focus({ preventScroll: true });
 }
@@ -5472,6 +5743,7 @@ ui.sortingHome.addEventListener("click", () => leaveGameFor("games"));
 ui.newMiniGameHome.addEventListener("click", () => leaveGameFor("games"));
 ui.newMiniGameCompletionHome.addEventListener("click", () => leaveGameFor("games"));
 ui.balloonHome.addEventListener("click", () => leaveGameFor("home"));
+ui.bonusContinue.addEventListener("click", () => finishManagedBonus(true));
 ui.matchingReplay.addEventListener("click", replayMatchingWithNewCategory);
 ui.matchingCategories.addEventListener("click", showMatchingCategorySelection);
 ui.matchingPause.addEventListener("click", pauseGame);
@@ -5548,6 +5820,8 @@ document.addEventListener("fullscreenchange", updateFullscreenButton);
 document.addEventListener("webkitfullscreenchange", updateFullscreenButton);
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible") {
+    ensureDailyGoal();
+    if (activePrimaryView === "home") renderDailyGoal();
     requestWakeLock();
     if (isMatchingGameActive && !isPaused) startMatchingTimer();
   } else {
@@ -5557,6 +5831,7 @@ document.addEventListener("visibilitychange", () => {
 });
 window.addEventListener("pagehide", () => {
   clearSpeech();
+  cancelManagedBonus();
   stopWakeLock();
 });
 document.addEventListener("pointerdown", event => {

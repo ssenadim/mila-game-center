@@ -27,7 +27,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=8.4" />
+    <link rel="stylesheet" href="styles.css?v=8.5.4" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -80,9 +80,9 @@
           <strong id="selected-player-summary" role="status">Henüz bir oyuncu seçilmedi</strong>
           <button id="home-player-change-button" class="compact-action-button" type="button">Oyuncu Değiştir</button>
         </section>
-        <section id="daily-goal-card" class="daily-goal-card hidden" aria-live="polite">
-          <span class="daily-goal-icon" aria-hidden="true">☀️</span>
-          <div><strong>Günün Görevi</strong><p id="daily-goal-title"></p><span id="daily-goal-progress"></span></div>
+        <section id="daily-goal-card" class="daily-goal-card hidden" aria-labelledby="daily-goal-title">
+          <div class="daily-mission-heading"><strong id="daily-goal-title">☀️ Günün Görevleri</strong><span id="daily-goal-progress">0 / 3 tamamlandı</span></div>
+          <div id="daily-mission-list" class="daily-mission-list"></div>
         </section>
         <div class="home-navigation-grid" aria-label="Oyun Merkezi bölümleri">
           <button class="home-navigation-card learn-card" type="button" data-home-target="learning"><strong>🧭 Öğren</strong><span>Yeni şeyler keşfet</span></button>
@@ -400,13 +400,15 @@
         </div>
       </section>
 
-      <section id="balloon-bonus" class="screen balloon-bonus hidden" aria-live="polite" aria-labelledby="balloon-title">
+      <section id="balloon-bonus" class="screen balloon-bonus hidden" aria-labelledby="balloon-title">
         <button id="bonus-home-button" class="game-destination-button bonus-home-button" type="button">⌂ Ana Sayfa</button>
         <button id="bonus-pause-button" class="icon-button bonus-pause-button" type="button" aria-label="Oyunu duraklat">⏸</button>
-        <p class="eyebrow">BALON BONUSU</p>
-        <h2 id="balloon-title">Balonu patlat!</h2>
-        <p id="balloon-target" class="balloon-target">Pop Apple.</p>
-        <div id="balloons" class="balloons" aria-label="Balonlar"></div>
+        <p id="bonus-eyebrow" class="eyebrow">KISA BONUS</p>
+        <h2 id="balloon-title" tabindex="-1">Balon Bonusu</h2>
+        <p id="balloon-target" class="balloon-target">Hazır mısın?</p>
+        <div id="balloons" class="bonus-activity" aria-label="Bonus etkinliği"></div>
+        <p id="bonus-feedback" class="bonus-feedback" role="status" aria-live="polite"></p>
+        <button id="bonus-continue-button" class="primary-button hidden" type="button">Devam Et</button>
       </section>
 
       <div id="reward-popup" class="reward-popup hidden" role="status" aria-live="polite">
@@ -419,7 +421,7 @@
         <strong id="achievement-popup-title"></strong>
       </div>
       <div id="daily-goal-popup" class="daily-goal-popup hidden" role="status" aria-live="polite">
-        <span aria-hidden="true">☀️</span><strong>Günün Görevi Tamamlandı!</strong>
+        <span aria-hidden="true">☀️</span><strong id="daily-goal-popup-title">Günün görevi tamamlandı!</strong>
       </div>
       <section id="world-theme-panel" class="world-theme-modal hidden" role="dialog" aria-modal="true" aria-labelledby="world-theme-title" aria-describedby="world-theme-guidance">
         <div class="world-theme-panel">
@@ -502,7 +504,9 @@
     <script src="js/LearningPath.js?v=8.3.6"></script>
     <script src="js/NumberLearning.js?v=8.3.5.3"></script>
     <script src="js/WorldThemes.js?v=1"></script>
+    <script src="js/DailyMissions.js?v=8.5.1"></script>
+    <script src="js/BonusManager.js?v=8.5.3"></script>
     <script src="data/offline-data.js"></script>
-    <script src="app.js?v=8.4"></script>
+    <script src="app.js?v=8.5.3"></script>
   </body>
 </html>
