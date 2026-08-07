@@ -27,7 +27,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=8.3.5.3" />
+    <link rel="stylesheet" href="styles.css?v=8.4" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -441,8 +441,8 @@
       </section>
       <section id="parent-dashboard" class="parent-dashboard hidden" role="dialog" aria-modal="true" aria-labelledby="parent-dashboard-title">
         <div class="parent-dashboard-card">
-          <button id="parent-dashboard-close" class="parent-dashboard-close" type="button" aria-label="Close parent mode">×</button>
-          <p class="eyebrow">EBEVEYN MODU</p>
+          <button id="parent-dashboard-close" class="parent-dashboard-close" type="button" aria-label="Ayarları kapat">×</button>
+          <p class="eyebrow">AYARLAR VE EBEVEYN ÖZETİ</p>
           <h2 id="parent-dashboard-title">Öğrenme özeti</h2>
           <div class="parent-stats">
             <p><span>Oyun süresi</span><strong id="parent-play-time">0 dk</strong></p>
@@ -452,6 +452,22 @@
             <p><span>En iyi seri</span><strong id="parent-streak">0</strong></p>
           </div>
           <div class="parent-difficult"><span>Birlikte tekrar edilebilecek kelimeler</span><strong id="parent-difficult-words">Henüz yok</strong></div>
+          <section class="audio-settings" aria-labelledby="audio-settings-title">
+            <h3 id="audio-settings-title">🔊 Ses</h3>
+            <p id="speech-unsupported-message" class="audio-support-message hidden">Bu tarayıcı sesli yönergeleri desteklemiyor. Oyun görsel olarak kullanılabilir.</p>
+            <div class="audio-setting-grid">
+              <label class="audio-setting-row" for="speech-enabled-setting"><span>Sesli Yönergeler</span><select id="speech-enabled-setting"><option value="true">Açık</option><option value="false">Kapalı</option></select></label>
+              <label class="audio-setting-row" for="speech-rate-setting"><span>Konuşma Hızı</span><select id="speech-rate-setting"><option value="slow">Yavaş</option><option value="normal">Normal</option><option value="fast">Hızlı</option></select></label>
+              <label id="turkish-voice-row" class="audio-setting-row" for="turkish-voice-setting"><span>Türkçe Ses</span><select id="turkish-voice-setting"><option value="auto">Otomatik</option></select></label>
+              <label id="english-voice-row" class="audio-setting-row" for="english-voice-setting"><span>İngilizce Ses</span><select id="english-voice-setting"><option value="auto">Otomatik</option></select></label>
+              <label class="audio-setting-row" for="sound-effects-setting"><span>Oyun Sesleri</span><select id="sound-effects-setting"><option value="true">Açık</option><option value="false">Kapalı</option></select></label>
+              <label class="audio-setting-row" for="audio-volume-setting"><span>Ses Seviyesi</span><select id="audio-volume-setting"><option value="low">Düşük</option><option value="normal">Normal</option><option value="high">Yüksek</option></select></label>
+            </div>
+            <div class="audio-preview-actions">
+              <button id="turkish-voice-preview" class="sound-button" type="button">🔊 Türkçe Sesi Dene</button>
+              <button id="english-voice-preview" class="sound-button" type="button">🔊 İngilizce Sesi Dene</button>
+            </div>
+          </section>
         </div>
       </section>
       <section id="achievements-modal" class="achievements-modal hidden" role="dialog" aria-modal="true" aria-labelledby="achievements-modal-title">
@@ -475,8 +491,8 @@
       </section>
     </main>
     <script src="js/utils/random.js"></script>
-    <script src="js/services/SpeechService.js"></script>
-    <script src="js/services/AudioHelper.js"></script>
+    <script src="js/services/SpeechService.js?v=8.4"></script>
+    <script src="js/services/AudioHelper.js?v=8.4"></script>
     <script src="js/services/AnimationHelper.js?v=6.6"></script>
     <script src="js/QuestionEngine.js?v=6.4"></script>
     <script src="js/NewMiniGames.js?v=8.1"></script>
@@ -487,6 +503,6 @@
     <script src="js/NumberLearning.js?v=8.3.5.3"></script>
     <script src="js/WorldThemes.js?v=1"></script>
     <script src="data/offline-data.js"></script>
-    <script src="app.js?v=8.3.5.3"></script>
+    <script src="app.js?v=8.4"></script>
   </body>
 </html>
