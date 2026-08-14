@@ -455,9 +455,47 @@
       </section>
       <section id="parent-dashboard" class="parent-dashboard hidden" role="dialog" aria-modal="true" aria-labelledby="parent-dashboard-title">
         <div class="parent-dashboard-card">
-          <button id="parent-dashboard-close" class="parent-dashboard-close" type="button" aria-label="Ayarları kapat">×</button>
+          <button id="parent-dashboard-close" class="parent-dashboard-close" type="button" aria-label="Ebeveyn Alanını kapat">×</button>
+          <section id="parent-gate" class="parent-gate" aria-labelledby="parent-dashboard-title">
+            <p class="eyebrow">⚙️ AYARLAR</p>
+            <h2 id="parent-dashboard-title" tabindex="-1">👨‍👩‍👧 Ebeveyn Alanı</h2>
+            <p>Devam etmek için işlemi çözün.</p>
+            <strong id="parent-gate-question" class="parent-gate-question"></strong>
+            <label for="parent-gate-answer">Cevap</label>
+            <input id="parent-gate-answer" type="number" inputmode="numeric" autocomplete="off" />
+            <p id="parent-gate-status" class="parent-gate-status" role="status"></p>
+            <div class="parent-gate-actions"><button id="parent-gate-submit" class="primary-button" type="button">Devam Et</button><button id="parent-gate-cancel" class="sound-button" type="button">Vazgeç</button></div>
+          </section>
+          <div id="parent-dashboard-content" class="parent-dashboard-content hidden">
+            <header class="parent-experience-header">
+              <div><p class="eyebrow">EBEVEYN ALANI</p><h2 id="parent-experience-title" tabindex="-1">Öğrenme Özeti</h2></div>
+              <div class="parent-player-summary"><strong id="parent-player-name">👤 Oyuncu</strong><button id="parent-change-player" class="compact-action-button" type="button">Oyuncu Değiştir</button></div>
+            </header>
+            <nav class="parent-tabs" aria-label="Ebeveyn Alanı bölümleri">
+              <button type="button" data-parent-tab="overview" aria-selected="true">Genel Bakış</button><button type="button" data-parent-tab="path" aria-selected="false">Öğrenme Yolu</button><button type="button" data-parent-tab="activities" aria-selected="false">Etkinlikler</button><button type="button" data-parent-tab="review" aria-selected="false">Birlikte Tekrar</button><button type="button" data-parent-tab="rewards" aria-selected="false">Kazandıkları</button><button type="button" data-parent-tab="preferences" aria-selected="false">Tercihler</button><button type="button" data-parent-tab="data" aria-selected="false">Veriler</button>
+            </nav>
+            <div class="parent-panel-wrap">
+              <section class="parent-panel" data-parent-panel="overview" tabindex="-1">
+                <div class="parent-period-switch" role="group" aria-label="Özet dönemi"><button type="button" data-parent-period="today" aria-pressed="true">Bugün</button><button type="button" data-parent-period="week" aria-pressed="false">Son 7 Gün</button></div>
+                <div class="parent-stats"><p><span>Oyun Süresi</span><strong id="parent-overview-play-time">0 dk</strong></p><p><span>Cevaplanan Sorular</span><strong id="parent-overview-questions">0</strong></p><p><span>Doğru Cevaplar</span><strong id="parent-overview-correct">0</strong></p><p><span>Öğrenme Yolu</span><strong id="parent-path-progress">0 / 0 bölüm</strong></p><p><span>Mini Oyunlar</span><strong id="parent-mini-games">0</strong></p><p><span>Yıldızlar</span><strong id="parent-stars">0</strong></p></div>
+                <div class="parent-overview-grid"><div><h3>En çok oynadığı alanlar</h3><div id="parent-top-activities" class="parent-simple-list"></div></div><div><h3>Son 7 gün</h3><div id="parent-week-grid" class="parent-week-grid"></div></div></div><p id="parent-history-note" class="parent-history-note"></p>
+              </section>
+              <section class="parent-panel hidden" data-parent-panel="path" tabindex="-1"><h3>🗺️ Öğrenme Yolu</h3><p>Tamamlanan ve sıradaki oynanabilir bölümler.</p><div id="parent-path-groups" class="parent-path-groups"></div></section>
+              <section class="parent-panel hidden" data-parent-panel="activities" tabindex="-1"><h3>🎮 Etkinlikler</h3><div id="parent-activity-summary" class="parent-simple-list"></div><h3>Son tamamlananlar</h3><div id="parent-recent-activities" class="parent-simple-list"></div></section>
+              <section class="parent-panel hidden" data-parent-panel="review" tabindex="-1"><h3>❤️ Birlikte Tekrar Edelim</h3><p>Birden fazla oyunda destek gerektiren ve birlikte tekrar edilebilecek alanlar.</p><div id="parent-review-suggestions" class="parent-review-list"></div></section>
+              <section class="parent-panel hidden" data-parent-panel="rewards" tabindex="-1"><h3>🏆 Kazandıkları</h3><div class="parent-stats parent-reward-stats"><p><span>Yıldızlar</span><strong id="parent-reward-stars">0</strong></p><p><span>Stickerlar</span><strong id="parent-sticker-count">0</strong></p><p><span>Rozetler</span><strong id="parent-achievement-count">0</strong></p></div><div id="parent-daily-missions" class="parent-simple-list"></div><button id="parent-open-rewards" class="compact-action-button" type="button">Ödül Odasını Aç</button></section>
+              <section class="parent-panel hidden" data-parent-panel="preferences" tabindex="-1"><h3>⚙️ Uygulama Tercihleri</h3><div id="parent-audio-settings-slot"></div><div class="parent-preference-grid"><div><span>🎨 Oyun Dünyası</span><strong id="parent-world-theme">Güneşli Dünya</strong><button id="parent-change-world" class="compact-action-button" type="button">Dünyayı Değiştir</button></div><label for="parent-break-reminder"><span>🌿 Oyun Hatırlatıcısı</span><select id="parent-break-reminder"><option value="0">Kapalı</option><option value="15">15 dakika</option><option value="20">20 dakika</option><option value="30">30 dakika</option></select></label></div></section>
+              <section class="parent-panel hidden" data-parent-panel="data" tabindex="-1">
+                <h3>🔒 Veriler ve Gizlilik</h3><p>İlerleme bu cihazdaki tarayıcıda saklanır. Hesap gerekmez ve bu özellik verileri yüklemez. Tarayıcı verilerini temizlemek yerel ilerlemeyi silebilir.</p>
+                <div class="parent-data-actions"><button id="parent-export-data" class="compact-action-button" type="button">📦 İlerlemeyi Dışa Aktar</button><label class="compact-action-button parent-import-label" for="parent-import-file">📥 İlerlemeyi Geri Yükle</label><input id="parent-import-file" class="sr-only" type="file" accept="application/json,.json" /></div><p id="parent-data-status" class="parent-data-status" role="status"></p>
+                <div id="parent-import-confirm" class="parent-confirm-box hidden"><p>Bu yedek mevcut oyun ilerlemesini değiştirecek.</p><button id="parent-import-apply" class="primary-button" type="button">Geri Yükle</button><button id="parent-import-cancel" class="sound-button" type="button">Vazgeç</button></div>
+                <div class="parent-danger-zone"><h3>Oyuncu ilerlemesi</h3><p id="parent-reset-copy"></p><button id="parent-reset-start" class="danger-button" type="button">🗑️ Oyuncu İlerlemesini Sıfırla</button><div id="parent-reset-confirm" class="parent-confirm-box hidden"><p id="parent-reset-confirm-copy"></p><button id="parent-reset-apply" class="danger-button" type="button"></button><button id="parent-reset-cancel" class="sound-button" type="button">Vazgeç</button></div></div>
+              </section>
+            </div>
+          </div>
+          <div class="parent-legacy-content hidden">
           <p class="eyebrow">AYARLAR VE EBEVEYN ÖZETİ</p>
-          <h2 id="parent-dashboard-title">Öğrenme özeti</h2>
+          <h2 id="parent-legacy-title">Öğrenme özeti</h2>
           <div class="parent-stats">
             <p><span>Oyun süresi</span><strong id="parent-play-time">0 dk</strong></p>
             <p><span>Cevaplanan soru</span><strong id="parent-questions">0</strong></p>
@@ -482,7 +520,11 @@
               <button id="english-voice-preview" class="sound-button" type="button">🔊 İngilizce Sesi Dene</button>
             </div>
           </section>
+          </div>
         </div>
+      </section>
+      <section id="break-reminder" class="break-reminder hidden" role="dialog" aria-modal="true" aria-labelledby="break-reminder-title">
+        <div class="break-reminder-card"><span aria-hidden="true">🌿</span><h2 id="break-reminder-title" tabindex="-1">Biraz dinlenmeye ne dersin?</h2><p>İstersen biraz ara verip sonra devam edebilirsin.</p><div><button id="break-reminder-home" class="primary-button" type="button">Ara Ver</button><button id="break-reminder-continue" class="sound-button" type="button">Oynamaya Devam Et</button></div></div>
       </section>
       <section id="achievements-modal" class="achievements-modal hidden" role="dialog" aria-modal="true" aria-labelledby="achievements-modal-title">
         <div class="achievements-modal-card">
@@ -519,6 +561,7 @@
     <script src="js/WorldThemes.js?v=1"></script>
     <script src="js/DailyMissions.js?v=8.5.1"></script>
     <script src="js/BonusManager.js?v=8.5.3"></script>
+    <script src="js/ParentExperience.js?v=7.0"></script>
     <script src="data/offline-data.js"></script>
     <script src="app.js?v=9.0"></script>
   </body>
