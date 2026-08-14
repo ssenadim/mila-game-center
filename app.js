@@ -3268,7 +3268,7 @@ function renderParentPreferences() {
   const audioSettings = document.querySelector(".audio-settings");
   if (audioSettings && audioSettings.parentElement !== ui.parentAudioSettingsSlot) ui.parentAudioSettingsSlot.append(audioSettings);
   renderAudioSettings();
-  ui.parentWorldTheme.textContent = worldThemeManager.getTheme()?.title || "Güneşli Dünya";
+  ui.parentWorldTheme.textContent = worldThemeManager.getTheme()?.name || "Güneşli Dünya";
   ui.parentBreakReminder.value = String(parentSettings.breakReminderMinutes);
 }
 

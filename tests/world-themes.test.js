@@ -104,6 +104,8 @@ test("global control, accessible dialog, all option rendering and focus lifecycl
   assert.match(html, /id="world-theme-panel"[\s\S]*role="dialog"[\s\S]*aria-modal="true"/);
   assert.match(html, /id="world-theme-close"[\s\S]*aria-label="Oyun Dünyası seçimini kapat"/);
   assert.match(app, /WORLD_THEMES\.forEach/);
+  assert.match(app, /parentWorldTheme\.textContent = worldThemeManager\.getTheme\(\)\?\.name/);
+  assert.doesNotMatch(app, /parentWorldTheme\.textContent = worldThemeManager\.getTheme\(\)\?\.title/);
   assert.match(app, /button\.type = "button"/);
   assert.match(app, /setAttribute\("aria-pressed"/);
   assert.match(app, /worldThemeClose\.focus/);
