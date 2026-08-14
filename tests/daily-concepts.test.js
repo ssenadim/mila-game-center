@@ -178,7 +178,7 @@ test("focused UI wires speech, retry, pause, cleanup, keyboard/tap and responsiv
   const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
   const app = fs.readFileSync(path.join(root, "app.js"), "utf8");
   const css = fs.readFileSync(path.join(root, "styles.css"), "utf8");
-  assert.match(html, /js\/DailyConcepts\.js\?v=8\.3\.5\.2/);
+  assert.match(html, /js\/DailyConcepts\.js\?v=1\.0\.0/);
   assert.match(html, /id="logic-attention-feedback"[^>]*role="status"[^>]*aria-live="polite"/);
   assert.match(app, /dailyConcepts\.STAGE_IDS\.includes\(stage\.id\)/);
   assert.match(app, /clearSpeech\(\)[\s\S]*speech\.speakPrompt\(logicAttentionState\.round\.speech, TURKISH_LANGUAGE\)/);

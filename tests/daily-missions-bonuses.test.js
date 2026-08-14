@@ -254,8 +254,8 @@ test("application wires mission manager and all five bonus interactions without 
   const app = fs.readFileSync(path.join(root, "app.js"), "utf8");
   const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
   const css = fs.readFileSync(path.join(root, "styles.css"), "utf8");
-  assert.match(html, /js\/DailyMissions\.js\?v=8\.5/);
-  assert.match(html, /js\/BonusManager\.js\?v=8\.5/);
+  assert.match(html, /js\/DailyMissions\.js\?v=1\.0\.0/);
+  assert.match(html, /js\/BonusManager\.js\?v=1\.0\.0/);
   assert.doesNotMatch(app, /BONUS_CORRECT_ANSWER_INTERVAL|updateDailyGoalOnBonusComplete/);
   ["collectBonusStar", "chooseTreasure", "chooseQuickMatchCard", "chooseColorPop", "popBalloon"].forEach(name => assert.match(app, new RegExp(`function ${name}`)));
   assert.match(app, /bonusManager\.takePending\(\{ safe: bonusBoundarySafe \}\)/);

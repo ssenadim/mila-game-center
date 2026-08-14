@@ -27,7 +27,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=9.0" />
+    <link rel="stylesheet" href="styles.css?v=1.0.0" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -486,7 +486,7 @@
               <section class="parent-panel hidden" data-parent-panel="rewards" tabindex="-1"><h3>🏆 Kazandıkları</h3><div class="parent-stats parent-reward-stats"><p><span>Yıldızlar</span><strong id="parent-reward-stars">0</strong></p><p><span>Stickerlar</span><strong id="parent-sticker-count">0</strong></p><p><span>Rozetler</span><strong id="parent-achievement-count">0</strong></p></div><div id="parent-daily-missions" class="parent-simple-list"></div><button id="parent-open-rewards" class="compact-action-button" type="button">Ödül Odasını Aç</button></section>
               <section class="parent-panel hidden" data-parent-panel="preferences" tabindex="-1"><h3>⚙️ Uygulama Tercihleri</h3><div id="parent-audio-settings-slot"></div><div class="parent-preference-grid"><div><span>🎨 Oyun Dünyası</span><strong id="parent-world-theme">Güneşli Dünya</strong><button id="parent-change-world" class="compact-action-button" type="button">Dünyayı Değiştir</button></div><label for="parent-break-reminder"><span>🌿 Oyun Hatırlatıcısı</span><select id="parent-break-reminder"><option value="0">Kapalı</option><option value="15">15 dakika</option><option value="20">20 dakika</option><option value="30">30 dakika</option></select></label></div></section>
               <section class="parent-panel hidden" data-parent-panel="data" tabindex="-1">
-                <h3>🔒 Veriler ve Gizlilik</h3><p>İlerleme bu cihazdaki tarayıcıda saklanır. Hesap gerekmez ve bu özellik verileri yüklemez. Tarayıcı verilerini temizlemek yerel ilerlemeyi silebilir.</p>
+                <h3>🔒 Veriler ve Gizlilik</h3><p>Çocuk profili ve oyun ilerlemesi bu tarayıcıda saklanır ve uygulamanın bu özelliği tarafından bir sunucuya gönderilmez. Tarayıcı verilerini temizlemek yerel ilerlemeyi silebilir.</p><p class="parent-history-note">Sürüm 1.0.0</p>
                 <div class="parent-data-actions"><button id="parent-export-data" class="compact-action-button" type="button">📦 İlerlemeyi Dışa Aktar</button><label class="compact-action-button parent-import-label" for="parent-import-file">📥 İlerlemeyi Geri Yükle</label><input id="parent-import-file" class="sr-only" type="file" accept="application/json,.json" /></div><p id="parent-data-status" class="parent-data-status" role="status"></p>
                 <div id="parent-import-confirm" class="parent-confirm-box hidden"><p>Bu yedek mevcut oyun ilerlemesini değiştirecek.</p><button id="parent-import-apply" class="primary-button" type="button">Geri Yükle</button><button id="parent-import-cancel" class="sound-button" type="button">Vazgeç</button></div>
                 <div class="parent-danger-zone"><h3>Oyuncu ilerlemesi</h3><p id="parent-reset-copy"></p><button id="parent-reset-start" class="danger-button" type="button">🗑️ Oyuncu İlerlemesini Sıfırla</button><div id="parent-reset-confirm" class="parent-confirm-box hidden"><p id="parent-reset-confirm-copy"></p><button id="parent-reset-apply" class="danger-button" type="button"></button><button id="parent-reset-cancel" class="sound-button" type="button">Vazgeç</button></div></div>
@@ -547,22 +547,22 @@
         </div>
       </section>
     </main>
-    <script src="js/utils/random.js"></script>
-    <script src="js/services/SpeechService.js?v=9.0"></script>
-    <script src="js/services/AudioHelper.js?v=8.4"></script>
-    <script src="js/services/AnimationHelper.js?v=9.0"></script>
-    <script src="js/QuestionEngine.js?v=6.4"></script>
-    <script src="js/NewMiniGames.js?v=8.1"></script>
-    <script src="js/LearningCategories.js?v=8.2"></script>
-    <script src="js/LogicAttention.js?v=8.3.5.1"></script>
-    <script src="js/DailyConcepts.js?v=8.3.5.2"></script>
-    <script src="js/LearningPath.js?v=8.3.6"></script>
-    <script src="js/NumberLearning.js?v=8.3.5.3"></script>
-    <script src="js/WorldThemes.js?v=1"></script>
-    <script src="js/DailyMissions.js?v=8.5.1"></script>
-    <script src="js/BonusManager.js?v=8.5.3"></script>
-    <script src="js/ParentExperience.js?v=7.0"></script>
-    <script src="data/offline-data.js"></script>
-    <script src="app.js?v=9.0"></script>
+    <script src="js/utils/random.js?v=1.0.0"></script>
+    <script src="js/services/SpeechService.js?v=1.0.0"></script>
+    <script src="js/services/AudioHelper.js?v=1.0.0"></script>
+    <script src="js/services/AnimationHelper.js?v=1.0.0"></script>
+    <script src="js/QuestionEngine.js?v=1.0.0"></script>
+    <script src="js/NewMiniGames.js?v=1.0.0"></script>
+    <script src="js/LearningCategories.js?v=1.0.0"></script>
+    <script src="js/LogicAttention.js?v=1.0.0"></script>
+    <script src="js/DailyConcepts.js?v=1.0.0"></script>
+    <script src="js/LearningPath.js?v=1.0.0"></script>
+    <script src="js/NumberLearning.js?v=1.0.0"></script>
+    <script src="js/WorldThemes.js?v=1.0.0"></script>
+    <script src="js/DailyMissions.js?v=1.0.0"></script>
+    <script src="js/BonusManager.js?v=1.0.0"></script>
+    <script src="js/ParentExperience.js?v=1.0.0"></script>
+    <script src="data/offline-data.js?v=1.0.0"></script>
+    <script src="app.js?v=1.0.0"></script>
   </body>
 </html>

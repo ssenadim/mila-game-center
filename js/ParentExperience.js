@@ -7,6 +7,7 @@
 
   const APP_NAME = "Mila Oyun Merkezi";
   const APP_ID = "mila-oyun-merkezi";
+  const APP_VERSION = "1.0.0";
   const SCHEMA_VERSION = 1;
   const SETTINGS_STORAGE_KEY = "mila-learning-parent-settings";
   const MAX_RECENT_ACTIVITIES = 10;
@@ -352,7 +353,7 @@
       const key = storage.key(index);
       if (key && isExportableKey(key)) applicationData[key] = storage.getItem(key);
     }
-    return { app: APP_NAME, appId: APP_ID, schemaVersion: SCHEMA_VERSION, exportedAt: now.toISOString(), applicationData };
+    return { app: APP_NAME, appId: APP_ID, appVersion: APP_VERSION, schemaVersion: SCHEMA_VERSION, exportedAt: now.toISOString(), applicationData };
   }
 
   function validateStoredValue(key, rawValue, validators = {}) {
@@ -388,6 +389,7 @@
 
   function validateBackup(value, validators = {}) {
     if (!isPlainObject(value) || value.app !== APP_NAME || value.appId !== APP_ID || value.schemaVersion !== SCHEMA_VERSION || !isPlainObject(value.applicationData)) return { valid: false };
+    if (value.appVersion !== undefined && (typeof value.appVersion !== "string" || !/^\d+\.\d+\.\d+$/.test(value.appVersion))) return { valid: false };
     const entries = Object.entries(value.applicationData);
     if (entries.length > 300 || entries.some(([key, raw]) => !isExportableKey(key) || !validateStoredValue(key, raw, validators))) return { valid: false };
     return { valid: true, applicationData: Object.fromEntries(entries) };
@@ -436,7 +438,7 @@
   }
 
   return {
-    APP_NAME, APP_ID, SCHEMA_VERSION, SETTINGS_STORAGE_KEY, MAX_RECENT_ACTIVITIES, MAX_DAILY_RECORDS,
+    APP_NAME, APP_ID, APP_VERSION, SCHEMA_VERSION, SETTINGS_STORAGE_KEY, MAX_RECENT_ACTIVITIES, MAX_DAILY_RECORDS,
     MAX_PROCESSED_EVENTS, MAX_REVIEW_CONCEPTS, ALLOWED_REMINDER_MINUTES, PLAYER_SCOPED_BASE_KEYS,
     isPlainObject, localDateKey, recentDateKeys, normalizeDailyEntry, pruneDailyMap, createDefaultParentData,
     normalizeParentData, recordQuestionEvent, recordCompletionEvent, recordActiveTime, getPeriodSummary,

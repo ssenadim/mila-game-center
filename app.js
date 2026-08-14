@@ -1,4 +1,5 @@
-const DATA_INDEX_URL = "./data/index.json";
+const APP_VERSION = "1.0.0";
+const DATA_INDEX_URL = `./data/index.json?v=${APP_VERSION}`;
 const SESSION_QUESTION_COUNT = 20;
 const QUESTION_DELAY = 800;
 const CHOICE_DELAY = 450;
@@ -428,14 +429,27 @@ function getPlayerStorageKey(storageKey, playerName = selectedPlayer) {
   return playerName ? `${storageKey}-${encodeURIComponent(playerName)}` : undefined;
 }
 
-function loadLearningPathProgress() {
+const warnedStorageKeys = new Set();
+
+function readStoredJson(storageKey, fallback) {
+  if (!storageKey) return fallback;
   try {
-    const storageKey = getPlayerStorageKey(LEARNING_PATH_PROGRESS_STORAGE_KEY);
-    const savedData = storageKey ? JSON.parse(window.localStorage.getItem(storageKey)) : undefined;
-    return learningPathModel.normalizeProgress(savedData);
+    const rawValue = window.localStorage.getItem(storageKey);
+    if (rawValue === null) return fallback;
+    return JSON.parse(rawValue);
   } catch {
-    return { completed: {} };
+    const baseKey = storageKey.split("-").slice(0, 3).join("-");
+    if (!warnedStorageKeys.has(baseKey)) {
+      warnedStorageKeys.add(baseKey);
+      console.warn("[Depolama] Geçersiz kaydedilmiş veri güvenli varsayılanla açıldı.");
+    }
+    return fallback;
   }
+}
+
+function loadLearningPathProgress() {
+  const storageKey = getPlayerStorageKey(LEARNING_PATH_PROGRESS_STORAGE_KEY);
+  return learningPathModel.normalizeProgress(readStoredJson(storageKey));
 }
 
 function saveLearningPathProgress(progress) {
@@ -644,13 +658,9 @@ function migratePlayerProgress() {
 }
 
 function loadAchievementData() {
-  try {
-    const storageKey = getPlayerStorageKey(ACHIEVEMENT_STORAGE_KEY);
-    const savedData = storageKey ? JSON.parse(window.localStorage.getItem(storageKey)) : undefined;
-    return savedData && typeof savedData === "object" && !Array.isArray(savedData) && savedData.unlocked && typeof savedData.unlocked === "object" && !Array.isArray(savedData.unlocked) ? { unlocked: savedData.unlocked } : { unlocked: {} };
-  } catch {
-    return { unlocked: {} };
-  }
+  const storageKey = getPlayerStorageKey(ACHIEVEMENT_STORAGE_KEY);
+  const savedData = readStoredJson(storageKey);
+  return savedData && typeof savedData === "object" && !Array.isArray(savedData) && savedData.unlocked && typeof savedData.unlocked === "object" && !Array.isArray(savedData.unlocked) ? { unlocked: savedData.unlocked } : { unlocked: {} };
 }
 
 function saveAchievementData() {
@@ -936,13 +946,9 @@ function renderAchievements() {
 }
 
 function getSavedStickers() {
-  try {
-    const storageKey = getPlayerStorageKey(STICKER_STORAGE_KEY);
-    const savedStickers = storageKey ? JSON.parse(window.localStorage.getItem(storageKey) ?? "[]") : [];
-    return Array.isArray(savedStickers) ? savedStickers : [];
-  } catch {
-    return [];
-  }
+  const storageKey = getPlayerStorageKey(STICKER_STORAGE_KEY);
+  const savedStickers = readStoredJson(storageKey, []);
+  return Array.isArray(savedStickers) ? savedStickers.filter(sticker => STICKERS.includes(sticker)).slice(0, STICKERS.length) : [];
 }
 
 function renderRewardsRoom() {
@@ -1131,18 +1137,13 @@ function restoreCategoryPack() {
   activeCategoryPack = "mixed";
   customCategories = [];
   activeCategoryGroup = learningCategories.GROUPS[0].id;
-  try {
-    const storageKey = getPlayerStorageKey(CATEGORY_PACK_STORAGE_KEY);
-    const savedPack = storageKey ? JSON.parse(window.localStorage.getItem(storageKey)) : undefined;
-    const availableCategories = getAvailableCategories().map(category => category.category);
-    const validPacks = ["mixed", "words", "colors-shapes", "numbers", "custom"];
-    customCategories = learningCategories.sanitizeSavedSelection(savedPack?.categories).filter(category => availableCategories.includes(category));
-    activeCategoryPack = validPacks.includes(savedPack?.pack) ? savedPack.pack : "mixed";
-    if (!getPackCategories(activeCategoryPack).length) activeCategoryPack = "mixed";
-  } catch {
-    activeCategoryPack = "mixed";
-    customCategories = [];
-  }
+  const storageKey = getPlayerStorageKey(CATEGORY_PACK_STORAGE_KEY);
+  const savedPack = readStoredJson(storageKey);
+  const availableCategories = getAvailableCategories().map(category => category.category);
+  const validPacks = ["mixed", "words", "colors-shapes", "numbers", "custom"];
+  customCategories = learningCategories.sanitizeSavedSelection(savedPack?.categories).filter(category => availableCategories.includes(category));
+  activeCategoryPack = validPacks.includes(savedPack?.pack) ? savedPack.pack : "mixed";
+  if (!getPackCategories(activeCategoryPack).length) activeCategoryPack = "mixed";
 }
 
 function getCategoriesForGroup(groupId) {
@@ -1480,12 +1481,7 @@ function recordMiniGameMissionCompletion(gameId, instanceId = activeMiniGameInst
 }
 
 function getSavedProgress() {
-  try {
-    const storageKey = getPlayerStorageKey(GAME_PROGRESS_STORAGE_KEY);
-    return storageKey ? JSON.parse(window.localStorage.getItem(storageKey)) : undefined;
-  } catch {
-    return undefined;
-  }
+  return readStoredJson(getPlayerStorageKey(GAME_PROGRESS_STORAGE_KEY));
 }
 
 function saveGameProgress(pendingAdvance = false) {
@@ -1526,7 +1522,7 @@ function saveLearningStats() {
 function restoreStoredLearningStats() {
   try {
     const storageKey = getPlayerStorageKey(LEARNING_STATS_STORAGE_KEY);
-    const savedData = storageKey ? JSON.parse(window.localStorage.getItem(storageKey)) : undefined;
+    const savedData = readStoredJson(storageKey);
     engine.learningStats.clear();
     engine.restoreDifficultyState({});
     engine.restoreLearningStats(savedData?.learningStats ?? savedData);
@@ -1572,13 +1568,8 @@ function restoreSavedProgress() {
 }
 
 function loadParentData() {
-  try {
-    const storageKey = getPlayerStorageKey(PARENT_DATA_STORAGE_KEY);
-    const savedData = storageKey ? JSON.parse(window.localStorage.getItem(storageKey)) : undefined;
-    return parentExperience.normalizeParentData(savedData);
-  } catch {
-    return parentExperience.createDefaultParentData();
-  }
+  const storageKey = getPlayerStorageKey(PARENT_DATA_STORAGE_KEY);
+  return parentExperience.normalizeParentData(readStoredJson(storageKey));
 }
 
 function saveParentData() {
@@ -1598,11 +1589,7 @@ function startPlayTime() {
 }
 
 function loadParentSettings() {
-  try {
-    return parentExperience.normalizeParentSettings(JSON.parse(window.localStorage.getItem(parentExperience.SETTINGS_STORAGE_KEY)));
-  } catch {
-    return parentExperience.normalizeParentSettings();
-  }
+  return parentExperience.normalizeParentSettings(readStoredJson(parentExperience.SETTINGS_STORAGE_KEY));
 }
 
 function saveParentSettings() {
@@ -3502,10 +3489,21 @@ async function loadJson(url) {
 
 async function loadQuestionEngine() {
   if (learningCategories?.questions?.length) return new window.MilaQuestionEngine(learningCategories.questions);
-  if (window.location.protocol === "file:") return new window.MilaQuestionEngine(window.MilaOfflineQuestions);
-  const index = await loadJson(DATA_INDEX_URL);
-  const categoryData = await Promise.all(index.files.map(file => loadJson(`./data/${file}`)));
-  return new window.MilaQuestionEngine(categoryData.flat());
+  const createOfflineEngine = () => {
+    if (!Array.isArray(window.MilaOfflineQuestions) || !window.MilaOfflineQuestions.length) throw new Error("Local question data is unavailable");
+    return new window.MilaQuestionEngine(window.MilaOfflineQuestions);
+  };
+  if (window.location.protocol === "file:") return createOfflineEngine();
+  try {
+    const index = await loadJson(DATA_INDEX_URL);
+    const files = Array.isArray(index?.files) ? index.files.filter(file => typeof file === "string" && /^[a-z0-9-]+\.json$/i.test(file)) : [];
+    if (!files.length) return createOfflineEngine();
+    const categoryData = await Promise.all(files.map(file => loadJson(`./data/${file}?v=${APP_VERSION}`)));
+    return new window.MilaQuestionEngine(categoryData.flat());
+  } catch {
+    console.warn("[Başlangıç] Yerel veri dosyaları kullanılamadı; çevrimdışı içerik açıldı.");
+    return createOfflineEngine();
+  }
 }
 
 function createEmptyNumberLearningState() {
@@ -5229,9 +5227,9 @@ function saveSticker(sticker) {
   try {
     const storageKey = getPlayerStorageKey(STICKER_STORAGE_KEY);
     if (!storageKey) return;
-    const savedStickers = JSON.parse(window.localStorage.getItem(storageKey) ?? "[]");
-    const stickers = Array.isArray(savedStickers) ? savedStickers : [];
-    window.localStorage.setItem(storageKey, JSON.stringify([...stickers, sticker]));
+    const savedStickers = readStoredJson(storageKey, []);
+    const stickers = Array.isArray(savedStickers) ? savedStickers.filter(item => STICKERS.includes(item)) : [];
+    window.localStorage.setItem(storageKey, JSON.stringify([...new Set([...stickers, sticker])].slice(0, STICKERS.length)));
   } catch {
     // The game continues when local storage is unavailable.
   }
@@ -6470,19 +6468,39 @@ renderDailyGoal();
 showPrimaryView(selectedPlayer ? "home" : "players", { focus: false });
 document.documentElement.classList.add("app-ready");
 window.addEventListener("load", async () => {
-  [engine] = await Promise.all([gameReady, speech.ready]);
-  worldThemeManager.restore(selectedPlayer);
-  setGameMode(getSavedGameMode());
-  restoreCategoryPack();
-  applyCategoryPack();
-  renderCategoryPackSelection();
-  renderPlayerSelection();
-  ensureDailyGoal();
-  renderDailyGoal();
-  restoreStoredLearningStats();
-  clearSavedProgress();
-  showPrimaryView(selectedPlayer ? "home" : "players", { focus: !selectedPlayer });
-  if (!selectedPlayer) ui.playerGuidance.classList.remove("hidden");
-});
+  try {
+    engine = await gameReady;
+  } catch (error) {
+    console.error("Uygulama içeriği başlatılamadı.", error);
+    ui.start.disabled = true;
+    ui.start.textContent = "Bu bölüm şu anda açılamıyor";
+  }
+  try {
+    await speech.ready;
+  } catch {
+    console.warn("[Ses] Ses sistemi kullanılamıyor; görsel oyun devam ediyor.");
+  }
+  try {
+    worldThemeManager.restore(selectedPlayer);
+    setGameMode(getSavedGameMode());
+    restoreCategoryPack();
+    applyCategoryPack();
+    renderCategoryPackSelection();
+    renderPlayerSelection();
+    ensureDailyGoal();
+    renderDailyGoal();
+    if (engine) restoreStoredLearningStats();
+    clearSavedProgress();
+    showPrimaryView(selectedPlayer ? "home" : "players", { focus: !selectedPlayer });
+    if (!selectedPlayer) ui.playerGuidance.classList.remove("hidden");
+  } catch (error) {
+    console.error("Uygulama başlangıcı tamamlanamadı.", error);
+  }
+  if ("serviceWorker" in navigator && ["http:", "https:"].includes(window.location.protocol)) {
+    navigator.serviceWorker.register(`./sw.js?v=${APP_VERSION}`).catch(() => {
+      console.warn("[Çevrimdışı] Çevrimdışı kullanım hazırlığı tamamlanamadı.");
+    });
+  }
+}, { once: true });
 
 updateFullscreenButton();
