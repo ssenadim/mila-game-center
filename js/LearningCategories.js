@@ -19,6 +19,15 @@
   ];
 
   const wordId = value => value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  const shuffle = (items, random = Math.random) => {
+    const result = [...items];
+    for (let index = result.length - 1; index > 0; index -= 1) {
+      const value = Number(random());
+      const next = Math.min(index, Math.max(0, Math.floor((Number.isFinite(value) ? value : 0) * (index + 1))));
+      [result[index], result[next]] = [result[next], result[index]];
+    }
+    return result;
+  };
   const svg = body => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">${body}</svg>`;
   const colorSvg = color => svg(`<circle cx="60" cy="60" r="47" fill="${color}" stroke="#493a85" stroke-width="5"/>`);
   const shapeSvg = body => svg(`${body}<rect x="2" y="2" width="116" height="116" rx="15" fill="none" stroke="#ffffff" stroke-width="4"/>`);
@@ -94,7 +103,10 @@
     ]),
     vocab("Vehicles", "Taşıtlar", "🚗", "world", [
       ["Car", "🚗"], ["Bus", "🚌"], ["Train", "🚂"], ["Bicycle", "🚲"], ["Motorcycle", "🏍️"], ["Truck", "🚚"],
-      ["Airplane", "✈️"], ["Helicopter", "🚁"], ["Boat", "⛵"], ["Ship", "🚢"], ["Tractor", "🚜"], ["Ambulance", "🚑"]
+      ["Airplane", "✈️"], ["Helicopter", "🚁"],
+      ["Hot-air Balloon", "", sceneSvg('<ellipse cx="60" cy="43" rx="31" ry="36" fill="#ef6f8f"/><path d="M31 43h58M60 7v72M40 16q20 27 40 0M39 70q21-28 42 0" fill="none" stroke="#ffd75a" stroke-width="5"/><path d="m48 77 5 15h14l5-15M51 92h18v18H51z" fill="#b97845" stroke="#7d4c2d" stroke-width="3"/>')],
+      ["Glider", "", sceneSvg('<path d="M8 63 52 50l15-31 10 3-6 29 41 12-3 10-40-5-9 35-10-2 3-34-43 6z" fill="#6f8fd8"/><path d="m52 50 18 1-1 17-16-1z" fill="#dff6ff"/>')],
+      ["Boat", "🚤"], ["Ship", "🚢"], ["Sailboat", "⛵"], ["Ferry", "⛴️"], ["Tractor", "🚜"], ["Ambulance", "🚑"]
     ]),
     vocab("SeaAnimals", "Deniz Canlıları", "🐬", "animals", [
       ["Fish", "🐟"], ["Shark", "🦈"], ["Whale", "🐋"], ["Dolphin", "🐬"], ["Octopus", "🐙"], ["Crab", "🦀"],
@@ -282,6 +294,262 @@
     }
   ];
 
+  const sortingCategory = (id, label, icon, tier, sourceCategoryId, itemRefs) => ({
+    id, label, icon, tier, sourceCategoryId,
+    itemRefs: itemRefs.map(([sourceItemId, itemLabel]) => ({ sourceItemId, label: itemLabel }))
+  });
+
+  const SORTING_CATEGORIES = [
+    sortingCategory("animals", "Hayvanlar", "🐾", "easy", "Animals", [
+      ["animals-cat", "Kedi"], ["animals-dog", "Köpek"], ["animals-lion", "Aslan"],
+      ["animals-elephant", "Fil"], ["animals-monkey", "Maymun"], ["animals-rabbit", "Tavşan"]
+    ]),
+    sortingCategory("fruits", "Meyveler", "🍎", "easy", "Fruits", [
+      ["fruits-apple", "Elma"], ["fruits-banana", "Muz"], ["fruits-orange", "Portakal"],
+      ["fruits-strawberry", "Çilek"], ["fruits-watermelon", "Karpuz"], ["fruits-grapes", "Üzüm"]
+    ]),
+    sortingCategory("vegetables", "Sebzeler", "🥕", "medium", "Vegetables", [
+      ["vegetables-carrot", "Havuç"], ["vegetables-tomato", "Domates"], ["vegetables-potato", "Patates"],
+      ["vegetables-onion", "Soğan"], ["vegetables-cucumber", "Salatalık"], ["vegetables-broccoli", "Brokoli"]
+    ]),
+    sortingCategory("toys", "Oyuncaklar", "🧸", "easy", "Toys", [
+      ["toys-ball", "Top"], ["toys-teddy-bear", "Oyuncak Ayı"], ["toys-doll", "Oyuncak Bebek"],
+      ["toys-kite", "Uçurtma"], ["toys-puzzle", "Yapboz"], ["toys-blocks", "Bloklar"]
+    ]),
+    sortingCategory("clothes", "Giysiler", "👕", "easy", "Clothes", [
+      ["clothes-shirt", "Tişört"], ["clothes-pants", "Pantolon"], ["clothes-dress", "Elbise"],
+      ["clothes-coat", "Mont"], ["clothes-shorts", "Şort"], ["clothes-socks", "Çorap"]
+    ]),
+    sortingCategory("schoolItems", "Okul Eşyaları", "🎒", "medium", "SchoolItems", [
+      ["schoolitems-book", "Kitap"], ["schoolitems-pencil", "Kurşun Kalem"], ["schoolitems-pen", "Kalem"],
+      ["schoolitems-ruler", "Cetvel"], ["schoolitems-scissors", "Makas"], ["schoolitems-backpack", "Okul Çantası"]
+    ]),
+    sortingCategory("homeItems", "Ev Eşyaları", "🏠", "medium", "HomeItems", [
+      ["homeitems-chair", "Sandalye"], ["homeitems-table", "Masa"], ["homeitems-lamp", "Lamba"],
+      ["homeitems-clock", "Saat"], ["homeitems-bed", "Yatak"], ["homeitems-sofa", "Koltuk"]
+    ]),
+    sortingCategory("foods", "Yiyecekler", "🍽️", "medium", "Foods", [
+      ["foods-bread", "Ekmek"], ["foods-cheese", "Peynir"], ["foods-egg", "Yumurta"],
+      ["foods-rice", "Pilav"], ["foods-pasta", "Makarna"], ["foods-pizza", "Pizza"]
+    ]),
+    sortingCategory("landVehicles", "Kara Taşıtları", "🚗", "advanced", "Vehicles", [
+      ["vehicles-car", "Araba"], ["vehicles-bus", "Otobüs"], ["vehicles-train", "Tren"],
+      ["vehicles-bicycle", "Bisiklet"], ["vehicles-motorcycle", "Motosiklet"], ["vehicles-truck", "Kamyon"]
+    ]),
+    sortingCategory("seaVehicles", "Deniz Taşıtları", "🚢", "advanced", "Vehicles", [
+      ["vehicles-boat", "Tekne"], ["vehicles-ship", "Gemi"], ["vehicles-sailboat", "Yelkenli"],
+      ["vehicles-ferry", "Feribot"]
+    ]),
+    sortingCategory("airVehicles", "Hava Taşıtları", "✈️", "advanced", "Vehicles", [
+      ["vehicles-airplane", "Uçak"], ["vehicles-helicopter", "Helikopter"],
+      ["vehicles-hot-air-balloon", "Sıcak Hava Balonu"], ["vehicles-glider", "Planör"]
+    ]),
+    sortingCategory("seaAnimals", "Deniz Hayvanları", "🐬", "advanced", "SeaAnimals", [
+      ["seaanimals-fish", "Balık"], ["seaanimals-shark", "Köpek Balığı"], ["seaanimals-whale", "Balina"],
+      ["seaanimals-dolphin", "Yunus"], ["seaanimals-octopus", "Ahtapot"], ["seaanimals-seahorse", "Denizatı"]
+    ]),
+    sortingCategory("landAnimals", "Kara Hayvanları", "🦒", "advanced", "Animals", [
+      ["animals-horse", "At"], ["animals-giraffe", "Zürafa"], ["animals-zebra", "Zebra"],
+      ["animals-panda", "Panda"], ["animals-elephant", "Fil"], ["animals-lion", "Aslan"]
+    ]),
+    sortingCategory("pets", "Evcil Hayvanlar", "🐶", "advanced", "Pets", [
+      ["pets-dog", "Köpek"], ["pets-cat", "Kedi"], ["pets-rabbit", "Tavşan"],
+      ["pets-hamster", "Hamster"], ["pets-parrot", "Papağan"], ["pets-mouse", "Fare"]
+    ]),
+    sortingCategory("wildAnimals", "Vahşi Hayvanlar", "🦁", "advanced", "WildAnimals", [
+      ["wildanimals-lion", "Aslan"], ["wildanimals-tiger", "Kaplan"], ["wildanimals-elephant", "Fil"],
+      ["wildanimals-giraffe", "Zürafa"], ["wildanimals-zebra", "Zebra"], ["wildanimals-gorilla", "Goril"]
+    ]),
+    sortingCategory("nature", "Doğa Nesneleri", "🌳", "medium", "Nature", [
+      ["nature-tree", "Ağaç"], ["nature-flower", "Çiçek"], ["nature-mountain", "Dağ"],
+      ["nature-river", "Nehir"], ["nature-forest", "Orman"], ["nature-rainbow", "Gökkuşağı"]
+    ])
+  ];
+
+  const sortingPair = (id, firstCategoryId, secondCategoryId, tier, instruction) => ({
+    id, categoryIds: [firstCategoryId, secondCategoryId], tier, instruction
+  });
+
+  const SORTING_PAIRS = [
+    sortingPair("animals-fruits", "animals", "fruits", "easy", "Hayvanları ve meyveleri grupla."),
+    sortingPair("animals-toys", "animals", "toys", "easy", "Hayvanları ve oyuncakları grupla."),
+    sortingPair("fruits-toys", "fruits", "toys", "easy", "Meyveleri ve oyuncakları grupla."),
+    sortingPair("clothes-animals", "clothes", "animals", "easy", "Giysileri ve hayvanları grupla."),
+    sortingPair("school-fruits", "schoolItems", "fruits", "easy", "Okul eşyalarını ve meyveleri grupla."),
+    sortingPair("fruits-vegetables", "fruits", "vegetables", "medium", "Meyveleri ve sebzeleri grupla."),
+    sortingPair("toys-school", "toys", "schoolItems", "medium", "Oyuncakları ve okul eşyalarını grupla."),
+    sortingPair("clothes-home", "clothes", "homeItems", "medium", "Giysileri ve ev eşyalarını grupla."),
+    sortingPair("foods-toys", "foods", "toys", "medium", "Yiyecekleri ve oyuncakları grupla."),
+    sortingPair("nature-home", "nature", "homeItems", "medium", "Doğadakileri ve ev eşyalarını grupla."),
+    sortingPair("land-sea-vehicles", "landVehicles", "seaVehicles", "advanced", "Karada ve denizde giden taşıtları grupla."),
+    sortingPair("land-air-vehicles", "landVehicles", "airVehicles", "advanced", "Karada ve havada giden taşıtları grupla."),
+    sortingPair("sea-air-vehicles", "seaVehicles", "airVehicles", "advanced", "Denizde ve havada giden taşıtları grupla."),
+    sortingPair("sea-land-animals", "seaAnimals", "landAnimals", "advanced", "Denizde ve karada yaşayan hayvanları grupla."),
+    sortingPair("pets-wild", "pets", "wildAnimals", "advanced", "Evcil ve vahşi hayvanları grupla.")
+  ];
+
+  const SORTING_SEMANTIC_CONFLICTS = new Set([
+    "animals|landAnimals", "animals|pets", "animals|seaAnimals", "animals|wildAnimals",
+    "foods|fruits", "foods|vegetables"
+  ]);
+  const SORTING_ITEMS_PER_CATEGORY = 4;
+  const SORTING_FALLBACK_PAIR_ID = "animals-fruits";
+
+  function normalizedSortingPair(firstCategoryId, secondCategoryId) {
+    return [firstCategoryId, secondCategoryId].sort().join("|");
+  }
+
+  function getSortingCategory(id, sourceCategories = SORTING_CATEGORIES) {
+    return sourceCategories.find(category => category.id === id);
+  }
+
+  function resolveSortingCategoryItems(category, educationalCategories = categories) {
+    if (!category) return [];
+    const source = educationalCategories.find(item => item.id === category.sourceCategoryId);
+    if (!source) return [];
+    return category.itemRefs.map(reference => {
+      const item = source.items.find(candidate => candidate.id === reference.sourceItemId);
+      if (!item) return undefined;
+      return {
+        id: item.id, conceptId: wordId(item.wordEn), label: reference.label,
+        visual: item.visual, visualSvg: item.visualSvg, sourceCategoryId: source.id
+      };
+    }).filter(Boolean);
+  }
+
+  function validateSortingCategory(category, educationalCategories = categories) {
+    const problems = [];
+    const items = resolveSortingCategoryItems(category, educationalCategories);
+    if (!category?.id || !category?.label || !category?.icon || !["easy", "medium", "advanced"].includes(category?.tier)) problems.push("Geçersiz kategori metadata'sı.");
+    if (items.length < SORTING_ITEMS_PER_CATEGORY) problems.push(`${category?.id || "Bilinmeyen"}: en az ${SORTING_ITEMS_PER_CATEGORY} geçerli öğe gerekli.`);
+    if (new Set(items.map(item => item.id)).size !== items.length) problems.push(`${category.id}: yinelenen öğe kimliği.`);
+    if (new Set(items.map(item => item.conceptId)).size !== items.length) problems.push(`${category.id}: yinelenen kavram.`);
+    if (items.some(item => !item.label || (!item.visual && !item.visualSvg))) problems.push(`${category.id}: etiketi veya görseli eksik öğe.`);
+    return { valid: problems.length === 0, problems, items };
+  }
+
+  function validateSortingPair(pair, sourceCategories = SORTING_CATEGORIES, educationalCategories = categories) {
+    const problems = [];
+    const [firstId, secondId] = pair?.categoryIds ?? [];
+    const first = getSortingCategory(firstId, sourceCategories);
+    const second = getSortingCategory(secondId, sourceCategories);
+    if (!pair?.id || pair?.categoryIds?.length !== 2 || !first || !second || firstId === secondId) problems.push(`${pair?.id || "Bilinmeyen çift"}: iki farklı geçerli kategori gerekli.`);
+    if (SORTING_SEMANTIC_CONFLICTS.has(normalizedSortingPair(firstId, secondId))) problems.push(`${pair?.id}: anlamsal olarak örtüşen kategoriler.`);
+    const firstValidation = validateSortingCategory(first, educationalCategories);
+    const secondValidation = validateSortingCategory(second, educationalCategories);
+    problems.push(...firstValidation.problems, ...secondValidation.problems);
+    const firstConcepts = new Set(firstValidation.items.map(item => item.conceptId));
+    const secondConcepts = new Set(secondValidation.items.map(item => item.conceptId));
+    const overlap = [...firstConcepts].filter(conceptId => secondConcepts.has(conceptId));
+    if (overlap.length) problems.push(`${pair?.id}: iki gruba da ait öğe var (${overlap.join(", ")}).`);
+    const firstItems = firstValidation.items.filter(item => !secondConcepts.has(item.conceptId));
+    const secondItems = secondValidation.items.filter(item => !firstConcepts.has(item.conceptId));
+    if (firstItems.length < SORTING_ITEMS_PER_CATEGORY || secondItems.length < SORTING_ITEMS_PER_CATEGORY) problems.push(`${pair?.id}: iki tarafta da yeterli özel öğe yok.`);
+    return { valid: problems.length === 0, problems, categories: [first, second], eligibleItems: [firstItems, secondItems] };
+  }
+
+  function getValidSortingPairs(sourcePairs = SORTING_PAIRS, sourceCategories = SORTING_CATEGORIES, educationalCategories = categories) {
+    return sourcePairs.filter(pair => validateSortingPair(pair, sourceCategories, educationalCategories).valid);
+  }
+
+  function safeRandomIndex(length, random) {
+    if (!length) return -1;
+    const value = Number(random());
+    return Math.min(length - 1, Math.max(0, Math.floor((Number.isFinite(value) ? value : 0) * length)));
+  }
+
+  function selectSortingPair(recentPairIds = [], random = Math.random, sourcePairs = SORTING_PAIRS, sourceCategories = SORTING_CATEGORIES, educationalCategories = categories) {
+    const validPairs = getValidSortingPairs(sourcePairs, sourceCategories, educationalCategories);
+    if (!validPairs.length) return undefined;
+    const recent = new Set(recentPairIds.slice(-3));
+    const freshPairs = validPairs.filter(pair => !recent.has(pair.id));
+    const available = freshPairs.length ? freshPairs : validPairs;
+    const tierRoll = Number(random());
+    const tier = tierRoll < .45 ? "easy" : tierRoll < .8 ? "medium" : "advanced";
+    const tierPairs = available.filter(pair => pair.tier === tier);
+    const pool = tierPairs.length ? tierPairs : available;
+    return pool[safeRandomIndex(pool.length, random)]
+      ?? validPairs.find(pair => pair.id === SORTING_FALLBACK_PAIR_ID)
+      ?? validPairs[0];
+  }
+
+  function hasMixedSortingOrder(items) {
+    let changes = 0;
+    for (let index = 1; index < items.length; index += 1) if (items[index].group !== items[index - 1].group) changes += 1;
+    return changes >= 2;
+  }
+
+  function createMixedSortingOrder(firstItems, secondItems, random = Math.random) {
+    const combined = [...firstItems, ...secondItems];
+    for (let attempt = 0; attempt < 8; attempt += 1) {
+      const candidate = shuffle(combined, random);
+      if (hasMixedSortingOrder(candidate)) return candidate;
+    }
+    const fallback = [];
+    for (let index = 0; index < Math.max(firstItems.length, secondItems.length); index += 1) {
+      if (index < secondItems.length) fallback.push(secondItems[index]);
+      if (index < firstItems.length) fallback.push(firstItems[index]);
+    }
+    return fallback;
+  }
+
+  function createSortingSession({ recentPairIds = [], random = Math.random, pairId, sourcePairs = SORTING_PAIRS, sourceCategories = SORTING_CATEGORIES, educationalCategories = categories } = {}) {
+    const validPairs = getValidSortingPairs(sourcePairs, sourceCategories, educationalCategories);
+    if (!validPairs.length) return undefined;
+    let pair = pairId ? validPairs.find(candidate => candidate.id === pairId) : selectSortingPair(recentPairIds, random, sourcePairs, sourceCategories, educationalCategories);
+    pair ??= validPairs.find(candidate => candidate.id === SORTING_FALLBACK_PAIR_ID) ?? validPairs[0];
+    const pairValidation = validateSortingPair(pair, sourceCategories, educationalCategories);
+    if (!pairValidation.valid) {
+      pair = validPairs.find(candidate => candidate.id === SORTING_FALLBACK_PAIR_ID) ?? validPairs[0];
+    }
+    const resolved = validateSortingPair(pair, sourceCategories, educationalCategories);
+    if (!resolved.valid) return undefined;
+    const chosen = resolved.eligibleItems.map((items, categoryIndex) => shuffle(items, random).slice(0, SORTING_ITEMS_PER_CATEGORY).map(item => ({
+      ...item, id: `sorting-${item.id}`, group: resolved.categories[categoryIndex].id, completed: false
+    })));
+    const reverseSides = Number(random()) >= .5;
+    const categoryOrder = reverseSides ? [...resolved.categories].reverse() : [...resolved.categories];
+    return {
+      id: `sorting-session-${pair.id}`, pairId: pair.id, tier: pair.tier, instruction: pair.instruction,
+      categories: categoryOrder.map(category => ({ id: category.id, label: category.label, icon: category.icon })),
+      items: createMixedSortingOrder(chosen[0], chosen[1], random)
+    };
+  }
+
+  function validateSortingSession(session) {
+    const problems = [];
+    if (!session || session.categories?.length !== 2 || session.categories[0].id === session.categories[1].id) problems.push("Oturumda iki farklı kategori olmalı.");
+    const items = session?.items ?? [];
+    if (items.length !== SORTING_ITEMS_PER_CATEGORY * 2 || new Set(items.map(item => item.id)).size !== items.length) problems.push("Oturum öğeleri dengeli ve benzersiz değil.");
+    const categoryIds = new Set((session?.categories ?? []).map(category => category.id));
+    const counts = items.reduce((result, item) => ({ ...result, [item.group]: (result[item.group] ?? 0) + 1 }), {});
+    if (items.some(item => !item.label || (!item.visual && !item.visualSvg) || !categoryIds.has(item.group))) problems.push("Oturumda hedefsiz veya görselsiz öğe var.");
+    if ([...categoryIds].some(categoryId => counts[categoryId] !== SORTING_ITEMS_PER_CATEGORY)) problems.push("Kategori dağılımı dengeli değil.");
+    if (!hasMixedSortingOrder(items)) problems.push("Öğe sırası kategori bloklarına ayrılmış.");
+    return { valid: problems.length === 0, problems };
+  }
+
+  function placeSortingSessionItem(session, itemId, destinationId, inputLocked = false) {
+    const item = session?.items?.find(candidate => candidate.id === itemId);
+    if (inputLocked || !item || item.completed || !session.categories.some(category => category.id === destinationId)) return { accepted: false, completed: false };
+    if (item.group !== destinationId) return { accepted: false, completed: false, retry: true };
+    item.completed = true;
+    return { accepted: true, completed: session.items.every(candidate => candidate.completed) };
+  }
+
+  function validateSortingContent(warn = console.warn) {
+    const problems = [];
+    const categoryIds = SORTING_CATEGORIES.map(category => category.id);
+    const pairIds = SORTING_PAIRS.map(pair => pair.id);
+    if (SORTING_CATEGORIES.length < 12 || new Set(categoryIds).size !== categoryIds.length) problems.push("Grupla kategorileri yetersiz veya yineleniyor.");
+    SORTING_CATEGORIES.forEach(category => problems.push(...validateSortingCategory(category).problems));
+    if (new Set(pairIds).size !== pairIds.length) problems.push("Grupla çift kimlikleri yineleniyor.");
+    SORTING_PAIRS.forEach(pair => problems.push(...validateSortingPair(pair).problems));
+    if (!getValidSortingPairs().some(pair => pair.id === SORTING_FALLBACK_PAIR_ID)) problems.push("Grupla güvenli geri dönüş çifti geçersiz.");
+    problems.forEach(problem => warn(`[Sprint 11.2 Grupla] ${problem}`));
+    return { valid: problems.length === 0, problems };
+  }
+
   const PACKS = {
     mixed: ["Colors", "Shapes", "Numbers", "Animals", "Fruits", "Vegetables", "Vehicles", "SeaAnimals", "Toys", "Body", "Emotions", "Nature"],
     words: ["Animals", "Fruits", "Vegetables", "Foods", "Drinks", "Vehicles", "SeaAnimals", "Insects", "Toys", "Clothes", "HomeItems", "Jobs", "Nature", "Space", "Actions"],
@@ -389,10 +657,14 @@
   const validation = validateCategories();
   const validCategories = validation.valid ? categories : categories.filter(category => validateCategories([category], () => {}).problems.every(problem => !problem.startsWith(category.id)));
   const questions = buildQuestions(validCategories);
+  const sortingValidation = validateSortingContent();
 
   root.MilaLearningCategories = {
     GROUPS, CATEGORIES: validCategories, REQUIRED_CATEGORY_IDS: categories.map(category => category.id), GENERAL_VOCABULARY_IDS,
-    PACKS, LEGACY_CATEGORY_ALIASES, questions, buildQuestions, validateCategories, getCategory, sanitizeSavedSelection, getEligibleCategories
+    PACKS, LEGACY_CATEGORY_ALIASES, questions, buildQuestions, validateCategories, getCategory, sanitizeSavedSelection, getEligibleCategories,
+    SORTING_CATEGORIES, SORTING_PAIRS, SORTING_ITEMS_PER_CATEGORY, SORTING_FALLBACK_PAIR_ID, sortingValidation,
+    getSortingCategory, resolveSortingCategoryItems, validateSortingCategory, validateSortingPair, getValidSortingPairs,
+    selectSortingPair, createSortingSession, validateSortingSession, placeSortingSessionItem, validateSortingContent
   };
 
   if (typeof module !== "undefined" && module.exports) module.exports = root.MilaLearningCategories;

@@ -89,6 +89,89 @@ test("Yapboz keeps one target per piece and completes only after every placement
   });
 });
 
+test("Sprint 11.1 exposes exactly 16 distinct local puzzle scenes and the 4x4 Çok Zor level", () => {
+  assert.equal(games.PUZZLES.length, 16);
+  assert.equal(new Set(games.PUZZLES.map(puzzle => puzzle.id)).size, 16);
+  assert.equal(new Set(games.PUZZLES.map(puzzle => puzzle.svg)).size, 16);
+  games.PUZZLES.forEach(puzzle => {
+    assert.equal(games.isPlayablePuzzle(puzzle), true, puzzle.id);
+    assert.match(puzzle.svg, /^<svg/);
+    assert.doesNotMatch(puzzle.svg, /<image\b|\bhref\s*=/i);
+    assert.ok(puzzle.description.length > 0);
+  });
+  assert.deepEqual(
+    Object.fromEntries(Object.values(games.PUZZLE_DIFFICULTIES).map(level => [level.id, level.columns * level.rows])),
+    { easy: 4, medium: 6, hard: 9, veryHard: 16 }
+  );
+  assert.equal(games.PUZZLE_DIFFICULTIES.veryHard.label, "🔥 Çok Zor");
+  assert.equal(games.PUZZLE_DIFFICULTIES.veryHard.pieceLabel, "16 Parça");
+});
+
+test("4x4 shuffle is a bounded, meaningful permutation and avoids the previous layout", () => {
+  const pieces = games.createPuzzlePieces("veryHard", seededRandom(111));
+  const order = pieces.map(piece => piece.target);
+  assert.equal(order.length, 16);
+  assert.deepEqual([...order].sort((a, b) => a - b), Array.from({ length: 16 }, (_, index) => index));
+  assert.equal(order.every((target, index) => target === index), false);
+  assert.ok(order.filter((target, index) => target === index).length <= 4);
+
+  const nextOrder = games.createPuzzlePieces("veryHard", seededRandom(111), order).map(piece => piece.target);
+  assert.notDeepEqual(nextOrder, order);
+  assert.equal(games.isMeaningfulPuzzleOrder(nextOrder, "veryHard", order), true);
+
+  let calls = 0;
+  const identityRandom = () => { calls += 1; return 0.999999; };
+  const fallback = games.createPuzzlePieces("veryHard", identityRandom).map(piece => piece.target);
+  assert.equal(calls, 12 * 15);
+  assert.equal(fallback.every((target, index) => target === index), false);
+  assert.ok(fallback.filter((target, index) => target === index).length <= 4);
+});
+
+test("puzzle completion requires the exact expected unique set and every placed piece", () => {
+  const pieces = games.createPuzzlePieces("veryHard", seededRandom(222));
+  assert.equal(games.isPuzzleComplete(pieces, 16), false);
+  pieces.forEach(piece => { piece.placed = true; });
+  assert.equal(games.isPuzzleComplete(pieces, 16), true);
+  pieces[7].placed = false;
+  assert.equal(games.isPuzzleComplete(pieces, 16), false);
+  pieces[7].placed = true;
+  pieces[7].target = pieces[6].target;
+  assert.equal(games.isPuzzleComplete(pieces, 16), false);
+  assert.equal(games.isPuzzleComplete(pieces.slice(0, 15), 16), false);
+});
+
+test("puzzle image selection is deterministic, excludes invalid entries and avoids the last three images", () => {
+  const recent = games.PUZZLES.slice(0, 3).map(puzzle => puzzle.id);
+  assert.equal(games.selectPuzzle(recent, () => 0).id, games.PUZZLES[3].id);
+  assert.equal(games.selectPuzzle(games.PUZZLES.map(puzzle => puzzle.id), () => 0).id, games.PUZZLES[0].id);
+
+  const invalid = { id: "remote", label: "Uzak", description: "Uzak görsel", svg: '<svg><image href="https://example.com/a.png"/></svg>' };
+  assert.equal(games.selectPuzzle([], () => 0, [invalid, games.PUZZLES[5]]).id, games.PUZZLES[5].id);
+  assert.equal(games.selectPuzzle([], () => 0, [invalid]), undefined);
+
+  const selectedIds = new Set(games.PUZZLES.map((_, index) => games.selectPuzzle([], () => (index + 0.01) / games.PUZZLES.length).id));
+  assert.equal(selectedIds.size, 16);
+});
+
+test("Sprint 11.1 puzzle UI wires replay, rapid-tap locks, completed image and responsive 4x4 styles", () => {
+  const root = path.resolve(__dirname, "..");
+  const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
+  const app = fs.readFileSync(path.join(root, "app.js"), "utf8");
+  const css = fs.readFileSync(path.join(root, "styles.css"), "utf8");
+  assert.match(html, /id="new-mini-game-completion-image"/);
+  assert.match(app, /previousPuzzleOrders\.get\(difficulty\.id\)/);
+  assert.match(app, /recentPuzzleIds[\s\S]*\.slice\(-3\)/);
+  assert.match(app, /placePuzzlePiece[\s\S]*newMiniGameState\.inputLocked = true/);
+  assert.match(app, /if \(newMiniGameState\.completed\) return;/);
+  assert.match(app, /mode !== PUZZLE_MODE[\s\S]*puzzleDifficulty[\s\S]*startPuzzleSession\(\)/);
+  assert.match(app, /isPuzzleComplete\(newMiniGameState\.pieces, difficultyPieceCount\(\)\)/);
+  assert.match(app, /aria-pressed/);
+  assert.match(css, /\.puzzle-tray\.grid-4\{grid-template-columns:repeat\(4/);
+  assert.match(css, /\.puzzle-layout-4 \.puzzle-board/);
+  assert.match(css, /@media\(max-width:600px\)[\s\S]*\.puzzle-layout\{grid-template-columns:1fr\}/);
+  assert.match(css, /@media\(prefers-reduced-motion:reduce\)/);
+});
+
 test("all five cards and shared cleanup, pause, replay and focused navigation are wired", () => {
   const root = path.resolve(__dirname, "..");
   const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
