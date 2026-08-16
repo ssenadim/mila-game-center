@@ -2516,7 +2516,7 @@ function createEmptyNewMiniGameState(mode) {
     mode, sessionId: ++newMiniGameSessionId, round: 0, correct: 0, streak: 0, missionWrongRounds: [],
     inputLocked: false, speaking: false, completed: false, pendingDelay: undefined,
     challenge: undefined, board: [], firstCard: undefined, attempts: 0,
-    elapsedMs: 0, timerStartedAt: 0, soundDifficulty: "standard",
+    elapsedMs: 0, timerStartedAt: 0, soundDifficulty: "standard", shadowDifficulty: "easy", recentShadowDistractorIds: [],
     puzzleDifficulty: "easy", puzzleId: suggestedPuzzle?.id ?? newMiniGames?.PUZZLES?.[0]?.id, pieces: [],
     selectedPieceId: undefined, draggedPieceId: undefined
   };
@@ -2615,6 +2615,9 @@ function resetNewMiniGameView() {
   ui.newMiniGameCompletion.classList.add("hidden");
   ui.newMiniGameListen.classList.add("hidden");
   ui.newMiniGameVisual.className = "new-mini-game-visual";
+  ui.newMiniGameVisual.setAttribute("aria-hidden", "true");
+  ui.newMiniGameVisual.removeAttribute("role");
+  ui.newMiniGameVisual.removeAttribute("aria-label");
   ui.newMiniGameChoices.className = "new-mini-game-choices";
   ui.newMiniGameVisual.textContent = "";
   ui.newMiniGameChoices.textContent = "";
@@ -2647,7 +2650,7 @@ function recordNewMiniGameCorrect(key) {
   recordDailyMissionEvent("questionAnswered", { eventId, correct: true, conceptId: key });
   recordDailyMissionEvent("correctAnswer", { eventId, conceptId: key, firstAttempt: !newMiniGameState.missionWrongRounds.includes(newMiniGameState.round) });
   recordDailyMissionEvent("categoryQuestionAnswered", { eventId, categoryId: newMiniGameState.mode });
-  if ([INITIAL_LETTER_MODE, SOUND_MEMORY_MODE].includes(newMiniGameState.mode)) recordDailyMissionEvent("englishQuestionAnswered", { eventId });
+  if (newMiniGameState.mode === SOUND_MEMORY_MODE) recordDailyMissionEvent("englishQuestionAnswered", { eventId });
   checkAchievements();
 }
 
@@ -2693,8 +2696,8 @@ function finishNewMiniGame(copy) {
     ui.newMiniGameCompletionImage.alt = "";
   }
   ui.newMiniGamePause.disabled = true;
-  ui.newMiniGameChange.classList.toggle("hidden", ![SOUND_MEMORY_MODE, PUZZLE_MODE].includes(newMiniGameState.mode));
-  ui.newMiniGameChange.textContent = newMiniGameState.mode === SOUND_MEMORY_MODE ? "Zorluk Seç" : "Başka Yapboz Seç";
+  ui.newMiniGameChange.classList.toggle("hidden", ![SHADOW_MODE, SOUND_MEMORY_MODE, PUZZLE_MODE].includes(newMiniGameState.mode));
+  ui.newMiniGameChange.textContent = [SHADOW_MODE, SOUND_MEMORY_MODE].includes(newMiniGameState.mode) ? "Zorluk Seç" : "Başka Yapboz Seç";
   recordNewMiniGameCompleted();
   recordMiniGameMissionCompletion(newMiniGameState.mode, `new-mini-game:${newMiniGameState.sessionId}`);
   celebrateNewMiniGame();
@@ -2775,6 +2778,48 @@ async function chooseMissingItem(itemId) {
   scheduleNewMiniGame(showMissingItemRound, 450);
 }
 
+function renderShadowSetup() {
+  resetNewMiniGameView();
+  ui.newMiniGameArea.classList.add("hidden");
+  ui.newMiniGameSetup.classList.remove("hidden");
+  ui.newMiniGameSetup.innerHTML = "<h3>Nasıl oynayalım?</h3>";
+  const options = document.createElement("div");
+  options.className = "setup-options shadow-difficulty-options";
+  Object.values(newMiniGames.SHADOW_DIFFICULTIES).forEach(difficulty => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "setup-choice shadow-difficulty-choice";
+    button.setAttribute("aria-pressed", String(newMiniGameState.shadowDifficulty === difficulty.id));
+    button.innerHTML = `<strong>${difficulty.label}</strong><span>${difficulty.choiceCount} seçenek</span>`;
+    button.addEventListener("click", () => {
+      newMiniGameState.shadowDifficulty = difficulty.id;
+      options.querySelectorAll("button").forEach(option => option.setAttribute("aria-pressed", String(option === button)));
+    });
+    options.append(button);
+  });
+  const start = document.createElement("button");
+  start.type = "button";
+  start.className = "primary-button";
+  start.textContent = "Oyuna Başla";
+  start.addEventListener("click", startShadowSession);
+  ui.newMiniGameSetup.append(options, start);
+}
+
+function startShadowSession() {
+  newMiniGameState.round = 0;
+  newMiniGameState.correct = 0;
+  newMiniGameState.streak = 0;
+  newMiniGameState.missionWrongRounds = [];
+  newMiniGameState.challenge = undefined;
+  newMiniGameState.inputLocked = false;
+  newMiniGameState.completed = false;
+  newMiniGameState.recentShadowDistractorIds = [];
+  ui.newMiniGameSetup.classList.add("hidden");
+  ui.newMiniGameArea.classList.remove("hidden");
+  showShadowRound();
+  ui.newMiniGameChoices.querySelector("button")?.focus({ preventScroll: true });
+}
+
 function showShadowRound() {
   if (!isNewMiniGameActive || isPaused) return;
   if (newMiniGameState.round >= 8) {
@@ -2782,11 +2827,29 @@ function showShadowRound() {
     return;
   }
   resetNewMiniGameView();
-  newMiniGameState.challenge = newMiniGames.createShadowRound(newMiniGameState.round);
+  newMiniGameState.challenge = newMiniGames.createShadowRound(
+    newMiniGameState.round,
+    newMiniGameState.shadowDifficulty,
+    Math.random,
+    newMiniGameState.recentShadowDistractorIds
+  );
+  if (!newMiniGameState.challenge) {
+    console.warn(`[Gölgesini Bul] ${newMiniGameState.shadowDifficulty} zorluğu için geçerli tur hazırlanamadı.`);
+    newMiniGameState.shadowDifficulty = "easy";
+    newMiniGameState.challenge = newMiniGames.createShadowRound(newMiniGameState.round, "easy");
+  }
+  if (!newMiniGameState.challenge) return;
+  newMiniGameState.recentShadowDistractorIds = [
+    ...newMiniGameState.recentShadowDistractorIds,
+    ...newMiniGameState.challenge.distractorIds
+  ].slice(-6);
   newMiniGameState.round += 1;
   newMiniGameState.inputLocked = false;
   updateNewMiniGameProgress(newMiniGameState.round, 8);
   ui.newMiniGamePrompt.textContent = `${newMiniGameState.challenge.source.label} hangisinin gölgesi?`;
+  ui.newMiniGameVisual.setAttribute("aria-hidden", "false");
+  ui.newMiniGameVisual.setAttribute("role", "img");
+  ui.newMiniGameVisual.setAttribute("aria-label", newMiniGameState.challenge.source.label);
   const source = document.createElement("img");
   source.className = "shadow-source";
   source.src = newMiniGameSvgUrl(newMiniGameState.challenge.source.svg);
@@ -2798,10 +2861,11 @@ function showShadowRound() {
 
 function renderShadowChoices(wrongId) {
   ui.newMiniGameChoices.textContent = "";
-  newMiniGameState.challenge.choices.forEach(item => {
+  ui.newMiniGameChoices.className = `new-mini-game-choices shadow-choice-grid${newMiniGameState.challenge.choiceCount === 4 ? " four-choice-grid" : ""}`;
+  newMiniGameState.challenge.choices.forEach((item, index) => {
     const button = addNewMiniGameChoice({
-      label: "", className: `shadow-choice${wrongId === item.id ? " try-again-choice" : ""}`,
-      ariaLabel: "Gölge seçeneği", disabled: newMiniGameState.inputLocked || newMiniGameState.speaking,
+      label: "", className: `shadow-choice${wrongId === item.id ? " try-again-choice" : ""}${newMiniGameState.inputLocked && item.id === newMiniGameState.challenge.source.id ? " correct" : ""}`,
+      ariaLabel: `Gölge seçeneği ${index + 1}`, disabled: newMiniGameState.inputLocked || newMiniGameState.speaking,
       onClick: () => chooseShadow(item.id)
     });
     const image = document.createElement("img");
@@ -2838,6 +2902,10 @@ function showInitialLetterRound() {
   }
   resetNewMiniGameView();
   newMiniGameState.challenge = newMiniGames.createLetterRound(newMiniGameState.round);
+  if (!newMiniGameState.challenge) {
+    console.warn("[İlk Harfi Bul] Dört benzersiz harf seçeneği hazırlanamadı.");
+    return;
+  }
   newMiniGameState.round += 1;
   newMiniGameState.inputLocked = false;
   updateNewMiniGameProgress(newMiniGameState.round, 10);
@@ -2852,13 +2920,14 @@ function showInitialLetterRound() {
 
 async function speakInitialLetterWord(explicit = false) {
   if (!newMiniGameState.challenge?.word) return;
-  await speakNewMiniGame(newMiniGameState.challenge.word.speech, ENGLISH_LANGUAGE, { explicit });
+  await speakNewMiniGame(newMiniGameState.challenge.word.speech, TURKISH_LANGUAGE, { explicit });
 }
 
 function renderInitialLetterChoices(wrongLetter) {
   ui.newMiniGameChoices.textContent = "";
+  ui.newMiniGameChoices.className = "new-mini-game-choices letter-choice-grid four-choice-grid";
   newMiniGameState.challenge.choices.forEach(letter => addNewMiniGameChoice({
-    label: letter, className: `letter-choice${wrongLetter === letter ? " try-again-choice" : ""}`,
+    label: letter, className: `letter-choice${wrongLetter === letter ? " try-again-choice" : ""}${newMiniGameState.inputLocked && letter === newMiniGameState.challenge.word.letter ? " correct" : ""}`,
     ariaLabel: `${letter} harfi`, disabled: newMiniGameState.inputLocked || newMiniGameState.speaking,
     onClick: () => chooseInitialLetter(letter)
   }));
@@ -3183,7 +3252,7 @@ function startNewMiniGame(mode) {
   startPlayTime();
   startWakeLock();
   if (mode === MISSING_ITEM_MODE) showMissingItemRound();
-  else if (mode === SHADOW_MODE) showShadowRound();
+  else if (mode === SHADOW_MODE) renderShadowSetup();
   else if (mode === INITIAL_LETTER_MODE) showInitialLetterRound();
   else if (mode === SOUND_MEMORY_MODE) renderSoundMemorySetup();
   else renderPuzzleSetup();
@@ -3193,6 +3262,13 @@ function startNewMiniGame(mode) {
 function replayNewMiniGame() {
   const mode = newMiniGameState.mode;
   if (!NEW_MINI_GAME_MODES.includes(mode)) return;
+  if (mode === SHADOW_MODE) {
+    const shadowDifficulty = newMiniGameState.shadowDifficulty;
+    startNewMiniGame(mode);
+    newMiniGameState.shadowDifficulty = shadowDifficulty;
+    startShadowSession();
+    return;
+  }
   if (mode !== PUZZLE_MODE) {
     startNewMiniGame(mode);
     return;
@@ -3207,7 +3283,7 @@ function replayNewMiniGame() {
 
 function changeNewMiniGameSetup() {
   const mode = newMiniGameState.mode;
-  if (mode === SOUND_MEMORY_MODE || mode === PUZZLE_MODE) startNewMiniGame(mode);
+  if (mode === SHADOW_MODE || mode === SOUND_MEMORY_MODE || mode === PUZZLE_MODE) startNewMiniGame(mode);
 }
 
 function renderParentList(container, items, emptyMessage) {

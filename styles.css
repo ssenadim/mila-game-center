@@ -144,8 +144,8 @@ button { font:inherit; cursor:pointer; }
 .new-mini-game-choice.correct{border-color:#218f53;background:#a6eac0;box-shadow:0 6px 0 #197542}
 .new-mini-game-choice.try-again-choice{border-color:#9674d8;background:#eee7ff}
 .shadow-source,.shadow-choice img{display:block;width:112px;height:112px;object-fit:contain}
-.shadow-choice{display:grid;place-items:center;min-height:132px}
-.shadow-choice img{filter:brightness(0);pointer-events:none}
+.shadow-choice{display:grid;place-items:center;min-height:132px;background:#fffdf8}
+.shadow-choice img{filter:grayscale(1) brightness(0);pointer-events:none}
 .letter-word-visual{font-size:6rem;line-height:1}
 .letter-word-label{display:block;margin-top:5px;color:#5c438f;font:900 1.15rem/1 "Baloo 2",cursive}
 .letter-choice{min-height:100px;font-size:3.3rem}
@@ -154,6 +154,12 @@ button { font:inherit; cursor:pointer; }
 .setup-options{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:17px}
 .setup-choice{min-height:52px;padding:9px 15px;border:3px solid #cfc1ff;border-radius:16px;background:#f7f3ff;color:#493a85;font-weight:900;box-shadow:0 4px 0 #9d89d9}
 .setup-choice[aria-pressed="true"]{border-color:#5e43ba;background:#e8e0ff;outline:3px solid #c8b7f1}
+.shadow-difficulty-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));max-width:430px;margin:0 auto 18px}
+.shadow-difficulty-choice{min-height:88px}
+.shadow-difficulty-choice strong,.shadow-difficulty-choice span{display:block}
+.shadow-difficulty-choice strong{font:900 1.25rem/1 "Baloo 2",cursive}
+.shadow-difficulty-choice span{margin-top:7px;font-size:.8rem}
+.four-choice-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 .puzzle-selector{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .puzzle-selector .setup-choice{min-width:0;padding:7px 4px;font-size:.72rem;overflow-wrap:anywhere}
 .puzzle-selector img{display:block;width:54px;height:54px;margin:0 auto 4px;border-radius:10px;object-fit:cover}
@@ -197,6 +203,9 @@ button { font:inherit; cursor:pointer; }
   .missing-item{width:61px;height:61px;border-radius:16px;font-size:2.65rem}
   .new-mini-game-choices{gap:9px}
   .new-mini-game-choice{min-height:76px;border-radius:17px}
+  .shadow-choice{min-height:106px}
+  .shadow-choice img{width:88px;height:88px}
+  .letter-choice{min-height:82px;font-size:3rem}
   .sound-memory-board{gap:8px}
   .sound-card{min-height:78px}
   .puzzle-tray{gap:5px}

@@ -43,22 +43,24 @@ test("Hangisi Eksik removes exactly one item and creates unique valid choices at
 });
 
 test("Gölgesini Bul has one correct SVG silhouette and unique distractors", () => {
-  for (let round = 0; round < 8; round += 1) {
-    const challenge = games.createShadowRound(round, seededRandom(round + 30));
-    assert.equal(challenge.choices.filter(item => item.id === challenge.source.id).length, 1);
-    assert.equal(new Set(challenge.choices.map(item => item.id)).size, challenge.choiceCount);
-    assert.ok(challenge.choices.every(item => item.svg.startsWith("<svg")));
-    assert.equal(challenge.choiceCount, round < 3 ? 2 : round < 6 ? 3 : 4);
-  }
+  Object.values(games.SHADOW_DIFFICULTIES).forEach((difficulty, difficultyIndex) => {
+    for (let round = 0; round < 8; round += 1) {
+      const challenge = games.createShadowRound(round, difficulty.id, seededRandom(round + 30 + difficultyIndex));
+      assert.equal(challenge.choices.filter(item => item.id === challenge.source.id).length, 1);
+      assert.equal(new Set(challenge.choices.map(item => item.id)).size, difficulty.choiceCount);
+      assert.ok(challenge.choices.every(item => item.svg.startsWith("<svg")));
+      assert.equal(challenge.choiceCount, difficulty.choiceCount);
+    }
+  });
 });
 
 test("İlk Harfi Bul maps every word to its displayed initial and produces unique answers", () => {
   games.INITIAL_LETTER_WORDS.forEach((word, index) => {
-    assert.equal(word.word[0].toUpperCase(), word.letter);
+    assert.equal(word.word[0].toLocaleUpperCase("tr-TR"), word.letter);
     const challenge = games.createLetterRound(index, seededRandom(index + 50));
     assert.ok(challenge.choices.includes(word.letter));
-    assert.equal(challenge.choices.length, 3);
-    assert.equal(new Set(challenge.choices).size, 3);
+    assert.equal(challenge.choices.length, 4);
+    assert.equal(new Set(challenge.choices).size, 4);
   });
 });
 

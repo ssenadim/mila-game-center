@@ -29,21 +29,24 @@
     { id: "lamp", label: "Lamba", category: "home", svg: svg('<path d="M42 14h36l13 42H29z" fill="#ffd75a"/><path d="M57 56h7v39h-7z" fill="#695489"/><path d="M40 98h41v9H40z" fill="#695489"/>') }
   ];
 
+  const TURKISH_INITIAL_LETTERS = ["A", "B", "C", "Ç", "D", "E", "F", "G", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
   const INITIAL_LETTER_WORDS = [
-    ["apple", "Apple", "A", "🍎", "foods"], ["ball", "Ball", "B", "⚽", "toys"], ["cat", "Cat", "C", "🐱", "animals"],
-    ["dog", "Dog", "D", "🐶", "animals"], ["elephant", "Elephant", "E", "🐘", "animals"], ["fish", "Fish", "F", "🐟", "animals"],
-    ["goat", "Goat", "G", "🐐", "animals"], ["hat", "Hat", "H", "🧢", "clothes"], ["juice", "Juice", "J", "🧃", "foods"],
-    ["kite", "Kite", "K", "🪁", "toys"], ["lion", "Lion", "L", "🦁", "animals"], ["moon", "Moon", "M", "🌙", "nature"],
-    ["nose", "Nose", "N", "👃", "daily"], ["orange", "Orange", "O", "🍊", "foods"], ["panda", "Panda", "P", "🐼", "animals"],
-    ["rabbit", "Rabbit", "R", "🐰", "animals"], ["sun", "Sun", "S", "☀️", "nature"], ["tiger", "Tiger", "T", "🐯", "animals"],
-    ["van", "Van", "V", "🚐", "vehicles"], ["window", "Window", "W", "🪟", "home"], ["yarn", "Yarn", "Y", "🧶", "daily"],
-    ["zebra", "Zebra", "Z", "🦓", "animals"], ["bus", "Bus", "B", "🚌", "vehicles"], ["cup", "Cup", "C", "🥤", "home"],
-    ["drum", "Drum", "D", "🥁", "toys"], ["flower", "Flower", "F", "🌻", "nature"], ["train", "Train", "T", "🚂", "vehicles"]
+    ["apple", "Elma", "E", "🍎", "foods"], ["ball", "Top", "T", "⚽", "toys"], ["cat", "Kedi", "K", "🐱", "animals"],
+    ["dog", "Köpek", "K", "🐶", "animals"], ["elephant", "Fil", "F", "🐘", "animals"], ["fish", "Balık", "B", "🐟", "animals"],
+    ["goat", "Keçi", "K", "🐐", "animals"], ["hat", "Şapka", "Ş", "🧢", "clothes"], ["juice", "Meyve Suyu", "M", "🧃", "foods"],
+    ["kite", "Uçurtma", "U", "🪁", "toys"], ["lion", "Aslan", "A", "🦁", "animals"], ["moon", "Ay", "A", "🌙", "nature"],
+    ["nose", "Burun", "B", "👃", "daily"], ["orange", "Portakal", "P", "🍊", "foods"], ["panda", "Panda", "P", "🐼", "animals"],
+    ["rabbit", "Tavşan", "T", "🐰", "animals"], ["sun", "Güneş", "G", "☀️", "nature"], ["tiger", "Kaplan", "K", "🐯", "animals"],
+    ["van", "Minibüs", "M", "🚐", "vehicles"], ["window", "Pencere", "P", "🪟", "home"], ["yarn", "Yün", "Y", "🧶", "daily"],
+    ["zebra", "Zebra", "Z", "🦓", "animals"], ["bus", "Otobüs", "O", "🚌", "vehicles"], ["cup", "Bardak", "B", "🥤", "home"],
+    ["drum", "Davul", "D", "🥁", "toys"], ["flower", "Çiçek", "Ç", "🌻", "nature"], ["train", "Tren", "T", "🚂", "vehicles"],
+    ["cow", "İnek", "İ", "🐄", "animals"], ["duck", "Ördek", "Ö", "🦆", "animals"], ["grapes", "Üzüm", "Ü", "🍇", "foods"]
   ].map(([id, word, letter, visual, category]) => ({ id, word, letter, visual, category, speech: word }));
 
-  const SOUND_MEMORY_ITEMS = INITIAL_LETTER_WORDS
-    .filter(item => ["apple", "cat", "dog", "fish", "lion", "moon", "sun", "car"].includes(item.id))
-    .concat([{ id: "car", word: "Car", letter: "C", visual: "🚗", category: "vehicles", speech: "Car" }]);
+  const SOUND_MEMORY_ITEMS = [
+    ["apple", "Apple", "🍎"], ["cat", "Cat", "🐱"], ["dog", "Dog", "🐶"], ["fish", "Fish", "🐟"],
+    ["lion", "Lion", "🦁"], ["moon", "Moon", "🌙"], ["sun", "Sun", "☀️"], ["car", "Car", "🚗"]
+  ].map(([id, speech, visual]) => ({ id, word: speech, visual, speech }));
 
   const PUZZLES = [
     { id: "cat-garden", label: "Bahçedeki Kedi", description: "Çiçekli bahçede turuncu kedi", category: "animal", svg: scene("#9de1f0", "#78c66c", '<circle cx="26" cy="25" r="12" fill="#ffd75a"/><circle cx="65" cy="65" r="23" fill="#f4a742"/><path d="m48 50 5-20 14 16 15-16 2 23" fill="#f4a742"/><circle cx="58" cy="62" r="3"/><circle cx="72" cy="62" r="3"/><path d="M27 94v14m-7-7h14" stroke="#f26ba6" stroke-width="5"/>') },
@@ -69,6 +72,11 @@
     standard: { id: "standard", label: "Orta", pairs: 4 },
     advanced: { id: "advanced", label: "Zor", pairs: 6 }
   };
+  const SHADOW_DIFFICULTIES = {
+    easy: { id: "easy", label: "🙂 Kolay", choiceCount: 2 },
+    hard: { id: "hard", label: "🔥 Zor", choiceCount: 4 }
+  };
+  const SHADOW_SIMILAR_PAIRS = new Set(["apple|pear", "boat|fish"]);
   const PUZZLE_DIFFICULTIES = {
     easy: { id: "easy", label: "Kolay", columns: 2, rows: 2 },
     medium: { id: "medium", label: "Orta", columns: 3, rows: 2 },
@@ -94,19 +102,88 @@
     return { group, presented, missing, remaining: presented.filter(item => item.id !== missing.id), choices: shuffle([missing, ...distractors.slice(0, level.answerCount - 1)], random), ...level };
   }
 
-  function createShadowRound(roundIndex, random = Math.random) {
-    const choiceCount = roundIndex < 3 ? 2 : roundIndex < 6 ? 3 : 4;
-    const source = SHADOW_OBJECTS[roundIndex % SHADOW_OBJECTS.length];
-    const distractors = shuffle(SHADOW_OBJECTS.filter(item => item.id !== source.id), random).slice(0, choiceCount - 1);
-    return { source, choices: shuffle([source, ...distractors], random), choiceCount };
+  function isValidShadowObject(item) {
+    return Boolean(item?.id && item?.label && item?.svg?.startsWith("<svg") && !/<image\b|\bhref\s*=/i.test(item.svg));
   }
 
-  function createLetterRound(roundIndex, random = Math.random) {
-    const word = INITIAL_LETTER_WORDS[roundIndex % INITIAL_LETTER_WORDS.length];
-    const confusing = roundIndex < 4 ? { M: ["W"], W: ["M"], P: ["R"], R: ["P"], B: ["D"], D: ["B"] } : {};
-    const letters = [...new Set(INITIAL_LETTER_WORDS.map(item => item.letter))]
+  function isFairShadowPair(firstId, secondId) {
+    return !SHADOW_SIMILAR_PAIRS.has([firstId, secondId].sort().join("|"));
+  }
+
+  function shadowDistractorPool(source, sourceObjects = SHADOW_OBJECTS) {
+    return sourceObjects.filter(item => isValidShadowObject(item) && item.id !== source.id && isFairShadowPair(source.id, item.id));
+  }
+
+  function getEligibleShadowTargets(difficultyId = "easy", sourceObjects = SHADOW_OBJECTS) {
+    const difficulty = SHADOW_DIFFICULTIES[difficultyId] ?? SHADOW_DIFFICULTIES.easy;
+    return sourceObjects.filter(item => isValidShadowObject(item) && shadowDistractorPool(item, sourceObjects).length >= difficulty.choiceCount - 1);
+  }
+
+  function validateShadowRound(round, expectedChoiceCount = round?.choiceCount) {
+    const choices = round?.choices ?? [];
+    return Boolean(
+      round?.source && [2, 4].includes(expectedChoiceCount)
+      && choices.length === expectedChoiceCount
+      && new Set(choices.map(item => item.id)).size === expectedChoiceCount
+      && choices.filter(item => item.id === round.source.id).length === 1
+      && choices.every(isValidShadowObject)
+    );
+  }
+
+  function createShadowRound(roundIndex, difficultyId = "easy", random = Math.random, recentDistractorIds = [], sourceObjects = SHADOW_OBJECTS) {
+    if (typeof difficultyId === "function") {
+      random = difficultyId;
+      difficultyId = "easy";
+    }
+    const difficulty = SHADOW_DIFFICULTIES[difficultyId] ?? SHADOW_DIFFICULTIES.easy;
+    const eligibleTargets = getEligibleShadowTargets(difficulty.id, sourceObjects);
+    if (!eligibleTargets.length) return undefined;
+    const source = eligibleTargets[roundIndex % eligibleTargets.length];
+    const pool = shadowDistractorPool(source, sourceObjects);
+    const recent = new Set(recentDistractorIds.slice(-6));
+    const fresh = shuffle(pool.filter(item => !recent.has(item.id)), random);
+    const repeated = shuffle(pool.filter(item => recent.has(item.id)), random);
+    const distractors = [...fresh, ...repeated].slice(0, difficulty.choiceCount - 1);
+    if (distractors.length !== difficulty.choiceCount - 1) return undefined;
+    const choices = shuffle([source, ...distractors], random);
+    const round = { source, choices, choiceCount: difficulty.choiceCount, difficultyId: difficulty.id, distractorIds: distractors.map(item => item.id) };
+    return validateShadowRound(round, difficulty.choiceCount) ? round : undefined;
+  }
+
+  function isValidInitialLetterWord(item) {
+    return Boolean(
+      item?.id && item?.word && item?.speech && item?.visual
+      && item.word[0].toLocaleUpperCase("tr-TR") === item.letter
+      && TURKISH_INITIAL_LETTERS.includes(item.letter)
+    );
+  }
+
+  function getEligibleInitialLetterWords(sourceWords = INITIAL_LETTER_WORDS) {
+    return sourceWords.filter(isValidInitialLetterWord);
+  }
+
+  function validateLetterRound(round) {
+    const choices = round?.choices ?? [];
+    return Boolean(
+      isValidInitialLetterWord(round?.word)
+      && choices.length === 4
+      && new Set(choices).size === 4
+      && choices.filter(letter => letter === round.word.letter).length === 1
+      && choices.every(letter => TURKISH_INITIAL_LETTERS.includes(letter))
+    );
+  }
+
+  function createLetterRound(roundIndex, random = Math.random, sourceWords = INITIAL_LETTER_WORDS) {
+    const eligibleWords = getEligibleInitialLetterWords(sourceWords);
+    if (!eligibleWords.length) return undefined;
+    const word = eligibleWords[roundIndex % eligibleWords.length];
+    const confusing = { I: ["İ"], İ: ["I"], O: ["Ö"], Ö: ["O"], U: ["Ü"], Ü: ["U"], C: ["Ç"], Ç: ["C"], S: ["Ş"], Ş: ["S"] };
+    const letters = [...new Set(eligibleWords.map(item => item.letter))]
       .filter(letter => letter !== word.letter && !(confusing[word.letter] ?? []).includes(letter));
-    return { word, choices: shuffle([word.letter, ...shuffle(letters, random).slice(0, 2)], random) };
+    const distractors = shuffle(letters, random).slice(0, 3);
+    if (distractors.length !== 3) return undefined;
+    const round = { word, choices: shuffle([word.letter, ...distractors], random) };
+    return validateLetterRound(round) ? round : undefined;
   }
 
   function createSoundBoard(difficultyId = "standard", random = Math.random) {
@@ -181,9 +258,12 @@
       if (!group.label || group.items.length < 5 || group.items.some(item => !item.label || !item.visual)) problems.push(`Hangisi Eksik/${group.id}: yetersiz içerik.`);
     });
     checkUnique(SHADOW_OBJECTS, "Gölge nesneleri");
-    if (SHADOW_OBJECTS.length < 12 || new Set(SHADOW_OBJECTS.map(item => item.category)).size < 4 || SHADOW_OBJECTS.some(item => !item.label || !item.svg?.startsWith("<svg"))) problems.push("Gölge içeriği gerekli çeşitliliği veya geçerli SVG'leri sağlamıyor.");
+    if (SHADOW_OBJECTS.length < 12 || new Set(SHADOW_OBJECTS.map(item => item.category)).size < 4 || SHADOW_OBJECTS.some(item => !isValidShadowObject(item))) problems.push("Gölge içeriği gerekli çeşitliliği veya geçerli SVG'leri sağlamıyor.");
+    Object.values(SHADOW_DIFFICULTIES).forEach(difficulty => {
+      if (!getEligibleShadowTargets(difficulty.id).length) problems.push(`Gölge/${difficulty.id}: oynanabilir hedef bulunamadı.`);
+    });
     checkUnique(INITIAL_LETTER_WORDS, "İlk harf kelimeleri");
-    if (INITIAL_LETTER_WORDS.length < 24 || new Set(INITIAL_LETTER_WORDS.map(item => item.letter)).size < 12 || INITIAL_LETTER_WORDS.some(item => !item.word || !item.speech || item.word[0].toUpperCase() !== item.letter)) problems.push("İlk harf içeriği geçersiz.");
+    if (INITIAL_LETTER_WORDS.length < 24 || new Set(INITIAL_LETTER_WORDS.map(item => item.letter)).size < 12 || INITIAL_LETTER_WORDS.some(item => !isValidInitialLetterWord(item))) problems.push("İlk harf içeriği geçersiz.");
     checkUnique(SOUND_MEMORY_ITEMS, "Ses hafızası");
     if (SOUND_MEMORY_ITEMS.length < 6 || SOUND_MEMORY_ITEMS.some(item => !item.speech)) problems.push("Ses hafızası içeriği yetersiz.");
     checkUnique(PUZZLES, "Yapbozlar");
@@ -197,8 +277,10 @@
 
   root.MilaNewMiniGames = {
     MISSING_ITEM_GROUPS, SHADOW_OBJECTS, INITIAL_LETTER_WORDS, SOUND_MEMORY_ITEMS, PUZZLES,
-    SOUND_DIFFICULTIES, PUZZLE_DIFFICULTIES, shuffle, createMissingRound, createShadowRound,
-    createLetterRound, createSoundBoard, canSelectSoundCard, createPuzzlePieces, isPuzzleComplete,
+    SHADOW_DIFFICULTIES, TURKISH_INITIAL_LETTERS, SOUND_DIFFICULTIES, PUZZLE_DIFFICULTIES, shuffle, createMissingRound, createShadowRound,
+    createLetterRound, getEligibleShadowTargets, isValidShadowObject, validateShadowRound,
+    getEligibleInitialLetterWords, isValidInitialLetterWord, validateLetterRound,
+    createSoundBoard, canSelectSoundCard, createPuzzlePieces, isPuzzleComplete,
     isMeaningfulPuzzleOrder, isPlayablePuzzle, selectPuzzle, validateContent
   };
 
