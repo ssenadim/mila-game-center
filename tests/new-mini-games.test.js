@@ -78,7 +78,7 @@ test("Ses Hafızası creates exact pairs for all three board sizes and honors se
   assert.equal(games.canSelectSoundCard({ matched: false }, false, true), false);
 });
 
-test("Yapboz keeps one target per piece and completes only after every placement", () => {
+test("Yapboz keeps one piece per board position and completes only in image order", () => {
   Object.entries(games.PUZZLE_DIFFICULTIES).forEach(([difficultyId, difficulty], index) => {
     const pieces = games.createPuzzlePieces(difficultyId, seededRandom(index + 90));
     const count = difficulty.columns * difficulty.rows;
@@ -86,7 +86,7 @@ test("Yapboz keeps one target per piece and completes only after every placement
     assert.equal(new Set(pieces.map(piece => piece.target)).size, count);
     assert.deepEqual([...pieces.map(piece => piece.target)].sort((a, b) => a - b), Array.from({ length: count }, (_, target) => target));
     assert.equal(games.isPuzzleComplete(pieces), false);
-    pieces.forEach(piece => { piece.placed = true; });
+    pieces.sort((first, second) => first.target - second.target);
     assert.equal(games.isPuzzleComplete(pieces), true);
   });
 });
@@ -129,17 +129,68 @@ test("4x4 shuffle is a bounded, meaningful permutation and avoids the previous l
   assert.ok(fallback.filter((target, index) => target === index).length <= 4);
 });
 
-test("puzzle completion requires the exact expected unique set and every placed piece", () => {
+test("puzzle completion requires the exact expected unique set in solved positions", () => {
   const pieces = games.createPuzzlePieces("veryHard", seededRandom(222));
   assert.equal(games.isPuzzleComplete(pieces, 16), false);
-  pieces.forEach(piece => { piece.placed = true; });
+  pieces.sort((first, second) => first.target - second.target);
   assert.equal(games.isPuzzleComplete(pieces, 16), true);
-  pieces[7].placed = false;
+  games.swapPuzzlePositions(pieces, 6, 7);
   assert.equal(games.isPuzzleComplete(pieces, 16), false);
-  pieces[7].placed = true;
+  games.swapPuzzlePositions(pieces, 6, 7);
   pieces[7].target = pieces[6].target;
   assert.equal(games.isPuzzleComplete(pieces, 16), false);
   assert.equal(games.isPuzzleComplete(pieces.slice(0, 15), 16), false);
+});
+
+test("canonical puzzle swap validates positions and preserves every board invariant", () => {
+  Object.entries(games.PUZZLE_DIFFICULTIES).forEach(([difficultyId, difficulty], seed) => {
+    const pieces = games.createPuzzlePieces(difficultyId, seededRandom(seed + 300));
+    const expectedIds = [...pieces.map(piece => piece.id)].sort();
+    for (let move = 0; move < 100; move += 1) {
+      const first = move % pieces.length;
+      const second = (move * 3 + 1) % pieces.length;
+      if (first !== second) assert.equal(games.swapPuzzlePositions(pieces, first, second), true);
+      assert.equal(games.validatePuzzleBoard(pieces, difficulty.columns * difficulty.rows), true);
+      assert.deepEqual([...pieces.map(piece => piece.id)].sort(), expectedIds);
+    }
+    assert.equal(pieces.length, difficulty.columns * difficulty.rows);
+  });
+  const pieces = games.createPuzzlePieces("easy", seededRandom(404));
+  const unchanged = pieces.map(piece => piece.id);
+  assert.equal(games.swapPuzzlePositions(pieces, 0, 0), false);
+  assert.equal(games.swapPuzzlePositions(pieces, -1, 2), false);
+  assert.equal(games.swapPuzzlePositions(pieces, 1, 99), false);
+  assert.deepEqual(pieces.map(piece => piece.id), unchanged);
+  pieces[1].id = "piece-missing";
+  assert.equal(games.validatePuzzleBoard(pieces, 4), false);
+  assert.equal(games.swapPuzzlePositions(pieces, 0, 1), false);
+});
+
+test("tap-to-swap selects, deselects and returns one canonical swap", () => {
+  assert.deepEqual(games.getPuzzleTapAction(undefined, 2), { selectedPosition: 2 });
+  assert.deepEqual(games.getPuzzleTapAction(2, 2), { selectedPosition: undefined });
+  assert.deepEqual(games.getPuzzleTapAction(2, 7), { selectedPosition: undefined, swap: [2, 7] });
+  assert.deepEqual(games.getPuzzleTapAction(undefined, -1), { selectedPosition: undefined });
+});
+
+test("pointer drag threshold keeps tiny movement as tap and starts a real drag", () => {
+  assert.equal(games.isPuzzleDragMovement(10, 10, 15, 15, 8), false);
+  assert.equal(games.isPuzzleDragMovement(10, 10, 18, 10, 8), true);
+  assert.equal(games.isPuzzleDragMovement(10, 10, 30, 25, 8), true);
+});
+
+test("tap, drag and mixed swaps share one board engine and can complete 4x4", () => {
+  ["tap", "drag", "mixed"].forEach(method => {
+    const pieces = games.createPuzzlePieces("veryHard", seededRandom(method.length + 500));
+    for (let position = 0; position < pieces.length; position += 1) {
+      const correctPosition = pieces.findIndex(piece => piece.target === position);
+      if (correctPosition === position) continue;
+      const action = method === "tap" ? games.getPuzzleTapAction(position, correctPosition) : { swap: [position, correctPosition] };
+      assert.equal(games.swapPuzzlePositions(pieces, action.swap[0], action.swap[1]), true);
+    }
+    assert.equal(games.isPuzzleComplete(pieces, 16), true);
+    assert.equal(games.validatePuzzleBoard(pieces, 16), true);
+  });
 });
 
 test("puzzle image selection is deterministic, excludes invalid entries and avoids the last three images", () => {
@@ -155,22 +206,36 @@ test("puzzle image selection is deterministic, excludes invalid entries and avoi
   assert.equal(selectedIds.size, 16);
 });
 
-test("Sprint 11.1 puzzle UI wires replay, rapid-tap locks, completed image and responsive 4x4 styles", () => {
+test("Sprint 12.1 puzzle UI wires one in-board pointer and tap swap model", () => {
   const root = path.resolve(__dirname, "..");
   const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
   const app = fs.readFileSync(path.join(root, "app.js"), "utf8");
   const css = fs.readFileSync(path.join(root, "styles.css"), "utf8");
+  const puzzleUi = app.slice(app.indexOf("function startPuzzleSession"), app.indexOf("function difficultyPieceCount"));
   assert.match(html, /id="new-mini-game-completion-image"/);
   assert.match(app, /previousPuzzleOrders\.get\(difficulty\.id\)/);
   assert.match(app, /recentPuzzleIds[\s\S]*\.slice\(-3\)/);
-  assert.match(app, /placePuzzlePiece[\s\S]*newMiniGameState\.inputLocked = true/);
+  assert.match(app, /function swapPuzzlePieces[\s\S]*newMiniGames\.swapPuzzlePositions/);
+  assert.match(app, /pointerdown[\s\S]*pointermove[\s\S]*pointerup[\s\S]*pointercancel/);
+  assert.match(app, /PUZZLE_DRAG_THRESHOLD = 8/);
+  assert.match(app, /suppressPuzzleClick/);
+  assert.match(app, /activatePuzzlePosition[\s\S]*swapPuzzlePieces\(action\.swap\[0\], action\.swap\[1\]/);
+  assert.match(app, /\["Enter", " "\][\s\S]*activatePuzzlePosition\(position\)/);
+  assert.match(app, /endPuzzlePointer[\s\S]*swapPuzzlePieces\(sourcePosition, targetPosition/);
+  assert.match(app, /pauseNewMiniGameState[\s\S]*cancelPuzzleDrag\(\)/);
+  assert.match(app, /cleanupNewMiniGame[\s\S]*cancelPuzzleDrag\(\)/);
   assert.match(app, /if \(newMiniGameState\.completed\) return;/);
   assert.match(app, /mode !== PUZZLE_MODE[\s\S]*puzzleDifficulty[\s\S]*startPuzzleSession\(\)/);
   assert.match(app, /isPuzzleComplete\(newMiniGameState\.pieces, difficultyPieceCount\(\)\)/);
   assert.match(app, /aria-pressed/);
-  assert.match(css, /\.puzzle-tray\.grid-4\{grid-template-columns:repeat\(4/);
+  assert.doesNotMatch(puzzleUi, /puzzle-tray|placePuzzlePiece|dataTransfer/);
+  assert.doesNotMatch(css, /\.puzzle-tray/);
+  assert.match(css, /\.puzzle-piece\.dragging/);
+  assert.match(css, /\.puzzle-piece\.drag-target/);
+  assert.match(css, /touch-action:none/);
   assert.match(css, /\.puzzle-layout-4 \.puzzle-board/);
-  assert.match(css, /@media\(max-width:600px\)[\s\S]*\.puzzle-layout\{grid-template-columns:1fr\}/);
+  assert.match(css, /\.puzzle-layout\{display:block;width:min\(94vw,620px\)/);
+  assert.match(css, /orientation:landscape[\s\S]*\.new-mini-game-screen\.puzzle-active/);
   assert.match(css, /@media\(prefers-reduced-motion:reduce\)/);
 });
 

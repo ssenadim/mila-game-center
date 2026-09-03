@@ -209,7 +209,7 @@
   function createPuzzlePieces(difficultyId = "easy", random = Math.random, previousOrder = []) {
     const difficulty = PUZZLE_DIFFICULTIES[difficultyId] ?? PUZZLE_DIFFICULTIES.easy;
     const pieces = Array.from({ length: difficulty.columns * difficulty.rows }, (_, target) => ({
-      id: `piece-${target}`, target, row: Math.floor(target / difficulty.columns), column: target % difficulty.columns, placed: false
+      id: `piece-${target}`, target, row: Math.floor(target / difficulty.columns), column: target % difficulty.columns
     }));
     for (let attempt = 0; attempt < 12; attempt += 1) {
       const candidate = shuffle(pieces, random);
@@ -223,11 +223,39 @@
   }
 
   function isPuzzleComplete(pieces, expectedCount = pieces?.length) {
+    return validatePuzzleBoard(pieces, expectedCount)
+      && pieces.every((piece, position) => piece.target === position);
+  }
+
+  function validatePuzzleBoard(pieces, expectedCount = pieces?.length) {
     if (!Array.isArray(pieces) || !Number.isInteger(expectedCount) || expectedCount < 1 || pieces.length !== expectedCount) return false;
-    const targets = pieces.map(piece => piece.target);
+    const targets = pieces.map(piece => piece?.target);
+    const ids = pieces.map(piece => piece?.id);
     return new Set(targets).size === expectedCount
       && targets.every(target => Number.isInteger(target) && target >= 0 && target < expectedCount)
-      && pieces.every(piece => piece.placed === true);
+      && new Set(ids).size === expectedCount
+      && ids.every((id, position) => id === `piece-${targets[position]}`);
+  }
+
+  function swapPuzzlePositions(pieces, positionA, positionB) {
+    if (!validatePuzzleBoard(pieces) || !Number.isInteger(positionA) || !Number.isInteger(positionB)
+      || positionA < 0 || positionB < 0 || positionA >= pieces.length || positionB >= pieces.length || positionA === positionB) return false;
+    [pieces[positionA], pieces[positionB]] = [pieces[positionB], pieces[positionA]];
+    return validatePuzzleBoard(pieces);
+  }
+
+  function getPuzzleTapAction(selectedPosition, activatedPosition) {
+    if (!Number.isInteger(activatedPosition) || activatedPosition < 0) return { selectedPosition };
+    if (!Number.isInteger(selectedPosition) || selectedPosition < 0) return { selectedPosition: activatedPosition };
+    if (selectedPosition === activatedPosition) return { selectedPosition: undefined };
+    return { selectedPosition: undefined, swap: [selectedPosition, activatedPosition] };
+  }
+
+  function isPuzzleDragMovement(startX, startY, currentX, currentY, threshold = 8) {
+    if (![startX, startY, currentX, currentY, threshold].every(Number.isFinite) || threshold < 0) return false;
+    const deltaX = currentX - startX;
+    const deltaY = currentY - startY;
+    return (deltaX * deltaX) + (deltaY * deltaY) >= threshold * threshold;
   }
 
   function isPlayablePuzzle(puzzle) {
@@ -280,7 +308,8 @@
     SHADOW_DIFFICULTIES, TURKISH_INITIAL_LETTERS, SOUND_DIFFICULTIES, PUZZLE_DIFFICULTIES, shuffle, createMissingRound, createShadowRound,
     createLetterRound, getEligibleShadowTargets, isValidShadowObject, validateShadowRound,
     getEligibleInitialLetterWords, isValidInitialLetterWord, validateLetterRound,
-    createSoundBoard, canSelectSoundCard, createPuzzlePieces, isPuzzleComplete,
+    createSoundBoard, canSelectSoundCard, createPuzzlePieces, isPuzzleComplete, validatePuzzleBoard,
+    swapPuzzlePositions, getPuzzleTapAction, isPuzzleDragMovement,
     isMeaningfulPuzzleOrder, isPlayablePuzzle, selectPuzzle, validateContent
   };
 

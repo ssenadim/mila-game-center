@@ -44,6 +44,8 @@ const SHADOW_MODE = "shadow";
 const INITIAL_LETTER_MODE = "initial-letter";
 const SOUND_MEMORY_MODE = "sound-memory";
 const PUZZLE_MODE = "puzzle";
+const PUZZLE_DRAG_THRESHOLD = 8;
+const PUZZLE_SWAP_DURATION = 180;
 const NEW_MINI_GAME_MODES = [MISSING_ITEM_MODE, SHADOW_MODE, INITIAL_LETTER_MODE, SOUND_MEMORY_MODE, PUZZLE_MODE];
 const MINI_GAME_MODES = [MATCHING_MODE, LISTENING_MODE, NUMBER_MATCH_MODE, COLOR_MATCH_MODE, SORTING_MODE, ...NEW_MINI_GAME_MODES];
 const LISTENING_SESSION_ROUNDS = 5;
@@ -2518,7 +2520,8 @@ function createEmptyNewMiniGameState(mode) {
     challenge: undefined, board: [], firstCard: undefined, attempts: 0,
     elapsedMs: 0, timerStartedAt: 0, soundDifficulty: "standard", shadowDifficulty: "easy", recentShadowDistractorIds: [],
     puzzleDifficulty: "easy", puzzleId: suggestedPuzzle?.id ?? newMiniGames?.PUZZLES?.[0]?.id, pieces: [],
-    selectedPieceId: undefined, draggedPieceId: undefined
+    selectedPiecePosition: undefined, puzzleDrag: undefined, suppressPuzzleClick: false,
+    puzzleFeedback: "Bir parçaya dokun ya da sürükle."
   };
 }
 
@@ -2554,6 +2557,11 @@ function pauseNewMiniGameState() {
     newMiniGameState.elapsedMs += Date.now() - newMiniGameState.timerStartedAt;
     newMiniGameState.timerStartedAt = 0;
   }
+  if (newMiniGameState.mode === PUZZLE_MODE) {
+    cancelPuzzleDrag();
+    newMiniGameState.selectedPiecePosition = undefined;
+    newMiniGameState.puzzleFeedback = "Oyun duraklatıldı.";
+  }
   newMiniGameState.speaking = false;
   renderCurrentNewMiniGame();
 }
@@ -2569,17 +2577,20 @@ function resumeNewMiniGameState() {
       pending.callback();
     }, pending.remaining);
   }
+  if (newMiniGameState.mode === PUZZLE_MODE) newMiniGameState.puzzleFeedback = "Bir parçaya dokun ya da sürükle.";
   if (newMiniGameState.mode === SOUND_MEMORY_MODE && newMiniGameState.board.length && !newMiniGameState.completed) newMiniGameState.timerStartedAt = Date.now();
   renderCurrentNewMiniGame();
 }
 
 function cleanupNewMiniGame() {
+  cancelPuzzleDrag();
   clearNewMiniGameDelay();
   newMiniGameState.sessionId += 1;
   newMiniGameState.inputLocked = false;
   newMiniGameState.speaking = false;
-  newMiniGameState.selectedPieceId = undefined;
-  newMiniGameState.draggedPieceId = undefined;
+  newMiniGameState.selectedPiecePosition = undefined;
+  newMiniGameState.puzzleDrag = undefined;
+  newMiniGameState.suppressPuzzleClick = false;
   newMiniGameState.timerStartedAt = 0;
   isNewMiniGameActive = false;
   ui.newMiniGameSetup.textContent = "";
@@ -2589,6 +2600,7 @@ function cleanupNewMiniGame() {
   ui.newMiniGameCompletionImage.classList.add("hidden");
   ui.newMiniGameCompletionImage.removeAttribute("src");
   ui.newMiniGameCompletionImage.alt = "";
+  ui.newMiniGame.classList.remove("puzzle-active");
 }
 
 async function speakNewMiniGame(text, language = TURKISH_LANGUAGE, { explicit = false, channel = "question" } = {}) {
@@ -3112,14 +3124,18 @@ function startPuzzleSession() {
   newMiniGameState.pieces = newMiniGames.createPuzzlePieces(difficulty.id, Math.random, previousOrder);
   previousPuzzleOrders.set(difficulty.id, newMiniGameState.pieces.map(piece => piece.target));
   recentPuzzleIds = [...recentPuzzleIds.filter(id => id !== newMiniGameState.puzzleId), newMiniGameState.puzzleId].slice(-3);
-  newMiniGameState.selectedPieceId = undefined;
-  newMiniGameState.draggedPieceId = undefined;
+  newMiniGameState.selectedPiecePosition = undefined;
+  newMiniGameState.puzzleDrag = undefined;
+  newMiniGameState.suppressPuzzleClick = false;
+  newMiniGameState.puzzleFeedback = "Bir parçaya dokun ya da sürükle.";
   newMiniGameState.correct = 0;
   newMiniGameState.completed = false;
   newMiniGameState.inputLocked = false;
   ui.newMiniGameEyebrow.textContent = `YAPBOZ · ${difficulty.label.toLocaleUpperCase("tr-TR")} · ${difficulty.columns}×${difficulty.rows}`;
+  ui.newMiniGame.classList.add("puzzle-active");
   ui.newMiniGameSetup.classList.add("hidden");
   ui.newMiniGameArea.classList.remove("hidden");
+  if (!validateActivePuzzleBoard()) return;
   renderPuzzleGame();
 }
 
@@ -3129,96 +3145,204 @@ function puzzlePieceStyle(piece, puzzle, difficulty) {
   return `background-image:url("${newMiniGameSvgUrl(puzzle.svg)}");background-size:${difficulty.columns * 100}% ${difficulty.rows * 100}%;background-position:${x}% ${y}%`;
 }
 
-function createPuzzlePieceButton(piece, puzzle, difficulty, inTray = false) {
+function canUsePuzzleInput() {
+  return isNewMiniGameActive && !isPaused && !newMiniGameState.inputLocked && !newMiniGameState.speaking && !newMiniGameState.completed;
+}
+
+function validateActivePuzzleBoard() {
+  const valid = newMiniGames.validatePuzzleBoard(newMiniGameState.pieces, difficultyPieceCount());
+  if (!valid) {
+    console.warn("[Yapboz] Geçersiz tahta durumu algılandı; etkileşim güvenle durduruldu.");
+    newMiniGameState.inputLocked = true;
+  }
+  return valid;
+}
+
+function clearPuzzleTapSelection() {
+  newMiniGameState.selectedPiecePosition = undefined;
+  ui.newMiniGameChoices.querySelectorAll(".puzzle-piece.selected").forEach(piece => {
+    piece.classList.remove("selected");
+    piece.setAttribute("aria-pressed", "false");
+  });
+}
+
+function getPuzzlePositionAtPoint(clientX, clientY) {
+  const elements = document.elementsFromPoint?.(clientX, clientY) ?? [];
+  const source = newMiniGameState.puzzleDrag?.sourceElement;
+  const piece = elements.map(element => element.closest?.(".puzzle-piece"))
+    .find(candidate => candidate && candidate !== source && candidate.closest(".puzzle-board"));
+  if (!piece?.closest(".puzzle-board")) return undefined;
+  const position = Number(piece.dataset.position);
+  return Number.isInteger(position) ? position : undefined;
+}
+
+function updatePuzzleDragTarget(position) {
+  const drag = newMiniGameState.puzzleDrag;
+  if (!drag) return;
+  ui.newMiniGameChoices.querySelectorAll(".puzzle-piece.drag-target").forEach(piece => piece.classList.remove("drag-target"));
+  drag.targetPosition = position;
+  if (Number.isInteger(position) && position !== drag.sourcePosition) {
+    ui.newMiniGameChoices.querySelector(`.puzzle-piece[data-position="${position}"]`)?.classList.add("drag-target");
+  }
+}
+
+function cancelPuzzleDrag() {
+  const drag = newMiniGameState?.puzzleDrag;
+  if (!drag) return;
+  const source = drag.sourceElement;
+  source?.classList.remove("dragging");
+  source?.style.removeProperty("--puzzle-drag-x");
+  source?.style.removeProperty("--puzzle-drag-y");
+  ui?.newMiniGameChoices?.querySelectorAll?.(".puzzle-piece.drag-target").forEach(piece => piece.classList.remove("drag-target"));
+  if (source?.hasPointerCapture?.(drag.pointerId)) {
+    try { source.releasePointerCapture(drag.pointerId); } catch { /* Pointer capture may already be gone. */ }
+  }
+  newMiniGameState.puzzleDrag = undefined;
+}
+
+function beginPuzzlePointer(event, position, button) {
+  if (!canUsePuzzleInput() || newMiniGameState.puzzleDrag || event.button > 0) return;
+  newMiniGameState.puzzleDrag = {
+    pointerId: event.pointerId, sourcePosition: position, targetPosition: position,
+    startX: event.clientX, startY: event.clientY, started: false, sourceElement: button
+  };
+  try { button.setPointerCapture(event.pointerId); } catch { /* Pointer capture is an enhancement. */ }
+}
+
+function movePuzzlePointer(event) {
+  const drag = newMiniGameState.puzzleDrag;
+  if (!drag || drag.pointerId !== event.pointerId || !canUsePuzzleInput()) return;
+  if (!drag.started && newMiniGames.isPuzzleDragMovement(drag.startX, drag.startY, event.clientX, event.clientY, PUZZLE_DRAG_THRESHOLD)) {
+    drag.started = true;
+    clearPuzzleTapSelection();
+    drag.sourceElement.classList.add("dragging");
+    newMiniGameState.puzzleFeedback = "Parçayı başka bir parçanın üstüne bırak.";
+    ui.newMiniGameFeedback.textContent = newMiniGameState.puzzleFeedback;
+  }
+  if (!drag.started) return;
+  event.preventDefault();
+  drag.sourceElement.style.setProperty("--puzzle-drag-x", `${event.clientX - drag.startX}px`);
+  drag.sourceElement.style.setProperty("--puzzle-drag-y", `${event.clientY - drag.startY}px`);
+  updatePuzzleDragTarget(getPuzzlePositionAtPoint(event.clientX, event.clientY));
+}
+
+function endPuzzlePointer(event, cancelled = false) {
+  const drag = newMiniGameState.puzzleDrag;
+  if (!drag || drag.pointerId !== event.pointerId) return;
+  const wasDragging = drag.started;
+  const sourcePosition = drag.sourcePosition;
+  const targetPosition = cancelled ? undefined : getPuzzlePositionAtPoint(event.clientX, event.clientY);
+  if (wasDragging) {
+    event.preventDefault();
+    newMiniGameState.suppressPuzzleClick = true;
+    const sessionId = newMiniGameState.sessionId;
+    window.setTimeout(() => {
+      if (newMiniGameState.sessionId === sessionId) newMiniGameState.suppressPuzzleClick = false;
+    }, 0);
+  }
+  cancelPuzzleDrag();
+  if (!wasDragging) return;
+  if (!Number.isInteger(targetPosition) || targetPosition === sourcePosition) {
+    newMiniGameState.puzzleFeedback = "Parça yerine döndü.";
+    renderPuzzleGame({ focusPosition: sourcePosition });
+    return;
+  }
+  swapPuzzlePieces(sourcePosition, targetPosition, { focusPosition: targetPosition });
+}
+
+function activatePuzzlePosition(position) {
+  if (!canUsePuzzleInput()) return;
+  const action = newMiniGames.getPuzzleTapAction(newMiniGameState.selectedPiecePosition, position);
+  newMiniGameState.selectedPiecePosition = action.selectedPosition;
+  if (action.swap) {
+    swapPuzzlePieces(action.swap[0], action.swap[1], { focusPosition: action.swap[1] });
+    return;
+  }
+  newMiniGameState.puzzleFeedback = Number.isInteger(action.selectedPosition)
+    ? "Parça seçildi. Şimdi başka bir parçaya dokun."
+    : "Seçim kaldırıldı.";
+  renderPuzzleGame({ focusPosition: position });
+}
+
+function createPuzzlePieceButton(piece, puzzle, difficulty, position, swappingPositions = []) {
   const button = document.createElement("button");
   button.type = "button";
-  button.className = `puzzle-piece${newMiniGameState.selectedPieceId === piece.id ? " selected" : ""}`;
+  button.className = `puzzle-piece${newMiniGameState.selectedPiecePosition === position ? " selected" : ""}${swappingPositions.includes(position) ? " swapping" : ""}`;
   button.style.cssText = puzzlePieceStyle(piece, puzzle, difficulty);
-  button.setAttribute("aria-label", `Yapboz parçası ${piece.target + 1}${inTray ? ", seçmek için dokun" : ", yerleştirildi"}`);
-  button.disabled = isPaused || newMiniGameState.inputLocked || newMiniGameState.speaking || piece.placed;
-  if (inTray) {
-    button.setAttribute("aria-pressed", String(newMiniGameState.selectedPieceId === piece.id));
-    button.draggable = true;
-    button.addEventListener("dragstart", event => {
-      newMiniGameState.draggedPieceId = piece.id;
-      event.dataTransfer?.setData("text/plain", piece.id);
-    });
-    button.addEventListener("dragend", () => { newMiniGameState.draggedPieceId = undefined; });
-    button.addEventListener("click", () => {
-      if (!isNewMiniGameActive || isPaused || newMiniGameState.inputLocked || newMiniGameState.speaking) return;
-      newMiniGameState.selectedPieceId = newMiniGameState.selectedPieceId === piece.id ? undefined : piece.id;
-      renderPuzzleGame();
-    });
-  }
+  button.dataset.position = position;
+  button.setAttribute("aria-label", `Yapboz parçası ${piece.target + 1}`);
+  button.setAttribute("aria-pressed", String(newMiniGameState.selectedPiecePosition === position));
+  button.disabled = !canUsePuzzleInput();
+  button.draggable = false;
+  button.addEventListener("pointerdown", event => beginPuzzlePointer(event, position, button));
+  button.addEventListener("lostpointercapture", () => {
+    if (newMiniGameState.puzzleDrag?.sourceElement === button) cancelPuzzleDrag();
+  });
+  button.addEventListener("keydown", event => {
+    if (!["Enter", " "].includes(event.key)) return;
+    event.preventDefault();
+    activatePuzzlePosition(position);
+  });
+  button.addEventListener("click", () => {
+    if (newMiniGameState.suppressPuzzleClick) {
+      newMiniGameState.suppressPuzzleClick = false;
+      return;
+    }
+    activatePuzzlePosition(position);
+  });
   return button;
 }
 
-function renderPuzzleGame() {
+function renderPuzzleGame({ focusPosition, swappingPositions = [] } = {}) {
   resetNewMiniGameView();
   const puzzle = newMiniGames.PUZZLES.find(item => item.id === newMiniGameState.puzzleId) ?? newMiniGames.PUZZLES[0];
   const difficulty = newMiniGames.PUZZLE_DIFFICULTIES[newMiniGameState.puzzleDifficulty];
-  const placedCount = newMiniGameState.pieces.filter(piece => piece.placed).length;
-  updateNewMiniGameProgress(placedCount, newMiniGameState.pieces.length);
-  ui.newMiniGamePrompt.textContent = "Parçayı seç, sonra doğru yere dokun. İstersen sürükle.";
+  const correctCount = newMiniGameState.pieces.filter((piece, position) => piece.target === position).length;
+  updateNewMiniGameProgress(correctCount, newMiniGameState.pieces.length);
+  ui.newMiniGamePrompt.textContent = "Parçaları sürükle ya da iki parçaya dokun ve resmi tamamla!";
+  ui.newMiniGameVisual.classList.add("puzzle-preview");
   ui.newMiniGameVisual.innerHTML = `<img class="puzzle-reference" src="${newMiniGameSvgUrl(puzzle.svg)}" alt="${puzzle.description}"><strong>${puzzle.label}</strong>`;
   ui.newMiniGameChoices.className = `new-mini-game-choices puzzle-layout${difficulty.columns === 4 ? " puzzle-layout-4" : ""}`;
   const board = document.createElement("div");
   board.className = "puzzle-board";
+  board.setAttribute("role", "group");
+  board.setAttribute("aria-label", "Karıştırılmış yapboz tahtası");
   board.style.gridTemplateColumns = `repeat(${difficulty.columns},1fr)`;
   board.style.gridTemplateRows = `repeat(${difficulty.rows},1fr)`;
-  Array.from({ length: difficulty.columns * difficulty.rows }, (_, target) => {
-    const placed = newMiniGameState.pieces.find(piece => piece.target === target && piece.placed);
-    const slot = document.createElement(placed ? "div" : "button");
-    if (!placed) slot.type = "button";
-    slot.className = `puzzle-slot${placed ? " filled" : ""}`;
-    slot.setAttribute("aria-label", placed ? `Dolu yapboz yeri ${target + 1}` : `Boş yapboz yeri ${target + 1}`);
-    if (placed) slot.append(createPuzzlePieceButton(placed, puzzle, difficulty));
-    else {
-      slot.disabled = isPaused || newMiniGameState.inputLocked || newMiniGameState.speaking;
-      slot.textContent = target + 1;
-      slot.addEventListener("click", () => placePuzzlePiece(newMiniGameState.selectedPieceId, target));
-      slot.addEventListener("dragover", event => event.preventDefault());
-      slot.addEventListener("drop", event => {
-        event.preventDefault();
-        placePuzzlePiece(event.dataTransfer?.getData("text/plain") || newMiniGameState.draggedPieceId, target);
-      });
-    }
+  newMiniGameState.pieces.forEach((piece, position) => {
+    const slot = document.createElement("div");
+    slot.className = "puzzle-slot filled";
+    slot.append(createPuzzlePieceButton(piece, puzzle, difficulty, position, swappingPositions));
     board.append(slot);
   });
-  const tray = document.createElement("div");
-  tray.className = `puzzle-tray${difficulty.columns === 4 ? " grid-4" : ""}`;
-  tray.setAttribute("aria-label", "Yapboz parçaları");
-  newMiniGameState.pieces.filter(piece => !piece.placed).forEach(piece => tray.append(createPuzzlePieceButton(piece, puzzle, difficulty, true)));
-  ui.newMiniGameChoices.append(board, tray);
-  ui.newMiniGameFeedback.textContent = newMiniGameState.selectedPieceId ? "Şimdi parçanın yerini seç." : "Bir parça seç.";
+  ui.newMiniGameChoices.append(board);
+  ui.newMiniGameFeedback.textContent = newMiniGameState.puzzleFeedback;
+  if (Number.isInteger(focusPosition)) board.querySelector(`[data-position="${focusPosition}"]`)?.focus({ preventScroll: true });
 }
 
-async function placePuzzlePiece(pieceId, target) {
-  if (!isNewMiniGameActive || isPaused || newMiniGameState.inputLocked || newMiniGameState.speaking || !pieceId) return;
-  const piece = newMiniGameState.pieces.find(item => item.id === pieceId && !item.placed);
-  if (!piece) return;
+function swapPuzzlePieces(positionA, positionB, { focusPosition = positionB } = {}) {
+  if (!canUsePuzzleInput() || positionA === positionB || !validateActivePuzzleBoard()) return false;
   const sessionId = newMiniGameState.sessionId;
   newMiniGameState.inputLocked = true;
-  newMiniGameState.selectedPieceId = undefined;
-  newMiniGameState.draggedPieceId = undefined;
-  if (piece.target !== target) {
-    recordNewMiniGameWrong();
-    ui.newMiniGameFeedback.textContent = "Bu parça başka bir yere ait. Yeniden deneyelim.";
-    await speakNewMiniGame("Başka bir yere bakalım.");
-    if (sessionId !== newMiniGameState.sessionId || newMiniGameState.completed) return;
+  clearPuzzleTapSelection();
+  cancelPuzzleDrag();
+  if (!newMiniGames.swapPuzzlePositions(newMiniGameState.pieces, positionA, positionB) || !validateActivePuzzleBoard()) {
+    return false;
+  }
+  newMiniGameState.puzzleFeedback = "Parçaların yeri değiştirildi.";
+  renderPuzzleGame({ focusPosition, swappingPositions: [positionA, positionB] });
+  const complete = newMiniGames.isPuzzleComplete(newMiniGameState.pieces, difficultyPieceCount());
+  const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+  scheduleNewMiniGame(() => {
+    if (newMiniGameState.sessionId !== sessionId || newMiniGameState.completed) return;
+    if (complete) {
+      finishNewMiniGame(`${newMiniGameState.pieces.length} parçayı doğru yerleştirdin.`);
+      return;
+    }
     newMiniGameState.inputLocked = false;
-    renderPuzzleGame();
-    return;
-  }
-  piece.placed = true;
-  recordNewMiniGameCorrect(piece.id);
-  audio.playSuccess();
-  if (newMiniGames.isPuzzleComplete(newMiniGameState.pieces, difficultyPieceCount())) {
-    finishNewMiniGame(`${newMiniGameState.pieces.length} parçayı doğru yerleştirdin.`);
-    return;
-  }
-  newMiniGameState.inputLocked = false;
-  renderPuzzleGame();
+    renderPuzzleGame({ focusPosition });
+  }, reduceMotion ? 0 : PUZZLE_SWAP_DURATION);
+  return true;
 }
 
 function difficultyPieceCount() {
@@ -6598,6 +6722,9 @@ document.addEventListener("pointerdown", event => {
   if (!ui.gameMenu.classList.contains("hidden") && !event.target.closest("#game-menu, #menu-button")) closeGameMenu();
   if (event.target.closest("button:not(:disabled)")) audio.playButton();
 });
+document.addEventListener("pointermove", movePuzzlePointer, { passive: false });
+window.addEventListener("pointerup", event => endPuzzlePointer(event), true);
+window.addEventListener("pointercancel", event => endPuzzlePointer(event, true), true);
 document.addEventListener("keydown", event => {
   if (event.key === "Escape") {
     if (!ui.worldThemePanel.classList.contains("hidden")) closeWorldThemePanel();
