@@ -7,7 +7,7 @@
 
   const APP_NAME = "Mila Oyun Merkezi";
   const APP_ID = "mila-oyun-merkezi";
-  const APP_VERSION = "1.0.0";
+  const APP_VERSION = "1.0.4";
   const SCHEMA_VERSION = 1;
   const SETTINGS_STORAGE_KEY = "mila-learning-parent-settings";
   const MAX_RECENT_ACTIVITIES = 10;

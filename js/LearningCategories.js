@@ -1,6 +1,9 @@
 (function initializeLearningCategories(root) {
   "use strict";
 
+  const educationalObjects = root.MilaEducationalObjects
+    || (typeof require === "function" ? require("./EducationalObjects.js") : undefined);
+
   const GROUPS = [
     { id: "basics", title: "Temel Öğrenme", icon: "🌟" },
     { id: "animals", title: "Hayvanlar Dünyası", icon: "🐾" },
@@ -44,7 +47,11 @@
       supportedModes: ["learning", "quick"], speechEnabled: true,
       items: entries.map((entry, index) => {
         const [wordEn, visual, visualSvg] = entry;
-        return { id: `${id.toLowerCase()}-${wordId(wordEn) || index}`, wordEn, speechValue: wordEn, visual, visualSvg };
+        const professionalObject = educationalObjects?.getByEnglish(wordEn);
+        return {
+          id: `${id.toLowerCase()}-${wordId(wordEn) || index}`, wordEn, speechValue: wordEn, visual, visualSvg,
+          semanticObjectId: professionalObject?.id, illustration: professionalObject?.illustration, illustrationSrc: professionalObject?.src
+        };
       })
     };
   }
@@ -412,7 +419,8 @@
       if (!item) return undefined;
       return {
         id: item.id, conceptId: wordId(item.wordEn), label: reference.label,
-        visual: item.visual, visualSvg: item.visualSvg, sourceCategoryId: source.id
+        visual: item.visual, visualSvg: item.visualSvg, illustration: item.illustration,
+        illustrationSrc: item.illustrationSrc, semanticObjectId: item.semanticObjectId, sourceCategoryId: source.id
       };
     }).filter(Boolean);
   }
@@ -424,7 +432,7 @@
     if (items.length < SORTING_ITEMS_PER_CATEGORY) problems.push(`${category?.id || "Bilinmeyen"}: en az ${SORTING_ITEMS_PER_CATEGORY} geçerli öğe gerekli.`);
     if (new Set(items.map(item => item.id)).size !== items.length) problems.push(`${category.id}: yinelenen öğe kimliği.`);
     if (new Set(items.map(item => item.conceptId)).size !== items.length) problems.push(`${category.id}: yinelenen kavram.`);
-    if (items.some(item => !item.label || (!item.visual && !item.visualSvg))) problems.push(`${category.id}: etiketi veya görseli eksik öğe.`);
+    if (items.some(item => !item.label || (!item.visual && !item.visualSvg && !item.illustration))) problems.push(`${category.id}: etiketi veya görseli eksik öğe.`);
     return { valid: problems.length === 0, problems, items };
   }
 
@@ -523,7 +531,7 @@
     if (items.length !== SORTING_ITEMS_PER_CATEGORY * 2 || new Set(items.map(item => item.id)).size !== items.length) problems.push("Oturum öğeleri dengeli ve benzersiz değil.");
     const categoryIds = new Set((session?.categories ?? []).map(category => category.id));
     const counts = items.reduce((result, item) => ({ ...result, [item.group]: (result[item.group] ?? 0) + 1 }), {});
-    if (items.some(item => !item.label || (!item.visual && !item.visualSvg) || !categoryIds.has(item.group))) problems.push("Oturumda hedefsiz veya görselsiz öğe var.");
+    if (items.some(item => !item.label || (!item.visual && !item.visualSvg && !item.illustration) || !categoryIds.has(item.group))) problems.push("Oturumda hedefsiz veya görselsiz öğe var.");
     if ([...categoryIds].some(categoryId => counts[categoryId] !== SORTING_ITEMS_PER_CATEGORY)) problems.push("Kategori dağılımı dengeli değil.");
     if (!hasMixedSortingOrder(items)) problems.push("Öğe sırası kategori bloklarına ayrılmış.");
     return { valid: problems.length === 0, problems };
@@ -588,6 +596,7 @@
           id: `${category.id}-${item.id}`, targetId: item.id, category: category.id, label: category.title,
           prompt: prompt.text, promptLanguage: prompt.language, answerLanguage: "en-US", correct,
           speechValue: item.speechValue, visual: item.visual ?? "", visualSvg: item.visualSvg,
+          semanticObjectId: item.semanticObjectId, illustration: item.illustration, illustrationSrc: item.illustrationSrc,
           answers, strategy: category.strategy, progressiveChoices: true, numericValue: item.numericValue,
           pair: item.pair, comparisonValues: item.comparisonValues, forceQuestionType: ["opposite", "position", "ordering", "comparison"].includes(category.strategy) ? "selection" : undefined,
           recognitionPrompt: category.strategy === "vocabulary" ? `What is this?` : undefined,
@@ -611,11 +620,11 @@
       if (new Set(itemIds).size !== itemIds.length || itemIds.some(id => !id)) problems.push(`${category.id}: yinelenen veya eksik öğe kimliği.`);
       const answers = category.items.map(answerFor);
       if (new Set(answers).size !== answers.length) problems.push(`${category.id}: yinelenen cevap etiketi.`);
-      const visuals = category.items.map(item => item.visualSvg ?? item.visual);
+      const visuals = category.items.map(item => item.illustration ?? item.visualSvg ?? item.visual);
       if (new Set(visuals).size !== visuals.length) problems.push(`${category.id}: yinelenen görsel.`);
       category.items.forEach(item => {
         if (!answerFor(item) || !item.speechValue) problems.push(`${category.id}/${item.id}: eksik İngilizce kelime veya konuşma değeri.`);
-        if (!item.visual && !item.visualSvg) problems.push(`${category.id}/${item.id}: görsel eksik.`);
+        if (!item.visual && !item.visualSvg && !item.illustration) problems.push(`${category.id}/${item.id}: görsel eksik.`);
         if (["number", "ordering"].includes(category.strategy) && !Number.isInteger(item.numericValue)) problems.push(`${category.id}/${item.id}: geçersiz sayı.`);
         if (category.strategy === "opposite" && (!Array.isArray(item.pair) || item.pair.length !== 2 || item.pair[0] === item.pair[1])) problems.push(`${category.id}/${item.id}: geçersiz zıt çift.`);
         if (category.strategy === "position" && !item.visualSvg) problems.push(`${category.id}/${item.id}: konum sahnesi eksik.`);
@@ -647,8 +656,8 @@
   }
 
   function getEligibleCategories(game) {
-    if (game === "matching") return categories.filter(category => category.items.length >= 8 && category.items.every(item => item.visual || item.visualSvg));
-    if (game === "listening") return categories.filter(category => category.items.length >= 4 && category.items.every(item => item.speechValue && (item.visual || item.visualSvg)));
+    if (game === "matching") return categories.filter(category => category.items.length >= 8 && category.items.every(item => item.visual || item.visualSvg || item.illustration));
+    if (game === "listening") return categories.filter(category => category.items.length >= 4 && category.items.every(item => item.speechValue && (item.visual || item.visualSvg || item.illustration)));
     if (game === "missing-item") return categories.filter(category => category.items.length >= 5 && category.items.every(item => item.visual));
     if (game === "initial-letter") return categories.filter(category => GENERAL_VOCABULARY_IDS.includes(category.id) && category.items.every(item => /^[A-Z]/.test(item.wordEn)));
     return [];

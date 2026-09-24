@@ -4,7 +4,7 @@
   const svg = body => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">${body}</svg>`;
   const scene = (sky, ground, body) => svg(`<rect width="120" height="120" rx="14" fill="${sky}"/><circle cx="12" cy="15" r="3" fill="#fff" opacity=".55"/><path d="M94 17q7-9 14 0 8 0 8 7H87q0-7 7-7z" fill="#fff" opacity=".5"/><rect y="82" width="120" height="38" fill="${ground}"/><circle cx="13" cy="101" r="3" fill="#fff" opacity=".45"/><path d="m103 91 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z" fill="#fff" opacity=".4"/>${body}`);
 
-  const MISSING_ITEM_GROUPS = [
+  const LEGACY_MISSING_ITEM_GROUPS = [
     { id: "animals", label: "Hayvanlar", items: [["cat", "Kedi", "🐱"], ["dog", "Köpek", "🐶"], ["lion", "Aslan", "🦁"], ["rabbit", "Tavşan", "🐰"], ["elephant", "Fil", "🐘"], ["panda", "Panda", "🐼"]] },
     { id: "fruits", label: "Meyveler", items: [["apple", "Elma", "🍎"], ["banana", "Muz", "🍌"], ["grape", "Üzüm", "🍇"], ["orange", "Portakal", "🍊"], ["pear", "Armut", "🍐"], ["strawberry", "Çilek", "🍓"]] },
     { id: "vehicles", label: "Taşıtlar", items: [["car", "Araba", "🚗"], ["bus", "Otobüs", "🚌"], ["train", "Tren", "🚂"], ["plane", "Uçak", "✈️"], ["bike", "Bisiklet", "🚲"], ["tractor", "Traktör", "🚜"]] },
@@ -14,7 +14,7 @@
     { id: "clothes", label: "Giysiler", items: [["shirt", "Tişört", "👕"], ["pants", "Pantolon", "👖"], ["dress", "Elbise", "👗"], ["shoe", "Ayakkabı", "👟"], ["hat", "Şapka", "🧢"], ["sock", "Çorap", "🧦"]] }
   ].map(group => ({ ...group, items: group.items.map(([id, label, visual]) => ({ id: `${group.id}-${id}`, label, visual })) }));
 
-  const SHADOW_OBJECTS = [
+  const LEGACY_SHADOW_OBJECTS = [
     { id: "cat", label: "Kedi", category: "animals", svg: svg('<circle cx="60" cy="58" r="30" fill="#f4a742"/><path d="M35 37 28 10 49 29M85 37l7-27-21 19" fill="#f4a742"/><circle cx="49" cy="55" r="4"/><circle cx="71" cy="55" r="4"/><path d="M55 70q5 6 10 0" fill="none" stroke="#713f23" stroke-width="4"/>') },
     { id: "fish", label: "Balık", category: "animals", svg: svg('<ellipse cx="55" cy="60" rx="38" ry="24" fill="#4bbbe8"/><path d="m88 60 27-22v44z" fill="#2d86c7"/><circle cx="39" cy="54" r="4" fill="#17345c"/>') },
     { id: "rabbit", label: "Tavşan", category: "animals", svg: svg('<ellipse cx="45" cy="30" rx="11" ry="27" fill="#ddd4ef"/><ellipse cx="75" cy="30" rx="11" ry="27" fill="#ddd4ef"/><circle cx="60" cy="70" r="33" fill="#eee8f8"/><circle cx="49" cy="66" r="4"/><circle cx="71" cy="66" r="4"/>') },
@@ -30,7 +30,7 @@
   ];
 
   const TURKISH_INITIAL_LETTERS = ["A", "B", "C", "Ç", "D", "E", "F", "G", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
-  const INITIAL_LETTER_WORDS = [
+  const LEGACY_INITIAL_LETTER_WORDS = [
     ["apple", "Elma", "E", "🍎", "foods"], ["ball", "Top", "T", "⚽", "toys"], ["cat", "Kedi", "K", "🐱", "animals"],
     ["dog", "Köpek", "K", "🐶", "animals"], ["elephant", "Fil", "F", "🐘", "animals"], ["fish", "Balık", "B", "🐟", "animals"],
     ["goat", "Keçi", "K", "🐐", "animals"], ["hat", "Şapka", "Ş", "🧢", "clothes"], ["juice", "Meyve Suyu", "M", "🧃", "foods"],
@@ -48,7 +48,7 @@
     ["lion", "Lion", "🦁"], ["moon", "Moon", "🌙"], ["sun", "Sun", "☀️"], ["car", "Car", "🚗"]
   ].map(([id, speech, visual]) => ({ id, word: speech, visual, speech }));
 
-  const PUZZLES = [
+  const LEGACY_PUZZLES = [
     { id: "cat-garden", label: "Bahçedeki Kedi", description: "Çiçekli bahçede turuncu kedi", category: "animal", svg: scene("#9de1f0", "#78c66c", '<circle cx="26" cy="25" r="12" fill="#ffd75a"/><circle cx="65" cy="65" r="23" fill="#f4a742"/><path d="m48 50 5-20 14 16 15-16 2 23" fill="#f4a742"/><circle cx="58" cy="62" r="3"/><circle cx="72" cy="62" r="3"/><path d="M27 94v14m-7-7h14" stroke="#f26ba6" stroke-width="5"/>') },
     { id: "apple-tree", label: "Elma Ağacı", description: "Kırmızı elmalı yeşil ağaç", category: "fruit", svg: scene("#b9e9f4", "#7fca6b", '<rect x="56" y="46" width="12" height="52" fill="#7d4c2d"/><circle cx="62" cy="42" r="29" fill="#58ad58"/><circle cx="47" cy="35" r="6" fill="#e94b4b"/><circle cx="72" cy="31" r="6" fill="#e94b4b"/><circle cx="66" cy="52" r="6" fill="#e94b4b"/><circle cx="35" cy="58" r="5" fill="#e94b4b"/>') },
     { id: "red-car", label: "Kırmızı Araba", description: "Yolda giden kırmızı araba", category: "vehicle", svg: scene("#b9e9f4", "#a9a2b7", '<path d="M17 77h88l-8-29H40L29 61H17z" fill="#e95b5b"/><circle cx="38" cy="83" r="10" fill="#26355a"/><circle cx="85" cy="83" r="10" fill="#26355a"/><path d="M44 52h42l7 18H31z" fill="#dff6ff"/><path d="M5 103h29m52 0h29" stroke="#fff" stroke-width="4"/>') },
@@ -66,6 +66,41 @@
     { id: "strawberry-basket", label: "Çilek Sepeti", description: "Çimenlerde kırmızı çileklerle dolu sepet", category: "fruit", svg: scene("#c7ebf4", "#86cc72", '<path d="M25 67h70l-8 42H33z" fill="#b97845"/><path d="M37 69q2-35 23-35t23 35" fill="none" stroke="#8c5c3d" stroke-width="7"/><path d="M38 75h44M35 88h50M48 68v39M71 68v39" stroke="#e3b06b" stroke-width="4"/><path d="M41 61c-11-13 2-25 13-13 11-12 24 0 13 13-8 10-18 10-26 0z" fill="#e94b4b"/><path d="m54 47-8-7 9 1 7-6-1 10" fill="#55a95b"/>') },
     { id: "moon-rover", label: "Ay Gezgini", description: "Ay yüzeyinde yıldızları keşfeden araç", category: "space", svg: scene("#292653", "#817ba0", '<circle cx="95" cy="22" r="12" fill="#f2e9b8"/><circle cx="20" cy="30" r="3" fill="#fff"/><circle cx="50" cy="18" r="2" fill="#ffd75a"/><path d="M27 70h60l12 22H19z" fill="#d8d4e6"/><rect x="43" y="48" width="31" height="25" rx="5" fill="#f3f0ff"/><rect x="49" y="54" width="19" height="12" fill="#69c5e3"/><circle cx="34" cy="95" r="12" fill="#34385f"/><circle cx="83" cy="95" r="12" fill="#34385f"/><path d="M74 53 92 35" stroke="#f2c94c" stroke-width="4"/>') }
   ];
+
+  const illustrationContent = root.MilaEducationalObjects
+    || (typeof require === "function" ? require("./EducationalObjects.js") : undefined);
+  const semanticObject = id => illustrationContent?.get(id) || illustrationContent?.getByEnglish(id);
+  const contentItem = (id, fallback) => {
+    const item = semanticObject(id);
+    return item ? { id: item.id, label: item.labelTr, visual: item.fallback || fallback, illustration: item.illustration, src: item.src } : undefined;
+  };
+  const group = (id, label, objectIds, legacyIndex) => ({
+    id, label,
+    items: objectIds.map(objectId => contentItem(objectId)).filter(Boolean).length >= 5
+      ? objectIds.map(objectId => contentItem(objectId)).filter(Boolean)
+      : LEGACY_MISSING_ITEM_GROUPS[legacyIndex].items
+  });
+  const MISSING_ITEM_GROUPS = [
+    group("animals", "Hayvanlar", ["cat", "dog", "lion", "rabbit", "elephant", "panda"], 0),
+    group("fruits", "Meyveler", ["apple", "banana", "grapes", "orange", "watermelon", "strawberry"], 1),
+    group("vehicles", "Taşıtlar", ["car", "bus", "train", "airplane", "bicycle", "truck"], 2),
+    group("toys", "Oyuncaklar", ["ball", "teddy-bear", "doll", "kite", "blocks", "puzzle"], 3),
+    group("home", "Ev Eşyaları", ["chair", "table", "lamp", "clock", "bed", "sofa"], 4),
+    group("nature", "Doğa", ["tree", "flower", "mountain", "river", "forest", "rainbow"], 5),
+    group("clothes", "Giysiler", ["shirt", "pants", "dress", "coat", "shorts", "socks"], 6)
+  ];
+  const SHADOW_OBJECTS = LEGACY_SHADOW_OBJECTS.map(legacyItem => {
+    const item = semanticObject(legacyItem.id);
+    return item ? { ...legacyItem, label: item.labelTr, src: item.src, illustration: item.illustration, visual: item.fallback } : legacyItem;
+  });
+  const INITIAL_LETTER_WORDS = LEGACY_INITIAL_LETTER_WORDS.map(word => {
+    const item = illustrationContent?.get(word.id) || illustrationContent?.getByEnglish(word.word);
+    return item ? { ...word, semanticObjectId: item.id, illustration: item.illustration, src: item.src } : word;
+  });
+  const PUZZLE_CATEGORIES = ["dinosaur", "space", "fantasy", "sea", "forest", "farm", "transport", "construction", "winter", "sky", "safari", "fruit", "seaside", "animals", "city", "nature"];
+  const PUZZLES = illustrationContent?.PUZZLE_SCENES?.length === 16
+    ? illustrationContent.PUZZLE_SCENES.map((sceneItem, index) => ({ ...sceneItem, category: PUZZLE_CATEGORIES[index] }))
+    : LEGACY_PUZZLES;
 
   const SOUND_DIFFICULTIES = {
     beginner: { id: "beginner", label: "Kolay", pairs: 3 },
@@ -103,7 +138,9 @@
   }
 
   function isValidShadowObject(item) {
-    return Boolean(item?.id && item?.label && item?.svg?.startsWith("<svg") && !/<image\b|\bhref\s*=/i.test(item.svg));
+    const inlineSvg = item?.svg?.startsWith("<svg") && !/<image\b|\bhref\s*=/i.test(item.svg);
+    const localSvg = typeof item?.src === "string" && item.src.startsWith("assets/illustrations/objects/") && /\.svg(?:\?v=[\w.-]+)?$/i.test(item.src);
+    return Boolean(item?.id && item?.label && (inlineSvg || localSvg));
   }
 
   function isFairShadowPair(firstId, secondId) {
@@ -259,9 +296,10 @@
   }
 
   function isPlayablePuzzle(puzzle) {
+    const inlineSvg = puzzle?.svg?.startsWith("<svg") && !/<image\b|\bhref\s*=/i.test(puzzle.svg);
+    const localSvg = typeof puzzle?.src === "string" && puzzle.src.startsWith("assets/illustrations/puzzles/") && /\.svg(?:\?v=[\w.-]+)?$/i.test(puzzle.src);
     return Boolean(puzzle && typeof puzzle.id === "string" && puzzle.id.trim() && typeof puzzle.label === "string" && puzzle.label.trim()
-      && typeof puzzle.description === "string" && puzzle.description.trim() && puzzle.svg?.startsWith("<svg")
-      && !/<image\b|\bhref\s*=/i.test(puzzle.svg));
+      && typeof puzzle.description === "string" && puzzle.description.trim() && (inlineSvg || localSvg));
   }
 
   function selectPuzzle(recentIds = [], random = Math.random, puzzles = PUZZLES) {
@@ -283,7 +321,7 @@
     checkUnique(MISSING_ITEM_GROUPS, "Hangisi Eksik grupları");
     MISSING_ITEM_GROUPS.forEach(group => {
       checkUnique(group.items, `Hangisi Eksik/${group.id}`);
-      if (!group.label || group.items.length < 5 || group.items.some(item => !item.label || !item.visual)) problems.push(`Hangisi Eksik/${group.id}: yetersiz içerik.`);
+      if (!group.label || group.items.length < 5 || group.items.some(item => !item.label || (!item.visual && !item.illustration))) problems.push(`Hangisi Eksik/${group.id}: yetersiz içerik.`);
     });
     checkUnique(SHADOW_OBJECTS, "Gölge nesneleri");
     if (SHADOW_OBJECTS.length < 12 || new Set(SHADOW_OBJECTS.map(item => item.category)).size < 4 || SHADOW_OBJECTS.some(item => !isValidShadowObject(item))) problems.push("Gölge içeriği gerekli çeşitliliği veya geçerli SVG'leri sağlamıyor.");
@@ -295,7 +333,7 @@
     checkUnique(SOUND_MEMORY_ITEMS, "Ses hafızası");
     if (SOUND_MEMORY_ITEMS.length < 6 || SOUND_MEMORY_ITEMS.some(item => !item.speech)) problems.push("Ses hafızası içeriği yetersiz.");
     checkUnique(PUZZLES, "Yapbozlar");
-    if (PUZZLES.length !== 16 || PUZZLES.some(item => !isPlayablePuzzle(item)) || new Set(PUZZLES.map(item => item.svg)).size !== 16) problems.push("Yapboz içeriği 16 benzersiz yerel SVG sağlamıyor.");
+    if (PUZZLES.length !== 16 || PUZZLES.some(item => !isPlayablePuzzle(item)) || new Set(PUZZLES.map(item => item.src || item.svg)).size !== 16) problems.push("Yapboz içeriği 16 benzersiz yerel SVG sağlamıyor.");
     Object.values(PUZZLE_DIFFICULTIES).forEach(difficulty => {
       if (!Number.isInteger(difficulty.columns) || !Number.isInteger(difficulty.rows) || difficulty.columns < 2 || difficulty.rows < 2) problems.push(`Yapboz/${difficulty.id}: geçersiz boyut.`);
     });

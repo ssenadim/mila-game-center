@@ -10,7 +10,7 @@ const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
 const app = fs.readFileSync(path.join(root, "app.js"), "utf8");
 const worker = fs.readFileSync(path.join(root, "sw.js"), "utf8");
 const parent = require(path.join(root, "js", "ParentExperience.js"));
-const releaseVersion = "1.0.0";
+const releaseVersion = "1.0.4";
 
 function localPath(reference) {
   return reference.split(/[?#]/, 1)[0].replace(/^\//, "");

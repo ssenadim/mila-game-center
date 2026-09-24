@@ -1,5 +1,7 @@
-const APP_VERSION = "1.0.0";
+const APP_VERSION = "1.0.4";
 const DATA_INDEX_URL = `./data/index.json?v=${APP_VERSION}`;
+const illustrationSystem = window.MilaIllustrations;
+const educationalObjectSystem = window.MilaEducationalObjects;
 const SESSION_QUESTION_COUNT = 20;
 const QUESTION_DELAY = 800;
 const CHOICE_DELAY = 450;
@@ -81,15 +83,30 @@ const BASE_MATCHING_CATEGORY_DEFINITIONS = [
   { id: "buildings", label: "Binalar", icon: "🏠", items: ["🏠", "🏫", "🏥", "🏰", "🏭", "🏨", "🏦", "🏪"] }
 ];
 const SHARED_MATCHING_CATEGORY_IDS = ["Vegetables", "Birds", "FarmAnimals", "WildAnimals", "KitchenItems", "SchoolItems", "Weather", "Emotions"];
+const PROFESSIONAL_MATCHING_OBJECTS = {
+  animals: ["cat", "dog", "rabbit", "lion", "tiger", "elephant", "giraffe", "monkey"],
+  vehicles: ["car", "bus", "train", "bicycle", "truck", "boat", "airplane", "helicopter"]
+};
+function professionalMatchingItems(category) {
+  const ids = PROFESSIONAL_MATCHING_OBJECTS[category.id];
+  if (!ids) return category.items;
+  const items = ids.map(id => educationalObjectSystem?.get(id)).filter(Boolean).map(item => ({
+    id: item.id, label: item.labelTr, visual: item.fallback, illustration: item.illustration, illustrationSrc: item.src
+  }));
+  return items.length >= MATCHING_PAIR_COUNT ? items : category.items;
+}
 const MATCHING_CATEGORY_DEFINITIONS = [
-  ...BASE_MATCHING_CATEGORY_DEFINITIONS,
+  ...BASE_MATCHING_CATEGORY_DEFINITIONS.map(category => ({ ...category, items: professionalMatchingItems(category) })),
   ...window.MilaLearningCategories.CATEGORIES
     .filter(category => SHARED_MATCHING_CATEGORY_IDS.includes(category.id))
     .map(category => ({
       id: `learning-${category.id}`,
       label: category.title,
       icon: category.icon,
-      items: category.items.filter(item => item.visual).map(item => ({ id: item.id, visual: item.visual }))
+      items: category.items.filter(item => item.visual || item.illustration).map(item => ({
+        id: item.semanticObjectId || item.id, label: educationalObjectSystem?.get(item.semanticObjectId)?.labelTr || item.wordEn,
+        visual: item.visual, illustration: item.illustration, illustrationSrc: item.illustrationSrc
+      }))
     }))
 ];
 
@@ -101,10 +118,14 @@ function getMatchingItemVisual(item) {
   return typeof item === "string" ? item : item?.visual;
 }
 
+function getMatchingItemIllustration(item) {
+  return typeof item === "object" ? item?.illustrationSrc : undefined;
+}
+
 function isMatchingCategoryPlayable(category) {
   if (!category?.id || !category.label || !Array.isArray(category.items) || category.items.length < MATCHING_PAIR_COUNT) return false;
   const itemIds = category.items.map(getMatchingItemId);
-  const itemVisuals = category.items.map(getMatchingItemVisual);
+  const itemVisuals = category.items.map(item => getMatchingItemIllustration(item) || getMatchingItemVisual(item));
   return itemIds.every(itemId => typeof itemId === "string" && itemId.trim())
     && itemVisuals.every(visual => typeof visual === "string" && visual.trim())
     && new Set(itemIds).size === category.items.length
@@ -500,7 +521,11 @@ function renderLearningPathGroupTabs() {
     button.setAttribute("aria-selected", String(group.id === activeLearningPathGroupId));
     button.setAttribute("aria-controls", "learning-path-stages");
     button.tabIndex = group.id === activeLearningPathGroupId ? 0 : -1;
-    button.innerHTML = `<span aria-hidden="true">${group.icon}</span>${group.title}`;
+    illustrationSystem?.mount(button, `path-${group.id}`, { className: "learning-path-group-tab-art", fallback: group.icon });
+    const label = document.createElement("span");
+    label.className = "learning-path-group-tab-label";
+    label.textContent = group.title;
+    button.append(label);
     button.addEventListener("click", () => selectLearningPathGroup(group.id, { focusTab: true }));
     button.addEventListener("keydown", event => {
       if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
@@ -553,7 +578,8 @@ function renderLearningPath({ focusStageId } = {}) {
     : `✨ Buradan devam et: ${recommendedStage.icon} ${recommendedStage.title}`;
   renderLearningPathGroupTabs();
   ui.learningPathGroupTitle.textContent = activeGroup.title;
-  ui.learningPathGroupIcon.textContent = activeGroup.icon;
+  ui.learningPathGroupIcon.textContent = "";
+  illustrationSystem?.mount(ui.learningPathGroupIcon, `path-${activeGroup.id}`, { className: "learning-path-group-hero-art", fallback: activeGroup.icon });
   ui.learningPathGroupDescription.textContent = activeGroup.description;
   ui.learningPathGroupProgress.textContent = groupProgress.playable
     ? `${groupProgress.completed} / ${groupProgress.playable} hazır bölüm tamamlandı${groupProgress.planned ? ` · ${groupProgress.planned} yeni bölüm yakında` : ""}`
@@ -1725,8 +1751,16 @@ function renderMatchingCards() {
     const button = document.createElement("button");
     button.className = `matching-card${card.revealed ? " revealed" : ""}${card.completed ? " completed" : ""}`;
     button.type = "button";
-    button.textContent = card.revealed || card.completed ? card.symbol : "?";
-    button.setAttribute("aria-label", card.revealed || card.completed ? "Açık kart" : "Kapalı kart");
+    if (card.illustrationSrc) {
+      button.classList.add("professional-object-card");
+      appendProfessionalObject(button, card, "matching-object-image");
+      const cover = document.createElement("span");
+      cover.className = "matching-card-cover";
+      cover.textContent = "?";
+      cover.setAttribute("aria-hidden", "true");
+      button.append(cover);
+    } else button.textContent = card.revealed || card.completed ? card.symbol : "?";
+    button.setAttribute("aria-label", card.revealed || card.completed ? `Açık kart: ${card.label || "resim"}` : "Kapalı kart");
     button.disabled = isPaused || matchingPendingFlip || card.revealed || card.completed;
     button.addEventListener("click", () => openMatchingCard(index));
     ui.matchingCards.append(button);
@@ -1854,6 +1888,8 @@ function startMatchingSession(categoryId = matchingSelectedCategory) {
   matchingCards = appUtils.shuffle(matchingItems.flatMap(item => [item, item])).map(item => ({
     itemId: getMatchingItemId(item),
     symbol: getMatchingItemVisual(item),
+    label: typeof item === "object" ? item.label : undefined,
+    illustrationSrc: getMatchingItemIllustration(item),
     revealed: false,
     completed: false
   }));
@@ -1901,6 +1937,7 @@ function startMatchingGame() {
 
 function getListeningVisual(answer, category) {
   const matchingQuestion = engine.questions.find(question => question.category === category && question.correct === answer);
+  if (matchingQuestion?.illustrationSrc) return { illustrationSrc: matchingQuestion.illustrationSrc };
   if (matchingQuestion?.visualSvg) return { svg: matchingQuestion.visualSvg };
   if (matchingQuestion?.visual) return { visual: matchingQuestion.visual };
   if (category === "Colors") return { visual: LISTENING_COLOR_VISUALS[answer] ?? "🎨" };
@@ -1924,7 +1961,10 @@ function renderListeningCards() {
     button.className = `listening-card${isListeningTransitioning && isCorrect ? " correct" : ""}${isListeningRevealing && isCorrect ? " correct-answer-reveal" : ""}${listeningWrongIndex === index ? " try-again-choice" : ""}`;
     button.type = "button";
     const visual = getListeningVisual(answer, currentListeningQuestion.category);
-    if (visual.svg) {
+    if (visual.illustrationSrc) {
+      button.classList.add("professional-object-card");
+      appendProfessionalObject(button, visual, "listening-object-image");
+    } else if (visual.svg) {
       button.classList.add("listening-card-svg");
       button.innerHTML = visual.svg;
     } else button.textContent = visual.visual;
@@ -2360,6 +2400,7 @@ function clearSortingInteraction(preserveSelection = false) {
 }
 
 function sortingVisualMarkup(item, className = "") {
+  if (item.illustrationSrc) return `<img class="${className} professional-object-image" src="${item.illustrationSrc}" alt="" loading="eager" decoding="async">`;
   if (item.visualSvg) return `<img class="${className}" src="${newMiniGameSvgUrl(item.visualSvg)}" alt="">`;
   return `<span class="${className}" aria-hidden="true">${item.visual}</span>`;
 }
@@ -2526,7 +2567,22 @@ function createEmptyNewMiniGameState(mode) {
 }
 
 function newMiniGameSvgUrl(svgMarkup) {
+  if (typeof svgMarkup === "string" && !svgMarkup.trimStart().startsWith("<svg")) return svgMarkup;
   return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgMarkup)}`;
+}
+
+function appendProfessionalObject(target, item, className = "professional-object-image") {
+  const source = item?.illustrationSrc || item?.src;
+  if (!source) return false;
+  const image = document.createElement("img");
+  image.className = className;
+  image.src = source;
+  image.alt = "";
+  image.loading = "eager";
+  image.decoding = "async";
+  image.setAttribute("aria-hidden", "true");
+  target.append(image);
+  return true;
 }
 
 function scheduleNewMiniGame(callback, delay) {
@@ -2638,13 +2694,18 @@ function resetNewMiniGameView() {
   ui.newMiniGameChange.classList.add("hidden");
 }
 
-function addNewMiniGameChoice({ label, visual, className = "", disabled = false, onClick, ariaLabel = label }) {
+function addNewMiniGameChoice({ label, visual, illustrationSrc, className = "", disabled = false, onClick, ariaLabel = label }) {
   const button = document.createElement("button");
   button.type = "button";
   button.className = `new-mini-game-choice ${className}`.trim();
   button.disabled = disabled || isPaused;
   button.setAttribute("aria-label", ariaLabel);
-  if (visual) button.innerHTML = `<span class="choice-visual" aria-hidden="true">${visual}</span><span>${label}</span>`;
+  if (illustrationSrc) {
+    appendProfessionalObject(button, { illustrationSrc }, "choice-visual professional-object-image");
+    const text = document.createElement("span");
+    text.textContent = label;
+    button.append(text);
+  } else if (visual) button.innerHTML = `<span class="choice-visual" aria-hidden="true">${visual}</span><span>${label}</span>`;
   else button.textContent = label;
   button.addEventListener("click", onClick);
   ui.newMiniGameChoices.append(button);
@@ -2698,7 +2759,7 @@ function finishNewMiniGame(copy) {
   if (newMiniGameState.mode === PUZZLE_MODE) {
     const puzzle = newMiniGames.PUZZLES.find(item => item.id === newMiniGameState.puzzleId);
     if (puzzle) {
-      ui.newMiniGameCompletionImage.src = newMiniGameSvgUrl(puzzle.svg);
+      ui.newMiniGameCompletionImage.src = newMiniGameSvgUrl(puzzle.src || puzzle.svg);
       ui.newMiniGameCompletionImage.alt = `Tamamlanan yapboz: ${puzzle.description}`;
       ui.newMiniGameCompletionImage.classList.remove("hidden");
     }
@@ -2732,7 +2793,7 @@ function showMissingItemRound() {
     const card = document.createElement("span");
     card.className = "missing-item";
     card.setAttribute("aria-hidden", "true");
-    card.textContent = item.visual;
+    if (!appendProfessionalObject(card, item, "missing-object-image")) card.textContent = item.visual;
     ui.newMiniGameVisual.append(card);
   });
   speakNewMiniGame("Resimlere dikkat et.");
@@ -2746,7 +2807,7 @@ function revealMissingItemChoices() {
   challenge.remaining.forEach(item => {
     const card = document.createElement("span");
     card.className = "missing-item";
-    card.textContent = item.visual;
+    if (!appendProfessionalObject(card, item, "missing-object-image")) card.textContent = item.visual;
     ui.newMiniGameVisual.append(card);
   });
   const gone = document.createElement("span");
@@ -2763,7 +2824,7 @@ function renderMissingItemChoices(wrongId) {
   const challenge = newMiniGameState.challenge;
   ui.newMiniGameChoices.textContent = "";
   challenge.choices.forEach(item => addNewMiniGameChoice({
-    label: item.label, visual: item.visual, className: wrongId === item.id ? "try-again-choice" : "",
+    label: item.label, visual: item.visual, illustrationSrc: item.src, className: wrongId === item.id ? "try-again-choice" : "",
     disabled: newMiniGameState.inputLocked || newMiniGameState.speaking,
     onClick: () => chooseMissingItem(item.id)
   }));
@@ -2864,7 +2925,7 @@ function showShadowRound() {
   ui.newMiniGameVisual.setAttribute("aria-label", newMiniGameState.challenge.source.label);
   const source = document.createElement("img");
   source.className = "shadow-source";
-  source.src = newMiniGameSvgUrl(newMiniGameState.challenge.source.svg);
+  source.src = newMiniGameSvgUrl(newMiniGameState.challenge.source.src || newMiniGameState.challenge.source.svg);
   source.alt = "";
   ui.newMiniGameVisual.append(source);
   renderShadowChoices();
@@ -2881,7 +2942,7 @@ function renderShadowChoices(wrongId) {
       onClick: () => chooseShadow(item.id)
     });
     const image = document.createElement("img");
-    image.src = newMiniGameSvgUrl(item.svg);
+    image.src = newMiniGameSvgUrl(item.src || item.svg);
     image.alt = "";
     button.append(image);
   });
@@ -2925,7 +2986,16 @@ function showInitialLetterRound() {
   ui.newMiniGamePrompt.textContent = `${word.word} hangi harfle başlıyor?`;
   ui.newMiniGameListen.classList.remove("hidden");
   ui.newMiniGameListen.setAttribute("aria-label", `${word.word} kelimesini tekrar dinle`);
-  ui.newMiniGameVisual.innerHTML = `<span><span class="letter-word-visual" aria-hidden="true">${word.visual}</span><span class="letter-word-label">${word.word}</span></span>`;
+  const wordWrap = document.createElement("span");
+  const wordVisual = document.createElement("span");
+  wordVisual.className = "letter-word-visual";
+  wordVisual.setAttribute("aria-hidden", "true");
+  if (!appendProfessionalObject(wordVisual, word, "letter-object-image")) wordVisual.textContent = word.visual;
+  const wordLabel = document.createElement("span");
+  wordLabel.className = "letter-word-label";
+  wordLabel.textContent = word.word;
+  wordWrap.append(wordVisual, wordLabel);
+  ui.newMiniGameVisual.append(wordWrap);
   renderInitialLetterChoices();
   speakInitialLetterWord();
 }
@@ -3078,6 +3148,10 @@ function renderPuzzleSetup() {
   ui.newMiniGameArea.classList.add("hidden");
   ui.newMiniGameSetup.classList.remove("hidden");
   ui.newMiniGameSetup.innerHTML = "<h3>Bir resim seç</h3>";
+  const selectedPuzzle = newMiniGames.PUZZLES.find(puzzle => puzzle.id === newMiniGameState.puzzleId) ?? newMiniGames.PUZZLES[0];
+  const selectedPreview = document.createElement("div");
+  selectedPreview.className = "puzzle-selected-preview";
+  selectedPreview.innerHTML = `<img src="${newMiniGameSvgUrl(selectedPuzzle.src || selectedPuzzle.svg)}" alt="${selectedPuzzle.description}"><strong>${selectedPuzzle.label}</strong>`;
   const puzzles = document.createElement("div");
   puzzles.className = "setup-options puzzle-selector";
   newMiniGames.PUZZLES.forEach(puzzle => {
@@ -3085,7 +3159,7 @@ function renderPuzzleSetup() {
     button.type = "button";
     button.className = "setup-choice";
     button.setAttribute("aria-pressed", String(newMiniGameState.puzzleId === puzzle.id));
-    button.innerHTML = `<img src="${newMiniGameSvgUrl(puzzle.svg)}" alt=""><span>${puzzle.label}</span>`;
+    button.innerHTML = `<span class="puzzle-selector-mark" aria-hidden="true">◆</span><span>${puzzle.label}</span>`;
     button.addEventListener("click", () => {
       newMiniGameState.puzzleId = puzzle.id;
       renderPuzzleSetup();
@@ -3115,7 +3189,7 @@ function renderPuzzleSetup() {
   start.className = "primary-button";
   start.textContent = "Yapbozu Başlat";
   start.addEventListener("click", startPuzzleSession);
-  ui.newMiniGameSetup.append(puzzles, difficultyTitle, difficulties, start);
+  ui.newMiniGameSetup.append(selectedPreview, puzzles, difficultyTitle, difficulties, start);
 }
 
 function startPuzzleSession() {
@@ -3142,7 +3216,7 @@ function startPuzzleSession() {
 function puzzlePieceStyle(piece, puzzle, difficulty) {
   const x = difficulty.columns === 1 ? 0 : (piece.column / (difficulty.columns - 1)) * 100;
   const y = difficulty.rows === 1 ? 0 : (piece.row / (difficulty.rows - 1)) * 100;
-  return `background-image:url("${newMiniGameSvgUrl(puzzle.svg)}");background-size:${difficulty.columns * 100}% ${difficulty.rows * 100}%;background-position:${x}% ${y}%`;
+  return `background-image:url("${newMiniGameSvgUrl(puzzle.src || puzzle.svg)}");background-size:${difficulty.columns * 100}% ${difficulty.rows * 100}%;background-position:${x}% ${y}%`;
 }
 
 function canUsePuzzleInput() {
@@ -3301,7 +3375,7 @@ function renderPuzzleGame({ focusPosition, swappingPositions = [] } = {}) {
   updateNewMiniGameProgress(correctCount, newMiniGameState.pieces.length);
   ui.newMiniGamePrompt.textContent = "Parçaları sürükle ya da iki parçaya dokun ve resmi tamamla!";
   ui.newMiniGameVisual.classList.add("puzzle-preview");
-  ui.newMiniGameVisual.innerHTML = `<img class="puzzle-reference" src="${newMiniGameSvgUrl(puzzle.svg)}" alt="${puzzle.description}"><strong>${puzzle.label}</strong>`;
+  ui.newMiniGameVisual.innerHTML = `<img class="puzzle-reference" src="${newMiniGameSvgUrl(puzzle.src || puzzle.svg)}" alt="${puzzle.description}"><strong>${puzzle.label}</strong>`;
   ui.newMiniGameChoices.className = `new-mini-game-choices puzzle-layout${difficulty.columns === 4 ? " puzzle-layout-4" : ""}`;
   const board = document.createElement("div");
   board.className = "puzzle-board";
@@ -3410,12 +3484,13 @@ function changeNewMiniGameSetup() {
   if (mode === SHADOW_MODE || mode === SOUND_MEMORY_MODE || mode === PUZZLE_MODE) startNewMiniGame(mode);
 }
 
-function renderParentList(container, items, emptyMessage) {
+function renderParentList(container, items, emptyMessage, emptyIllustrationId) {
   container.textContent = "";
   if (!items.length) {
     const empty = document.createElement("p");
-    empty.className = "parent-empty";
+    empty.className = `parent-empty${emptyIllustrationId ? " parent-empty-illustrated" : ""}`;
     empty.textContent = emptyMessage;
+    if (emptyIllustrationId) illustrationSystem?.mount(empty, emptyIllustrationId, { className: "parent-empty-art" });
     container.append(empty);
     return;
   }
@@ -3492,7 +3567,7 @@ function renderParentActivities() {
   const summaryRows = parentExperience.getTopActivities(parentData, 10).map(item => createParentTextRow(item.label, `${item.count} tamamlanan etkileşim`));
   renderParentList(ui.parentActivitySummary, summaryRows, "Etkinlik özeti yeni oyunlarla oluşacak.");
   const recentRows = [...parentData.recentActivities].reverse().map(item => createParentTextRow(`${item.icon} ${item.label}`, item.date || ""));
-  renderParentList(ui.parentRecentActivities, recentRows, "Henüz tamamlanan bir etkinlik kaydı yok.");
+  renderParentList(ui.parentRecentActivities, recentRows, "Henüz tamamlanan bir etkinlik kaydı yok.", "empty-activity");
 }
 
 function launchParentSuggestion(suggestion) {
@@ -3519,7 +3594,7 @@ function renderParentReview() {
     row.append(icon, copy, button);
     return row;
   });
-  renderParentList(ui.parentReviewSuggestions, rows, "Şimdilik birlikte tekrar edilmesi gereken belirgin bir alan yok.");
+  renderParentList(ui.parentReviewSuggestions, rows, "Şimdilik birlikte tekrar edilmesi gereken belirgin bir alan yok.", "empty-review");
 }
 
 function renderParentRewards() {
@@ -6736,6 +6811,9 @@ document.addEventListener("keydown", event => {
     }
   }
 });
+const illustrationValidation = illustrationSystem?.validateRegistry();
+if (illustrationValidation && !illustrationValidation.valid) console.warn("[İllüstrasyon] Registry doğrulaması başarısız.", illustrationValidation.errors);
+illustrationSystem?.hydrate();
 renderPlayerSelection();
 ensureDailyGoal();
 renderDailyGoal();

@@ -48,7 +48,7 @@ test("Gölgesini Bul has one correct SVG silhouette and unique distractors", () 
       const challenge = games.createShadowRound(round, difficulty.id, seededRandom(round + 30 + difficultyIndex));
       assert.equal(challenge.choices.filter(item => item.id === challenge.source.id).length, 1);
       assert.equal(new Set(challenge.choices.map(item => item.id)).size, difficulty.choiceCount);
-      assert.ok(challenge.choices.every(item => item.svg.startsWith("<svg")));
+      assert.ok(challenge.choices.every(item => item.src?.startsWith("assets/illustrations/objects/") || item.svg?.startsWith("<svg")));
       assert.equal(challenge.choiceCount, difficulty.choiceCount);
     }
   });
@@ -94,11 +94,11 @@ test("Yapboz keeps one piece per board position and completes only in image orde
 test("Sprint 11.1 exposes exactly 16 distinct local puzzle scenes and the 4x4 Çok Zor level", () => {
   assert.equal(games.PUZZLES.length, 16);
   assert.equal(new Set(games.PUZZLES.map(puzzle => puzzle.id)).size, 16);
-  assert.equal(new Set(games.PUZZLES.map(puzzle => puzzle.svg)).size, 16);
+  assert.equal(new Set(games.PUZZLES.map(puzzle => puzzle.src)).size, 16);
   games.PUZZLES.forEach(puzzle => {
     assert.equal(games.isPlayablePuzzle(puzzle), true, puzzle.id);
-    assert.match(puzzle.svg, /^<svg/);
-    assert.doesNotMatch(puzzle.svg, /<image\b|\bhref\s*=/i);
+    assert.match(puzzle.src, /^assets\/illustrations\/puzzles\/.+\.svg\?v=1\.0\.4$/);
+    assert.equal(fs.existsSync(path.join(__dirname, "..", puzzle.src.split("?")[0])), true, puzzle.id);
     assert.ok(puzzle.description.length > 0);
   });
   assert.deepEqual(

@@ -120,7 +120,7 @@ test("Grupla UI preserves identity, tap/drag, pause selection, cleanup, replay a
   const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
   const app = fs.readFileSync(path.join(root, "app.js"), "utf8");
   const css = fs.readFileSync(path.join(root, "styles.css"), "utf8");
-  assert.match(html, /<strong>🧺 Grupla<\/strong>/);
+  assert.match(html, /id="sorting-mode-button"[^>]*data-illustration="mini-game-sorting"[^>]*><strong>Grupla<\/strong>/);
   assert.match(html, /id="sorting-replay-button"[^>]*>Tekrar Oyna/);
   assert.match(app, /createSortingSession\(\{ recentPairIds: recentSortingPairIds \}\)/);
   assert.match(app, /recentSortingPairIds[\s\S]*\.slice\(-3\)/);

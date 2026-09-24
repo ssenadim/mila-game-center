@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "1.0.0";
+const APP_VERSION = "1.0.4";
 const CACHE_PREFIX = "mila-oyun-merkezi-";
 const CACHE_NAME = `${CACHE_PREFIX}${APP_VERSION}`;
 const VERSIONED_ASSETS = [
@@ -10,6 +10,8 @@ const VERSIONED_ASSETS = [
   "./js/services/AudioHelper.js",
   "./js/services/AnimationHelper.js",
   "./js/QuestionEngine.js",
+  "./js/EducationalObjects.js",
+  "./js/Illustrations.js",
   "./js/NewMiniGames.js",
   "./js/LearningCategories.js",
   "./js/LogicAttention.js",
@@ -23,7 +25,42 @@ const VERSIONED_ASSETS = [
   "./data/offline-data.js",
   "./app.js"
 ].map(path => `${path}?v=${APP_VERSION}`);
-const APP_SHELL = ["./", "./index.html", ...VERSIONED_ASSETS];
+const ILLUSTRATION_ASSETS = [
+  "./assets/illustrations/home/learn.svg",
+  "./assets/illustrations/home/mini-games.svg",
+  "./assets/illustrations/home/learning-path.svg",
+  "./assets/illustrations/home/rewards.svg",
+  "./assets/illustrations/learning/path.svg",
+  "./assets/illustrations/learning/modes.svg",
+  "./assets/illustrations/learning/category-packs.svg",
+  "./assets/illustrations/learning/custom-category.svg",
+  "./assets/illustrations/mini-games/matching.svg",
+  "./assets/illustrations/mini-games/listening.svg",
+  "./assets/illustrations/mini-games/number.svg",
+  "./assets/illustrations/mini-games/color.svg",
+  "./assets/illustrations/mini-games/sorting.svg",
+  "./assets/illustrations/mini-games/missing.svg",
+  "./assets/illustrations/mini-games/shadow.svg",
+  "./assets/illustrations/mini-games/initial-letter.svg",
+  "./assets/illustrations/mini-games/sound-memory.svg",
+  "./assets/illustrations/mini-games/puzzle.svg",
+  "./assets/illustrations/learning-path/first-discoveries.svg",
+  "./assets/illustrations/learning-path/word-world.svg",
+  "./assets/illustrations/learning-path/number-world.svg",
+  "./assets/illustrations/learning-path/first-operations.svg",
+  "./assets/illustrations/learning-path/think-find.svg",
+  "./assets/illustrations/learning-path/daily-life.svg",
+  "./assets/illustrations/missions/daily.svg",
+  "./assets/illustrations/rewards/stars.svg",
+  "./assets/illustrations/rewards/stickers.svg",
+  "./assets/illustrations/rewards/achievements.svg",
+  "./assets/illustrations/empty-states/stickers.svg",
+  "./assets/illustrations/empty-states/achievements.svg",
+  "./assets/illustrations/empty-states/activity.svg",
+  "./assets/illustrations/empty-states/review.svg",
+  "./assets/illustrations/empty-states/unavailable.svg"
+].map(path => `${path}?v=${APP_VERSION}`);
+const APP_SHELL = ["./", "./index.html", ...VERSIONED_ASSETS, ...ILLUSTRATION_ASSETS];
 
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)));
