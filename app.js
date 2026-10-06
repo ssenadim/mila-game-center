@@ -5,6 +5,10 @@ const educationalObjectSystem = window.MilaEducationalObjects;
 const SESSION_QUESTION_COUNT = 20;
 const QUESTION_DELAY = 800;
 const CHOICE_DELAY = 450;
+const QUESTION_NARRATION = Object.freeze({
+  learning: Object.freeze({ options: true, repeatQuestion: true }),
+  quick: Object.freeze({ options: false, repeatQuestion: false })
+});
 const SUCCESS_NEXT_DELAY = 1000;
 const ENGLISH_LANGUAGE = "en-US";
 const TURKISH_LANGUAGE = "tr-TR";
@@ -29,6 +33,7 @@ const REWARD_POPUP_DURATION = 2200;
 const PARENT_DATA_STORAGE_KEY = "mila-learning-parent-data";
 const PARENT_HOLD_DURATION = 5000;
 const SESSION_CELEBRATION_DURATION = 3500;
+const COMPLETION_SETTLE_DURATION = 300;
 const BONUS_POP_TRANSITION_DELAY = 600;
 const BONUS_WRONG_ANIMATION_DURATION = 450;
 const GAME_PROGRESS_STORAGE_KEY = "mila-learning-progress";
@@ -249,6 +254,9 @@ let questionNumber = 0;
 let isSpeaking = false;
 let isStartingGame = false;
 let audioRun = 0;
+let isQuestionNarrationActive = false;
+let resumeQuestionNarration = false;
+let cancelCompletionNavigation;
 let balloonBonusTimer;
 let isBalloonBonusActive = false;
 let selectedPlayer = getSavedPlayer();
@@ -1994,6 +2002,7 @@ async function speakListeningWord(explicit = false) {
 
 function finishListeningGame() {
   if (!isListeningGameActive) return;
+  clearSpeech();
   isListeningGameActive = false;
   isListeningTransitioning = true;
   ui.listeningFeedback.textContent = getCompletionMessage();
@@ -2006,7 +2015,7 @@ function finishListeningGame() {
   audio.playCelebration();
   recordMiniGameMissionCompletion(LISTENING_MODE);
   window.clearTimeout(listeningCompletionTimer);
-  listeningCompletionTimer = window.setTimeout(goHome, 1400);
+  finishMiniGameNavigation(ui.listening, ui.listeningFeedback);
 }
 
 function showListeningRound() {
@@ -2136,6 +2145,7 @@ async function speakNumberMatchNumber(explicit = false) {
 
 function finishNumberMatchGame() {
   if (!isNumberMatchGameActive) return;
+  clearSpeech();
   isNumberMatchGameActive = false;
   isNumberMatchTransitioning = true;
   ui.numberMatchFeedback.textContent = getCompletionMessage();
@@ -2148,7 +2158,7 @@ function finishNumberMatchGame() {
   audio.playCelebration();
   recordMiniGameMissionCompletion(NUMBER_MATCH_MODE);
   window.clearTimeout(numberMatchCompletionTimer);
-  numberMatchCompletionTimer = window.setTimeout(goHome, 1400);
+  finishMiniGameNavigation(ui.numberMatch, ui.numberMatchFeedback);
 }
 
 function showNumberMatchRound() {
@@ -2293,7 +2303,7 @@ function finishColorMatchGame() {
   audio.playCelebration();
   recordMiniGameMissionCompletion(COLOR_MATCH_MODE);
   window.clearTimeout(colorMatchCompletionTimer);
-  colorMatchCompletionTimer = window.setTimeout(goHome, 1400);
+  finishMiniGameNavigation(ui.colorMatch, ui.colorMatchFeedback);
 }
 
 function showColorMatchRound() {
@@ -2744,6 +2754,12 @@ function celebrateNewMiniGame() {
 }
 
 function finishNewMiniGame(copy) {
+  const completionIcon = ui.newMiniGameCompletion.querySelector(".new-mini-game-completion-icon");
+  const matchedVisuals = newMiniGameState.mode === SOUND_MEMORY_MODE
+    ? [...new Set(newMiniGameState.board.filter(card => card.matched).map(card =>
+      newMiniGames.SOUND_MEMORY_ITEMS.find(item => item.id === card.targetId)?.visual).filter(Boolean))]
+    : [];
+  completionIcon.textContent = ["🎉", ...matchedVisuals].join(" ");
   if (newMiniGameState.completed) return;
   clearNewMiniGameDelay();
   if (newMiniGameState.timerStartedAt) {
@@ -3091,8 +3107,11 @@ function renderSoundMemoryBoard() {
   ui.newMiniGameVisual.classList.add("hidden");
   ui.newMiniGameChoices.className = "new-mini-game-choices sound-memory-board";
   newMiniGameState.board.forEach((card, index) => {
+    const matchedVisual = card.matched
+      ? newMiniGames.SOUND_MEMORY_ITEMS.find(item => item.id === card.targetId)?.visual
+      : undefined;
     addNewMiniGameChoice({
-      label: card.revealed || card.matched ? "🔊" : "?",
+      label: matchedVisual || (card.revealed || card.matched ? "🔊" : "?"),
       className: `sound-card${card.revealed ? " open" : ""}${card.matched ? " matched" : ""}`,
       ariaLabel: card.matched ? `Eşleşen ses kartı ${index + 1}` : card.revealed ? `Açık ses kartı ${index + 1}, tekrar dinle` : `Kapalı ses kartı ${index + 1}`,
       disabled: card.matched || newMiniGameState.inputLocked || newMiniGameState.speaking,
@@ -3127,6 +3146,7 @@ async function openSoundMemoryCard(index) {
     card.matched = true;
     recordNewMiniGameCorrect(card.targetId);
     audio.playSuccess();
+    renderSoundMemoryBoard();
     ui.newMiniGameFeedback.textContent = "Aynı sesi buldun!";
     if (newMiniGameState.board.every(item => item.matched)) {
       const elapsed = newMiniGameState.elapsedMs + (Date.now() - newMiniGameState.timerStartedAt);
@@ -5309,7 +5329,55 @@ function startLogicAttentionStage(stage) {
   beginLogicAttentionRound();
 }
 
+async function finishMiniGameNavigation(screen, feedback) {
+  cancelCompletionNavigation?.();
+  const run = audioRun;
+  let timer;
+  let cancelled = false;
+  let cancelWait;
+  const cleanups = [];
+  const cancellation = new Promise(resolve => { cancelWait = resolve; });
+  const cancel = () => {
+    cancelled = true;
+    window.clearTimeout(timer);
+    cleanups.forEach(cleanup => cleanup());
+    cancelWait();
+  };
+  cancelCompletionNavigation = cancel;
+  const wait = duration => new Promise(resolve => { timer = window.setTimeout(resolve, duration); });
+  const effects = (screen.getAnimations?.({ subtree: true }) ?? [])
+    .filter(animation => animation.effect?.getTiming().iterations !== Infinity)
+    .map(animation => animation.finished.catch(() => {}));
+  // A suspended/blocked audio context cannot emit ended events; navigation
+  // intentionally cancels those silent effects through the existing cleanup.
+  if (audio.context?.state === "running") audio.activeOscillators.forEach(oscillator => {
+    effects.push(new Promise(resolve => {
+      oscillator.addEventListener("ended", resolve, { once: true });
+      cleanups.push(() => oscillator.removeEventListener("ended", resolve));
+    }));
+  });
+  try {
+    await Promise.race([
+      Promise.all([wait(SESSION_CELEBRATION_DURATION), speech.speakCelebration(feedback.textContent), ...effects]),
+      cancellation
+    ]);
+    if (cancelled || !isActiveAudio(run) || screen.classList.contains("hidden")) return;
+    await Promise.race([wait(COMPLETION_SETTLE_DURATION), cancellation]);
+    if (cancelled || !isActiveAudio(run) || screen.classList.contains("hidden")) return;
+    if (cancelCompletionNavigation === cancel) cancelCompletionNavigation = undefined;
+    goHome();
+  } finally {
+    cancel();
+    if (cancelCompletionNavigation === cancel) cancelCompletionNavigation = undefined;
+  }
+}
+
 function clearSpeech() {
+  isQuestionNarrationActive = false;
+  resumeQuestionNarration = false;
+  ui.answers.querySelectorAll(".speaking-choice").forEach(button => button.classList.remove("speaking-choice"));
+  cancelCompletionNavigation?.();
+  cancelCompletionNavigation = undefined;
   audioRun += 1;
   speech.clear();
   audio.stopAll();
@@ -5359,7 +5427,9 @@ function pauseGame() {
   if (isPaused || (ui.quiz.classList.contains("hidden") && !isBalloonBonusActive && !isMatchingGameActive && !isListeningGameActive && !isNumberMatchGameActive && !isColorMatchGameActive && !isSortingGameActive && !isNewMiniGameActive && !isNumberLearningActive && !isLogicAttentionActive)) return;
   pauseReturnFocus = document.activeElement;
   isPaused = true;
+  const wasNarrating = isQuestionNarrationActive;
   clearSpeech();
+  resumeQuestionNarration = wasNarrating;
   stopPlayTime();
   setInputEnabled(false);
   setGameActionsEnabled(false);
@@ -5540,7 +5610,8 @@ function resumeGame() {
   }
   if (isWelcomeSequenceActive) {
     isWelcomeSequenceActive = false;
-    showQuestion();
+    ui.feedback.textContent = "";
+    playQuestionSequence();
     return;
   }
   if (isRevealingCorrectAnswer) {
@@ -5549,6 +5620,7 @@ function resumeGame() {
     return;
   }
   if (pendingCorrectTransition) finishCorrectAnswer(audioRun);
+  else if (resumeQuestionNarration) playQuestionSequence();
   else setInputEnabled(true);
 }
 
@@ -5955,38 +6027,48 @@ function triggerMascotReaction(reactionClass) {
   }, 800);
 }
 
-async function playQuestionSequence(keepInputDisabled = false) {
+async function playQuestionSequence(keepInputDisabled = false, explicit = false) {
   if (isPaused || !currentQuestion) return false;
-  const isQuickPlay = activeGameMode === QUICK_MODE && !keepInputDisabled;
+  const narration = keepInputDisabled ? QUESTION_NARRATION.learning : (QUESTION_NARRATION[activeGameMode] ?? QUESTION_NARRATION.learning);
   clearSpeech();
   const run = audioRun;
+  const question = currentQuestion;
+  const instanceId = currentQuestionInstanceId;
+  const prompt = question.questionPrompt ?? question.prompt;
+  const language = question.promptLanguage ?? ENGLISH_LANGUAGE;
+  isQuestionNarrationActive = true;
   setInputEnabled(false);
-  if (!speech.getSettings().speechEnabled) {
+  if ((!explicit && !speech.getSettings().speechEnabled) || !speech.getCapabilities().speechSynthesis) {
+    isQuestionNarrationActive = false;
     if (!keepInputDisabled) setInputEnabled(true);
     return true;
   }
-  await speech.speakPrompt(currentQuestion.questionPrompt ?? currentQuestion.prompt, currentQuestion.promptLanguage ?? ENGLISH_LANGUAGE);
+  ui.replay.disabled = keepInputDisabled;
+  await speech.speakPrompt(prompt, language, { automatic: !explicit });
   if (!isActiveAudio(run)) return false;
-  if (isQuickPlay) {
-    setInputEnabled(true);
-    return true;
-  }
-  await appUtils.wait(QUESTION_DELAY);
-  const answerButtons = getAnswerButtons();
-  for (let index = 0; index < answerButtons.length; index += 1) {
+  if (narration.options) {
+    await appUtils.wait(QUESTION_DELAY);
     if (!isActiveAudio(run)) return false;
-    const button = answerButtons[index];
-    button.classList.add("speaking-choice");
-    const spoken = await speech.speakAnswerChoice(button.textContent, ENGLISH_LANGUAGE);
-    if (spoken) recordDailyMissionEvent("englishTargetHeard", { eventId: `${currentQuestionInstanceId}:choice:${button.textContent}`, targetId: `${currentQuestion.category}:${button.textContent}` });
-    button.classList.remove("speaking-choice");
-    if (index < answerButtons.length - 1) await appUtils.wait(CHOICE_DELAY);
+    const answerButtons = getAnswerButtons();
+    for (let index = 0; index < answerButtons.length; index += 1) {
+      if (!isActiveAudio(run)) return false;
+      const button = answerButtons[index];
+      button.classList.add("speaking-choice");
+      const spoken = await speech.speakAnswerChoice(button.textContent, ENGLISH_LANGUAGE, { automatic: !explicit });
+      if (!isActiveAudio(run)) return false;
+      if (spoken) recordDailyMissionEvent("englishTargetHeard", { eventId: `${instanceId}:choice:${button.textContent}`, targetId: `${question.category}:${button.textContent}` });
+      button.classList.remove("speaking-choice");
+      if (index < answerButtons.length - 1) await appUtils.wait(CHOICE_DELAY);
+    }
   }
-  await appUtils.wait(QUESTION_DELAY);
-  if (!isActiveAudio(run)) return false;
-  await speech.speakPrompt(currentQuestion.questionPrompt ?? currentQuestion.prompt, currentQuestion.promptLanguage ?? ENGLISH_LANGUAGE, { interrupt: false });
-  if (!isActiveAudio(run)) return false;
-  if (!keepInputDisabled && !isQuickPlay) setInputEnabled(true);
+  if (narration.repeatQuestion) {
+    await appUtils.wait(QUESTION_DELAY);
+    if (!isActiveAudio(run)) return false;
+    await speech.speakPrompt(prompt, language, { interrupt: false, automatic: !explicit });
+    if (!isActiveAudio(run)) return false;
+  }
+  isQuestionNarrationActive = false;
+  if (!keepInputDisabled) setInputEnabled(true);
   return true;
 }
 
@@ -6016,7 +6098,7 @@ async function playWelcomeSequence() {
   return true;
 }
 
-function showQuestion() {
+function showQuestion({ playAudio = true } = {}) {
   if (isPaused) return;
   clearSpeech();
   pendingCorrectTransition = false;
@@ -6039,7 +6121,9 @@ function showQuestion() {
   updateScoreboard();
   renderAnswers();
   saveGameProgress();
-  playQuestionSequence();
+  setInputEnabled(false);
+  if (playAudio) playQuestionSequence();
+  return true;
 }
 
 async function showSessionSummary() {
@@ -6327,7 +6411,8 @@ async function startGame({ skipWelcome = false, miniGameMode } = {}) {
       return;
     }
     isWelcomeSequenceActive = true;
-    if (await playWelcomeSequence()) showQuestion();
+    if (!showQuestion({ playAudio: false })) return;
+    if (await playWelcomeSequence()) playQuestionSequence();
   } catch (error) {
     console.error("Oturum başlatılamadı.", error);
     const returnToLearningPath = Boolean(activeLearningPathStage);
@@ -6351,14 +6436,9 @@ function speakWelcome() {
 }
 
 async function replayCurrentQuestion() {
-  if (isPaused || !currentQuestion || pendingCorrectTransition || isRevealingCorrectAnswer) return;
-  clearSpeech();
-  const run = audioRun;
-  const replayed = await speech.replay(currentQuestion.questionPrompt ?? currentQuestion.prompt, currentQuestion.promptLanguage ?? ENGLISH_LANGUAGE);
-  if (isActiveAudio(run)) {
-    if (replayed) recordDailyMissionEvent("replayUsed", { eventId: currentQuestionInstanceId, targetId: currentQuestionInstanceId });
-    setInputEnabled(true);
-  }
+  if (isPaused || !currentQuestion || isWelcomeSequenceActive || pendingCorrectTransition || isRevealingCorrectAnswer) return;
+  const instanceId = currentQuestionInstanceId;
+  if (await playQuestionSequence(false, true)) recordDailyMissionEvent("replayUsed", { eventId: instanceId, targetId: instanceId });
 }
 
 function goHome(shouldSpeak = true, destination = "home") {

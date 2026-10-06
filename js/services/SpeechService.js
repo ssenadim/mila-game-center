@@ -165,9 +165,7 @@ class SpeechService {
     return exactLocales.map(locale => suitable.find(voice => (voice.lang || "").toLowerCase() === locale && voice.localService)).find(Boolean)
       || exactLocales.map(locale => suitable.find(voice => (voice.lang || "").toLowerCase() === locale)).find(Boolean)
       || suitable.find(voice => voice.localService)
-      || suitable[0]
-      || this.voices.find(voice => voice.default)
-      || this.voices[0];
+      || suitable[0];
   }
 
   resolvePreferredVoices() {
@@ -209,6 +207,7 @@ class SpeechService {
   }
 
   getVoice(language) {
+    this.cacheVoices();
     return language?.toLowerCase().startsWith("tr") ? this.turkishVoice : this.englishVoice;
   }
 
@@ -295,7 +294,7 @@ class SpeechService {
       const voice = this.getVoice(request.language);
       const isTurkish = request.language.toLowerCase().startsWith("tr");
       const utterance = new this.Utterance(normalizedText);
-      utterance.lang = voice?.lang || (isTurkish ? "tr-TR" : "en-US");
+      utterance.lang = isTurkish ? "tr-TR" : (voice?.lang || "en-US");
       utterance.rate = this.getRate(request.channel, request.language);
       utterance.pitch = 1;
       utterance.volume = this.getVolume();

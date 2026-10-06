@@ -63,6 +63,31 @@ function createSpeechEnvironment({ voices = [], settings, autoEnd = true, suppor
 
 const voice = (name, lang, options = {}) => ({ name, voiceURI: `voice:${name}`, lang, localService: false, default: false, ...options });
 
+test("Turkish fallback never explicitly selects English and preserves feedback Unicode", async () => {
+  const env = createSpeechEnvironment({ voices: [voice("Default English", "en-US", { default: true })] });
+  const service = new env.SpeechService();
+  await service.ready;
+  for (const text of ["Harika", "Muhteşem", "Çok güzel", "Bir daha deneyelim"]) {
+    await service.speakFeedback(text);
+    const utterance = env.spoken.at(-1);
+    assert.equal(utterance.text, text);
+    assert.equal(utterance.lang, "tr-TR");
+    assert.equal(utterance.voice, undefined);
+  }
+  env.setVoices([voice("Other Turkish", "tr-CY"), voice("English", "en-US")]);
+  await service.speakFeedback("Muhteşem");
+  assert.equal(env.spoken.at(-1).voice.lang, "tr-CY");
+  assert.equal(env.spoken.at(-1).lang, "tr-TR");
+  env.setVoices([voice("Other Turkish", "tr-CY", { localService: true }), voice("Turkish", "tr-TR"), voice("English", "en-US")]);
+  env.dispatch("voiceschanged");
+  await service.speakFeedback("Muhteşem");
+  assert.equal(env.spoken.at(-1).voice.lang, "tr-TR");
+  await service.speakEnglish("Nine");
+  await service.speakEnglish("Green");
+  assert.equal(env.spoken.at(-1).voice.lang, "en-US");
+  assert.equal(env.spoken.at(-1).lang, "en-US");
+});
+
 test("voice discovery loads immediately, refreshes when delayed and registers one listener", async () => {
   const environment = createSpeechEnvironment({ voices: [] });
   const service = new environment.SpeechService();
