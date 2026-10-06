@@ -97,7 +97,7 @@ test("Sprint 11.1 exposes exactly 16 distinct local puzzle scenes and the 4x4 Ç
   assert.equal(new Set(games.PUZZLES.map(puzzle => puzzle.src)).size, 16);
   games.PUZZLES.forEach(puzzle => {
     assert.equal(games.isPlayablePuzzle(puzzle), true, puzzle.id);
-    assert.match(puzzle.src, /^assets\/illustrations\/puzzles\/.+\.svg\?v=1\.0\.4$/);
+    assert.match(puzzle.src, /^assets\/illustrations\/puzzles\/.+\.svg\?v=1\.0\.5$/);
     assert.equal(fs.existsSync(path.join(__dirname, "..", puzzle.src.split("?")[0])), true, puzzle.id);
     assert.ok(puzzle.description.length > 0);
   });

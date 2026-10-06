@@ -5,7 +5,7 @@
   if (root) root.MilaEducationalObjects = api;
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";
-  const VERSION = "1.0.4";
+  const VERSION = "1.0.5";
   const OBJECTS = Object.freeze([
   {
     "id": "cat",
@@ -19,7 +19,7 @@
       "pets"
     ],
     "illustration": "object-cat",
-    "src": "assets/illustrations/objects/object-cat.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-cat.svg?v=1.0.5",
     "fallback": "🐱"
   },
   {
@@ -34,7 +34,7 @@
       "pets"
     ],
     "illustration": "object-dog",
-    "src": "assets/illustrations/objects/object-dog.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-dog.svg?v=1.0.5",
     "fallback": "🐶"
   },
   {
@@ -49,7 +49,7 @@
       "pets"
     ],
     "illustration": "object-rabbit",
-    "src": "assets/illustrations/objects/object-rabbit.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-rabbit.svg?v=1.0.5",
     "fallback": "🐰"
   },
   {
@@ -64,7 +64,7 @@
       "pets"
     ],
     "illustration": "object-hamster",
-    "src": "assets/illustrations/objects/object-hamster.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-hamster.svg?v=1.0.5",
     "fallback": "🐹"
   },
   {
@@ -80,7 +80,7 @@
       "birds"
     ],
     "illustration": "object-parrot",
-    "src": "assets/illustrations/objects/object-parrot.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-parrot.svg?v=1.0.5",
     "fallback": "🦜"
   },
   {
@@ -95,7 +95,7 @@
       "pets"
     ],
     "illustration": "object-mouse",
-    "src": "assets/illustrations/objects/object-mouse.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-mouse.svg?v=1.0.5",
     "fallback": "🐭"
   },
   {
@@ -111,7 +111,7 @@
       "landAnimals"
     ],
     "illustration": "object-lion",
-    "src": "assets/illustrations/objects/object-lion.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-lion.svg?v=1.0.5",
     "fallback": "🦁"
   },
   {
@@ -126,7 +126,7 @@
       "wildAnimals"
     ],
     "illustration": "object-tiger",
-    "src": "assets/illustrations/objects/object-tiger.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-tiger.svg?v=1.0.5",
     "fallback": "🐯"
   },
   {
@@ -142,7 +142,7 @@
       "landAnimals"
     ],
     "illustration": "object-elephant",
-    "src": "assets/illustrations/objects/object-elephant.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-elephant.svg?v=1.0.5",
     "fallback": "🐘"
   },
   {
@@ -158,7 +158,7 @@
       "landAnimals"
     ],
     "illustration": "object-giraffe",
-    "src": "assets/illustrations/objects/object-giraffe.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-giraffe.svg?v=1.0.5",
     "fallback": "🦒"
   },
   {
@@ -174,7 +174,7 @@
       "landAnimals"
     ],
     "illustration": "object-zebra",
-    "src": "assets/illustrations/objects/object-zebra.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-zebra.svg?v=1.0.5",
     "fallback": "🦓"
   },
   {
@@ -189,7 +189,7 @@
       "wildAnimals"
     ],
     "illustration": "object-monkey",
-    "src": "assets/illustrations/objects/object-monkey.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-monkey.svg?v=1.0.5",
     "fallback": "🐒"
   },
   {
@@ -204,7 +204,7 @@
       "wildAnimals"
     ],
     "illustration": "object-gorilla",
-    "src": "assets/illustrations/objects/object-gorilla.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-gorilla.svg?v=1.0.5",
     "fallback": "🦍"
   },
   {
@@ -219,7 +219,7 @@
       "landAnimals"
     ],
     "illustration": "object-horse",
-    "src": "assets/illustrations/objects/object-horse.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-horse.svg?v=1.0.5",
     "fallback": "🐴"
   },
   {
@@ -234,7 +234,7 @@
       "landAnimals"
     ],
     "illustration": "object-panda",
-    "src": "assets/illustrations/objects/object-panda.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-panda.svg?v=1.0.5",
     "fallback": "🐼"
   },
   {
@@ -249,7 +249,7 @@
       "seaAnimals"
     ],
     "illustration": "object-fish",
-    "src": "assets/illustrations/objects/object-fish.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-fish.svg?v=1.0.5",
     "fallback": "🐟"
   },
   {
@@ -264,7 +264,7 @@
       "seaAnimals"
     ],
     "illustration": "object-shark",
-    "src": "assets/illustrations/objects/object-shark.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-shark.svg?v=1.0.5",
     "fallback": "🦈"
   },
   {
@@ -279,7 +279,7 @@
       "seaAnimals"
     ],
     "illustration": "object-whale",
-    "src": "assets/illustrations/objects/object-whale.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-whale.svg?v=1.0.5",
     "fallback": "🐳"
   },
   {
@@ -294,7 +294,7 @@
       "seaAnimals"
     ],
     "illustration": "object-dolphin",
-    "src": "assets/illustrations/objects/object-dolphin.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-dolphin.svg?v=1.0.5",
     "fallback": "🐬"
   },
   {
@@ -309,7 +309,7 @@
       "seaAnimals"
     ],
     "illustration": "object-octopus",
-    "src": "assets/illustrations/objects/object-octopus.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-octopus.svg?v=1.0.5",
     "fallback": "🐙"
   },
   {
@@ -324,7 +324,7 @@
       "seaAnimals"
     ],
     "illustration": "object-seahorse",
-    "src": "assets/illustrations/objects/object-seahorse.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-seahorse.svg?v=1.0.5",
     "fallback": "🐠"
   },
   {
@@ -339,7 +339,7 @@
       "food"
     ],
     "illustration": "object-apple",
-    "src": "assets/illustrations/objects/object-apple.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-apple.svg?v=1.0.5",
     "fallback": "🍎"
   },
   {
@@ -354,7 +354,7 @@
       "food"
     ],
     "illustration": "object-banana",
-    "src": "assets/illustrations/objects/object-banana.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-banana.svg?v=1.0.5",
     "fallback": "🍌"
   },
   {
@@ -369,7 +369,7 @@
       "food"
     ],
     "illustration": "object-orange",
-    "src": "assets/illustrations/objects/object-orange.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-orange.svg?v=1.0.5",
     "fallback": "🍊"
   },
   {
@@ -384,7 +384,7 @@
       "food"
     ],
     "illustration": "object-strawberry",
-    "src": "assets/illustrations/objects/object-strawberry.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-strawberry.svg?v=1.0.5",
     "fallback": "🍓"
   },
   {
@@ -399,7 +399,7 @@
       "food"
     ],
     "illustration": "object-watermelon",
-    "src": "assets/illustrations/objects/object-watermelon.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-watermelon.svg?v=1.0.5",
     "fallback": "🍉"
   },
   {
@@ -415,7 +415,7 @@
       "food"
     ],
     "illustration": "object-grapes",
-    "src": "assets/illustrations/objects/object-grapes.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-grapes.svg?v=1.0.5",
     "fallback": "🍇"
   },
   {
@@ -430,7 +430,7 @@
       "food"
     ],
     "illustration": "object-pear",
-    "src": "assets/illustrations/objects/object-pear.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-pear.svg?v=1.0.5",
     "fallback": "🍐"
   },
   {
@@ -445,7 +445,7 @@
       "food"
     ],
     "illustration": "object-carrot",
-    "src": "assets/illustrations/objects/object-carrot.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-carrot.svg?v=1.0.5",
     "fallback": "🥕"
   },
   {
@@ -460,7 +460,7 @@
       "food"
     ],
     "illustration": "object-tomato",
-    "src": "assets/illustrations/objects/object-tomato.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-tomato.svg?v=1.0.5",
     "fallback": "🍅"
   },
   {
@@ -475,7 +475,7 @@
       "food"
     ],
     "illustration": "object-potato",
-    "src": "assets/illustrations/objects/object-potato.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-potato.svg?v=1.0.5",
     "fallback": "🥔"
   },
   {
@@ -490,7 +490,7 @@
       "food"
     ],
     "illustration": "object-onion",
-    "src": "assets/illustrations/objects/object-onion.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-onion.svg?v=1.0.5",
     "fallback": "🧅"
   },
   {
@@ -505,7 +505,7 @@
       "food"
     ],
     "illustration": "object-cucumber",
-    "src": "assets/illustrations/objects/object-cucumber.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-cucumber.svg?v=1.0.5",
     "fallback": "🥒"
   },
   {
@@ -520,7 +520,7 @@
       "food"
     ],
     "illustration": "object-broccoli",
-    "src": "assets/illustrations/objects/object-broccoli.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-broccoli.svg?v=1.0.5",
     "fallback": "🥦"
   },
   {
@@ -534,7 +534,7 @@
       "food"
     ],
     "illustration": "object-bread",
-    "src": "assets/illustrations/objects/object-bread.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-bread.svg?v=1.0.5",
     "fallback": "🍞"
   },
   {
@@ -548,7 +548,7 @@
       "food"
     ],
     "illustration": "object-cheese",
-    "src": "assets/illustrations/objects/object-cheese.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-cheese.svg?v=1.0.5",
     "fallback": "🧀"
   },
   {
@@ -562,7 +562,7 @@
       "food"
     ],
     "illustration": "object-egg",
-    "src": "assets/illustrations/objects/object-egg.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-egg.svg?v=1.0.5",
     "fallback": "🥚"
   },
   {
@@ -576,7 +576,7 @@
       "food"
     ],
     "illustration": "object-rice",
-    "src": "assets/illustrations/objects/object-rice.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-rice.svg?v=1.0.5",
     "fallback": "🍚"
   },
   {
@@ -590,7 +590,7 @@
       "food"
     ],
     "illustration": "object-pasta",
-    "src": "assets/illustrations/objects/object-pasta.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-pasta.svg?v=1.0.5",
     "fallback": "🍝"
   },
   {
@@ -604,7 +604,7 @@
       "food"
     ],
     "illustration": "object-pizza",
-    "src": "assets/illustrations/objects/object-pizza.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-pizza.svg?v=1.0.5",
     "fallback": "🍕"
   },
   {
@@ -618,7 +618,7 @@
       "toys"
     ],
     "illustration": "object-ball",
-    "src": "assets/illustrations/objects/object-ball.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-ball.svg?v=1.0.5",
     "fallback": "⚽"
   },
   {
@@ -632,7 +632,7 @@
       "toys"
     ],
     "illustration": "object-teddy-bear",
-    "src": "assets/illustrations/objects/object-teddy-bear.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-teddy-bear.svg?v=1.0.5",
     "fallback": "🧸"
   },
   {
@@ -646,7 +646,7 @@
       "toys"
     ],
     "illustration": "object-doll",
-    "src": "assets/illustrations/objects/object-doll.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-doll.svg?v=1.0.5",
     "fallback": "🪆"
   },
   {
@@ -660,7 +660,7 @@
       "toys"
     ],
     "illustration": "object-kite",
-    "src": "assets/illustrations/objects/object-kite.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-kite.svg?v=1.0.5",
     "fallback": "🪁"
   },
   {
@@ -674,7 +674,7 @@
       "toys"
     ],
     "illustration": "object-puzzle",
-    "src": "assets/illustrations/objects/object-puzzle.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-puzzle.svg?v=1.0.5",
     "fallback": "🧩"
   },
   {
@@ -688,7 +688,7 @@
       "toys"
     ],
     "illustration": "object-blocks",
-    "src": "assets/illustrations/objects/object-blocks.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-blocks.svg?v=1.0.5",
     "fallback": "🧱"
   },
   {
@@ -702,7 +702,7 @@
       "clothes"
     ],
     "illustration": "object-shirt",
-    "src": "assets/illustrations/objects/object-shirt.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-shirt.svg?v=1.0.5",
     "fallback": "👕"
   },
   {
@@ -716,7 +716,7 @@
       "clothes"
     ],
     "illustration": "object-pants",
-    "src": "assets/illustrations/objects/object-pants.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-pants.svg?v=1.0.5",
     "fallback": "👖"
   },
   {
@@ -730,7 +730,7 @@
       "clothes"
     ],
     "illustration": "object-dress",
-    "src": "assets/illustrations/objects/object-dress.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-dress.svg?v=1.0.5",
     "fallback": "👗"
   },
   {
@@ -744,7 +744,7 @@
       "clothes"
     ],
     "illustration": "object-coat",
-    "src": "assets/illustrations/objects/object-coat.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-coat.svg?v=1.0.5",
     "fallback": "🧥"
   },
   {
@@ -758,7 +758,7 @@
       "clothes"
     ],
     "illustration": "object-shorts",
-    "src": "assets/illustrations/objects/object-shorts.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-shorts.svg?v=1.0.5",
     "fallback": "🩳"
   },
   {
@@ -772,7 +772,7 @@
       "clothes"
     ],
     "illustration": "object-socks",
-    "src": "assets/illustrations/objects/object-socks.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-socks.svg?v=1.0.5",
     "fallback": "🧦"
   },
   {
@@ -786,7 +786,7 @@
       "schoolItems"
     ],
     "illustration": "object-book",
-    "src": "assets/illustrations/objects/object-book.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-book.svg?v=1.0.5",
     "fallback": "📕"
   },
   {
@@ -800,7 +800,7 @@
       "schoolItems"
     ],
     "illustration": "object-pencil",
-    "src": "assets/illustrations/objects/object-pencil.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-pencil.svg?v=1.0.5",
     "fallback": "✏️"
   },
   {
@@ -814,7 +814,7 @@
       "schoolItems"
     ],
     "illustration": "object-pen",
-    "src": "assets/illustrations/objects/object-pen.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-pen.svg?v=1.0.5",
     "fallback": "🖊️"
   },
   {
@@ -828,7 +828,7 @@
       "schoolItems"
     ],
     "illustration": "object-ruler",
-    "src": "assets/illustrations/objects/object-ruler.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-ruler.svg?v=1.0.5",
     "fallback": "📏"
   },
   {
@@ -842,7 +842,7 @@
       "schoolItems"
     ],
     "illustration": "object-scissors",
-    "src": "assets/illustrations/objects/object-scissors.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-scissors.svg?v=1.0.5",
     "fallback": "✂️"
   },
   {
@@ -857,7 +857,7 @@
       "schoolItems"
     ],
     "illustration": "object-backpack",
-    "src": "assets/illustrations/objects/object-backpack.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-backpack.svg?v=1.0.5",
     "fallback": "🎒"
   },
   {
@@ -871,7 +871,7 @@
       "homeItems"
     ],
     "illustration": "object-chair",
-    "src": "assets/illustrations/objects/object-chair.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-chair.svg?v=1.0.5",
     "fallback": "🪑"
   },
   {
@@ -885,7 +885,7 @@
       "homeItems"
     ],
     "illustration": "object-table",
-    "src": "assets/illustrations/objects/object-table.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-table.svg?v=1.0.5",
     "fallback": "🪑"
   },
   {
@@ -899,7 +899,7 @@
       "homeItems"
     ],
     "illustration": "object-lamp",
-    "src": "assets/illustrations/objects/object-lamp.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-lamp.svg?v=1.0.5",
     "fallback": "💡"
   },
   {
@@ -913,7 +913,7 @@
       "homeItems"
     ],
     "illustration": "object-clock",
-    "src": "assets/illustrations/objects/object-clock.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-clock.svg?v=1.0.5",
     "fallback": "⏰"
   },
   {
@@ -927,7 +927,7 @@
       "homeItems"
     ],
     "illustration": "object-bed",
-    "src": "assets/illustrations/objects/object-bed.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-bed.svg?v=1.0.5",
     "fallback": "🛏️"
   },
   {
@@ -941,7 +941,7 @@
       "homeItems"
     ],
     "illustration": "object-sofa",
-    "src": "assets/illustrations/objects/object-sofa.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-sofa.svg?v=1.0.5",
     "fallback": "🛋️"
   },
   {
@@ -956,7 +956,7 @@
       "landVehicles"
     ],
     "illustration": "object-car",
-    "src": "assets/illustrations/objects/object-car.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-car.svg?v=1.0.5",
     "fallback": "🚗"
   },
   {
@@ -970,7 +970,7 @@
       "landVehicles"
     ],
     "illustration": "object-bus",
-    "src": "assets/illustrations/objects/object-bus.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-bus.svg?v=1.0.5",
     "fallback": "🚌"
   },
   {
@@ -984,7 +984,7 @@
       "landVehicles"
     ],
     "illustration": "object-train",
-    "src": "assets/illustrations/objects/object-train.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-train.svg?v=1.0.5",
     "fallback": "🚂"
   },
   {
@@ -998,7 +998,7 @@
       "landVehicles"
     ],
     "illustration": "object-bicycle",
-    "src": "assets/illustrations/objects/object-bicycle.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-bicycle.svg?v=1.0.5",
     "fallback": "🚲"
   },
   {
@@ -1012,7 +1012,7 @@
       "landVehicles"
     ],
     "illustration": "object-motorcycle",
-    "src": "assets/illustrations/objects/object-motorcycle.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-motorcycle.svg?v=1.0.5",
     "fallback": "🏍️"
   },
   {
@@ -1026,7 +1026,7 @@
       "landVehicles"
     ],
     "illustration": "object-truck",
-    "src": "assets/illustrations/objects/object-truck.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-truck.svg?v=1.0.5",
     "fallback": "🚚"
   },
   {
@@ -1040,7 +1040,7 @@
       "seaVehicles"
     ],
     "illustration": "object-boat",
-    "src": "assets/illustrations/objects/object-boat.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-boat.svg?v=1.0.5",
     "fallback": "⛵"
   },
   {
@@ -1054,7 +1054,7 @@
       "seaVehicles"
     ],
     "illustration": "object-ship",
-    "src": "assets/illustrations/objects/object-ship.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-ship.svg?v=1.0.5",
     "fallback": "🚢"
   },
   {
@@ -1068,7 +1068,7 @@
       "seaVehicles"
     ],
     "illustration": "object-sailboat",
-    "src": "assets/illustrations/objects/object-sailboat.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-sailboat.svg?v=1.0.5",
     "fallback": "⛵"
   },
   {
@@ -1082,7 +1082,7 @@
       "seaVehicles"
     ],
     "illustration": "object-ferry",
-    "src": "assets/illustrations/objects/object-ferry.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-ferry.svg?v=1.0.5",
     "fallback": "⛴️"
   },
   {
@@ -1097,7 +1097,7 @@
       "airVehicles"
     ],
     "illustration": "object-airplane",
-    "src": "assets/illustrations/objects/object-airplane.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-airplane.svg?v=1.0.5",
     "fallback": "✈️"
   },
   {
@@ -1111,7 +1111,7 @@
       "airVehicles"
     ],
     "illustration": "object-helicopter",
-    "src": "assets/illustrations/objects/object-helicopter.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-helicopter.svg?v=1.0.5",
     "fallback": "🚁"
   },
   {
@@ -1126,7 +1126,7 @@
       "airVehicles"
     ],
     "illustration": "object-hot-air-balloon",
-    "src": "assets/illustrations/objects/object-hot-air-balloon.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-hot-air-balloon.svg?v=1.0.5",
     "fallback": "🎈"
   },
   {
@@ -1140,7 +1140,7 @@
       "airVehicles"
     ],
     "illustration": "object-glider",
-    "src": "assets/illustrations/objects/object-glider.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-glider.svg?v=1.0.5",
     "fallback": "✈️"
   },
   {
@@ -1154,7 +1154,7 @@
       "nature"
     ],
     "illustration": "object-tree",
-    "src": "assets/illustrations/objects/object-tree.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-tree.svg?v=1.0.5",
     "fallback": "🌳"
   },
   {
@@ -1168,7 +1168,7 @@
       "nature"
     ],
     "illustration": "object-flower",
-    "src": "assets/illustrations/objects/object-flower.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-flower.svg?v=1.0.5",
     "fallback": "🌻"
   },
   {
@@ -1182,7 +1182,7 @@
       "nature"
     ],
     "illustration": "object-mountain",
-    "src": "assets/illustrations/objects/object-mountain.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-mountain.svg?v=1.0.5",
     "fallback": "⛰️"
   },
   {
@@ -1196,7 +1196,7 @@
       "nature"
     ],
     "illustration": "object-river",
-    "src": "assets/illustrations/objects/object-river.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-river.svg?v=1.0.5",
     "fallback": "🏞️"
   },
   {
@@ -1210,7 +1210,7 @@
       "nature"
     ],
     "illustration": "object-forest",
-    "src": "assets/illustrations/objects/object-forest.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-forest.svg?v=1.0.5",
     "fallback": "🌲"
   },
   {
@@ -1224,7 +1224,7 @@
       "nature"
     ],
     "illustration": "object-rainbow",
-    "src": "assets/illustrations/objects/object-rainbow.svg?v=1.0.4",
+    "src": "assets/illustrations/objects/object-rainbow.svg?v=1.0.5",
     "fallback": "🌈"
   }
 ].map(item => Object.freeze(item)));
@@ -1235,7 +1235,7 @@
     "label": "Dinozor Vadisi",
     "description": "Bitkiler, yumurtalar ve uzaktaki volkanla sevimli dinozor vadisi",
     "sceneKey": "dinosaur-valley",
-    "src": "assets/illustrations/puzzles/scene-dinosaur-valley.svg?v=1.0.4",
+    "src": "assets/illustrations/puzzles/scene-dinosaur-valley.svg?v=1.0.5",
     "category": "scene"
   },
   {
@@ -1244,7 +1244,7 @@
     "label": "Uzay Macerası",
     "description": "Roket, gezegenler, uydu ve renkli yıldızlarla uzay sahnesi",
     "sceneKey": "space-adventure",
-    "src": "assets/illustrations/puzzles/scene-space-adventure.svg?v=1.0.4",
+    "src": "assets/illustrations/puzzles/scene-space-adventure.svg?v=1.0.5",
     "category": "scene"
   },
   {
@@ -1253,7 +1253,7 @@
     "label": "Unicorn Bahçesi",
     "description": "Gökkuşağı, dere, çiçekler ve kelebeklerle özgün unicorn bahçesi",
     "sceneKey": "unicorn-garden",
-    "src": "assets/illustrations/puzzles/scene-unicorn-garden.svg?v=1.0.4",
+    "src": "assets/illustrations/puzzles/scene-unicorn-garden.svg?v=1.0.5",
     "category": "scene"
   },
   {
@@ -1262,7 +1262,7 @@
     "label": "Deniz Altı Dünyası",
     "description": "Balıklar, ahtapot, mercanlar ve baloncuklarla deniz altı sahnesi",
     "sceneKey": "underwater-world",
-    "src": "assets/illustrations/puzzles/scene-underwater-world.svg?v=1.0.4",
+    "src": "assets/illustrations/puzzles/scene-underwater-world.svg?v=1.0.5",
     "category": "scene"
   },
   {
@@ -1271,7 +1271,7 @@
     "label": "Ormanda Piknik",
     "description": "Orman hayvanları, piknik örtüsü ve meyve sepetiyle piknik sahnesi",
     "sceneKey": "forest-picnic",
-    "src": "assets/illustrations/puzzles/scene-forest-picnic.svg?v=1.0.4",
+    "src": "assets/illustrations/puzzles/scene-forest-picnic.svg?v=1.0.5",
     "category": "scene"
   },
   {
@@ -1280,7 +1280,7 @@
     "label": "Çiftlik Sabahı",
     "description": "Ahır, inek, tavuk, traktör ve samanlarla çiftlik sabahı",
     "sceneKey": "farm-morning",
-    "src": "assets/illustrations/puzzles/scene-farm-morning.svg?v=1.0.4",
+    "src": "assets/illustrations/puzzles/scene-farm-morning.svg?v=1.0.5",
     "category": "scene"
   },
   {
@@ -1289,7 +1289,7 @@
     "label": "Tren İstasyonu",
     "description": "Renkli tren, istasyon saati, bavullar ve ağaçlarla istasyon sahnesi",
     "sceneKey": "train-station",
-    "src": "assets/illustrations/puzzles/scene-train-station.svg?v=1.0.4",
+    "src": "assets/illustrations/puzzles/scene-train-station.svg?v=1.0.5",
     "category": "scene"
   },
   {
@@ -1298,7 +1298,7 @@
     "label": "İnşaat Araçları",
     "description": "Ekskavatör, kamyon, vinç ve güvenlik konileriyle şantiye sahnesi",
     "sceneKey": "construction-site",
-    "src": "assets/illustrations/puzzles/scene-construction-site.svg?v=1.0.4",
+    "src": "assets/illustrations/puzzles/scene-construction-site.svg?v=1.0.5",
     "category": "scene"
   },
   {
@@ -1307,7 +1307,7 @@
     "label": "Kış Oyun Alanı",
     "description": "Kardan adam, kızak, çam ağaçları ve kulübeyle kış sahnesi",
     "sceneKey": "winter-playground",
-    "src": "assets/illustrations/puzzles/scene-winter-playground.svg?v=1.0.4",
+    "src": "assets/illustrations/puzzles/scene-winter-playground.svg?v=1.0.5",
     "category": "scene"
   },
   {
@@ -1316,7 +1316,7 @@
     "label": "Sıcak Hava Balonları",
     "description": "Tepeler, evler ve bulutların üzerinde renkli sıcak hava balonları",
     "sceneKey": "hot-air-balloons",
-    "src": "assets/illustrations/puzzles/scene-hot-air-balloons.svg?v=1.0.4",
+    "src": "assets/illustrations/puzzles/scene-hot-air-balloons.svg?v=1.0.5",
     "category": "scene"
   },
   {
@@ -1325,7 +1325,7 @@
     "label": "Safari Su Başı",
     "description": "Zürafa, fil ve zebranın su başında buluştuğu sakin safari sahnesi",
     "sceneKey": "safari-waterhole",
-    "src": "assets/illustrations/puzzles/scene-safari-waterhole.svg?v=1.0.4",
+    "src": "assets/illustrations/puzzles/scene-safari-waterhole.svg?v=1.0.5",
     "category": "scene"
   },
   {
@@ -1334,7 +1334,7 @@
     "label": "Meyve Pikniği",
     "description": "Meyve sepeti, karpuz, çilek, üzüm ve çiçeklerle piknik sahnesi",
     "sceneKey": "fruit-picnic",
-    "src": "assets/illustrations/puzzles/scene-fruit-picnic.svg?v=1.0.4",
+    "src": "assets/illustrations/puzzles/scene-fruit-picnic.svg?v=1.0.5",
     "category": "scene"
   },
   {
@@ -1343,7 +1343,7 @@
     "label": "Deniz Kenarında Kumdan Kale",
     "description": "Kumdan kale, kova, deniz kabukları, şemsiye ve uzakta yelkenli",
     "sceneKey": "seaside-sandcastle",
-    "src": "assets/illustrations/puzzles/scene-seaside-sandcastle.svg?v=1.0.4",
+    "src": "assets/illustrations/puzzles/scene-seaside-sandcastle.svg?v=1.0.5",
     "category": "scene"
   },
   {
@@ -1352,7 +1352,7 @@
     "label": "Orman Hayvanları",
     "description": "Geyik, tavşan, tilki, baykuş, mantarlar ve dereyle orman sahnesi",
     "sceneKey": "forest-animals",
-    "src": "assets/illustrations/puzzles/scene-forest-animals.svg?v=1.0.4",
+    "src": "assets/illustrations/puzzles/scene-forest-animals.svg?v=1.0.5",
     "category": "scene"
   },
   {
@@ -1361,7 +1361,7 @@
     "label": "Renkli Şehir",
     "description": "Arabalar, otobüs, bisiklet, trafik ışığı ve yaya geçidiyle şehir sahnesi",
     "sceneKey": "colorful-city",
-    "src": "assets/illustrations/puzzles/scene-colorful-city.svg?v=1.0.4",
+    "src": "assets/illustrations/puzzles/scene-colorful-city.svg?v=1.0.5",
     "category": "scene"
   },
   {
@@ -1370,7 +1370,7 @@
     "label": "Gökkuşağı Bahçesi",
     "description": "Gökkuşağı, çiçekler, kelebek, sulama kabı, kuş ve küçük gölet",
     "sceneKey": "rainbow-garden",
-    "src": "assets/illustrations/puzzles/scene-rainbow-garden.svg?v=1.0.4",
+    "src": "assets/illustrations/puzzles/scene-rainbow-garden.svg?v=1.0.5",
     "category": "scene"
   }
 ].map(item => Object.freeze(item)));

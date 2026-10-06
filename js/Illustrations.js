@@ -7,7 +7,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function (root) {
   "use strict";
 
-  const VERSION = "1.0.4";
+  const VERSION = "1.0.5";
   const content = root?.MilaEducationalObjects
     || (typeof require === "function" ? require("./EducationalObjects.js") : undefined);
   const asset = path => `assets/illustrations/${path}?v=${VERSION}`;

@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "1.0.4";
+const APP_VERSION = "1.0.5";
 const CACHE_PREFIX = "mila-oyun-merkezi-";
 const CACHE_NAME = `${CACHE_PREFIX}${APP_VERSION}`;
 const VERSIONED_ASSETS = [

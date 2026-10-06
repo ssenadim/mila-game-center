@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="tr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sprint 12.4 Bonus Görsel QA</title>
+<link rel="stylesheet" href="../../styles.css?v=1.0.5&amp;qa=12.4.1">
+<style>
+  body{margin:0;padding:24px;background:#eee8fb;color:#30285a;font-family:Nunito,system-ui,sans-serif}
+  h1{margin:0 0 20px;font-family:"Baloo 2",system-ui,sans-serif}
+  .qa-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;max-width:1500px;margin:auto}
+  .qa-card{padding:18px;border:3px solid #d7cfff;border-radius:26px;background:#fffdf8;box-shadow:0 7px 0 #b4a5df;text-align:center}
+  .qa-card h2{margin:0 0 7px;color:#493a85;font-family:"Baloo 2",system-ui,sans-serif}
+  .qa-card p{min-height:2.4em;margin:0 0 14px;color:#5b448f;font-weight:900}
+  .qa-card .bonus-activity{gap:12px;margin-bottom:0}
+  .qa-card .bonus-choice{min-height:88px}
+  .theme-matrix{display:grid;gap:20px;max-width:1500px;margin:34px auto 0}
+  .theme-row h2{margin:0 0 9px;font-family:"Baloo 2",system-ui,sans-serif}
+  .theme-grid{display:grid;grid-template-columns:repeat(8,minmax(130px,1fr));gap:9px}
+  .theme-cell.game-shell{display:grid;place-items:center;align-content:center;gap:7px;min-height:145px;padding:10px;border:3px solid #ffffffc9;border-radius:20px;overflow:hidden;background:linear-gradient(180deg,var(--world-background-start),var(--world-background-middle) 58%,var(--world-background-end));box-shadow:0 5px 0 #493a852b;text-align:center}
+  .theme-cell.game-shell::after{display:none}
+  .theme-cell img{display:block;width:88px;height:66px;object-fit:contain;border-radius:12px;background:#fffdf8d9}
+  .theme-cell strong{color:#493a85;font-size:.76rem;line-height:1.05}
+  .theme-cell[data-world-theme="night"] strong,.theme-cell[data-world-theme="space"] strong{color:#fff;text-shadow:0 2px 0 #30285a}
+  @media(max-width:360px){body{padding:10px}.qa-grid{grid-template-columns:1fr}.qa-card{padding:13px}.qa-card .bonus-activity{gap:9px}}
+  @media(max-width:900px){.theme-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+<h1>Sprint 12.4 – 5 bonus yüzeyi</h1>
+<main class="qa-grid">
+  <article class="qa-card"><h2>🎈 Balon Bonusu</h2><p>Pop Apple.</p><div class="balloons"><button class="bonus-choice balloon">Apple</button><button class="bonus-choice balloon">Cat</button><button class="bonus-choice balloon">Blue</button><button class="bonus-choice balloon">Five</button></div></article>
+  <article class="qa-card"><h2>⭐ Yıldız Yağmuru</h2><p>Bütün yıldızları topla!</p><div class="bonus-activity" data-bonus="star-rain"><button class="bonus-choice star-rain-choice">⭐</button><button class="bonus-choice star-rain-choice collected">✓</button><button class="bonus-choice star-rain-choice">⭐</button><button class="bonus-choice star-rain-choice">⭐</button><button class="bonus-choice star-rain-choice">⭐</button><button class="bonus-choice star-rain-choice">⭐</button></div></article>
+  <article class="qa-card"><h2>🎁 Hazine Kutuları</h2><p>Bir hazine kutusu seç!</p><div class="bonus-activity" data-bonus="treasure"><button class="bonus-choice treasure-choice">🎁</button><button class="bonus-choice treasure-choice">🎀</button><button class="bonus-choice treasure-choice">✨</button></div></article>
+  <article class="qa-card"><h2>🧩 Hızlı Eşleştir</h2><p>Aynı kartları eşleştir!</p><div class="bonus-activity" data-bonus="quick-match"><button class="bonus-choice quick-match-choice">?</button><button class="bonus-choice quick-match-choice matched">🐶</button><button class="bonus-choice quick-match-choice">?</button><button class="bonus-choice quick-match-choice">🍎</button></div></article>
+  <article class="qa-card"><h2>🎨 Renk Patlat</h2><p>Mor şekilleri bul!</p><div class="bonus-activity" data-bonus="color-pop"><button class="bonus-choice color-pop-choice purple">●</button><button class="bonus-choice color-pop-choice yellow">●</button><button class="bonus-choice color-pop-choice purple collected">✓</button><button class="bonus-choice color-pop-choice blue">★</button><button class="bonus-choice color-pop-choice green">■</button><button class="bonus-choice color-pop-choice purple">■</button></div></article>
+</main>
+<section id="theme-matrix" class="theme-matrix" aria-label="On dünya ve sekiz yüzey görsel matrisi"></section>
+<script>
+  const themes = [["sunny","Güneşli"],["spring","İlkbahar"],["summer","Yaz"],["autumn","Sonbahar"],["winter","Kış"],["night","Gece"],["unicorn","Unicorn"],["space","Uzay"],["dinosaur","Dinozor"],["forest","Orman"]];
+  const surfaces = [
+    ["Ana Sayfa","home/learn.svg"], ["Öğren","learning/category-packs.svg"],
+    ["Mini Oyunlar","mini-games/matching.svg"], ["Öğrenme Yolu","learning-path/first-discoveries.svg"],
+    ["Ödüller","rewards/achievements.svg"], ["Oyuncu Seçimi","empty-states/activity.svg"],
+    ["Yapboz","puzzles/scene-rainbow-garden.svg"], ["Bonus","mini-games/color.svg"]
+  ];
+  const matrix = document.querySelector("#theme-matrix");
+  themes.forEach(([id,label]) => {
+    const row = document.createElement("section"); row.className = "theme-row";
+    const heading = document.createElement("h2"); heading.textContent = label;
+    const grid = document.createElement("div"); grid.className = "theme-grid";
+    surfaces.forEach(([surface,source]) => {
+      const cell = document.createElement("article"); cell.className = "theme-cell game-shell"; cell.dataset.worldTheme = id;
+      cell.innerHTML = `<img src="../../assets/illustrations/${source}?v=1.0.5" alt=""><strong>${surface}</strong>`;
+      grid.append(cell);
+    });
+    row.append(heading, grid); matrix.append(row);
+  });
+</script>
+</html>

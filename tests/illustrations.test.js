@@ -25,7 +25,7 @@ test("illustration registry is centralized, unique, local and complete", () => {
   assert.equal(new Set(illustrations.ILLUSTRATIONS.map(entry => entry.id)).size, expectedCount);
   assert.equal(new Set(illustrations.ILLUSTRATIONS.map(entry => entry.src)).size, expectedCount);
   illustrations.ILLUSTRATIONS.forEach(entry => {
-    assert.match(entry.src, /^assets\/illustrations\/.+\.svg\?v=1\.0\.4$/);
+    assert.match(entry.src, /^assets\/illustrations\/.+\.svg\?v=1\.0\.5$/);
     assert.doesNotMatch(entry.src, /^(?:https?:)?\/\//i);
     assert.ok(entry.alt.trim().length >= (entry.category === "educational" ? 2 : 8), entry.id);
     assert.ok(entry.type && entry.theme && entry.category && entry.fallback, entry.id);

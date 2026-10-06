@@ -1,4 +1,4 @@
-# Mila Oyun Merkezi 1.0.0 Release Checklist
+# Mila Oyun Merkezi 1.0.5 Release Checklist
 
 Production URL source: the canonical, Open Graph, JSON-LD, robots, sitemap, and SEO regression tests identify `https://mila-game-center.vercel.app/` as the stable production URL. This repository is a dependency-free static Vercel deployment; there is no build command or output directory.
 
@@ -11,7 +11,7 @@ Production URL source: the canonical, Open Graph, JSON-LD, robots, sitemap, and 
 - Confirm there is no `noindex`, localhost URL, Vercel preview URL, console error, or missing asset.
 - Confirm storage migration/import tests preserve existing player data and never call `localStorage.clear()`.
 - Smoke-test 360×640, 390×844, 768×1024, 1024×768, and desktop layouts without horizontal overflow or clipped controls.
-- When releasing a changed asset set, bump `1.0.0` consistently in `index.html`, `app.js`, `sw.js`, and `js/ParentExperience.js`; the release tests enforce equality.
+- When releasing a changed asset set, bump `1.0.5` consistently in `index.html`, `app.js`, `sw.js`, `js/Illustrations.js`, `js/EducationalObjects.js`, and `js/ParentExperience.js`; the release tests enforce equality.
 
 ## Deployment and post-deployment smoke test
 

@@ -1,4 +1,4 @@
-const APP_VERSION = "1.0.4";
+const APP_VERSION = "1.0.5";
 const DATA_INDEX_URL = `./data/index.json?v=${APP_VERSION}`;
 const illustrationSystem = window.MilaIllustrations;
 const educationalObjectSystem = window.MilaEducationalObjects;
@@ -1911,6 +1911,7 @@ function startMatchingSession(categoryId = matchingSelectedCategory) {
   ui.matchingFeedback.textContent = "İki kartı aç.";
   ui.matchingPause.disabled = false;
   renderMatchingCards();
+  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   startMatchingTimer();
   isMatchingSessionStarting = false;
 }
@@ -2890,6 +2891,7 @@ function startShadowSession() {
   ui.newMiniGameSetup.classList.add("hidden");
   ui.newMiniGameArea.classList.remove("hidden");
   showShadowRound();
+  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   ui.newMiniGameChoices.querySelector("button")?.focus({ preventScroll: true });
 }
 
@@ -3077,6 +3079,7 @@ function startSoundMemorySession() {
   ui.newMiniGameSetup.classList.add("hidden");
   ui.newMiniGameArea.classList.remove("hidden");
   renderSoundMemoryBoard();
+  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
 }
 
 function renderSoundMemoryBoard() {
@@ -3211,6 +3214,7 @@ function startPuzzleSession() {
   ui.newMiniGameArea.classList.remove("hidden");
   if (!validateActivePuzzleBoard()) return;
   renderPuzzleGame();
+  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
 }
 
 function puzzlePieceStyle(piece, puzzle, difficulty) {
@@ -5628,7 +5632,7 @@ function renderManagedBonus() {
   }
 
   if (bonusId === "treasure") {
-    ["🎁", "🎀", "✨"].forEach((icon, index) => {
+    ["🎁", "🎀", "✨", "⭐"].forEach((icon, index) => {
       ui.balloons.append(createBonusButton("treasure-choice", `${index + 1}. hazine kutusu`, icon, () => chooseTreasure(index)));
     });
     return;
@@ -5913,6 +5917,29 @@ function renderAnswers() {
 function renderQuestionVisual(question) {
   ui.visual.textContent = "";
   ui.visual.classList.toggle("question-visual-svg", Boolean(question?.visualSvg));
+  const isNumberRow = question?.category === "NumberOrder";
+  const isComparison = question?.category === "BigSmall";
+  ui.visual.classList.toggle("question-visual-row", isNumberRow || isComparison);
+  if (isNumberRow || isComparison) {
+    const row = document.createElement("div");
+    row.className = isNumberRow ? "question-number-row" : "question-comparison-row";
+    const values = String(question.visual ?? "").split(isNumberRow ? /\s*→\s*/ : /\s+/).filter(Boolean);
+    values.forEach((value, index) => {
+      if (index) {
+        const separator = document.createElement("span");
+        separator.className = "question-row-separator";
+        separator.setAttribute("aria-hidden", "true");
+        separator.textContent = isNumberRow ? "→" : "❔";
+        row.append(separator);
+      }
+      const cell = document.createElement("span");
+      cell.className = "question-row-value";
+      cell.textContent = value;
+      row.append(cell);
+    });
+    ui.visual.append(row);
+    return;
+  }
   if (question?.visualSvg) ui.visual.innerHTML = question.visualSvg;
   else ui.visual.textContent = question?.visual ?? "";
 }
