@@ -88,14 +88,18 @@ const { pathToFileURL } = require('node:url');
       const choose = async index => { await page.evaluate(index => { void openSoundMemoryCard(index); }, index); await finish(); };
       const a = 0, b = board.findIndex(card => card.targetId !== board[a].targetId), pair = board.findIndex((card, index) => index !== a && card.targetId === board[a].targetId);
       await choose(a); await choose(b);
+      assert.equal(await page.locator('.sound-card img').count(), 0);
       assert.equal(await page.evaluate(() => [...ui.newMiniGameChoices.children].some(b => /🍎|🐱|🐶|🐟|🦁|🌙|☀️|🚗/.test(b.textContent))), false);
       await page.clock.runFor(700);
       await choose(a); await choose(pair);
-      const visual = await page.evaluate(() => newMiniGames.SOUND_MEMORY_ITEMS.find(item => item.id === newMiniGameState.board[0].targetId).visual);
+      const visual = await page.evaluate(() => {
+        const card = newMiniGameState.board[0];
+        return educationalObjectSystem.getByEnglish(card.speech)?.src || newMiniGames.SOUND_MEMORY_ITEMS.find(item => item.id === card.targetId).visual;
+      });
       assert.equal(await page.evaluate(() => [...ui.newMiniGameChoices.children].filter(b => b.classList.contains('matched')).every(b => b.disabled)), true);
-      assert.equal(await page.evaluate(visual => [...ui.newMiniGameChoices.children].filter(b => b.textContent === visual).length, visual), 2);
+      assert.equal(await page.evaluate(visual => [...ui.newMiniGameChoices.children].filter(b => b.querySelector('img')?.getAttribute('src') === visual || b.textContent === visual).length, visual), 2);
       await page.clock.runFor(700);
-      assert.equal(await page.evaluate(visual => [...ui.newMiniGameChoices.children].filter(b => b.textContent === visual).length, visual), 2);
+      assert.equal(await page.evaluate(visual => [...ui.newMiniGameChoices.children].filter(b => b.querySelector('img')?.getAttribute('src') === visual || b.textContent === visual).length, visual), 2);
       for (const targetId of [...new Set(board.map(card => card.targetId))].filter(id => id !== board[a].targetId)) {
         for (const index of board.map((card, index) => card.targetId === targetId ? index : -1).filter(index => index >= 0)) await choose(index);
         await page.clock.runFor(700);

@@ -140,6 +140,7 @@ function isMatchingCategoryPlayable(category) {
 const MATCHING_CATEGORIES = MATCHING_CATEGORY_DEFINITIONS.filter(isMatchingCategoryPlayable);
 const GAME_MODE_STORAGE_KEY = "mila-learning-game-mode";
 const PLAYER_STORAGE_KEY = "mila-learning-player";
+const QA_PROFILE_NAME = "adaniakadmin";
 const PLAYER_PROGRESS_MIGRATION_STORAGE_KEY = "mila-learning-player-progress-migrated";
 const CATEGORY_PACK_STORAGE_KEY = "mila-learning-category-pack";
 const LEARNING_PATH_PROGRESS_STORAGE_KEY = "mila-learning-path-progress";
@@ -435,6 +436,10 @@ const SPEECH_CONTROL_SELECTOR = [
   "#english-voice-preview"
 ].join(",");
 
+function isQaProfile(name = selectedPlayer) {
+  return typeof name === "string" && name.trim() === QA_PROFILE_NAME;
+}
+
 function getValidPlayerName(name) {
   const playerName = typeof name === "string" ? name.trim() : "";
   return playerName.length > 0 && Array.from(playerName).length <= 20 && /^[\p{L} ]+$/u.test(playerName) ? playerName : undefined;
@@ -480,7 +485,10 @@ function readStoredJson(storageKey, fallback) {
 
 function loadLearningPathProgress() {
   const storageKey = getPlayerStorageKey(LEARNING_PATH_PROGRESS_STORAGE_KEY);
-  return learningPathModel.normalizeProgress(readStoredJson(storageKey));
+  const progress = learningPathModel.normalizeProgress(readStoredJson(storageKey));
+  // Access comes from the active profile, never from persisted completion data.
+  Object.defineProperty(progress, "qaProfileAccess", { value: isQaProfile(), enumerable: false });
+  return progress;
 }
 
 function saveLearningPathProgress(progress) {
@@ -1426,7 +1434,8 @@ function selectCustomPlayer() {
 }
 
 function updateCustomPlayer() {
-  const sanitizedName = Array.from(ui.customPlayerName.value).filter(character => /[\p{L} ]/u.test(character)).slice(0, 20).join("");
+  const rawName = ui.customPlayerName.value;
+  const sanitizedName = Array.from(rawName).filter(character => /[\p{L} ]/u.test(character)).slice(0, 20).join("");
   if (ui.customPlayerName.value !== sanitizedName) ui.customPlayerName.value = sanitizedName;
   const playerName = getValidPlayerName(ui.customPlayerName.value);
   selectedPlayer = playerName;
@@ -2587,6 +2596,7 @@ function appendProfessionalObject(target, item, className = "professional-object
   if (!source) return false;
   const image = document.createElement("img");
   image.className = className;
+  image.classList.add("professional-object-image");
   image.src = source;
   image.alt = "";
   image.loading = "eager";
@@ -2755,11 +2765,21 @@ function celebrateNewMiniGame() {
 
 function finishNewMiniGame(copy) {
   const completionIcon = ui.newMiniGameCompletion.querySelector(".new-mini-game-completion-icon");
-  const matchedVisuals = newMiniGameState.mode === SOUND_MEMORY_MODE
-    ? [...new Set(newMiniGameState.board.filter(card => card.matched).map(card =>
-      newMiniGames.SOUND_MEMORY_ITEMS.find(item => item.id === card.targetId)?.visual).filter(Boolean))]
-    : [];
-  completionIcon.textContent = ["🎉", ...matchedVisuals].join(" ");
+  const isSoundMemory = newMiniGameState.mode === SOUND_MEMORY_MODE;
+  completionIcon.classList.toggle("sound-memory-reinforcement", isSoundMemory);
+  completionIcon.textContent = "🎉";
+  if (isSoundMemory) {
+    const matchedIds = [...new Set(newMiniGameState.board.filter(card => card.matched).map(card => card.targetId))];
+    matchedIds.forEach(id => {
+      const item = newMiniGames.SOUND_MEMORY_ITEMS.find(item => item.id === id);
+      const object = educationalObjectSystem?.getByEnglish(item?.speech);
+      if (!appendProfessionalObject(completionIcon, object, "sound-memory-object-image") && item?.visual) {
+        const fallback = document.createElement("span");
+        fallback.textContent = item.visual;
+        completionIcon.append(fallback);
+      }
+    });
+  }
   if (newMiniGameState.completed) return;
   clearNewMiniGameDelay();
   if (newMiniGameState.timerStartedAt) {
@@ -3110,8 +3130,10 @@ function renderSoundMemoryBoard() {
     const matchedVisual = card.matched
       ? newMiniGames.SOUND_MEMORY_ITEMS.find(item => item.id === card.targetId)?.visual
       : undefined;
+    const matchedObject = card.matched ? educationalObjectSystem?.getByEnglish(card.speech) : undefined;
     addNewMiniGameChoice({
-      label: matchedVisual || (card.revealed || card.matched ? "🔊" : "?"),
+      label: matchedObject ? "" : matchedVisual || (card.revealed || card.matched ? "🔊" : "?"),
+      illustrationSrc: matchedObject?.src,
       className: `sound-card${card.revealed ? " open" : ""}${card.matched ? " matched" : ""}`,
       ariaLabel: card.matched ? `Eşleşen ses kartı ${index + 1}` : card.revealed ? `Açık ses kartı ${index + 1}, tekrar dinle` : `Kapalı ses kartı ${index + 1}`,
       disabled: card.matched || newMiniGameState.inputLocked || newMiniGameState.speaking,

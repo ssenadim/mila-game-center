@@ -34,7 +34,8 @@ test("Sprint 12.4 visual inventory is complete, local, referenced and lightweigh
   assert.deepEqual(new Set(files.map(file => path.resolve(file))), new Set([...registeredSources].map(file => path.resolve(file))));
 
   const sizes = files.map(file => fs.statSync(file).size);
-  assert.ok(sizes.reduce((sum, size) => sum + size, 0) < 125_000);
+  // Original local vectors now include the Sprint 13.5 gradient/shadow material.
+  assert.ok(sizes.reduce((sum, size) => sum + size, 0) < 185_000);
   assert.ok(Math.max(...sizes) < 4_000);
   files.forEach(file => {
     const source = fs.readFileSync(file, "utf8");
@@ -51,7 +52,7 @@ test("all semantic objects and puzzle scenes resolve and the potato is visually 
   });
   const potato = fs.readFileSync(path.join(root, "assets", "illustrations", "objects", "object-potato.svg"), "utf8");
   assert.match(potato, /<ellipse\b/g);
-  assert.match(potato, /fill="#8f6544"/);
+  assert.match(potato, /(?:fill|stop-color)="#8f6544"/);
   assert.doesNotMatch(potato, /m55 43 17 6 8-17/);
 });
 

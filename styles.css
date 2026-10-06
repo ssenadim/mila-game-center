@@ -185,6 +185,8 @@ button { font:inherit; cursor:pointer; }
 .puzzle-layout-4 .puzzle-slot,.puzzle-layout-4 .puzzle-piece{border-width:1px;border-radius:6px}
 .new-mini-game-completion{max-width:520px;margin:22px auto;padding:25px 18px;border:4px solid #fff;border-radius:28px;background:#fffdf8;box-shadow:0 8px 0 #b4a5df}
 .new-mini-game-completion-icon{font-size:4rem;line-height:1}
+.new-mini-game-completion-icon.sound-memory-reinforcement{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;max-width:100%}
+.sound-memory-object-image{width:clamp(48px,18vw,72px);height:clamp(48px,18vw,72px);object-fit:contain}
 .new-mini-game-completion h3{margin:7px 0 5px;color:#493a85;font-family:"Baloo 2",cursive;font-size:clamp(2rem,8vw,3rem);line-height:1}
 .new-mini-game-completion p{font-weight:900;color:#5c438f}
 .new-mini-game-completion .primary-button,.new-mini-game-completion .sound-button{display:block;width:min(100%,320px);min-height:56px;margin:12px auto 0}

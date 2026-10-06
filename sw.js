@@ -2,7 +2,7 @@
 
 const APP_VERSION = "1.0.5";
 const CACHE_PREFIX = "mila-oyun-merkezi-";
-const CACHE_NAME = `${CACHE_PREFIX}${APP_VERSION}`;
+const CACHE_NAME = `${CACHE_PREFIX}${APP_VERSION}-art13-5`;
 const VERSIONED_ASSETS = [
   "./styles.css",
   "./js/utils/random.js",

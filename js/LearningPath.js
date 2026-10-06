@@ -232,12 +232,12 @@
   function canLaunchStage(stageId, progress, stages = STAGES) {
     const stage = stageById(stageId, stages);
     if (!isPlayableStage(stage)) return false;
-    return progress?.completed?.[stage.id] === true || prerequisitesComplete(stage, progress);
+    return progress?.qaProfileAccess === true || progress?.completed?.[stage.id] === true || prerequisitesComplete(stage, progress);
   }
 
   function getRecommendedStage(progress, stages = STAGES) {
     const ordered = [...stages].sort((first, second) => first.order - second.order);
-    const recommended = ordered.find(stage => isPlayableStage(stage) && progress?.completed?.[stage.id] !== true && prerequisitesComplete(stage, progress));
+    const recommended = ordered.find(stage => isPlayableStage(stage) && progress?.completed?.[stage.id] !== true && canLaunchStage(stage.id, progress, stages));
     return recommended;
   }
 
@@ -246,13 +246,13 @@
     if (!current) return undefined;
     return [...stages]
       .sort((first, second) => first.order - second.order)
-      .find(stage => stage.order > current.order && isPlayableStage(stage) && progress?.completed?.[stage.id] !== true && prerequisitesComplete(stage, progress));
+      .find(stage => stage.order > current.order && isPlayableStage(stage) && progress?.completed?.[stage.id] !== true && canLaunchStage(stage.id, progress, stages));
   }
 
   function getStageState(stage, progress, recommendedStage = getRecommendedStage(progress)) {
     if (!isPlayableStage(stage)) return "planned";
     if (progress?.completed?.[stage.id] === true) return "completed";
-    if (!prerequisitesComplete(stage, progress)) return "locked";
+    if (!canLaunchStage(stage.id, progress, [stage])) return "locked";
     return stage.id === recommendedStage?.id ? "current" : "unlocked";
   }
 
