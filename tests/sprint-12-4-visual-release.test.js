@@ -82,10 +82,15 @@ test("ten worlds and five bonus surfaces remain complete after visual polish", (
   assert.match(css, /\.bonus-choice\.balloon\{font-size:clamp\(1\.05rem,4vw,1\.35rem\)\}/);
 });
 
-test("offline shell stays bounded while local art is cached on first use", () => {
+test("offline shell stays bounded with core objects while other local art is cached on first use", () => {
   assert.match(worker, /const APP_VERSION = "1\.0\.5"/);
   assert.match(worker, /const APP_SHELL = \["\.\/", "\.\/index\.html", \.\.\.VERSIONED_ASSETS, \.\.\.ILLUSTRATION_ASSETS\]/);
   assert.match(worker, /if \(url\.origin === self\.location\.origin\) event\.respondWith\(handleLocalAsset\(request\)\)/);
-  educationalObjects.OBJECTS.forEach(item => assert.equal(worker.includes(sourcePath(item.src).replaceAll(path.sep, "/")), false, item.id));
+  const context = { self: { addEventListener() {} } };
+  require("node:vm").runInNewContext(worker + ";globalThis.targets = APP_SHELL;", context);
+  const targets = new Set(context.targets.map(source => source.replace(/^\.\//, "").split("?")[0]));
+  const coreIds = new Set(["apple", "strawberry", "pear", "cat", "rabbit", "fish", "car", "bus", "airplane", "ball", "kite", "pencil", "seahorse", "tree", "broccoli", "dog", "lion"]);
+  educationalObjects.OBJECTS.forEach(item => assert.equal(targets.has(sourcePath(item.src).replaceAll(path.sep, "/")), coreIds.has(item.id), item.id));
+  assert.equal(coreIds.size, 17);
   educationalObjects.PUZZLE_SCENES.forEach(item => assert.equal(worker.includes(sourcePath(item.src).replaceAll(path.sep, "/")), false, item.id));
 });

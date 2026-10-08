@@ -2,7 +2,7 @@
 
 const APP_VERSION = "1.0.5";
 const CACHE_PREFIX = "mila-oyun-merkezi-";
-const CACHE_NAME = `${CACHE_PREFIX}${APP_VERSION}-art13-5`;
+const CACHE_NAME = `${CACHE_PREFIX}${APP_VERSION}-art13-5-math13-6-qa13-7`;
 const VERSIONED_ASSETS = [
   "./styles.css",
   "./js/utils/random.js",
@@ -25,7 +25,11 @@ const VERSIONED_ASSETS = [
   "./data/offline-data.js",
   "./app.js"
 ].map(path => `${path}?v=${APP_VERSION}`);
+// Bounded core set: math quantities, Sprint 13 targets and canonical memory reveals.
+// Other educational objects and puzzle scenes retain their existing first-use cache.
+const CORE_OBJECT_IDS = ["apple", "strawberry", "pear", "cat", "rabbit", "fish", "car", "bus", "airplane", "ball", "kite", "pencil", "seahorse", "tree", "broccoli", "dog", "lion"];
 const ILLUSTRATION_ASSETS = [
+  ...CORE_OBJECT_IDS.map(id => `./assets/illustrations/objects/object-${id}.svg`),
   "./assets/illustrations/home/learn.svg",
   "./assets/illustrations/home/mini-games.svg",
   "./assets/illustrations/home/learning-path.svg",

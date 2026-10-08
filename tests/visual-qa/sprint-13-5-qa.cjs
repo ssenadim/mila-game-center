@@ -109,7 +109,7 @@ const root = path.resolve(__dirname, '../..');
       await game.waitForFunction(() => document.documentElement.classList.contains('app-ready'));
       await render('listening', 'success');
       assert.equal(await game.locator('.listening-card img').count(), 4);
-      assert.ok(await game.evaluate(async () => (await caches.keys()).some(key => key.endsWith('-art13-5'))));
+      assert.ok(await game.evaluate(async () => (await caches.keys()).some(key => key.includes('-art13-5'))));
       console.log('Controlled PWA offline reload and four target SVGs decoded successfully');
     } finally { await context.close(); await new Promise(resolve => server.close(resolve)); }
   } finally { await browser.close(); }

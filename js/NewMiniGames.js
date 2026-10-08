@@ -137,6 +137,42 @@
     return { group, presented, missing, remaining: presented.filter(item => item.id !== missing.id), choices: shuffle([missing, ...distractors.slice(0, level.answerCount - 1)], random), ...level };
   }
 
+  // Small, bounded object quantities for the three playful math mini-games.
+  const MATH_OBJECT_IDS = ["apple", "strawberry", "pear", "cat", "rabbit", "fish", "car", "bus", "airplane", "ball", "kite", "pencil"];
+  const MATH_MODES = ["math-addition", "math-subtraction", "math-missing"];
+  function createMathRound(mode, roundIndex = 0, recentKeys = [], random = Math.random) {
+    if (!MATH_MODES.includes(mode)) return undefined;
+    const operation = mode === "math-subtraction" || (mode === "math-missing" && roundIndex % 3 === 2) ? "subtract" : "add";
+    const blank = mode === "math-missing" ? (operation === "subtract" ? "second" : roundIndex % 3 === 1 ? "first" : "second") : "result";
+    const pool = [];
+    const early = roundIndex < 2;
+    for (let first = operation === "add" ? 1 : 2; first <= (operation === "add" ? 5 : early ? 5 : 10); first++) {
+      for (let second = 1; second <= (operation === "add" ? 5 : first); second++) {
+        const result = operation === "add" ? first + second : first - second;
+        if (result > (early && operation === "add" ? 5 : 10)) continue;
+        // Zero is a countable empty remainder, used occasionally rather than repeatedly.
+        if (result === 0 && (roundIndex !== 4 || mode === "math-missing")) continue;
+        const answer = blank === "first" ? first : blank === "second" ? second : result;
+        const key = `${mode}:${first}:${second}:${blank}`;
+        pool.push({ mode, operation, blank, first, second, result, answer, key });
+      }
+    }
+    const fresh = pool.filter(item => !recentKeys.includes(item.key));
+    const candidates = fresh.length ? fresh : pool.filter(item => item.key !== recentKeys.at(-1));
+    const round = candidates[Math.floor(random() * candidates.length)];
+    const near = Array.from({ length: 11 }, (_, n) => n).filter(n => n !== round.answer)
+      .sort((a, b) => Math.abs(a - round.answer) - Math.abs(b - round.answer));
+    const objectId = MATH_OBJECT_IDS[Math.floor(random() * MATH_OBJECT_IDS.length)];
+    const object = contentItem(objectId);
+    const label = object?.label.toLocaleLowerCase("tr-TR") || "nesne";
+    let narration;
+    if (mode === "math-addition") narration = `${round.first} ${label} ile ${round.second} ${label} birleştirelim. Birleştir düğmesine dokun. Kaç tane oldu?`;
+    else if (mode === "math-subtraction") narration = `${round.first} ${label} var. ${round.second} tanesi gidiyor. Kaç tane kaldı?`;
+    else if (operation === "subtract") narration = `${round.first} ${label} vardı. Kaç tanesi giderse ${round.result} kalır?`;
+    else narration = `${blank === "first" ? round.second : round.first} ${label} var. Kaç tane eklersek ${round.result} olur?`;
+    return { ...round, objectId, object, narration, choices: shuffle([round.answer, ...near.slice(0, 2)], random) };
+  }
+
   function isValidShadowObject(item) {
     const inlineSvg = item?.svg?.startsWith("<svg") && !/<image\b|\bhref\s*=/i.test(item.svg);
     const localSvg = typeof item?.src === "string" && item.src.startsWith("assets/illustrations/objects/") && /\.svg(?:\?v=[\w.-]+)?$/i.test(item.src);
@@ -342,6 +378,7 @@
   }
 
   root.MilaNewMiniGames = {
+    MATH_OBJECT_IDS, MATH_MODES, createMathRound,
     MISSING_ITEM_GROUPS, SHADOW_OBJECTS, INITIAL_LETTER_WORDS, SOUND_MEMORY_ITEMS, PUZZLES,
     SHADOW_DIFFICULTIES, TURKISH_INITIAL_LETTERS, SOUND_DIFFICULTIES, PUZZLE_DIFFICULTIES, shuffle, createMissingRound, createShadowRound,
     createLetterRound, getEligibleShadowTargets, isValidShadowObject, validateShadowRound,

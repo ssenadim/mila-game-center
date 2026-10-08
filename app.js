@@ -51,9 +51,14 @@ const SHADOW_MODE = "shadow";
 const INITIAL_LETTER_MODE = "initial-letter";
 const SOUND_MEMORY_MODE = "sound-memory";
 const PUZZLE_MODE = "puzzle";
+const MATH_ADDITION_MODE = "math-addition";
+const MATH_SUBTRACTION_MODE = "math-subtraction";
+const MATH_MISSING_MODE = "math-missing";
+const MATH_MINI_GAME_MODES = [MATH_ADDITION_MODE, MATH_SUBTRACTION_MODE, MATH_MISSING_MODE];
+const recentMathMiniRoundKeys = [];
 const PUZZLE_DRAG_THRESHOLD = 8;
 const PUZZLE_SWAP_DURATION = 180;
-const NEW_MINI_GAME_MODES = [MISSING_ITEM_MODE, SHADOW_MODE, INITIAL_LETTER_MODE, SOUND_MEMORY_MODE, PUZZLE_MODE];
+const NEW_MINI_GAME_MODES = [MISSING_ITEM_MODE, SHADOW_MODE, INITIAL_LETTER_MODE, SOUND_MEMORY_MODE, PUZZLE_MODE, ...MATH_MINI_GAME_MODES];
 const MINI_GAME_MODES = [MATCHING_MODE, LISTENING_MODE, NUMBER_MATCH_MODE, COLOR_MATCH_MODE, SORTING_MODE, ...NEW_MINI_GAME_MODES];
 const LISTENING_SESSION_ROUNDS = 5;
 const NUMBER_MATCH_SESSION_ROUNDS = 10;
@@ -733,7 +738,8 @@ function getDailyMissionContext() {
   const miniGames = [
     [MATCHING_MODE, "Eşini Bul"], [LISTENING_MODE, "Dinle ve Seç"], [NUMBER_MATCH_MODE, "Sayıyı Bul"],
     [COLOR_MATCH_MODE, "Rengi Bul"], [SORTING_MODE, "Grupla"], [MISSING_ITEM_MODE, "Hangisi Eksik"],
-    [SHADOW_MODE, "Gölgesini Bul"], [INITIAL_LETTER_MODE, "İlk Harfi Bul"], [SOUND_MEMORY_MODE, "Ses Hafızası"], [PUZZLE_MODE, "Yapboz"]
+    [SHADOW_MODE, "Gölgesini Bul"], [INITIAL_LETTER_MODE, "İlk Harfi Bul"], [SOUND_MEMORY_MODE, "Ses Hafızası"], [PUZZLE_MODE, "Yapboz"],
+    [MATH_ADDITION_MODE, "Toplama Macerası"], [MATH_SUBTRACTION_MODE, "Çıkarma Macerası"], [MATH_MISSING_MODE, "Eksik Sayıyı Bul"]
   ].map(([id, label]) => ({ id, label }));
   const mathStageIds = eligibleStages.filter(stage => ["number-world", "first-operations"].includes(stage.groupId)).map(stage => stage.id);
   const logicStageIds = eligibleStages.filter(stage => stage.groupId === "think-find").map(stage => stage.id);
@@ -806,7 +812,8 @@ function getMiniGameParentLabel(gameId) {
   const labels = {
     [MATCHING_MODE]: "Eşini Bul", [LISTENING_MODE]: "Dinle ve Seç", [NUMBER_MATCH_MODE]: "Sayıyı Bul",
     [COLOR_MATCH_MODE]: "Rengi Bul", [SORTING_MODE]: "Grupla", [MISSING_ITEM_MODE]: "Hangisi Eksik?",
-    [SHADOW_MODE]: "Gölgesini Bul", [INITIAL_LETTER_MODE]: "İlk Harfi Bul", [SOUND_MEMORY_MODE]: "Ses Hafızası", [PUZZLE_MODE]: "Yapboz"
+    [SHADOW_MODE]: "Gölgesini Bul", [INITIAL_LETTER_MODE]: "İlk Harfi Bul", [SOUND_MEMORY_MODE]: "Ses Hafızası", [PUZZLE_MODE]: "Yapboz",
+    [MATH_ADDITION_MODE]: "Toplama Macerası", [MATH_SUBTRACTION_MODE]: "Çıkarma Macerası", [MATH_MISSING_MODE]: "Eksik Sayıyı Bul"
   };
   return labels[gameId] || "Mini Oyun";
 }
@@ -2570,7 +2577,10 @@ const NEW_MINI_GAME_CONFIG = {
   [SHADOW_MODE]: { eyebrow: "GÖLGESİNİ BUL", title: "Doğru gölgeyi bul!", rounds: 8 },
   [INITIAL_LETTER_MODE]: { eyebrow: "İLK HARFİ BUL", title: "İlk harfi seç!", rounds: 10 },
   [SOUND_MEMORY_MODE]: { eyebrow: "SES HAFIZASI", title: "Aynı sesleri bul!" },
-  [PUZZLE_MODE]: { eyebrow: "YAPBOZ", title: "Resmi tamamla!" }
+  [PUZZLE_MODE]: { eyebrow: "YAPBOZ", title: "Resmi tamamla!" },
+  [MATH_ADDITION_MODE]: { eyebrow: "TOPLAMA MACERASI", title: "Birlikte sayalım!", rounds: 5 },
+  [MATH_SUBTRACTION_MODE]: { eyebrow: "ÇIKARMA MACERASI", title: "Kaç tane kaldı?", rounds: 5 },
+  [MATH_MISSING_MODE]: { eyebrow: "EKSİK SAYIYI BUL", title: "Kaç tane eksik?", rounds: 5 }
 };
 
 function createEmptyNewMiniGameState(mode) {
@@ -2579,6 +2589,7 @@ function createEmptyNewMiniGameState(mode) {
     mode, sessionId: ++newMiniGameSessionId, round: 0, correct: 0, streak: 0, missionWrongRounds: [],
     inputLocked: false, speaking: false, completed: false, pendingDelay: undefined,
     challenge: undefined, board: [], firstCard: undefined, attempts: 0,
+    mathPhase: "ready", mathNarrating: false, mathSpeechRun: 0, mathPendingResult: undefined, mathWrongAnswer: undefined, mathAdvanceReady: false,
     elapsedMs: 0, timerStartedAt: 0, soundDifficulty: "standard", shadowDifficulty: "easy", recentShadowDistractorIds: [],
     puzzleDifficulty: "easy", puzzleId: suggestedPuzzle?.id ?? newMiniGames?.PUZZLES?.[0]?.id, pieces: [],
     selectedPiecePosition: undefined, puzzleDrag: undefined, suppressPuzzleClick: false,
@@ -2610,7 +2621,7 @@ function scheduleNewMiniGame(callback, delay) {
   clearNewMiniGameDelay();
   const sessionId = newMiniGameState.sessionId;
   const pending = { callback, remaining: delay, dueAt: Date.now() + delay, timer: undefined };
-  pending.timer = window.setTimeout(() => {
+  if (!isPaused) pending.timer = window.setTimeout(() => {
     if (newMiniGameState.sessionId !== sessionId || isPaused) return;
     newMiniGameState.pendingDelay = undefined;
     callback();
@@ -2624,6 +2635,10 @@ function clearNewMiniGameDelay() {
 }
 
 function pauseNewMiniGameState() {
+  if (MATH_MINI_GAME_MODES.includes(newMiniGameState.mode)) {
+    newMiniGameState.mathSpeechRun += 1;
+    newMiniGameState.mathNarrating = false;
+  }
   const pending = newMiniGameState.pendingDelay;
   if (pending?.timer) {
     window.clearTimeout(pending.timer);
@@ -2657,9 +2672,20 @@ function resumeNewMiniGameState() {
   if (newMiniGameState.mode === PUZZLE_MODE) newMiniGameState.puzzleFeedback = "Bir parçaya dokun ya da sürükle.";
   if (newMiniGameState.mode === SOUND_MEMORY_MODE && newMiniGameState.board.length && !newMiniGameState.completed) newMiniGameState.timerStartedAt = Date.now();
   renderCurrentNewMiniGame();
+  if (MATH_MINI_GAME_MODES.includes(newMiniGameState.mode)) {
+    if (newMiniGameState.mathPendingResult === "correct") {
+      if (newMiniGameState.mathAdvanceReady) showMathMiniRound();
+      else if (!newMiniGameState.pendingDelay && !celebrationCoordinator.hasGroup("math-round-transition")) scheduleNewMiniGame(queueMathMiniAdvance, 700);
+    } else {
+      newMiniGameState.mathPendingResult = undefined;
+      newMiniGameState.inputLocked = false;
+      narrateMathMiniRound();
+    }
+  }
 }
 
 function cleanupNewMiniGame() {
+  celebrationCoordinator.cancelGroup("math-round-transition");
   cancelPuzzleDrag();
   clearNewMiniGameDelay();
   newMiniGameState.sessionId += 1;
@@ -2678,6 +2704,7 @@ function cleanupNewMiniGame() {
   ui.newMiniGameCompletionImage.removeAttribute("src");
   ui.newMiniGameCompletionImage.alt = "";
   ui.newMiniGame.classList.remove("puzzle-active");
+  ui.newMiniGame.classList.remove("math-mini-active");
 }
 
 async function speakNewMiniGame(text, language = TURKISH_LANGUAGE, { explicit = false, channel = "question" } = {}) {
@@ -2869,12 +2896,14 @@ function renderMissingItemChoices(wrongId) {
 
 async function chooseMissingItem(itemId) {
   if (!isNewMiniGameActive || isPaused || newMiniGameState.inputLocked || newMiniGameState.speaking) return;
+  const sessionId = newMiniGameState.sessionId;
   if (itemId !== newMiniGameState.challenge.missing.id) {
     recordNewMiniGameWrong();
     ui.newMiniGameFeedback.textContent = "Bir daha bakalım.";
     ui.newMiniGameFeedback.className = "matching-feedback try-again";
     renderMissingItemChoices(itemId);
     await speakNewMiniGame("Bir daha bakalım.");
+    if (sessionId !== newMiniGameState.sessionId || !isNewMiniGameActive) return;
     renderMissingItemChoices();
     return;
   }
@@ -2885,6 +2914,7 @@ async function chooseMissingItem(itemId) {
   audio.playSuccess();
   renderMissingItemChoices();
   await speakNewMiniGame("Harika!");
+  if (sessionId !== newMiniGameState.sessionId || !isNewMiniGameActive) return;
   scheduleNewMiniGame(showMissingItemRound, 450);
 }
 
@@ -2988,11 +3018,13 @@ function renderShadowChoices(wrongId) {
 
 async function chooseShadow(itemId) {
   if (!isNewMiniGameActive || isPaused || newMiniGameState.inputLocked || newMiniGameState.speaking) return;
+  const sessionId = newMiniGameState.sessionId;
   if (itemId !== newMiniGameState.challenge.source.id) {
     recordNewMiniGameWrong();
     ui.newMiniGameFeedback.textContent = "Çok yaklaştın, bir daha dene.";
     renderShadowChoices(itemId);
     await speakNewMiniGame("Bir daha bakalım.");
+    if (sessionId !== newMiniGameState.sessionId || !isNewMiniGameActive) return;
     renderShadowChoices();
     return;
   }
@@ -3002,6 +3034,7 @@ async function chooseShadow(itemId) {
   audio.playSuccess();
   renderShadowChoices();
   await speakNewMiniGame("Harika!");
+  if (sessionId !== newMiniGameState.sessionId || !isNewMiniGameActive) return;
   scheduleNewMiniGame(showShadowRound, 450);
 }
 
@@ -3056,13 +3089,16 @@ function renderInitialLetterChoices(wrongLetter) {
 
 async function chooseInitialLetter(letter) {
   if (!isNewMiniGameActive || isPaused || newMiniGameState.inputLocked || newMiniGameState.speaking) return;
+  const sessionId = newMiniGameState.sessionId;
   const word = newMiniGameState.challenge.word;
   if (letter !== word.letter) {
     recordNewMiniGameWrong();
     ui.newMiniGameFeedback.textContent = "Bir daha dinleyelim.";
     renderInitialLetterChoices(letter);
     await speakNewMiniGame("Bir daha dinleyelim.");
+    if (sessionId !== newMiniGameState.sessionId || !isNewMiniGameActive) return;
     await speakInitialLetterWord();
+    if (sessionId !== newMiniGameState.sessionId || !isNewMiniGameActive) return;
     renderInitialLetterChoices();
     return;
   }
@@ -3072,6 +3108,7 @@ async function chooseInitialLetter(letter) {
   audio.playSuccess();
   renderInitialLetterChoices();
   await speakNewMiniGame("Harika!");
+  if (sessionId !== newMiniGameState.sessionId || !isNewMiniGameActive) return;
   scheduleNewMiniGame(showInitialLetterRound, 450);
 }
 
@@ -3151,8 +3188,15 @@ async function openSoundMemoryCard(index) {
     return;
   }
   card.revealed = true;
+  const sessionId = newMiniGameState.sessionId;
   renderSoundMemoryBoard();
-  if (!await speakNewMiniGame(card.speech, ENGLISH_LANGUAGE, { explicit: true })) return;
+  if (!await speakNewMiniGame(card.speech, ENGLISH_LANGUAGE, { explicit: true })) {
+    if (sessionId === newMiniGameState.sessionId && isNewMiniGameActive && !card.matched) {
+      card.revealed = false;
+      renderSoundMemoryBoard();
+    }
+    return;
+  }
   if (newMiniGameState.firstCard === undefined) {
     newMiniGameState.firstCard = index;
     renderSoundMemoryBoard();
@@ -3470,6 +3514,201 @@ function difficultyPieceCount() {
   return difficulty.columns * difficulty.rows;
 }
 
+function createMathMiniGroup(quantity, label, { unknown = false, removedFrom = Infinity, wide = false } = {}) {
+  const group = document.createElement("div");
+  group.className = "math-mini-group";
+  const heading = document.createElement("strong");
+  heading.textContent = label;
+  const grid = document.createElement("div");
+  grid.className = "math-mini-objects";
+  grid.style.setProperty("--math-columns", String(Math.min(wide ? 5 : 3, Math.max(1, quantity))));
+  if (unknown) {
+    grid.classList.add("math-mini-unknown");
+    grid.textContent = "?";
+  } else if (!quantity) {
+    grid.classList.add("math-mini-empty");
+    grid.textContent = "0";
+  } else for (let index = 0; index < quantity; index++) {
+    const slot = document.createElement("span");
+    slot.className = "math-mini-object";
+    if (index >= removedFrom) slot.classList.add(newMiniGameState.mathPhase === "moving" ? "departing" : "departed");
+    appendProfessionalObject(slot, newMiniGameState.challenge.object, "math-mini-object-image");
+    grid.append(slot);
+  }
+  group.append(heading, grid);
+  return group;
+}
+
+function renderMathMiniVisual() {
+  const challenge = newMiniGameState.challenge;
+  const phase = newMiniGameState.mathPhase;
+  ui.newMiniGameVisual.className = "new-mini-game-visual math-mini-visual";
+  ui.newMiniGameVisual.removeAttribute("aria-hidden");
+  ui.newMiniGameVisual.setAttribute("role", "group");
+  ui.newMiniGameVisual.setAttribute("aria-label", `${challenge.object.label} ile sayalım`);
+  ui.newMiniGameVisual.textContent = "";
+  const board = document.createElement("div");
+  board.className = "math-mini-board";
+  const symbol = text => {
+    const element = document.createElement("span");
+    element.className = "math-mini-symbol";
+    element.textContent = text;
+    return element;
+  };
+  if (challenge.mode === MATH_ADDITION_MODE && ["moving", "settled"].includes(phase)) {
+    board.classList.add("combined");
+    const group = createMathMiniGroup(challenge.result, "Birlikte", { wide: true });
+    if (phase === "moving") group.classList.add("combining");
+    board.append(group);
+  } else if (challenge.mode === MATH_SUBTRACTION_MODE) {
+    board.classList.add("subtraction");
+    board.append(createMathMiniGroup(challenge.first, phase === "ready" ? "Başlangıç" : "Kalanlar", {
+      removedFrom: phase === "ready" ? Infinity : challenge.result, wide: true
+    }));
+    const departing = document.createElement("p");
+    departing.className = "math-mini-departure";
+    departing.textContent = `${challenge.second} tanesi gidiyor →`;
+    board.append(departing);
+  } else {
+    const missing = challenge.mode === MATH_MISSING_MODE;
+    const solved = newMiniGameState.mathPendingResult === "correct";
+    board.append(createMathMiniGroup(challenge.first, challenge.operation === "subtract" ? "Başlangıç" : "İlk grup", { unknown: missing && challenge.blank === "first" && !solved }));
+    board.append(symbol(challenge.operation === "add" ? "+" : "−"));
+    board.append(createMathMiniGroup(challenge.second, challenge.operation === "subtract" ? "Gidenler" : "Eklenenler", { unknown: missing && challenge.blank === "second" && !solved }));
+    if (missing) {
+      board.classList.add("missing-quantity");
+      const result = createMathMiniGroup(challenge.result, challenge.operation === "add" ? "Böyle olsun" : "Kalanlar", { wide: true });
+      result.classList.add("math-mini-result");
+      board.append(result);
+    }
+  }
+  ui.newMiniGameVisual.append(board);
+  const equation = document.createElement("small");
+  equation.className = "math-mini-equation";
+  equation.textContent = `${challenge.blank === "first" ? "?" : challenge.first} ${challenge.operation === "add" ? "+" : "−"} ${challenge.blank === "second" ? "?" : challenge.second} = ${challenge.blank === "result" ? "?" : challenge.result}`;
+  ui.newMiniGameVisual.append(equation);
+  const action = document.createElement("button");
+  action.type = "button";
+  action.className = "replay-button math-mini-combine";
+  action.textContent = "↓ Birleştir";
+  action.classList.toggle("hidden", challenge.mode !== MATH_ADDITION_MODE);
+  action.style.visibility = phase === "ready" ? "visible" : "hidden";
+  action.addEventListener("click", combineMathMiniGroups);
+  ui.newMiniGameVisual.append(action);
+  renderMathMiniControls();
+}
+
+function renderMathMiniControls() {
+  ui.newMiniGameVisual.classList.toggle("math-mini-paused", isPaused);
+  const challenge = newMiniGameState.challenge;
+  const blocked = isPaused || newMiniGameState.inputLocked || newMiniGameState.mathNarrating || newMiniGameState.mathPhase !== "settled";
+  ui.newMiniGameChoices.className = "new-mini-game-choices math-mini-choices";
+  ui.newMiniGameChoices.textContent = "";
+  challenge.choices.forEach(number => addNewMiniGameChoice({
+    label: String(number), ariaLabel: `${number} tane`, disabled: blocked,
+    className: `math-mini-answer${number === newMiniGameState.mathWrongAnswer ? " try-again-choice" : ""}${newMiniGameState.mathPendingResult === "correct" && number === challenge.answer ? " correct" : ""}`,
+    onClick: () => answerMathMiniRound(number)
+  }));
+  const combine = ui.newMiniGameVisual.querySelector(".math-mini-combine");
+  if (combine) combine.disabled = isPaused || newMiniGameState.inputLocked || newMiniGameState.mathNarrating || newMiniGameState.mathPhase !== "ready";
+  ui.newMiniGameListen.disabled = isPaused || newMiniGameState.inputLocked;
+}
+
+async function narrateMathMiniRound(explicit = false, prefix = "") {
+  if (!isNewMiniGameActive || isPaused || !newMiniGameState.challenge) return;
+  const state = newMiniGameState;
+  const round = state.round;
+  const run = ++state.mathSpeechRun;
+  state.mathNarrating = true;
+  const text = state.mode === MATH_ADDITION_MODE && state.mathPhase !== "ready"
+    ? "Nesneler birleşti. Sayalım. Kaç tane oldu?" : state.challenge.narration;
+  await speakNewMiniGame(prefix + text, TURKISH_LANGUAGE, { explicit });
+  if (state !== newMiniGameState || state.round !== round || run !== state.mathSpeechRun || isPaused || !isNewMiniGameActive) return;
+  state.mathNarrating = false;
+  if (state.mathPendingResult === "wrong") state.mathPendingResult = undefined;
+  renderMathMiniControls();
+}
+
+function settleMathMiniAction() {
+  newMiniGameState.mathPhase = "settled";
+  renderMathMiniVisual();
+}
+
+function beginMathMiniRemoval() {
+  newMiniGameState.mathPhase = "moving";
+  renderMathMiniVisual();
+  scheduleNewMiniGame(settleMathMiniAction, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 650);
+}
+
+function combineMathMiniGroups() {
+  if (!isNewMiniGameActive || isPaused || newMiniGameState.inputLocked || newMiniGameState.mathNarrating || newMiniGameState.mathPhase !== "ready") return;
+  newMiniGameState.mathPhase = "moving";
+  renderMathMiniVisual();
+  scheduleNewMiniGame(settleMathMiniAction, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 650);
+}
+
+function showMathMiniRound() {
+  if (!isNewMiniGameActive || isPaused) return;
+  if (newMiniGameState.round >= 5) {
+    finishNewMiniGame("5 turu tamamladın. Sayılarla harika oynadın!");
+    return;
+  }
+  resetNewMiniGameView();
+  newMiniGameState.challenge = newMiniGames.createMathRound(newMiniGameState.mode, newMiniGameState.round, recentMathMiniRoundKeys);
+  recentMathMiniRoundKeys.push(newMiniGameState.challenge.key);
+  if (recentMathMiniRoundKeys.length > 30) recentMathMiniRoundKeys.shift();
+  newMiniGameState.round += 1;
+  newMiniGameState.inputLocked = false;
+  newMiniGameState.mathPendingResult = undefined;
+  newMiniGameState.mathAdvanceReady = false;
+  newMiniGameState.mathWrongAnswer = undefined;
+  newMiniGameState.mathPhase = newMiniGameState.mode === MATH_MISSING_MODE ? "settled" : "ready";
+  ui.newMiniGamePrompt.textContent = newMiniGameState.mode === MATH_ADDITION_MODE ? "Birleştir, birlikte say." : newMiniGameState.mode === MATH_SUBTRACTION_MODE ? "Kaç tane kaldı?" : newMiniGameState.challenge.operation === "subtract" ? "Kaç tanesi gitti?" : "Kaç tane ekleyelim?";
+  ui.newMiniGameListen.classList.remove("hidden");
+  updateNewMiniGameProgress(newMiniGameState.round, 5);
+  renderMathMiniVisual();
+  if (newMiniGameState.mode === MATH_SUBTRACTION_MODE) scheduleNewMiniGame(beginMathMiniRemoval, 600);
+  narrateMathMiniRound();
+}
+
+function queueMathMiniAdvance() {
+  const state = newMiniGameState;
+  const sessionId = state.sessionId;
+  const round = state.round;
+  // Rewards finish through the existing coordinator before the next counting task.
+  celebrationCoordinator.enqueue({
+    id: `math-next-${sessionId}-${round}`, group: "math-round-transition", priority: -1,
+    show: () => {
+      if (state !== newMiniGameState || state.sessionId !== sessionId || state.round !== round || !isNewMiniGameActive) return;
+      if (isPaused) state.mathAdvanceReady = true;
+      else showMathMiniRound();
+    }
+  });
+}
+
+function answerMathMiniRound(number) {
+  if (!isNewMiniGameActive || isPaused || newMiniGameState.inputLocked || newMiniGameState.mathNarrating || newMiniGameState.mathPhase !== "settled") return;
+  if (!newMiniGameState.challenge.choices.includes(number)) return;
+  if (number !== newMiniGameState.challenge.answer) {
+    recordNewMiniGameWrong();
+    newMiniGameState.mathWrongAnswer = number;
+    newMiniGameState.mathPendingResult = "wrong";
+    ui.newMiniGameFeedback.textContent = "Bir daha sayalım.";
+    ui.newMiniGameFeedback.className = "matching-feedback try-again";
+    narrateMathMiniRound(false, "Bir daha sayalım. ");
+    return;
+  }
+  newMiniGameState.inputLocked = true;
+  newMiniGameState.mathPendingResult = "correct";
+  newMiniGameState.mathWrongAnswer = undefined;
+  recordNewMiniGameCorrect(newMiniGameState.challenge.key);
+  ui.newMiniGameFeedback.textContent = "Harika, buldun!";
+  ui.newMiniGameFeedback.className = "matching-feedback success";
+  renderMathMiniVisual();
+  audio.playSuccess();
+  scheduleNewMiniGame(queueMathMiniAdvance, 1200);
+}
+
 function renderCurrentNewMiniGame() {
   if (!ui.newMiniGame || newMiniGameState.completed) return;
   if (newMiniGameState.mode === MISSING_ITEM_MODE && newMiniGameState.challenge?.missing && ui.newMiniGamePrompt.textContent === "Hangisi eksik?") renderMissingItemChoices();
@@ -3477,6 +3716,7 @@ function renderCurrentNewMiniGame() {
   else if (newMiniGameState.mode === INITIAL_LETTER_MODE && newMiniGameState.challenge) renderInitialLetterChoices();
   else if (newMiniGameState.mode === SOUND_MEMORY_MODE && newMiniGameState.board.length) renderSoundMemoryBoard();
   else if (newMiniGameState.mode === PUZZLE_MODE && newMiniGameState.pieces.length) renderPuzzleGame();
+  else if (MATH_MINI_GAME_MODES.includes(newMiniGameState.mode) && newMiniGameState.challenge) renderMathMiniControls();
 }
 
 function startNewMiniGame(mode) {
@@ -3491,6 +3731,7 @@ function startNewMiniGame(mode) {
   clearSpeech();
   hideAllScreens();
   ui.newMiniGame.classList.remove("hidden");
+  ui.newMiniGame.classList.toggle("math-mini-active", MATH_MINI_GAME_MODES.includes(mode));
   window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   recordNewMiniGameStarted(mode);
   startPlayTime();
@@ -3499,6 +3740,7 @@ function startNewMiniGame(mode) {
   else if (mode === SHADOW_MODE) renderShadowSetup();
   else if (mode === INITIAL_LETTER_MODE) showInitialLetterRound();
   else if (mode === SOUND_MEMORY_MODE) renderSoundMemorySetup();
+  else if (MATH_MINI_GAME_MODES.includes(mode)) showMathMiniRound();
   else renderPuzzleSetup();
   ui.newMiniGameTitle.focus({ preventScroll: true });
 }
@@ -6738,6 +6980,9 @@ ui.shadowMode.addEventListener("click", () => launchMiniGame(SHADOW_MODE));
 ui.initialLetterMode.addEventListener("click", () => launchMiniGame(INITIAL_LETTER_MODE));
 ui.soundMemoryMode.addEventListener("click", () => launchMiniGame(SOUND_MEMORY_MODE));
 ui.puzzleMode.addEventListener("click", () => launchMiniGame(PUZZLE_MODE));
+document.querySelectorAll("[data-math-mini-mode]").forEach(button => {
+  button.addEventListener("click", () => launchMiniGame(button.dataset.mathMiniMode));
+});
 ui.categoryPackButtons.forEach(button => button.addEventListener("click", () => setCategoryPack(button.dataset.categoryPack)));
 ui.customCategoryReset.addEventListener("click", () => {
   if (!customCategories.length) return;
@@ -6803,6 +7048,10 @@ ui.numberLearningCount.addEventListener("click", toggleAdditionCounting);
 ui.newMiniGameReplay.addEventListener("click", replayNewMiniGame);
 ui.newMiniGameChange.addEventListener("click", changeNewMiniGameSetup);
 ui.newMiniGameListen.addEventListener("click", () => {
+  if (MATH_MINI_GAME_MODES.includes(newMiniGameState.mode) && !isPaused && !newMiniGameState.inputLocked) {
+    narrateMathMiniRound(true);
+    return;
+  }
   if (newMiniGameState.mode === INITIAL_LETTER_MODE && !isPaused && !newMiniGameState.inputLocked && !newMiniGameState.speaking) {
     speakInitialLetterWord(true);
   }

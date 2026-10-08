@@ -67,7 +67,7 @@ test("Turkish fallback never explicitly selects English and preserves feedback U
   const env = createSpeechEnvironment({ voices: [voice("Default English", "en-US", { default: true })] });
   const service = new env.SpeechService();
   await service.ready;
-  for (const text of ["Harika", "Muhteşem", "Çok güzel", "Bir daha deneyelim"]) {
+  for (const text of ["Harika", "Muhteşem", "Tebrikler", "Çok güzel", "Bir daha deneyelim"]) {
     await service.speakFeedback(text);
     const utterance = env.spoken.at(-1);
     assert.equal(utterance.text, text);
@@ -86,6 +86,11 @@ test("Turkish fallback never explicitly selects English and preserves feedback U
   await service.speakEnglish("Green");
   assert.equal(env.spoken.at(-1).voice.lang, "en-US");
   assert.equal(env.spoken.at(-1).lang, "en-US");
+  for (const text of ["One", "Five", "Green", "Yellow"]) {
+    await service.speakEnglish(text);
+    assert.equal(env.spoken.at(-1).voice.lang, "en-US");
+    assert.equal(env.spoken.at(-1).lang, "en-US");
+  }
 });
 
 test("voice discovery loads immediately, refreshes when delayed and registers one listener", async () => {
